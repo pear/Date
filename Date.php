@@ -121,8 +121,7 @@ class Date
         $this->tz = Date_TimeZone::getDefault();
         if (is_null($date)) {
             $this->setDate(date("Y-m-d H:i:s"));
-        } elseif (is_a($date, 'Date'))
-        ) {
+        } elseif (is_a($date, 'Date')) {
             $this->copy($date);
         } else {
             $this->setDate($date);
