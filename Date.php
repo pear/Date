@@ -555,7 +555,7 @@ class Date
         if (preg_match('/([\+\-])(\d{2}):?(\d{2})/', $offset, $regs)) {
             // convert offset to seconds
             $hours  = (int) $regs[2];
-            $mins   = (int) $regs[4];
+            $mins   = (int) $regs[3];
             $offset = ($hours * 3600) + ($mins * 60);
 
             if ($regs[1] == "-") {
