@@ -501,47 +501,6 @@ class Date_Calc
     }
 
     /**
-     * Returns the full month name for the given month
-     *
-     * @param int    $month   the month
-     *
-     * @return string  the full name of the month
-     *
-     * @access public
-     * @static
-     */
-    function getMonthFullname($month)
-    {
-        $month = (int)$month;
-        if (empty($month)) {
-            $month = (int)Date_Calc::dateNow('%m');
-        }
-        $month_names = Date_Calc::getMonthNames();
-        return $month_names[$month];
-    }
-
-    /**
-     * Returns the abbreviated month name for the given month
-     *
-     * @param int    $month   the month
-     * @param int    $length  the length of abbreviation
-     *
-     * @return string  the abbreviated name of the month
-     *
-     * @access public
-     * @static
-     * @see Date_Calc::getMonthFullname
-     */
-    function getMonthAbbrname($month, $length = 3)
-    {
-        $month = (int)$month;
-        if (empty($month)) {
-            $month = Date_Calc::dateNow('%m');
-        }
-        return substr(Date_Calc::getMonthFullname($month), 0, $length);
-    }
-
-    /**
      * Returns the full weekday name for the given date
      *
      * @param int    $day     the day of the month, default is current local day
@@ -596,6 +555,47 @@ class Date_Calc
         }
         return substr(Date_Calc::getWeekdayFullname($day, $month, $year),
                       0, $length);
+    }
+
+    /**
+     * Returns the full month name for the given month
+     *
+     * @param int    $month   the month
+     *
+     * @return string  the full name of the month
+     *
+     * @access public
+     * @static
+     */
+    function getMonthFullname($month)
+    {
+        $month = (int)$month;
+        if (empty($month)) {
+            $month = (int)Date_Calc::dateNow('%m');
+        }
+        $month_names = Date_Calc::getMonthNames();
+        return $month_names[$month];
+    }
+
+    /**
+     * Returns the abbreviated month name for the given month
+     *
+     * @param int    $month   the month
+     * @param int    $length  the length of abbreviation
+     *
+     * @return string  the abbreviated name of the month
+     *
+     * @access public
+     * @static
+     * @see Date_Calc::getMonthFullname
+     */
+    function getMonthAbbrname($month, $length = 3)
+    {
+        $month = (int)$month;
+        if (empty($month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        return substr(Date_Calc::getMonthFullname($month), 0, $length);
     }
 
     /**
