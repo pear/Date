@@ -16,8 +16,8 @@
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
- * @category   CategoryName
- * @package    PackageName
+ * @category   Date and Time
+ * @package    Date
  * @author     Monte Ohrt <monte@ispi.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999, 2002, 2003 ispi
@@ -35,6 +35,16 @@ if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
      * Redefine this to 0 if you want weeks to begin on Sunday.
      */
     define('DATE_CALC_BEGIN_WEEKDAY', 1);
+}
+
+if (!defined('DATE_CALC_FORMAT')) {
+    /**
+     * The default value for each method's $format parameter
+     *
+     * The default is '%Y%m%d'.  To override this default, define
+     * this constant before including Calc.php.
+     */
+    define('DATE_CALC_FORMAT', '%Y%m%d');
 }
 
 /**
@@ -232,7 +242,7 @@ class Date_Calc
      *
      * @access public
      */
-    function daysToDate($days, $format = '%Y%m%d')
+    function daysToDate($days, $format = DATE_CALC_FORMAT)
     {
         $days   -= 1721119;
         $century = floor((4 * $days - 1) / 146097);
@@ -400,7 +410,7 @@ class Date_Calc
      *
      * @access public
      */
-    function dateNow($format = '%Y%m%d')
+    function dateNow($format = DATE_CALC_FORMAT)
     {
         return strftime($format, time());
     }
@@ -809,7 +819,7 @@ class Date_Calc
      * @access public
      */
     function getCalendarWeek($day = '', $month = '', $year = '',
-                             $format = '%Y%m%d')
+                             $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -845,7 +855,8 @@ class Date_Calc
      *
      * @access public
      */
-    function getCalendarMonth($month = '', $year = '', $format = '%Y%m%d')
+    function getCalendarMonth($month = '', $year = '',
+                              $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -894,7 +905,7 @@ class Date_Calc
      *
      * @access public
      */
-    function getCalendarYear($year = '', $format = '%Y%m%d')
+    function getCalendarYear($year = '', $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -927,7 +938,8 @@ insert..................................
      *
      * @access public
      */
-    function prevDay($day = '', $month = '', $year = '', $format = '%Y%m%d')
+    function prevDay($day = '', $month = '', $year = '',
+                     $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -954,7 +966,8 @@ insert..................................
      *
      * @access public
      */
-    function nextDay($day = '', $month = '', $year = '', $format = '%Y%m%d')
+    function nextDay($day = '', $month = '', $year = '',
+                     $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -982,7 +995,7 @@ insert..................................
      * @access public
      */
     function prevWeekday($day = '', $month = '', $year = '',
-                         $format = '%Y%m%d')
+                         $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1017,7 +1030,8 @@ insert..................................
      *
      * @access public
      */
-    function nextWeekday($day = '', $month = '', $year = '', $format = '%Y%m%d')
+    function nextWeekday($day = '', $month = '', $year = '',
+                         $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1055,7 +1069,7 @@ insert..................................
      * @access public
      */
     function prevDayOfWeek($dow, $day = '', $month = '', $year = '',
-                           $format = '%Y%m%d', $onOrBefore = false)
+                           $format = DATE_CALC_FORMAT, $onOrBefore = false)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1096,7 +1110,7 @@ insert..................................
      * @access public
      */
     function nextDayOfWeek($dow, $day = '', $month = '', $year = '',
-                           $format = '%Y%m%d', $onOrAfter = false)
+                           $format = DATE_CALC_FORMAT, $onOrAfter = false)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1139,7 +1153,7 @@ insert..................................
      * @access public
      */
     function prevDayOfWeekOnOrBefore($dow, $day = '', $month = '', $year = '',
-                                     $format = '%Y%m%d')
+                                     $format = DATE_CALC_FORMAT)
     {
         return Date_Calc::prevDayOfWeek($dow, $day, $month, $year, $format,
                                         true);
@@ -1160,7 +1174,7 @@ insert..................................
      * @access public
      */
     function nextDayOfWeekOnOrAfter($dow, $day = '', $month = '', $year = '',
-                                    $format = '%Y%m%d')
+                                    $format = DATE_CALC_FORMAT)
     {
         return Date_Calc::nextDayOfWeek($dow, $day, $month, $year, $format,
                                         true);
@@ -1182,7 +1196,7 @@ insert..................................
      * @access public
      */
     function beginOfWeek($day = '', $month = '', $year = '',
-                         $format = '%Y%m%d')
+                         $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1214,7 +1228,8 @@ insert..................................
      *
      * @access public
      */
-    function endOfWeek($day = '', $month = '', $year = '', $format = '%Y%m%d')
+    function endOfWeek($day = '', $month = '', $year = '',
+                       $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1247,7 +1262,7 @@ insert..................................
      * @access public
      */
     function beginOfPrevWeek($day = '', $month = '', $year = '',
-                             $format = '%Y%m%d')
+                             $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1288,7 +1303,7 @@ insert..................................
      * @access public
      */
     function beginOfNextWeek($day = '', $month = '', $year = '',
-                             $format = '%Y%m%d')
+                             $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1324,7 +1339,7 @@ insert..................................
      *
      * @access public
      */
-    function beginOfMonth($month = '', $year = '', $format = '%Y%m%d')
+    function beginOfMonth($month = '', $year = '', $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1348,7 +1363,7 @@ insert..................................
      * @access public
      */
     function beginOfPrevMonth($day = '', $month = '', $year = '',
-                              $format = '%Y%m%d')
+                              $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1383,7 +1398,7 @@ insert..................................
      * @access public
      */
     function endOfPrevMonth($day = '', $month = '', $year = '',
-                            $format = '%Y%m%d')
+                            $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1417,7 +1432,7 @@ insert..................................
      * @access public
      */
     function beginOfNextMonth($day = '', $month = '', $year = '',
-                              $format = '%Y%m%d')
+                              $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1452,7 +1467,7 @@ insert..................................
      * @access public
      */
     function endOfNextMonth($day = '', $month = '', $year = '',
-                            $format = '%Y%m%d')
+                            $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1509,7 +1524,7 @@ insert..................................
      * @access public
      */
     function NWeekdayOfMonth($occurance, $dayOfWeek, $month, $year,
-                             $format = '%Y%m%d')
+                             $format = DATE_CALC_FORMAT)
     {
         $year  = sprintf('%04d', $year);
         $month = sprintf('%02d', $month);
