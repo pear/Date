@@ -272,7 +272,8 @@ class Date
                         $output .= sprintf("%02d", $this->hour);
                         break;
                     case "I":
-                        $output .= sprintf("%02d", ($this->hour + 1) > 12 ? $this->hour + 1 - 12 : $this->hour + 1);
+                        $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                        $output .= sprintf("%02d", $hour==0 ? 12 : $hour);
                         break;
                     case "j":
                         $output .= Date_Calc::julianDate($this->day,$this->month,$this->year);
@@ -287,13 +288,14 @@ class Date
                         $output .= "\n";
                         break;
                     case "p":
-                        $output .= $this->hour > 12 ? "pm" : "am";
+                        $output .= $this->hour >= 12 ? "pm" : "am";
                         break;
                     case "P":
-                        $output .= $this->hour > 12 ? "PM" : "AM";
+                        $output .= $this->hour >= 12 ? "PM" : "AM";
                         break;
                     case "r":
-                        $output .= sprintf("%02d:%02d:%02d %s", $this->hour > 12 ? $this->hour - 12 : $this->hour, $this->minute, $this->second, $this->hour > 12 ? "PM" : "AM");
+                        $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                        $output .= sprintf("%02d:%02d:%02d %s", $hour==0 ?  12 : $hour, $this->minute, $this->second, $this->hour >= 12 ? "PM" : "AM");
                         break;
                     case "R":
                         $output .= sprintf("%02d:%02d", $this->hour, $this->minute);
@@ -1006,7 +1008,7 @@ class Date
         if($m > 59 || $m < 0) {
             $this->minute = 0;
         } else {
-            $this->minute = $s;
+            $this->minute = $m;
         }
     }
 
