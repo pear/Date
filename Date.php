@@ -426,11 +426,17 @@ class Date
      * convertTZ().
      *
      * @access public
-     * @param object Date_TimeZone $tz the Date_TimeZone object to use
+     * @param object Date_TimeZone $tz the Date_TimeZone object to use, if called 
+     * with a paramater that is not a Date_TimeZone object, will fall through to
+     * setTZbyID(). 
      */
     function setTZ($tz)
     {
-        $this->tz = $tz;
+    	if(is_a($tz, 'date_timezone')) {
+        	$this->tz = $tz;
+    	} else {
+    		$this->setTZbyID($tz);
+    	}
     }
 
     /**
