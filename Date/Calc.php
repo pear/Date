@@ -1502,8 +1502,8 @@ class Date_Calc
      *
      * @access public
      */
-    function beginOfOtherMonth($months = 0, $day = '', $month = '', $year = '',
-                               $format = DATE_CALC_FORMAT)
+    function beginOfMonthBySpan($months = 0, $day = '', $month = '', $year = '',
+                                $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1512,12 +1512,14 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
         if ($months > 0) {
+            // future month
             $year  = $year + floor(($month + $months) / 12);
             $month = ($month + $months) % 12;
             if ($month == 0) {
                 $month = 12;
             }
         } else {
+            // past or present month
             $tmp_mo = $month + $months;
             if ($tmp_mo > 0) {
                 // same year
@@ -1553,8 +1555,8 @@ class Date_Calc
      *
      * @access public
      */
-    function endOfOtherMonth($months = 0, $day = '', $month = '', $year = '',
-                             $format = DATE_CALC_FORMAT)
+    function endOfMonthBySpan($months = 0, $day = '', $month = '', $year = '',
+                              $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -1563,12 +1565,14 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
         if ($months > 0) {
+            // future month
             $year  = $year + floor(($month + $months) / 12);
             $month = ($month + $months) % 12;
             if ($month == 0) {
                 $month = 12;
             }
         } else {
+            // past or present month
             $tmp_mo = $month + $months;
             if ($tmp_mo > 0) {
                 // same year
@@ -1583,8 +1587,8 @@ class Date_Calc
                 $year  = $year + floor($tmp_mo / 12);
             }
         }
-        $day = Date_Calc::daysInMonth($month, $year);
-        return Date_Calc::dateFormat($day, $month, $year, $format);
+        return Date_Calc::dateFormat(Date_Calc::daysInMonth($month, $year),
+                                     $month, $year, $format);
     }
 
     /**
