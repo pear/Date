@@ -620,7 +620,7 @@ class Date_Calc
 
     /**
      * Returns date of the next specific day of the week
-     * on or before the given date.
+     * on or after the given date.
      *
      * @param int day of week, 0=Sunday
      * @param string day in format DD, default is current local day
