@@ -3,7 +3,9 @@
 // The constant telling us what day starts the week. Monday (1) is the
 // international standard. Redefine this to 0 if you want weeks to
 // begin on Sunday.
+if(!defined('DATE_CALC_BEGIN_WEEKDAY')) {
 define('DATE_CALC_BEGIN_WEEKDAY', 1);
+}
 
 /**
  * Date_Calc is a calendar class used to calculate and
@@ -20,11 +22,11 @@ define('DATE_CALC_BEGIN_WEEKDAY', 1);
  * obtain it through the world-wide-web, please send a note to
  * license@php.net so we can mail you a copy immediately.
  *
- * Copyright (c) 1999, 2000 ispi
+ * Copyright (c) 1999, 2002 ispi
  *
  * @access public
  *
- * @version 1.2.4
+ * @version 1.2.6
  * @author Monte Ohrt <monte@ispi.net>
  */
 
@@ -1209,8 +1211,8 @@ class Date_Calc
     function dateToDays($day,$month,$year)
     {
 
-        $century = substr($year,0,2);
-        $year = substr($year,2,2);
+        $century = (int) substr($year,0,2);
+        $year = (int) substr($year,2,2);
 
         if($month > 2) {
             $month -= 3;
