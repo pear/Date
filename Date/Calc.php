@@ -232,14 +232,9 @@ class Date_Calc
         if(empty($day)) {
             $day = Date_Calc::dateNow("%d");
         }
-
-        $week_year = $year - 1501;
-        $week_day = $week_year * 365 + floor($week_year / 4) - 29872 + 1
-            - floor($week_year / 100) + floor(($week_year - 300) / 400);
-
-        $week_number = ceil((Date_Calc::julianDate($day,$month,$year)
-            + floor(($week_day + 4) % 7)) / 7);
-
+        $iso    = Date_Calc::gregorianToISO($day, $month, $year);
+        $parts  = explode('-',$iso);
+        $week_number = intval($parts[1]);
         return $week_number;
     } // end func weekOfYear
 
@@ -524,7 +519,7 @@ class Date_Calc
 
         if(Date_Calc::dayOfWeek($day,$month,$year) == 1) {
             $days -= 3;
-        } elseif(Date_Calc::dayOfWeek($day,$month,$year) == 0) { 
+        } elseif(Date_Calc::dayOfWeek($day,$month,$year) == 0) {
             $days -= 2;
         } else {
             $days -= 1;
@@ -1629,7 +1624,7 @@ class Date_Calc
 	 *
 	 * Uses ISO 8601 definitions.
 	 * Algorithm from Rick McCarty, 1999 at http://personal.ecu.edu/mccartyr/ISOwdALG.txt
-	 * 
+	 *
 	 * @param int $year
 	 * @param int $month
 	 * @param int $day
@@ -1637,7 +1632,7 @@ class Date_Calc
 	 * @access public
 	 */
 	// Transcribed to PHP by Jesus M. Castagnetto (blame him if it is fubared ;-)
-	function gregorianToISO($year, $month, $day) {
+	function gregorianToISO($day, $month, $year) {
 		$mnth = array (0,31,59,90,120,151,181,212,243,273,304,334);
 		$y_isleap = Date_Calc::isLeapYear($year);
 		$y_1_isleap = Date_Calc::isLeapYear($year - 1);
@@ -1653,7 +1648,7 @@ class Date_Calc
 		// weekday for year-month-day
 		$h = $day_of_year_number + ($jan1_weekday - 1);
 		$weekday = 1 + intval(($h - 1) % 7);
-		// find if Y M D falls in YearNumber Y-1, WeekNumber 52 or 
+		// find if Y M D falls in YearNumber Y-1, WeekNumber 52 or
 		if ($day_of_year_number <= (8 - $jan1_weekday) && $jan1_weekday > 4){
 			$yearnumber = $year - 1;
 			if ($jan1_weekday == 5 || ($jan1_weekday == 6 && $y_1_isleap)) {
@@ -1679,7 +1674,8 @@ class Date_Calc
 		// find if Y M D falls in YearNumber Y, WeekNumber 1 through 53
 		if ($yearnumber == $year) {
 			$j = $day_of_year_number + (7 - $weekday) + ($jan1_weekday - 1);
-			$weeknumber = intval($j / 7) + 1; // kludge!!! - JMC
+			//$weeknumber = intval($j / 7) + 1; // kludge!!! - JMC
+            $weeknumber = intval($j / 7); // kludge!!! - JMC
 			if ($jan1_weekday > 4) {
 				$weeknumber--;
 			}
