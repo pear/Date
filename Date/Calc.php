@@ -1501,6 +1501,7 @@ class Date_Calc
      * @return string  the date in the desired format
      *
      * @access public
+     * @since  Method available since Release 1.5.0
      */
     function beginOfMonthBySpan($months = 0, $day = '', $month = '', $year = '',
                                 $format = DATE_CALC_FORMAT)
@@ -1513,10 +1514,13 @@ class Date_Calc
         }
         if ($months > 0) {
             // future month
-            $year  = $year + floor(($month + $months) / 12);
-            $month = ($month + $months) % 12;
+            $tmp_mo = $month + $months;
+            $month  = $tmp_mo % 12;
             if ($month == 0) {
                 $month = 12;
+                $year = $year + floor(($tmp_mo - 1) / 12);
+            } else {
+                $year = $year + floor($tmp_mo / 12);
             }
         } else {
             // past or present month
@@ -1554,6 +1558,7 @@ class Date_Calc
      * @return string  the date in the desired format
      *
      * @access public
+     * @since  Method available since Release 1.5.0
      */
     function endOfMonthBySpan($months = 0, $day = '', $month = '', $year = '',
                               $format = DATE_CALC_FORMAT)
@@ -1566,10 +1571,13 @@ class Date_Calc
         }
         if ($months > 0) {
             // future month
-            $year  = $year + floor(($month + $months) / 12);
-            $month = ($month + $months) % 12;
+            $tmp_mo = $month + $months;
+            $month  = $tmp_mo % 12;
             if ($month == 0) {
                 $month = 12;
+                $year = $year + floor(($tmp_mo - 1) / 12);
+            } else {
+                $year = $year + floor($tmp_mo / 12);
             }
         } else {
             // past or present month
