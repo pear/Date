@@ -1686,6 +1686,52 @@ class Date_Calc
 		return "{$yearnumber}-{$weeknumber}-{$weekday}";
 	}
 
+	/**
+	* Determines julian date of the given season
+	* Adapted from previous work in Java by James Mark Hamilton, mhamilton@qwest.net
+	*
+	* @author Robert Butler <rob@maxwellcreek.org>
+	*
+	* @param string is VERNALEQUINOX, SUMMERSOLSTICE, AUTUMNALEQUINOX, or WINTERSOLSTICE.
+	* @param string year in format CCYY, must be a calendar year between -1000BC and 3000AD.
+	*
+	* @access public
+	*
+	* @return float $juliandate
+	*/
+
+	function dateSeason ($season, $year = '') {
+        	if ($year == '') {
+                	$year = Date_Calc::dateNow('%Y');
+			}
+        	
+			if (($year >= -1000) && ($year <= 1000)) {
+                	$y = $year / 1000.0;
+                	if ($season == "VERNALEQUINOX") {
+                        	$juliandate = (((((((-0.00071 * $y) - 0.00111) * $y) + 0.06134) * $y) + 365242.1374) * $y) + 1721139.29189;
+                	} else if ($season == "SUMMERSOLSTICE") {
+                        	$juliandate = ((((((( 0.00025 * $y) + 0.00907) * $y) - 0.05323) * $y) + 365241.72562) * $y) + 1721233.25401;
+                	} else if ($season == "AUTUMNALEQUINOX") {
+                        	$juliandate = ((((((( 0.00074 * $y) - 0.00297) * $y) - 0.11677) * $y) + 365242.49558) * $y) + 1721325.70455;
+                	} else if ($season == "WINTERSOLSTICE") {
+                        	$juliandate = (((((((-0.00006 * $y) - 0.00933) * $y) - 0.00769) * $y) + 365242.88257) * $y) + 1721414.39987;
+                	}
+        	} elseif (($year > 1000) && ($year <= 3000)) {
+                	$y = ($year - 2000) / 1000;
+                	if ($season == "VERNALEQUINOX") {
+                        	$juliandate = (((((((-0.00057 * $y) - 0.00411) * $y) + 0.05169) * $y) + 365242.37404) * $y) + 2451623.80984;
+                	} else if ($season == "SUMMERSOLSTICE") {
+                        	$juliandate = (((((((-0.0003 * $y) + 0.00888) * $y) + 0.00325) * $y) + 365241.62603) * $y) + 2451716.56767;
+                	} else if ($season == "AUTUMNALEQUINOX") {
+                        	$juliandate = ((((((( 0.00078 * $y) + 0.00337) * $y) - 0.11575) * $y) + 365242.01767) * $y) + 2451810.21715;
+                	} else if ($season == "WINTERSOLSTICE") {
+                        	$juliandate = ((((((( 0.00032 * $y) - 0.00823) * $y) - 0.06223) * $y) + 365242.74049) * $y) + 2451900.05952;
+                	}
+        	}
+
+        	return ($juliandate);
+	} // end func dateSeason	
+	
 } // end class Date_Calc
 
 ?>
