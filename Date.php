@@ -1,23 +1,31 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Baba Buehler <baba@babaz.com>                               |
-// |          Pierre-Alain Joye <pajoye@php.net>                          |
-// +----------------------------------------------------------------------+
-//
-// $Id$
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+/**
+ * Generic date handling class for PEAR
+ *
+ * Generic date handling class for PEAR.  Attempts to be time zone aware
+ * through the Date::TimeZone class.  Supports several operations from
+ * Date::Calc on Date objects.
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 2.02 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/2_02.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Date and Time
+ * @package    Date
+ * @author     Baba Buehler <baba@babaz.com>
+ * @author     Pierre-Alain Joye <pajoye@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    CVS: $Id$
+ * @link       http://pear.php.net/package/Date
+ */
 
 /**@#+
  * Include supporting classes
@@ -57,15 +65,18 @@ define('DATE_FORMAT_UNIXTIME', 5);
 /**@#-*/
 
 /**
- * Generic date handling class for PEAR.
+ * Generic date handling class for PEAR
  *
  * Generic date handling class for PEAR.  Attempts to be time zone aware
  * through the Date::TimeZone class.  Supports several operations from
  * Date::Calc on Date objects.
  *
- * @author Baba Buehler <baba@babaz.com>
- * @package Date
- * @access public
+ * @author     Baba Buehler <baba@babaz.com>
+ * @author     Pierre-Alain Joye <pajoye@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    Release: @package_version@
+ * @link       http://pear.php.net/package/Date
  */
 class Date
 {
@@ -1215,10 +1226,6 @@ class Date
             $this->second = $s;
         }
     }
+}
 
-} // Date
-
-
-//
-// END
 ?>

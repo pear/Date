@@ -1,49 +1,49 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-//
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Baba Buehler <baba@babaz.com>                               |
-// |                                                                      |
-// +----------------------------------------------------------------------+
-//
-// $Id$
-//
-// Date_TimeZone Class
-//
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * TimeZone representation class, along with time zone information data.
+ * TimeZone representation class, along with time zone information data
  *
- * TimeZone representation class, along with time zone information data.
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 2.02 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/2_02.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Date and Time
+ * @package    Date
+ * @author     Baba Buehler <baba@babaz.com>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    CVS: $Id$
+ * @link       http://pear.php.net/package/Date
+ */
+
+/**
+ * TimeZone representation class, along with time zone information data
+ *
  * The default timezone is set from the first valid timezone id found
- * in one of the following places, in this order: <br>
- * 1) global $_DATE_TIMEZONE_DEFAULT<br>
- * 2) system environment variable PHP_TZ<br>
- * 3) system environment variable TZ<br>
- * 4) the result of date('T')<br>
+ * in one of the following places, in this order:
+ *   + global $_DATE_TIMEZONE_DEFAULT
+ *   + system environment variable PHP_TZ
+ *   + system environment variable TZ
+ *   + the result of date('T')
+ *
  * If no valid timezone id is found, the default timezone is set to 'UTC'.
  * You may also manually set the default timezone by passing a valid id to
- * Date_TimeZone::setDefault().<br>
+ * Date_TimeZone::setDefault().
  *
- * This class includes time zone data (from zoneinfo) in the form of a global array, $_DATE_TIMEZONE_DATA.
+ * This class includes time zone data (from zoneinfo) in the form of a
+ * global array, $_DATE_TIMEZONE_DATA.
  *
- *
- * @author Baba Buehler <baba@babaz.com>
- * @package Date
- * @access public
- * @version 1.0
+ * @author     Baba Buehler <baba@babaz.com>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    Release: @package_version@
+ * @link       http://pear.php.net/package/Date
  */
 class Date_TimeZone
 {
@@ -392,8 +392,7 @@ class Date_TimeZone
     {
         return $this->offset;
     }
-
-} // Date_TimeZone
+}
 
 
 //
@@ -4629,6 +4628,5 @@ if(isset($_DATE_TIMEZONE_DEFAULT)
 } else {
     Date_TimeZone::setDefault('UTC');
 }
-//
-// END
+
 ?>
