@@ -1032,7 +1032,8 @@ class Date_Calc
         $next_week_day = substr($date,6,2);
 
         return Date_Calc::beginOfWeek(
-                            $next_week_day,$next_week_month,$next_week_year
+                            $next_week_day,$next_week_month,$next_week_year,
+                            $format
                         );
     } // end func beginOfNextWeek
 
@@ -1070,7 +1071,7 @@ class Date_Calc
         $prev_week_month = substr($date,4,2);
         $prev_week_day = substr($date,6,2);
 
-        return Date_Calc::beginOfWeek($prev_week_day,$prev_week_month,$prev_week_year);
+        return Date_Calc::beginOfWeek($prev_week_day,$prev_week_month,$prev_week_year,$format);
     } // end func beginOfPrevWeek
 
     /**
