@@ -519,8 +519,12 @@ class Date_Span {
      *  <code>%D</code> Days as a decimal number.<br>
      *  <code>%e</code> Total hours as a float number
      *                  (1 day, 2 hours, 30 minutes = 26.5 hours).<br>
+     *  <code>%E</code> Total hours as a decimal number
+     *                  (1 day, 2 hours, 40 minutes = 26 hours).<br>
      *  <code>%f</code> Total minutes as a float number
      *                  (2 minutes, 30 seconds = 2.5 minutes).<br>
+     *  <code>%F</code> Total minutes as a decimal number
+     *                  (1 hour, 2 minutes, 40 seconds = 62 minutes).<br>
      *  <code>%g</code> Total seconds as a decimal number
      *                  (2 minutes, 30 seconds = 90 seconds).<br>
      *  <code>%h</code> Hours as decimal number (0 to 23).<br>
@@ -577,8 +581,14 @@ class Date_Span {
                     case 'e':
                         $output .= $this->toHours();
                         break;
+                    case 'E':
+                        $output .= floor($this->toHours());
+                        break;
                     case 'f':
                         $output .= $this->toMinutes();
+                        break;
+                    case 'F':
+                        $output .= floor($this->toMinutes());
                         break;
                     case 'g':
                         $output .= $this->toSeconds();
