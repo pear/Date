@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <package version="1.0">
-  <!-- $Id: package.xml,v 1.20 2005-01-05 19:53:33 danielc Exp $ -->
+  <!-- $Id: package.xml,v 1.21 2005-01-05 20:25:37 danielc Exp $ -->
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
   <description>
@@ -63,14 +63,22 @@ to convert date strings between Gregorian and Human calendar formats.
   Date_TimeZone work under more operating systems.
     ]]></notes>
     <filelist>
-      <file role="php" baseinstalldir="/">Date.php</file>
+      <file name="Date.php" role="php" baseinstalldir="/">
+        <replace from="@package_version@" to="version" type="package-info" />
+      </file>
       <dir name="Date" role="php">
         <file name="Calc.php">
           <replace from="@package_version@" to="version" type="package-info" />
         </file>
-        <file name="Human.php"/>
-        <file name="TimeZone.php"/>
-        <file name="Span.php"/>
+        <file name="Human.php">
+          <replace from="@package_version@" to="version" type="package-info" />
+        </file>
+        <file name="TimeZone.php">
+          <replace from="@package_version@" to="version" type="package-info" />
+        </file>
+        <file name="Span.php">
+          <replace from="@package_version@" to="version" type="package-info" />
+        </file>
       </dir>
       <dir name="tests" role="test">
         <file name="calc.php">
