@@ -28,10 +28,14 @@ to convert date strings between Gregorian and Human calendar formats.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.X</version>
+    <version>1.2</version>
     <state>stable</state>
-    <date>2002-XX-XX</date>
-    <notes>The Date package now contains Calc and Human</notes>
+    <date>2002-08-06</date>
+    <notes>
+    - The Date package now contains Calc and Human
+    - Date/Calc.php -> added compareDates() func
+    - Date.php -> modified format(), %p for am/pm, %P for AM/PM
+    </notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date">
