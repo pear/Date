@@ -914,10 +914,10 @@ class Date
      * @param boolean $abbr abbrivate the name
      * @return string name of this day
      */
-    function getDayName($abbr = false)
+    function getDayName($abbr = false, $length = 3)
     {
         if ($abbr) {
-            return Date_Calc::getWeekdayAbbrname($this->day, $this->month, $this->year);
+            return Date_Calc::getWeekdayAbbrname($this->day, $this->month, $this->year, $length);
         } else {
             return Date_Calc::getWeekdayFullname($this->day, $this->month, $this->year);
         }
