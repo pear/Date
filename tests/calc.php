@@ -29,7 +29,7 @@
  * @license    http://www.php.net/license/3_0.txt  PHP License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
- * @since      File available since Release 1.2
+ * @since      File available since Release 1.5
  */
 
 if ('@include_path@' != '@'.'include_path'.'@') {
@@ -80,14 +80,18 @@ if (php_sapi_name() != 'cli') {
 
 
 compare('20001122', Date_Calc::dateFormat(22, 11, 2000, '%Y%m%d'), 'dateFormat');
+compare('20001122', Date_Calc::dateFormat('22', '11', '2000', '%Y%m%d'), 'dateFormat str');
 
+compare('2001', Date_Calc::defaultCentury('1'), 'defaultCentury 1 str');
 compare('2001', Date_Calc::defaultCentury(1), 'defaultCentury 1');
 compare('1960', Date_Calc::defaultCentury(60), 'defaultCentury 2');
 compare('2010', Date_Calc::defaultCentury(10), 'defaultCentury 3');
 
+compare(2451871, Date_Calc::dateToDays('22', '11', '2000'), 'dateToDays str');
 compare(2451871, Date_Calc::dateToDays(22, 11, 2000), 'dateToDays');
 compare('20001122', Date_Calc::daysToDate(2451871), 'daysToDate');
 
+compare('2000-47-3', Date_Calc::gregorianToISO('22', '11', '2000'), 'gregorianToISO str');
 compare('2000-47-3', Date_Calc::gregorianToISO(22, 11, 2000), 'gregorianToISO');
 compare(2451716.56767, Date_Calc::dateSeason('SUMMERSOLSTICE', 2000), 'dateSeason');
 
@@ -102,6 +106,12 @@ compare('Nov', Date_Calc::getMonthAbbrname(11), 'getMonthAbbrname');
 compare('Saturday', Date_Calc::getWeekdayFullname(1, 1, 2005), 'getWeekdayFullname');
 compare('Sat', Date_Calc::getWeekdayAbbrname(1, 1, 2005), 'getWeekdayAbbrname');
 compare(11, Date_Calc::getMonthFromFullName('November'), 'getMonthFromFullName');
+
+compare(327, Date_Calc::julianDate('22', '11', '2000'), 'julianDate str');
+compare('November', Date_Calc::getMonthFullname('11'), 'getMonthFullname str');
+compare('Nov', Date_Calc::getMonthAbbrname('11'), 'getMonthAbbrname str');
+compare('Saturday', Date_Calc::getWeekdayFullname('01', '01', '2005'), 'getWeekdayFullname str');
+compare('Sat', Date_Calc::getWeekdayAbbrname('01', '01', '2005'), 'getWeekdayAbbrname str');
 
 $exp = array(
     'January',
@@ -134,13 +144,25 @@ compare(3, Date_Calc::dayOfWeek(22, 11, 2000), 'dayOfWeek');
 compare(47, Date_Calc::weekOfYear(22, 11, 2000), 'weekOfYear');
 compare(4, Date_Calc::quarterOfYear(22, 11, 2000), 'quarterOfYear');
 
+compare(3, Date_Calc::dayOfWeek('22', '11', '2000'), 'dayOfWeek str');
+compare(47, Date_Calc::weekOfYear('22', '11', '2000'), 'weekOfYear str');
+compare(4, Date_Calc::quarterOfYear('22', '11', '2000'), 'quarterOfYear str');
+
 compare(28, Date_Calc::daysInMonth(2, 1900), 'daysInMonth 1');
 compare(29, Date_Calc::daysInMonth(2, 1996), 'daysInMonth 2');
 compare(29, Date_Calc::daysInMonth(2, 2000), 'daysInMonth 3');
 compare(28, Date_Calc::daysInMonth(2, 2001), 'daysInMonth 4');
 compare(30, Date_Calc::daysInMonth(11, 2000), 'daysInMonth 5');
 
+compare(28, Date_Calc::daysInMonth('02', 1900), 'daysInMonth 1 str');
+compare(29, Date_Calc::daysInMonth('02', 1996), 'daysInMonth 2 str');
+compare(29, Date_Calc::daysInMonth('02', 2000), 'daysInMonth 3 str');
+compare(28, Date_Calc::daysInMonth('02', 2001), 'daysInMonth 4 str');
+compare(30, Date_Calc::daysInMonth('11', '2000'), 'daysInMonth 5 str');
+
 compare(5, Date_Calc::weeksInMonth(11, 2000), 'weeksInMonth');
+compare(5, Date_Calc::weeksInMonth('11', '2000'), 'weeksInMonth str');
+
 
 $exp = array(
     '19000226',
@@ -174,6 +196,7 @@ $exp = array(
     '20001203'
 );
 compare($exp, Date_Calc::getCalendarWeek(27, 11, 2000), 'getCalendarWeek 3');
+compare($exp, Date_Calc::getCalendarWeek('27', '11', '2000'), 'getCalendarWeek 3 str');
 
 $exp = array(
     array(
@@ -222,17 +245,22 @@ $exp = array(
     )
 );
 compare($exp, Date_Calc::getCalendarMonth(11, 2000), 'getCalendarMonth');
+compare($exp, Date_Calc::getCalendarMonth('11', '2000'), 'getCalendarMonth str');
 
 // I don't feel like dealing with this right now...
 //compare('', Date_Calc::getCalendarYear(2000), 'getCalendarYear');
 
 compare('20001121', Date_Calc::prevDay(22, 11, 2000), 'prevDay');
 compare('20001123', Date_Calc::nextDay(22, 11, 2000), 'nextDay');
+compare('20001121', Date_Calc::prevDay(22, 11, 2000), 'prevDay str');
+compare('20001123', Date_Calc::nextDay('22', '11', '2000'), 'nextDay str');
 
+compare('20001117', Date_Calc::prevWeekday('19', '11', '2000'), 'prevWeekday 1 str');
 compare('20001117', Date_Calc::prevWeekday(19, 11, 2000), 'prevWeekday 1');
 compare('20001121', Date_Calc::prevWeekday(22, 11, 2000), 'prevWeekday 2');
 compare('20001123', Date_Calc::nextWeekday(22, 11, 2000), 'nextWeekday 1');
 compare('20001127', Date_Calc::nextWeekday(24, 11, 2000), 'nextWeekday 2');
+compare('20001127', Date_Calc::nextWeekday('24', '11', '2000'), 'nextWeekday 2 str');
 
 compare('20001121', Date_Calc::prevDayOfWeek(2, 22, 11, 2000), 'prevDayOfWeek 1');
 compare('20001115', Date_Calc::prevDayOfWeek(3, 22, 11, 2000), 'prevDayOfWeek 2');
