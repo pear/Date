@@ -121,9 +121,7 @@ class Date
         $this->tz = Date_TimeZone::getDefault();
         if (is_null($date)) {
             $this->setDate(date("Y-m-d H:i:s"));
-        } elseif (is_object($date) && 
-            ((get_class($date) == 'date') ||
-            (is_subclass_of($date,'date')))
+        } elseif (is_a($date, 'Date'))
         ) {
             $this->copy($date);
         } else {
@@ -435,7 +433,7 @@ class Date
      */
     function setTZ($tz)
     {
-    	if(is_a($tz, 'date_timezone')) {
+    	if(is_a($tz, 'Date_Timezone')) {
         	$this->tz = $tz;
     	} else {
     		$this->setTZbyID($tz);
