@@ -1704,7 +1704,7 @@ class Date_Calc
     function NWeekdayOfMonth($week, $dow, $month, $year,
                              $format = DATE_CALC_FORMAT)
     {
-        if (is_int($week)) {
+        if (is_numeric($week)) {
             $DOW1day = ($week - 1) * 7 + 1;
             $DOW1    = Date_Calc::dayOfWeek($DOW1day, $month, $year);
             $wdate   = ($week - 1) * 7 + 1 + (7 + $dow - $DOW1) % 7;
