@@ -311,7 +311,7 @@ class Date
                     $output .= sprintf("%02d/%02d/%02d",$this->month,$this->day,$this->year);
                     break;
                 case "e":
-                    $output .= $this->day;
+                    $output .= $this->day * 1; // get rid of leading zero
                     break;
                 case "E":
                     $output .= Date_Calc::dateToDays($this->day,$this->month,$this->year);
