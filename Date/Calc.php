@@ -43,6 +43,8 @@ if (!defined('DATE_CALC_FORMAT')) {
      *
      * The default is '%Y%m%d'.  To override this default, define
      * this constant before including Calc.php.
+     *
+     * @since Constant available since Release 1.5.0
      */
     define('DATE_CALC_FORMAT', '%Y%m%d');
 }
@@ -101,6 +103,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function dateFormat($day, $month, $year, $format)
     {
@@ -186,6 +189,7 @@ class Date_Calc
      * @return string 4 digit year
      *
      * @access public
+     * @static
      */
     function defaultCentury($year)
     {
@@ -209,6 +213,7 @@ class Date_Calc
      * @return integer number of days
      *
      * @access public
+     * @static
      */
     function dateToDays($day, $month, $year)
     {
@@ -241,6 +246,7 @@ class Date_Calc
      * @return string date in specified format
      *
      * @access public
+     * @static
      */
     function daysToDate($days, $format = DATE_CALC_FORMAT)
     {
@@ -286,6 +292,7 @@ class Date_Calc
      * @return string
      *
      * @access public
+     * @static
      */
     function gregorianToISO($day, $month, $year) {
         $mnth = array (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334);
@@ -357,6 +364,7 @@ class Date_Calc
      * @author James Mark Hamilton <mhamilton@qwest.net>
      * @author Robert Butler <rob@maxwellcreek.org>
      * @access public
+     * @static
      */
     function dateSeason($season, $year = '') {
         if ($year == '') {
@@ -409,6 +417,7 @@ class Date_Calc
      * @return string  the current date in the specified format
      *
      * @access public
+     * @static
      */
     function dateNow($format = DATE_CALC_FORMAT)
     {
@@ -421,6 +430,7 @@ class Date_Calc
      * @return string year in format CCYY
      *
      * @access public
+     * @static
      */
     function getYear()
     {
@@ -433,6 +443,7 @@ class Date_Calc
      * @return string month in format MM
      *
      * @access public
+     * @static
      */
     function getMonth()
     {
@@ -445,6 +456,7 @@ class Date_Calc
      * @return string day in format DD
      *
      * @access public
+     * @static
      */
     function getDay()
     {
@@ -461,6 +473,7 @@ class Date_Calc
      * @return int
      *
      * @access public
+     * @static
      */
     function julianDate($day = '', $month = '', $year = '')
     {
@@ -489,6 +502,7 @@ class Date_Calc
      * @return string full month name
      *
      * @access public
+     * @static
      */
     function getMonthFullname($month)
     {
@@ -510,6 +524,7 @@ class Date_Calc
      * @see Date_Calc::getMonthFullname
      *
      * @access public
+     * @static
      */
     function getMonthAbbrname($month, $length = 3)
     {
@@ -530,6 +545,7 @@ class Date_Calc
      * @return string full month name
      *
      * @access public
+     * @static
      */
     function getWeekdayFullname($day = '', $month = '', $year = '')
     {
@@ -559,6 +575,7 @@ class Date_Calc
      * @see Date_Calc::getWeekdayFullname
      *
      * @access public
+     * @static
      */
     function getWeekdayAbbrname($day = '', $month = '', $year = '', $length = 3)
     {
@@ -585,6 +602,7 @@ class Date_Calc
      * @return   integer month number
      *
      * @access public
+     * @static
      */
     function getMonthFromFullName($month)
     {
@@ -610,6 +628,7 @@ class Date_Calc
      * @returns array  an array of month names
      *
      * @access public
+     * @static
      */
     function getMonthNames()
     {
@@ -631,6 +650,7 @@ class Date_Calc
      * @returns array  an array of week day names
      *
      * @access public
+     * @static
      */
     function getWeekDays()
     {
@@ -650,6 +670,7 @@ class Date_Calc
      * @return int $weekday_number
      *
      * @access public
+     * @static
      */
     function dayOfWeek($day = '', $month = '', $year = '')
     {
@@ -689,6 +710,7 @@ class Date_Calc
      * @return integer $week_number
      *
      * @access public
+     * @static
      */
     function weekOfYear($day = '', $month = '', $year = '')
     {
@@ -717,6 +739,7 @@ class Date_Calc
      * @return int $year_quarter
      *
      * @access public
+     * @static
      */
     function quarterOfYear($day = '', $month = '', $year = '')
     {
@@ -742,6 +765,7 @@ class Date_Calc
      * @return int number of days
      *
      * @access public
+     * @static
      */
     function daysInMonth($month = '', $year = '')
     {
@@ -781,6 +805,7 @@ class Date_Calc
      * @return int number of weeks
      *
      * @access public
+     * @static
      */
     function weeksInMonth($month = '', $year = '')
     {
@@ -817,6 +842,7 @@ class Date_Calc
      * @return array $week[$weekday]
      *
      * @access public
+     * @static
      */
     function getCalendarWeek($day = '', $month = '', $year = '',
                              $format = DATE_CALC_FORMAT)
@@ -854,6 +880,7 @@ class Date_Calc
      * @return array $month[$row][$col]
      *
      * @access public
+     * @static
      */
     function getCalendarMonth($month = '', $year = '',
                               $format = DATE_CALC_FORMAT)
@@ -904,6 +931,7 @@ class Date_Calc
      * @return array $year[$month][$row][$col]
      *
      * @access public
+     * @static
      */
     function getCalendarYear($year = '', $format = DATE_CALC_FORMAT)
     {
@@ -933,6 +961,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function prevDay($day = '', $month = '', $year = '',
                      $format = DATE_CALC_FORMAT)
@@ -961,6 +990,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function nextDay($day = '', $month = '', $year = '',
                      $format = DATE_CALC_FORMAT)
@@ -989,6 +1019,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function prevWeekday($day = '', $month = '', $year = '',
                          $format = DATE_CALC_FORMAT)
@@ -1025,6 +1056,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function nextWeekday($day = '', $month = '', $year = '',
                          $format = DATE_CALC_FORMAT)
@@ -1063,6 +1095,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function prevDayOfWeek($dow, $day = '', $month = '', $year = '',
                            $format = DATE_CALC_FORMAT, $onOrBefore = false)
@@ -1104,6 +1137,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function nextDayOfWeek($dow, $day = '', $month = '', $year = '',
                            $format = DATE_CALC_FORMAT, $onOrAfter = false)
@@ -1147,6 +1181,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function prevDayOfWeekOnOrBefore($dow, $day = '', $month = '', $year = '',
                                      $format = DATE_CALC_FORMAT)
@@ -1168,6 +1203,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function nextDayOfWeekOnOrAfter($dow, $day = '', $month = '', $year = '',
                                     $format = DATE_CALC_FORMAT)
@@ -1190,6 +1226,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function beginOfWeek($day = '', $month = '', $year = '',
                          $format = DATE_CALC_FORMAT)
@@ -1223,6 +1260,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function endOfWeek($day = '', $month = '', $year = '',
                        $format = DATE_CALC_FORMAT)
@@ -1256,6 +1294,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function beginOfPrevWeek($day = '', $month = '', $year = '',
                              $format = DATE_CALC_FORMAT)
@@ -1297,6 +1336,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function beginOfNextWeek($day = '', $month = '', $year = '',
                              $format = DATE_CALC_FORMAT)
@@ -1334,6 +1374,9 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
+     * @see Date_Calc::beginOfMonthBySpan()
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function beginOfMonth($month = '', $year = '', $format = DATE_CALC_FORMAT)
     {
@@ -1357,6 +1400,9 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
+     * @see Date_Calc::beginOfMonthBySpan()
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function beginOfPrevMonth($day = '', $month = '', $year = '',
                               $format = DATE_CALC_FORMAT)
@@ -1392,6 +1438,9 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
+     * @see Date_Calc::endOfMonthBySpan()
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function endOfPrevMonth($day = '', $month = '', $year = '',
                             $format = DATE_CALC_FORMAT)
@@ -1426,6 +1475,9 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
+     * @see Date_Calc::beginOfMonthBySpan()
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function beginOfNextMonth($day = '', $month = '', $year = '',
                               $format = DATE_CALC_FORMAT)
@@ -1461,6 +1513,9 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
+     * @see Date_Calc::endOfMonthBySpan()
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function endOfNextMonth($day = '', $month = '', $year = '',
                             $format = DATE_CALC_FORMAT)
@@ -1501,6 +1556,7 @@ class Date_Calc
      * @return string  the date in the desired format
      *
      * @access public
+     * @static
      * @since  Method available since Release 1.5.0
      */
     function beginOfMonthBySpan($months = 0, $day = '', $month = '', $year = '',
@@ -1558,6 +1614,7 @@ class Date_Calc
      * @return string  the date in the desired format
      *
      * @access public
+     * @static
      * @since  Method available since Release 1.5.0
      */
     function endOfMonthBySpan($months = 0, $day = '', $month = '', $year = '',
@@ -1608,6 +1665,7 @@ class Date_Calc
      * @return int number of weekday for the first day, 0=Sunday
      *
      * @access public
+     * @static
      */
     function firstOfMonthWeekday($month = '', $year = '')
     {
@@ -1633,6 +1691,7 @@ class Date_Calc
      * @return string date in given format
      *
      * @access public
+     * @static
      */
     function NWeekdayOfMonth($occurance, $dayOfWeek, $month, $year,
                              $format = DATE_CALC_FORMAT)
@@ -1662,6 +1721,7 @@ class Date_Calc
      * @return boolean
      *
      * @access public
+     * @static
      */
     function isValidDate($day, $month, $year)
     {
@@ -1682,6 +1742,7 @@ class Date_Calc
      * @return boolean
      *
      * @access public
+     * @static
      */
     function isLeapYear($year = '')
     {
@@ -1713,6 +1774,7 @@ class Date_Calc
      * @return boolean
      *
      * @access public
+     * @static
      */
     function isFutureDate($day, $month, $year)
     {
@@ -1744,6 +1806,7 @@ class Date_Calc
      * @return boolean
      *
      * @access public
+     * @static
      */
     function isPastDate($day, $month, $year)
     {
@@ -1779,6 +1842,7 @@ class Date_Calc
      *      -1 if there is an error.
      *
      * @access public
+     * @static
      */
     function dateDiff($day1, $month1, $year1, $day2, $month2, $year2)
     {
@@ -1803,9 +1867,11 @@ class Date_Calc
      * @param string $year2  year in format CCYY
      *
      * @access public
+     * @static
      * @return int 0 on equality, 1 if date 1 is greater, -1 if smaller
      *
      * @access public
+     * @static
      */
     function compareDates($day1, $month1, $year1, $day2, $month2, $year2)
     {
