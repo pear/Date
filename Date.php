@@ -597,6 +597,10 @@ class Date
      */
     function addSpan($span)
     {
+        if (!is_a($span, 'Date_Span')) {
+            return;
+        }
+
         $this->second += $span->second;
         if ($this->second >= 60) {
             $this->minute++;
@@ -654,6 +658,13 @@ class Date
      */
     function subtractSpan($span)
     {
+        if (!is_a($span, 'Date_Span')) {
+            return;
+        }
+        if ($span->isEmpty()) {
+            return;
+        }
+
         $this->second -= $span->second;
         if ($this->second < 0) {
             $this->minute--;
