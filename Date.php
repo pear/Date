@@ -121,7 +121,10 @@ class Date
         $this->tz = Date_TimeZone::getDefault();
         if (is_null($date)) {
             $this->setDate(date("Y-m-d H:i:s"));
-        } elseif (is_object($date) && (get_class($date) == 'date')) {
+        } elseif (is_object($date) && 
+            ((get_class($date) == 'date') ||
+            (is_subclass_of($date,'date')))
+        ) {
             $this->copy($date);
         } else {
             $this->setDate($date);
@@ -155,9 +158,9 @@ class Date
             $this->year   = $regs[1];
             $this->month  = $regs[2];
             $this->day    = $regs[3];
-            $this->hour   = $regs[5];
-            $this->minute = $regs[6];
-            $this->second = $regs[7];
+            $this->hour   = isset($regs[5])?$regs[5]:0;
+            $this->minute = isset($regs[6])?$regs[6]:0;
+            $this->second = isset($regs[7])?$regs[7]:0;
 
             // if an offset is defined, convert time to UTC
             // Date currently can't set a timezone only by offset,

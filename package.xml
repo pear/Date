@@ -40,7 +40,7 @@ to convert date strings between Gregorian and Human calendar formats.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.4rc1</version>
+    <version>1.4rc2</version>
     <state>beta</state>
     <date>2003-12-03</date>
     <notes>
@@ -58,6 +58,7 @@ to convert date strings between Gregorian and Human calendar formats.
     - bugfix for bug 65: format(e) returns zero-padded day
     - bugfix for bug 195: Suppress a notice in setDate()
     - bugfix for bug 271: Date_Calc weeksInMonth() returns wrong number
+    - fix abstraction bug, Date constructor accepts now object that extends Date
     - add tests to release package
     </notes>
     <filelist>

@@ -22,6 +22,13 @@
 require_once 'Date.php';
 require_once 'PHPUnit.php';
 
+class myDate extends Date {
+    function myDate($date)
+    {
+        $this->Date($date);
+    }
+}
+
 /**
  * Test case for Date
  *
@@ -56,6 +63,13 @@ class Date_Test extends PHPUnit_TestCase {
                 $time->year, $time->month, $time->day,
                 $time->hour, $time->minute, $time->second)
         );
+    }
+
+    function testAbstraction()
+    {
+        $d = new Date();
+        $my = new myDate($d);
+        $this->assertEquals($d->getDate(),$my->getDate());
     }
 
     function testDateCopy()
