@@ -26,6 +26,18 @@ to convert date strings between Gregorian and Human calendar formats.
       <name>Monte Ohrt</name>
       <email>mohrt@php.net</email>
     </maintainer>
+    <maintainer>
+      <user>pajoye</user>
+      <role>lead</role>
+      <name>Pierre-Alain Joye</name>
+      <email>pajoye@pearfr.org</email>
+    </maintainer>
+    <maintainer>
+      <user>alan_k</user>
+      <role>developer</role>
+      <name>Alan Knowles</name>
+      <email>alan@akbkhome.com</email>
+	</maintainer>
   </maintainers>
   <release>
     <version>1.3</version>
