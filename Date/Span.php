@@ -920,6 +920,20 @@ class Date_Span {
         return $GLOBALS['_DATE_SPAN_FORMAT'];
     }
 
+    /**
+     * Returns a copy of the object (workarround for PHP5 forward compatibility).
+     *
+     * @return object Date_Span Copy of the object.
+     */
+    function __clone() {
+        $c = get_class($this);
+        $s = new $c;
+        $s->day    = $this->day;
+        $s->hour   = $this->hour;
+        $s->minute = $this->minute;
+        $s->second = $this->second;
+        return $s;
+    }
 }
 
 ?>
