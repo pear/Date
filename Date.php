@@ -532,6 +532,9 @@ class Date
 
         list($this->year, $this->month, $this->day) =
             sscanf(Date_Calc::daysToDate($d), "%04s%02s%02s");
+        $this->year  = intval($this->year);
+        $this->month = intval($this->month);
+        $this->day   = intval($this->day);
     }
 
     /**
@@ -580,6 +583,9 @@ class Date
 
         list($this->year, $this->month, $this->day) =
             sscanf(Date_Calc::daysToDate($d), "%04s%02s%02s");
+        $this->year  = intval($this->year);
+        $this->month = intval($this->month);
+        $this->day   = intval($this->day);
     }
 
     /**
