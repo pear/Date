@@ -260,29 +260,29 @@ compare('20001031', Date_Calc::endOfPrevMonth(22, 11, 2000), 'endOfPrevMonth');
 compare('20001201', Date_Calc::beginOfNextMonth(22, 11, 2000), 'beginOfNextMonth');
 compare('20001231', Date_Calc::endOfNextMonth(22, 11, 2000), 'endOfNextMonth');
 
-compare('19991001', Date_Calc::beginOfMonthBySpan(-13, 22, 11, 2000), 'beginOfMonthBySpan 1');
-compare('20001001', Date_Calc::beginOfMonthBySpan(-1, 22, 11, 2000), 'beginOfMonthBySpan 2');
-compare('20001101', Date_Calc::beginOfMonthBySpan(0, 22, 11, 2000), 'beginOfMonthBySpan 3');
-compare('20001201', Date_Calc::beginOfMonthBySpan(1, 22, 11, 2000), 'beginOfMonthBySpan 4');
-compare('20011201', Date_Calc::beginOfMonthBySpan(13, 22, 11, 2000), 'beginOfMonthBySpan 5');
+compare('19991001', Date_Calc::beginOfMonthBySpan(-13, 11, 2000), 'beginOfMonthBySpan 1');
+compare('20001001', Date_Calc::beginOfMonthBySpan(-1, 11, 2000), 'beginOfMonthBySpan 2');
+compare('20001101', Date_Calc::beginOfMonthBySpan(0, 11, 2000), 'beginOfMonthBySpan 3');
+compare('20001201', Date_Calc::beginOfMonthBySpan(1, 11, 2000), 'beginOfMonthBySpan 4');
+compare('20011201', Date_Calc::beginOfMonthBySpan(13, 11, 2000), 'beginOfMonthBySpan 5');
 
-compare('19990101', Date_Calc::beginOfMonthBySpan(-13, 22, 2, 2000), 'beginOfMonthBySpan 6');
-compare('20000101', Date_Calc::beginOfMonthBySpan(-1, 22, 2, 2000), 'beginOfMonthBySpan 7');
-compare('20000201', Date_Calc::beginOfMonthBySpan(0, 22, 2, 2000), 'beginOfMonthBySpan 8');
-compare('20000301', Date_Calc::beginOfMonthBySpan(1, 22, 2, 2000), 'beginOfMonthBySpan 9');
-compare('20010301', Date_Calc::beginOfMonthBySpan(13, 22, 2, 2000), 'beginOfMonthBySpan 10');
+compare('19990101', Date_Calc::beginOfMonthBySpan(-13, 2, 2000), 'beginOfMonthBySpan 6');
+compare('20000101', Date_Calc::beginOfMonthBySpan(-1, 2, 2000), 'beginOfMonthBySpan 7');
+compare('20000201', Date_Calc::beginOfMonthBySpan(0, 2, 2000), 'beginOfMonthBySpan 8');
+compare('20000301', Date_Calc::beginOfMonthBySpan(1, 2, 2000), 'beginOfMonthBySpan 9');
+compare('20010301', Date_Calc::beginOfMonthBySpan(13, 2, 2000), 'beginOfMonthBySpan 10');
 
-compare('19991031', Date_Calc::endOfMonthBySpan(-13, 22, 11, 2000), 'endOfMonthBySpan 1');
-compare('20001031', Date_Calc::endOfMonthBySpan(-1, 22, 11, 2000), 'endOfMonthBySpan 2');
-compare('20001130', Date_Calc::endOfMonthBySpan(0, 22, 11, 2000), 'endOfMonthBySpan 3');
-compare('20001231', Date_Calc::endOfMonthBySpan(1, 22, 11, 2000), 'endOfMonthBySpan 4');
-compare('20011231', Date_Calc::endOfMonthBySpan(13, 22, 11, 2000), 'endOfMonthBySpan 5');
+compare('19991031', Date_Calc::endOfMonthBySpan(-13, 11, 2000), 'endOfMonthBySpan 1');
+compare('20001031', Date_Calc::endOfMonthBySpan(-1, 11, 2000), 'endOfMonthBySpan 2');
+compare('20001130', Date_Calc::endOfMonthBySpan(0, 11, 2000), 'endOfMonthBySpan 3');
+compare('20001231', Date_Calc::endOfMonthBySpan(1, 11, 2000), 'endOfMonthBySpan 4');
+compare('20011231', Date_Calc::endOfMonthBySpan(13, 11, 2000), 'endOfMonthBySpan 5');
 
-compare('19990131', Date_Calc::endOfMonthBySpan(-13, 22, 2, 2000), 'endOfMonthBySpan 6');
-compare('20000131', Date_Calc::endOfMonthBySpan(-1, 22, 2, 2000), 'endOfMonthBySpan 7');
-compare('20000229', Date_Calc::endOfMonthBySpan(0, 22, 2, 2000), 'endOfMonthBySpan 8');
-compare('20000331', Date_Calc::endOfMonthBySpan(1, 22, 2, 2000), 'endOfMonthBySpan 9');
-compare('20010331', Date_Calc::endOfMonthBySpan(13, 22, 2, 2000), 'endOfMonthBySpan 10');
+compare('19990131', Date_Calc::endOfMonthBySpan(-13, 2, 2000), 'endOfMonthBySpan 6');
+compare('20000131', Date_Calc::endOfMonthBySpan(-1, 2, 2000), 'endOfMonthBySpan 7');
+compare('20000229', Date_Calc::endOfMonthBySpan(0, 2, 2000), 'endOfMonthBySpan 8');
+compare('20000331', Date_Calc::endOfMonthBySpan(1, 2, 2000), 'endOfMonthBySpan 9');
+compare('20010331', Date_Calc::endOfMonthBySpan(13, 2, 2000), 'endOfMonthBySpan 10');
 
 compare(3, Date_Calc::firstOfMonthWeekday(11, 2000), 'firstOfMonthWeekday');
 
