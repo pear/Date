@@ -42,21 +42,21 @@ require_once 'Date/Calc.php';
  *
  * @const int
  */
-define('TIME_SPAN_INPUT_FORMAT_NNSV', 1);
+define('DATE_SPAN_INPUT_FORMAT_NNSV', 1);
 
 /**
  * Default time format when converting to a string.
  *
  * @global string
  */
-$_TIME_SPAN_FORMAT  = '%C';
+$_DATE_SPAN_FORMAT  = '%C';
 
 /**
  * Default time format when converting from a string.
  *
  * @global mixed
  */
-$_TIME_SPAN_INPUT_FORMAT = TIME_SPAN_INPUT_FORMAT_NNSV;
+$_DATE_SPAN_INPUT_FORMAT = DATE_SPAN_INPUT_FORMAT_NNSV;
 
 /**
  * Generic time span handling class for PEAR.
@@ -66,11 +66,11 @@ $_TIME_SPAN_INPUT_FORMAT = TIME_SPAN_INPUT_FORMAT_NNSV;
  * @version $Revision$
  * @since   1.4
  * @todo    Integrate more with Date, by adding a
- *          Date::addSpan($time_span) method for example.
+ *          Date::addSpan($date_span) method for example.
  * @todo    Get and set default local input and output formats?
  * @access  public
  */
-class Time_Span {
+class Date_Span {
 
     /**
      * @var int
@@ -104,7 +104,7 @@ class Time_Span {
      * @see    set()
      * @access public
      */
-    function Time_Span($time = 0, $format = null)
+    function Date_Span($time = 0, $format = null)
     {
         $this->set($time, $format);
     }
@@ -130,7 +130,7 @@ class Time_Span {
      */
     function set($time = 0, $format = null)
     {
-        if (is_a($time, 'time_span')) {
+        if (is_a($time, 'date_span')) {
             return $this->copy($time);
         } elseif (is_a($time, 'date') and is_a($format, 'date')) {
             return $this->setFromDateDiff($time, $format);
@@ -167,11 +167,11 @@ class Time_Span {
         if (!is_array($time)) {
             return false;
         }
-        $tmp1 = new Time_Span;
+        $tmp1 = new Date_Span;
         if (!$tmp1->setFromSeconds(@array_pop($time))) {
             return false;
         }
-        $tmp2 = new Time_Span;
+        $tmp2 = new Date_Span;
         if (!$tmp2->setFromMinutes(@array_pop($time))) {
             return false;
         }
@@ -240,7 +240,7 @@ class Time_Span {
     function setFromString($time, $format = null)
     {
         if (is_null($format)) {
-            $format = $GLOBALS['_TIME_SPAN_INPUT_FORMAT'];
+            $format = $GLOBALS['_DATE_SPAN_INPUT_FORMAT'];
         }
         // If format is a string, it parses the string format.
         if (is_string($format)) {
@@ -357,7 +357,7 @@ class Time_Span {
         // detection method.
         } elseif (is_integer($format)) {
             switch ($format) {
-                case TIME_SPAN_INPUT_FORMAT_NNSV:
+                case DATE_SPAN_INPUT_FORMAT_NNSV:
                     $time = preg_split('/\D+/', $time);
                     switch (count($time)) {
                         case 0:
@@ -487,7 +487,7 @@ class Time_Span {
     /**
      * Set the time span from another time object.
      *
-     * @param  object Time_Span $time Source time span object.
+     * @param  object Date_Span $time Source time span object.
      *
      * @return bool   True on success.
      *
@@ -495,7 +495,7 @@ class Time_Span {
      */
     function copy($time)
     {
-        if (is_a($time, 'time_span')) {
+        if (is_a($time, 'date_span')) {
             $this->second = $time->second;
             $this->minute = $time->minute;
             $this->hour   = $time->hour;
@@ -551,7 +551,7 @@ class Time_Span {
     function format($format = null)
     {
         if (is_null($format)) {
-            $format = $GLOBALS['_TIME_SPAN_FORMAT'];
+            $format = $GLOBALS['_DATE_SPAN_FORMAT'];
         }
         $output = '';
         for ($i = 0; $i < strlen($format); $i++) {
@@ -719,7 +719,7 @@ class Time_Span {
     /**
      * Adds a time span.
      *
-     * @param  object Time_Span $time Time span to add.
+     * @param  object Date_Span $time Time span to add.
      *
      * @access public
      */
@@ -737,7 +737,7 @@ class Time_Span {
      * than the original, the result is zero (there's no sense in
      * negative time spans).
      *
-     * @param  object Time_Span $time Time span to subtract.
+     * @param  object Date_Span $time Time span to subtract.
      *
      * @access public
      */
@@ -754,7 +754,7 @@ class Time_Span {
     /**
      * Tells if time span is equal to $time.
      *
-     * @param  object Time_Span $time Time span to compare to.
+     * @param  object Date_Span $time Time span to compare to.
      *
      * @return bool   True if the time spans are equal.
      *
@@ -768,7 +768,7 @@ class Time_Span {
     /**
      * Tells if this time span is greater or equal than $time.
      *
-     * @param  object Time_Span $time Time span to compare to.
+     * @param  object Date_Span $time Time span to compare to.
      *
      * @return bool   True if this time span is greater or equal than $time.
      *
@@ -782,7 +782,7 @@ class Time_Span {
     /**
      * Tells if this time span is lower or equal than $time.
      *
-     * @param  object Time_Span $time Time span to compare to.
+     * @param  object Date_Span $time Time span to compare to.
      *
      * @return bool   True if this time span is lower or equal than $time.
      *
@@ -796,7 +796,7 @@ class Time_Span {
     /**
      * Tells if this time span is greater than $time.
      *
-     * @param  object Time_Span $time Time span to compare to.
+     * @param  object Date_Span $time Time span to compare to.
      *
      * @return bool   True if this time span is greater than $time.
      *
@@ -810,7 +810,7 @@ class Time_Span {
     /**
      * Tells if this time span is lower than $time.
      *
-     * @param  object Time_Span $time Time span to compare to.
+     * @param  object Date_Span $time Time span to compare to.
      *
      * @return bool   True if this time span is lower than $time.
      *
@@ -826,8 +826,8 @@ class Time_Span {
      *
      * Compares two time spans. Suitable for use in sorting functions.
      *
-     * @param  object Time_Span $time1 The first time span.
-     * @param  object Time_Span $time2 The second time span.
+     * @param  object Date_Span $time1 The first time span.
+     * @param  object Date_Span $time2 The second time span.
      *
      * @return int    0 if the time spans are equal, -1 if time1 is lower
      *                than time2, 1 if time1 is greater than time2.
@@ -867,8 +867,8 @@ class Time_Span {
      */
     function setDefaultInputFormat($format)
     {
-        $old = $GLOBALS['_TIME_SPAN_INPUT_FORMAT'];
-        $GLOBALS['_TIME_SPAN_INPUT_FORMAT'] = $format;
+        $old = $GLOBALS['_DATE_SPAN_INPUT_FORMAT'];
+        $GLOBALS['_DATE_SPAN_INPUT_FORMAT'] = $format;
         return $old;
     }
 
@@ -881,7 +881,7 @@ class Time_Span {
      */
     function getDefaultInputFormat()
     {
-        return $GLOBALS['_TIME_SPAN_INPUT_FORMAT'];
+        return $GLOBALS['_DATE_SPAN_INPUT_FORMAT'];
     }
 
     /**
@@ -895,8 +895,8 @@ class Time_Span {
      */
     function setDefaultFormat($format)
     {
-        $old = $GLOBALS['_TIME_SPAN_FORMAT'];
-        $GLOBALS['_TIME_SPAN_FORMAT'] = $format;
+        $old = $GLOBALS['_DATE_SPAN_FORMAT'];
+        $GLOBALS['_DATE_SPAN_FORMAT'] = $format;
         return $old;
     }
 
@@ -909,7 +909,7 @@ class Time_Span {
      */
     function getDefaultFormat()
     {
-        return $GLOBALS['_TIME_SPAN_FORMAT'];
+        return $GLOBALS['_DATE_SPAN_FORMAT'];
     }
 
 }

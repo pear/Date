@@ -20,19 +20,19 @@
 //
 
 require_once 'Date.php';
-require_once 'Time/Span.php';
+require_once 'Date/Span.php';
 require_once 'PHPUnit.php';
     
-class Time_SpanTest extends PHPUnit_TestCase {
+class Date_SpanTest extends PHPUnit_TestCase {
 
     var $time;
 
-    function Time_SpanTest($name) {
+    function Date_SpanTest($name) {
         $this->PHPUnit_TestCase($name);
     }
 
     function setUp() {
-        $this->time = new Time_Span(97531);
+        $this->time = new Date_Span(97531);
     }
 
     function tearDown() {
@@ -106,7 +106,7 @@ class Time_SpanTest extends PHPUnit_TestCase {
     }
 
     function testCopy() {
-        $time = new Time_Span();
+        $time = new Date_Span();
         $time->copy($this->time);
         $this->assertEquals(
             sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
@@ -119,10 +119,10 @@ class Time_SpanTest extends PHPUnit_TestCase {
     function testFormat() {
         $codes = array(
             'C' => '1, 03:05:31',
-            'd' => '1.1288310185185',
+            'd' => '1.12883101852',
             'D' => '1',
-            'e' => '27.091944444444',
-            'f' => '1625.5166666667',
+            'e' => '27.0919444444',
+            'f' => '1625.51666667',
             'g' => '97531',
             'h' => '3',
             'H' => '03',
@@ -149,14 +149,14 @@ class Time_SpanTest extends PHPUnit_TestCase {
     }
 
     function testAdd() {
-        $this->time->add(new Time_Span(6000));
+        $this->time->add(new Date_Span(6000));
         $result = $this->time->toSeconds();
         $expected = 103531;
         $this->assertEquals($expected, $result); 
     }
 
-    function testSubstract() {
-        $this->time->substract(new Time_Span(6000));
+    function testSubtract() {
+        $this->time->subtract(new Date_Span(6000));
         $result = $this->time->toSeconds();
         $expected = 91531;
         $this->assertEquals($expected, $result); 
@@ -165,7 +165,7 @@ class Time_SpanTest extends PHPUnit_TestCase {
 }
 
 // runs the tests
-$suite = new PHPUnit_TestSuite("Time_SpanTest");
+$suite = new PHPUnit_TestSuite("Date_SpanTest");
 $result = PHPUnit::run($suite);
 // prints the tests
 echo $result->toString();
