@@ -50,6 +50,8 @@ to convert date strings between Gregorian and Human calendar formats.
   and use it as the default value for each
   of the Date_Calc class' method's $format
   parameter.
+- Add beginOfOtherMonth() and
+  endOfOtherMonth() methods to Date_Calc.
     ]]></notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>

@@ -1489,6 +1489,109 @@ insert..................................
     }
 
     /**
+     * Returns date of the first day of the month in the number of months
+     * from the given date
+     *
+     * @param int    $months  the number of months from the date provided.
+     *                         Positive numbers go into the future.
+     *                         Negative numbers go into the past.
+     *                         0 is the month presented in $month.
+     * @param string $day     the day, the default is the last day of the month
+     * @param string $month   the month, default is current local month
+     * @param string $year    the year in four digit format, default is the
+     *                         current local year
+     * @param string $format  the format for returned date
+     *
+     * @return string  the date in the desired format
+     *
+     * @access public
+     */
+    function beginOfOtherMonth($months = 0, $day = '', $month = '', $year = '',
+                               $format = DATE_CALC_FORMAT)
+    {
+        if (empty($year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if ($months > 0) {
+            $year  = $year + floor(($month + $months) / 12);
+            $month = ($month + $months) % 12;
+            if ($month == 0) {
+                $month = 12;
+            }
+        } else {
+            $tmp_mo = $month + $months;
+            if ($tmp_mo > 0) {
+                // same year
+                $month = $tmp_mo;
+            } elseif ($tmp_mo == 0) {
+                // prior dec
+                $month = 12;
+                $year--;
+            } else {
+                // some time in a prior year
+                $month = 12 + ($tmp_mo % 12);
+                $year  = $year + floor($tmp_mo / 12);
+            }
+        }
+        return Date_Calc::dateFormat(1, $month, $year, $format);
+    }
+
+    /**
+     * Returns date of the last day of the month in the number of months
+     * from the given date
+     *
+     * @param int    $months  the number of months from the date provided.
+     *                         Positive numbers go into the future.
+     *                         Negative numbers go into the past.
+     *                         0 is the month presented in $month.
+     * @param string $day     the day, the default is the last day of the month
+     * @param string $month   the month, default is current local month
+     * @param string $year    the year in four digit format, default is the
+     *                         current local year
+     * @param string $format  the format for returned date
+     *
+     * @return string  the date in the desired format
+     *
+     * @access public
+     */
+    function endOfOtherMonth($months = 0, $day = '', $month = '', $year = '',
+                             $format = DATE_CALC_FORMAT)
+    {
+        if (empty($year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if ($months > 0) {
+            $year  = $year + floor(($month + $months) / 12);
+            $month = ($month + $months) % 12;
+            if ($month == 0) {
+                $month = 12;
+            }
+        } else {
+            $tmp_mo = $month + $months;
+            if ($tmp_mo > 0) {
+                // same year
+                $month = $tmp_mo;
+            } elseif ($tmp_mo == 0) {
+                // prior dec
+                $month = 12;
+                $year--;
+            } else {
+                // some time in a prior year
+                $month = 12 + ($tmp_mo % 12);
+                $year  = $year + floor($tmp_mo / 12);
+            }
+        }
+        $day = Date_Calc::daysInMonth($month, $year);
+        return Date_Calc::dateFormat($day, $month, $year, $format);
+    }
+
+    /**
      * Find the day of the week for the first of the month of given date
      *
      * @param string month in format MM, default is current local month
