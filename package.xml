@@ -37,7 +37,7 @@ to convert date strings between Gregorian and Human calendar formats.
       <role>developer</role>
       <name>Alan Knowles</name>
       <email>alan@akbkhome.com</email>
-	</maintainer>
+    </maintainer>
   </maintainers>
   <release>
     <version>1.3.1beta</version>
@@ -46,7 +46,7 @@ to convert date strings between Gregorian and Human calendar formats.
     <notes>
     - bugfix in beginOfNextWeek(), beginOfPreviousWeek() (thx to andreas dot kossmeier at bergfex dot at)
     - bugfix in nextDayOfWeek and prevDayOfWeek (thx to koan at gmx dot at)
-	- Tests cases should be added in the stable release
+    - Tests cases should be added in the stable release
     </notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
@@ -54,6 +54,7 @@ to convert date strings between Gregorian and Human calendar formats.
         <file role="php">Calc.php</file>
         <file role="php">Human.php</file>
         <file role="php">TimeZone.php</file>
+        <file role="php">Span.php</file>
       </dir>
     </filelist>
   </release>
