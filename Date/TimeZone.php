@@ -137,8 +137,8 @@ class Date_TimeZone
      */
     function getDefault()
     {
-        global $default;
-        return new Date_TimeZone($default);
+        global $_DATE_TIMEZONE_DEFAULT;
+        return new Date_TimeZone($_DATE_TIMEZONE_DEFAULT);
     }
 
     /**
@@ -151,9 +151,9 @@ class Date_TimeZone
      */
     function setDefault($id)
     {
-        global $default;
+        global $_DATE_TIMEZONE_DEFAULT;
         if(Date_TimeZone::isValidID($id)) {
-            $default = $id;
+            $_DATE_TIMEZONE_DEFAULT = $id;
         }
     }
 
@@ -3626,7 +3626,7 @@ $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
 //  First try _DATE_TIMEZONE_DEFAULT global,
 //  then PHP_TZ environment var, then TZ environment var
 //
-if(isset($_DATE_TIMEZONE_DEFAULT) 
+if(isset($_DATE_TIMEZONE_DEFAULT)
     && Date_TimeZone::isValidID($_DATE_TIMEZONE_DEFAULT)
 ) {
     Date_TimeZone::setDefault($_DATE_TIMEZONE_DEFAULT);
