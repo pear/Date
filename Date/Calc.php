@@ -1134,7 +1134,7 @@ class Date_Calc
      * Returns date of the next specific day of the week
      * from the given date
      *
-     * @param int day of week, 0=Sunday
+     * @param int    $dow     the day of the week (0 = Sunday)
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
      * @param int    $year    the year in four digit format, default is current local year
@@ -1687,7 +1687,7 @@ class Date_Calc
      * Calculates the date of the Nth weekday of the month,
      * such as the second Saturday of January 2000
      *
-     * @param int    $occur   the number of the week to get
+     * @param int    $week    the number of the week to get
      *                         (1 = first, etc.  Also can be 'last'.)
      * @param int    $dow     the day of the week (0 = Sunday)
      * @param int    $month   the month
@@ -1701,19 +1701,19 @@ class Date_Calc
      * @access public
      * @static
      */
-    function NWeekdayOfMonth($occur, $dow, $month, $year,
+    function NWeekdayOfMonth($week, $dow, $month, $year,
                              $format = DATE_CALC_FORMAT)
     {
-        if (is_int($occur)) {
-            $DOW1day = ($occur - 1) * 7 + 1;
+        if (is_int($week)) {
+            $DOW1day = ($week - 1) * 7 + 1;
             $DOW1    = Date_Calc::dayOfWeek($DOW1day, $month, $year);
-            $wdate   = ($occur - 1) * 7 + 1 + (7 + $dow - $DOW1) % 7;
+            $wdate   = ($week - 1) * 7 + 1 + (7 + $dow - $DOW1) % 7;
             if ($wdate > Date_Calc::daysInMonth($month, $year)) {
                 return -1;
             } else {
                 return Date_Calc::dateFormat($wdate, $month, $year, $format);
             }
-        } elseif ($occur == 'last' && $occur < 7) {
+        } elseif ($week == 'last' && $dow < 7) {
             $lastday = Date_Calc::daysInMonth($month, $year);
             $lastdow = Date_Calc::dayOfWeek($lastday, $month, $year);
             $diff    = $dow - $lastdow;
