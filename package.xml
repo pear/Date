@@ -5,9 +5,9 @@
   <summary>Date and Time Zone Classes</summary>
   <description>
 Generic classes for representation and manipulation of
-dates, times and time zones.  Includes time zone data,
-time zone conversions and many date/time conversions
-based on Date::Calc.
+dates, times and time zones without the need of timestamps,
+which is a huge limitation for php programs.  Includes time zone data,
+time zone conversions and many date/time conversions based on Date::Calc.
   </description>
   <license>PHP License</license>
   <maintainers>
@@ -26,6 +26,7 @@ based on Date::Calc.
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date">
+        <file role="php">Calc.php</file>
         <file role="php">TimeZone.php</file>
       </dir>
     </filelist>
