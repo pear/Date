@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <package version="1.0">
-  <!-- $Id: package.xml,v 1.21 2005-01-05 20:25:37 danielc Exp $ -->
+  <!-- $Id: package.xml,v 1.22 2005-01-10 07:59:30 pajoye Exp $ -->
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
   <description>
@@ -43,7 +43,7 @@ to convert date strings between Gregorian and Human calendar formats.
   </maintainers>
 
   <release>
-    <version>1.5.0</version>
+    <version>1.4.4</version>
     <state>alpha</state>
     <date>2005-02-10</date>
     <notes><![CDATA[
