@@ -37,7 +37,7 @@ to convert date strings between Gregorian and Human calendar formats.
     - bugfix for off-by-one errors in Date::format()'s %I, %P, %p and %r output
     - bugfix for Date::setMinute() typo
     - bugfix for Date::convertTZ() incorrectly converting some time zones
-    - bugfix in Date_Calc::NWeekdayOfMonth(), fixes bug #19334, dayOfWeek & dateFormat called with incorrect paramaters
+    - bugfix in Date_Calc::NWeekdayOfMonth(), fixes bug #19334, dayOfWeek &amp; dateFormat called with incorrect paramaters
     </notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
