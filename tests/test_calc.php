@@ -36,12 +36,11 @@ $pass3  = 2==Date_Calc::weekOfYear(5,1,2004)?true:false;
 $pass4  = 2==Date_Calc::weekOfYear(6,1,2004)?true:false;
 if( !($pass1 && $pass2 && $pass3 && $pass4) ){
     $failed_test_19788   = true;
-    echo "Test Bug 19788 failed.\n";
 }
 
 if($failed_test_19788 || $failed_test_data){
-    echo "Tests failed\n";
+    echo "Bug #19788: failed\n";
 } else {
-    echo "End test, succesfully passed\n";
+    echo "Bug #19788: OK\n";
 }
 ?>
