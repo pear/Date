@@ -947,22 +947,9 @@ class Date_Calc
 
         $this_weekday = Date_Calc::dayOfWeek($day,$month,$year);
 
-        if (DATE_CALC_BEGIN_WEEKDAY == 1) {
-            if ($this_weekday == 0) {
-                $beginOfWeek = Date_Calc::dateToDays($day,$month,$year) - 6;
-            } else {
-                $beginOfWeek = Date_Calc::dateToDays($day,$month,$year)
-                    - $this_weekday + 1;
-            }
-        } else {
-                $beginOfWeek = (Date_Calc::dateToDays($day,$month,$year)
-                    - $this_weekday);
-        }
+        $interval = (7 - DATE_CALC_BEGIN_WEEKDAY + $this_weekday) % 7;
 
-       /*  $beginOfWeek = (Date_Calc::dateToDays($day,$month,$year)
-            - ($this_weekday - DATE_CALC_BEGIN_WEEKDAY)); */
-
-        return(Date_Calc::daysToDate($beginOfWeek,$format));
+        return(Date_Calc::daysToDate(Date_Calc::dateToDays($day,$month,$year) - $interval,$format));
     } // end of func beginOfWeek
 
     /**
@@ -992,12 +979,12 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
+
         $this_weekday = Date_Calc::dayOfWeek($day,$month,$year);
 
-        $last_dayOfWeek = (Date_Calc::dateToDays($day,$month,$year)
-            + (6 - $this_weekday + DATE_CALC_BEGIN_WEEKDAY));
+        $interval = (6 + DATE_CALC_BEGIN_WEEKDAY - $this_weekday) % 7;
 
-        return(Date_Calc::daysToDate($last_dayOfWeek,$format));
+        return(Date_Calc::daysToDate(Date_Calc::dateToDays($day,$month,$year) + $interval,$format));
     } // end func endOfWeek
 
     /**
@@ -1038,6 +1025,8 @@ class Date_Calc
                             $next_week_day,$next_week_month,$next_week_year,
                             $format
                         );
+
+        $date = Date_Calc::daysToDate(Date_Calc::dateToDays($day+7,$month,$year),"%Y%m%d");
     } // end func beginOfNextWeek
 
     /**
@@ -1075,6 +1064,9 @@ class Date_Calc
         $prev_week_day = substr($date,6,2);
 
         return Date_Calc::beginOfWeek($prev_week_day,$prev_week_month,$prev_week_year,$format);
+
+
+        $date = Date_Calc::daysToDate(Date_Calc::dateToDays($day-7,$month,$year),"%Y%m%d");
     } // end func beginOfPrevWeek
 
     /**
