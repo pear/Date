@@ -635,7 +635,7 @@ class Date_Calc
 
     function nextDayOfWeekOnOrAfter($dow,$day="",$month="",$year="",$format="%Y%m%d")
     {
-        return(Date_Calc::nextDayOfWeek($dow,$day="",$month="",$year="",$format="%Y%m%d",true));
+        return(Date_Calc::nextDayOfWeek($dow,$day,$month,$year,$format,true));
     } // end func nextDayOfWeekOnOrAfter
 
     /**
@@ -655,7 +655,7 @@ class Date_Calc
 
     function prevDayOfWeekOnOrBefore($dow,$day="",$month="",$year="",$format="%Y%m%d")
     {
-        return(Date_Calc::prevDayOfWeek($dow,$day="",$month="",$year="",$format="%Y%m%d",true));
+        return(Date_Calc::prevDayOfWeek($dow,$day,$month,$year,$format,true));
     } // end func prevDayOfWeekOnOrAfter
 
     /**
