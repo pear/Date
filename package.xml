@@ -40,12 +40,13 @@ to convert date strings between Gregorian and Human calendar formats.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <state>stable</state>
-    <date>2004-02-24</date>
-    <notes>- Fix #674 endOfWeek() beginOfWeek()
-- Fix #727, weeksInMonth (wrong result with some dates)
-- Fix #674 (and old system #22549), check arguments in Date_Span
+    <date>2004-03-14</date>
+    <notes>- Fix #976 TimeZone default bad global usage
+   only _DATE_TIMEZONE_DEFAULT is used now
+- Fix #683, add optional length argumet to getDayName()
+- Fix PHP5 problems with get_class functions
 </notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
@@ -62,6 +63,7 @@ to convert date strings between Gregorian and Human calendar formats.
       	<file name="testunit_date_span.php"/>
       	<file name="testunit.php"/>
       	<file name="bug674.php"/>
+        <file name="bug967.php"/>
       	<file name="bug727_1.php"/>
       	<file name="bug727_2.php"/>
       	<file name="bug727_3.php"/>
@@ -74,8 +76,18 @@ to convert date strings between Gregorian and Human calendar formats.
       </dir>
     </filelist>
     <file role="doc" name="TODO" />
+    <deps>
+      <dep type="php" rel="ge" version="4.2"/>
+    </deps>
   </release>
   <changelog>
+    <release>
+      <version>1.4.1</version>
+      <state>stable</state>
+      <notes>- Fix #674 endOfWeek() beginOfWeek()
+- Fix #727, weeksInMonth (wrong result with some dates)
+- Fix #674 (and old system #22549), check arguments in Date_Span</notes>
+    </release>
     <release>
       <version>1.4</version>
       <state>stable</state>
