@@ -101,18 +101,23 @@ class Date
      * @param mixed $date optional - date/time to initialize
      * @return object Date the new Date object
      */
-    function Date($date = 0) {
+    function Date($date = null) {
         $this->tz = Date_TimeZone::getDefault();
-        if(is_object($date) && (get_class($date) == 'date'))
+        if (is_null($date)) {
+            $this->setDate(date('Y-m-d H:i:s'));
+        }
+        elseif (is_object($date) && (get_class($date) == 'date')) {
             $this->copy($date);
-        elseif(preg_match('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/',$date))
+        }
+        elseif (preg_match('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $date)) {
             $this->setDate($date);
-        elseif(preg_match('/\d{14}/',$date))
+        }
+        elseif (preg_match('/\d{14}/',$date)) {
             $this->setDate($date,DATE_FORMAT_TIMESTAMP);
-        elseif(is_int($date))
+        }
+        else {
             $this->setDate($date,DATE_FORMAT_UNIXTIME);
-        else
-            $this->setDate(date("Y-m-d H:i:s"));
+        }
     }
 
     /**
@@ -179,7 +184,7 @@ class Date
     {
         $this->year = $date->year;
         $this->month = $date->month;
-        $this->day = $date->month;
+        $this->day = $date->day;
         $this->hour = $date->hour;
         $this->minute = $date->minute;
         $this->second = $date->second;
@@ -551,7 +556,7 @@ class Date
      * @param object Date $d2 the second date
      * @return int 0 if the dates are equal, -1 if d1 is before d2, 1 if d1 is after d2
      */
-    function compare($d1,$d2)
+    function compare($d1, $d2)
     {
         $d1->convertTZ(new Date_TimeZone('UTC'));
         $d2->convertTZ(new Date_TimeZone('UTC'));
