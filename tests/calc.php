@@ -262,31 +262,44 @@ compare('20001123', Date_Calc::nextWeekday(22, 11, 2000), 'nextWeekday 1');
 compare('20001127', Date_Calc::nextWeekday(24, 11, 2000), 'nextWeekday 2');
 compare('20001127', Date_Calc::nextWeekday('24', '11', '2000'), 'nextWeekday 2 str');
 
+compare('20001121', Date_Calc::prevDayOfWeek('2', '22', '11', '2000'), 'prevDayOfWeek 1 str');
 compare('20001121', Date_Calc::prevDayOfWeek(2, 22, 11, 2000), 'prevDayOfWeek 1');
 compare('20001115', Date_Calc::prevDayOfWeek(3, 22, 11, 2000), 'prevDayOfWeek 2');
 compare('20001122', Date_Calc::prevDayOfWeek(3, 22, 11, 2000, '%Y%m%d', true), 'prevDayOfWeek 3');
 compare('20001122', Date_Calc::nextDayOfWeek(3, 22, 11, 2000, '%Y%m%d', true), 'nextDayOfWeek 1');
 compare('20001129', Date_Calc::nextDayOfWeek(3, 22, 11, 2000), 'nextDayOfWeek 2');
 compare('20001123', Date_Calc::nextDayOfWeek(4, 22, 11, 2000), 'nextDayOfWeek 3');
+compare('20001123', Date_Calc::nextDayOfWeek('4', '22', '11', '2000'), 'nextDayOfWeek 3 str');
 
+compare('20001121', Date_Calc::prevDayOfWeekOnOrBefore('2', '22', '11', '2000'), 'prevDayOfWeekOnOrBefore 1 str');
 compare('20001121', Date_Calc::prevDayOfWeekOnOrBefore(2, 22, 11, 2000), 'prevDayOfWeekOnOrBefore 1');
 compare('20001122', Date_Calc::prevDayOfWeekOnOrBefore(3, 22, 11, 2000), 'prevDayOfWeekOnOrBefore 2');
 compare('20001122', Date_Calc::nextDayOfWeekOnOrAfter(3, 22, 11, 2000), 'nextDayOfWeekOnOrAfter 1');
 compare('20001123', Date_Calc::nextDayOfWeekOnOrAfter(4, 22, 11, 2000), 'nextDayOfWeekOnOrAfter 2');
+compare('20001123', Date_Calc::nextDayOfWeekOnOrAfter('4', '22', '11', '2000'), 'nextDayOfWeekOnOrAfter 2 str');
 
+compare('20001120', Date_Calc::beginOfWeek('22', '11', '2000'), 'beginOfWeek str');
 compare('20001120', Date_Calc::beginOfWeek(22, 11, 2000), 'beginOfWeek');
 compare('20001126', Date_Calc::endOfWeek(22, 11, 2000), 'endOfWeek');
+compare('20001126', Date_Calc::endOfWeek('22', '11', '2000'), 'endOfWeek str');
 
 compare('20001113', Date_Calc::beginOfPrevWeek(22, 11, 2000), 'beginOfPrevWeek');
 compare('20001127', Date_Calc::beginOfNextWeek(22, 11, 2000), 'beginOfNextWeek');
+compare('20001113', Date_Calc::beginOfPrevWeek('22', '11', '2000'), 'beginOfPrevWeek str');
+compare('20001127', Date_Calc::beginOfNextWeek('22', '11', '2000'), 'beginOfNextWeek str');
 
 compare('20001101', Date_Calc::beginOfMonth(11, 2000), 'beginOfMonth');
+compare('20001101', Date_Calc::beginOfMonth('11', '2000'), 'beginOfMonth str');
 
 compare('20001001', Date_Calc::beginOfPrevMonth(22, 11, 2000), 'beginOfPrevMonth');
 compare('20001031', Date_Calc::endOfPrevMonth(22, 11, 2000), 'endOfPrevMonth');
+compare('20001001', Date_Calc::beginOfPrevMonth('22', '11', '2000'), 'beginOfPrevMonth str');
+compare('20001031', Date_Calc::endOfPrevMonth('22', '11', '2000'), 'endOfPrevMonth str');
 
 compare('20001201', Date_Calc::beginOfNextMonth(22, 11, 2000), 'beginOfNextMonth');
 compare('20001231', Date_Calc::endOfNextMonth(22, 11, 2000), 'endOfNextMonth');
+compare('20001201', Date_Calc::beginOfNextMonth('22', '11', '2000'), 'beginOfNextMonth str');
+compare('20001231', Date_Calc::endOfNextMonth('22', '11', '2000'), 'endOfNextMonth str');
 
 compare('19991001', Date_Calc::beginOfMonthBySpan(-13, 11, 2000), 'beginOfMonthBySpan 1');
 compare('20001001', Date_Calc::beginOfMonthBySpan(-1, 11, 2000), 'beginOfMonthBySpan 2');
@@ -294,11 +307,13 @@ compare('20001101', Date_Calc::beginOfMonthBySpan(0, 11, 2000), 'beginOfMonthByS
 compare('20001201', Date_Calc::beginOfMonthBySpan(1, 11, 2000), 'beginOfMonthBySpan 4');
 compare('20011201', Date_Calc::beginOfMonthBySpan(13, 11, 2000), 'beginOfMonthBySpan 5');
 
+compare('19990101', Date_Calc::beginOfMonthBySpan('-13', '02', '2000'), 'beginOfMonthBySpan 6 str');
 compare('19990101', Date_Calc::beginOfMonthBySpan(-13, 2, 2000), 'beginOfMonthBySpan 6');
 compare('20000101', Date_Calc::beginOfMonthBySpan(-1, 2, 2000), 'beginOfMonthBySpan 7');
 compare('20000201', Date_Calc::beginOfMonthBySpan(0, 2, 2000), 'beginOfMonthBySpan 8');
 compare('20000301', Date_Calc::beginOfMonthBySpan(1, 2, 2000), 'beginOfMonthBySpan 9');
 compare('20010301', Date_Calc::beginOfMonthBySpan(13, 2, 2000), 'beginOfMonthBySpan 10');
+compare('20010301', Date_Calc::beginOfMonthBySpan('13', '02', '2000'), 'beginOfMonthBySpan 10 str');
 
 compare('19991031', Date_Calc::endOfMonthBySpan(-13, 11, 2000), 'endOfMonthBySpan 1');
 compare('20001031', Date_Calc::endOfMonthBySpan(-1, 11, 2000), 'endOfMonthBySpan 2');
@@ -306,13 +321,16 @@ compare('20001130', Date_Calc::endOfMonthBySpan(0, 11, 2000), 'endOfMonthBySpan 
 compare('20001231', Date_Calc::endOfMonthBySpan(1, 11, 2000), 'endOfMonthBySpan 4');
 compare('20011231', Date_Calc::endOfMonthBySpan(13, 11, 2000), 'endOfMonthBySpan 5');
 
+compare('19990131', Date_Calc::endOfMonthBySpan('-13', '02', '2000'), 'endOfMonthBySpan 6 str');
 compare('19990131', Date_Calc::endOfMonthBySpan(-13, 2, 2000), 'endOfMonthBySpan 6');
 compare('20000131', Date_Calc::endOfMonthBySpan(-1, 2, 2000), 'endOfMonthBySpan 7');
 compare('20000229', Date_Calc::endOfMonthBySpan(0, 2, 2000), 'endOfMonthBySpan 8');
 compare('20000331', Date_Calc::endOfMonthBySpan(1, 2, 2000), 'endOfMonthBySpan 9');
 compare('20010331', Date_Calc::endOfMonthBySpan(13, 2, 2000), 'endOfMonthBySpan 10');
+compare('20010331', Date_Calc::endOfMonthBySpan('13', '02', '2000'), 'endOfMonthBySpan 10 str');
 
 compare(3, Date_Calc::firstOfMonthWeekday(11, 2000), 'firstOfMonthWeekday');
+compare(3, Date_Calc::firstOfMonthWeekday('11', '2000'), 'firstOfMonthWeekday str');
 
 compare('20050101', Date_Calc::NWeekdayOfMonth(1, 6, 1, 2005), 'NWeekdayOfMonth 161');
 compare('20050102', Date_Calc::NWeekdayOfMonth(1, 0, 1, 2005), 'NWeekdayOfMonth 101');
@@ -349,22 +367,28 @@ compare('20050325', Date_Calc::NWeekdayOfMonth('last', 5, 3, 2005), 'NWeekdayOfM
 
 compare(false, Date_Calc::isValidDate(29, 2, 1900), 'isValidDate 1');
 compare(true, Date_Calc::isValidDate(29, 2, 2000), 'isValidDate 2');
+compare(true, Date_Calc::isValidDate('29', '02', '2000'), 'isValidDate 2 str');
 
 compare(false, Date_Calc::isLeapYear(1900), 'isLeapYear 1');
 compare(true, Date_Calc::isLeapYear(1996), 'isLeapYear 2');
 compare(true, Date_Calc::isLeapYear(2000), 'isLeapYear 3');
 compare(false, Date_Calc::isLeapYear(2001), 'isLeapYear 4');
+compare(false, Date_Calc::isLeapYear('2001'), 'isLeapYear 4 str');
 
+compare(false, Date_Calc::isFutureDate('22', '11', '2000'), 'isFutureDate 1 str');
 compare(false, Date_Calc::isFutureDate(22, 11, 2000), 'isFutureDate 1');
 compare(true, Date_Calc::isFutureDate(22, 11, date('Y') + 1), 'isFutureDate 2');
 
 compare(false, Date_Calc::isPastDate(22, 11, date('Y') + 1), 'isPastDate 1');
 compare(true, Date_Calc::isPastDate(22, 11, 2000), 'isPastDate 2');
+compare(true, Date_Calc::isPastDate('22', '11', '2000'), 'isPastDate 2 str');
 
 compare(10, Date_Calc::dateDiff(22, 11, 2000, 12, 11, 2000), 'dateDiff 1');
 compare(10, Date_Calc::dateDiff(12, 11, 2000, 22, 11, 2000), 'dateDiff 2');
 compare(61, Date_Calc::dateDiff(22, 11, 2000, 22, 1, 2001), 'dateDiff 3');
+compare(61, Date_Calc::dateDiff('22', '11', '2000', '22, '01', '2001'), 'dateDiff 3 str');
 
 compare(-1, Date_Calc::compareDates(12, 11, 2000, 22, 11, 2000), 'compareDates 1');
 compare(0, Date_Calc::compareDates(22, 11, 2000, 22, 11, 2000), 'compareDates 2');
 compare(1, Date_Calc::compareDates(22, 11, 2000, 12, 11, 2000), 'compareDates 3');
+compare(1, Date_Calc::compareDates('22', '11', '2000', '12', '11', '2000'), 'compareDates 3 str');
