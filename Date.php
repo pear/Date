@@ -214,6 +214,8 @@ class Date
      *  <code>%m  </code>  month as decimal number (range 01 to 12) <br>
      *  <code>%M  </code>  minute as a decimal number (00 to 59) <br>
      *  <code>%n  </code>  newline character (\n) <br>
+     *  <code>%O  </code>  dst-corrected timezone offset expressed as "+/-HH:MM" <br>
+     *  <code>%o  </code>  raw timezone offset expressed as "+/-HH:MM" <br>
      *  <code>%p  </code>  either 'am' or 'pm' depending on the time <br>
      *  <code>%P  </code>  either 'AM' or 'PM' depending on the time <br>
      *  <code>%r  </code>  time in am/pm notation, same as "%I:%M:%S %p" <br>
@@ -286,6 +288,22 @@ class Date
                         break;
                     case "n":
                         $output .= "\n";
+                        break;
+                    case "O":
+                        $offms = $this->tz->getOffset($this);
+                        $direction = $offms >= 0 ? "+" : "-";                       
+                        $offmins = abs($offms) / 1000 / 60;
+                        $hours = $offmins / 60;
+                        $minutes = $offmins % 60;
+                        $output .= sprintf("%s%02d:%02d", $direction, $hours, $minutes);
+                        break;
+                    case "o":
+                        $offms = $this->tz->getRawOffset($this);
+                        $direction = $offms >= 0 ? "+" : "-";                       
+                        $offmins = abs($offms) / 1000 / 60;
+                        $hours = $offmins / 60;
+                        $minutes = $offmins % 60;
+                        $output .= sprintf("%s%02d:%02d", $direction, $hours, $minutes);
                         break;
                     case "p":
                         $output .= $this->hour >= 12 ? "pm" : "am";
@@ -438,7 +456,7 @@ class Date
     {
         // convert to UTC
         if($this->tz->getOffset($this) > 0) {
-            $this->subtractSeconds(intval($this->tz->getOffset($this) / 1000));
+            $this->subtractSeconds(intval(abs($this->tz->getOffset($this)) / 1000));
         } else {
             $this->addSeconds(intval(abs($this->tz->getOffset($this)) / 1000));
         }
@@ -446,11 +464,32 @@ class Date
         if($tz->getOffset($this) > 0) {
             $this->addSeconds(intval(abs($tz->getOffset($this)) / 1000));
         } else {
-            $this->subtractSeconds(intval($tz->getOffset($this) / 1000));
+            $this->subtractSeconds(intval(abs($tz->getOffset($this)) / 1000));
         }
         $this->tz = $tz;
     }
 
+    /**
+     * Converts this date to a new time zone, given a valid time zone ID
+     * 
+     * Converts this date to a new time zone, given a valid time zone ID
+     * WARNING: This may not work correctly if your system does not allow
+     * putenv() or if localtime() does not work in your environment.  See
+     * Date::TimeZone::inDaylightTime() for more information.
+     * 
+     * @access public
+     * @param string id a time zone id
+     */
+    function convertTZbyID($id)
+    {
+	   if(Date_TimeZone::isValidID($id)) {
+		  $tz = new Date_TimeZone($id);
+	   } else {
+		  $tz = Date_TimeZone::getDefault();
+	   }
+	   $this->convertTZ($tz);
+    }
+    
     /**
      * Adds a given number of seconds to the date
      *
