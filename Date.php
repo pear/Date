@@ -546,7 +546,6 @@ class Date
 
     function toUTCbyOffset($offset)
     {
-
         if ($offset == "Z" || $offset == "+00:00" || $offset == "+0000") {
             $this->toUTC();
             return true;
@@ -554,11 +553,11 @@ class Date
 
         if (preg_match('/([\+\-])(\d{2}):?(\d{2})/', $offset, $regs)) {
             // convert offset to seconds
-            $hours  = (int) $regs[2];
-            $mins   = (int) $regs[3];
+            $hours  = (int) isset($regs[2])?$regs[2]:0;
+            $mins   = (int) isset($regs[3])?$regs[3]:0;
             $offset = ($hours * 3600) + ($mins * 60);
 
-            if ($regs[1] == "-") {
+            if (isset($regs[1]) && $regs[1] == "-") {
                 $offset *= -1;
             }
 
