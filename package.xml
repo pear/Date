@@ -40,27 +40,13 @@ to convert date strings between Gregorian and Human calendar formats.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.4rc2</version>
-    <state>beta</state>
-    <date>2003-12-03</date>
-    <notes>
-    - improvements in input date parsing
-    - add Date methods addSpan() and subtractSpan()
-    - added two more ISO8601 date/time output formats DATE_FORMAT_ISO_BASIC and DATE_FORMAT_ISO_EXTENDED
-    - improve Date_Calc isLeapYear() and daysInMonth() for year 1582
-    - add gregorianToISO() method to Date_Calc
-    - add dateSeason() method to Date_Calc
-    - add Date_Span class
-    - bugfix in Date_Calc when century ends in 00, only define DATE_CALC_BEGIN_WEEKDAY if not already defined
-    - bugfix in beginOfNextWeek(), beginOfPreviousWeek() (thx to andreas dot kossmeier at bergfex dot at)
-    - bugfix in nextDayOfWeek and prevDayOfWeek (thx to koan at gmx dot at)
-    - bugfix for bug 62: getDate(DATE_FORMAT_UNIXTIME) off because of DST
-    - bugfix for bug 65: format(e) returns zero-padded day
-    - bugfix for bug 195: Suppress a notice in setDate()
-    - bugfix for bug 271: Date_Calc weeksInMonth() returns wrong number
-    - fix abstraction bug, Date constructor accepts now object that extends Date
-    - add tests to release package
-    </notes>
+    <version>1.4.1</version>
+    <state>stable</state>
+    <date>2004-02-24</date>
+    <notes>- Fix #674 endOfWeek() beginOfWeek()
+- Fix #727, weeksInMonth (wrong result with some dates)
+- Fix #674 (and old system #22549), check arguments in Date_Span
+</notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date" role="php">
@@ -75,8 +61,42 @@ to convert date strings between Gregorian and Human calendar formats.
       	<file name="testunit_date.php"/>
       	<file name="testunit_date_span.php"/>
       	<file name="testunit.php"/>
+      	<file name="bug674.php"/>
+      	<file name="bug727_1.php"/>
+      	<file name="bug727_2.php"/>
+      	<file name="bug727_3.php"/>
+      	<file name="bug727_4.php"/>
       	<file name="wknotest.txt"/>
+      	<file name="weeksinmonth_4_monday.txt"/>
+      	<file name="weeksinmonth_4_sunday.txt"/>
+      	<file name="weeksinmonth_rdm_monday.txt"/>
+      	<file name="weeksinmonth_rdm_sunday.txt"/>
       </dir>
     </filelist>
+    <file role="doc" name="TODO" />
   </release>
+  <changelog>
+    <release>
+      <version>1.4</version>
+      <state>stable</state>
+      <date>2003-12-21</date>
+      <notes>- improvements in input date parsing
+- add Date methods addSpan() and subtractSpan()
+- added two more ISO8601 date/time output formats DATE_FORMAT_ISO_BASIC and DATE_FORMAT_ISO_EXTENDED
+- improve Date_Calc isLeapYear() and daysInMonth() for year 1582
+- add gregorianToISO() method to Date_Calc
+- add dateSeason() method to Date_Calc
+- add Date_Span class 
+- bugfix in Date_Calc when century ends in 00, only define DATE_CALC_BEGIN_WEEKDAY if not already defined
+- bugfix in beginOfNextWeek(), beginOfPreviousWeek() (thx to andreas dot kossmeier at bergfex dot at)
+- bugfix in nextDayOfWeek and prevDayOfWeek (thx to koan at gmx dot at)
+- bugfix for bug 62: getDate(DATE_FORMAT_UNIXTIME) off because of DST
+- bugfix for bug 65: format(e) returns zero-padded day
+- bugfix for bug 195: Suppress a notice in setDate()
+- bugfix for bug 271: Date_Calc weeksInMonth() returns wrong number
+- fix abstraction bug, Date constructor accepts now object that extends Date
+- add tests to release package 
+- Fix notices and mins calc in to toUTCbyOffset()</notes>
+    </release>
+  </changelog>
 </package>
