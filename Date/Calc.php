@@ -847,19 +847,16 @@ class Date_Calc
         if (empty($month)) {
             $month = Date_Calc::dateNow('%m');
         }
-
-        if (DATE_CALC_BEGIN_WEEKDAY == 1) {
-            if (Date_Calc::firstOfMonthWeekday($month,$year) == 0) {
-                $first_week_days = 1;
-            } else {
-                $first_week_days =
-                    7 - (Date_Calc::firstOfMonthWeekday($month,$year) - 1);
-            }
+        $FDOM = Date_Calc::firstOfMonthWeekday($month, $year);
+        if ($FDOM > DATE_CALC_BEGIN_WEEKDAY) {
+            $first_week_days = 7 - $FDOM + DATE_CALC_BEGIN_WEEKDAY;
+            $weeks = 1;
         } else {
-            $first_week_days = 7 - Date_Calc::firstOfMonthWeekday($month,$year);
+            $first_week_days = DATE_CALC_BEGIN_WEEKDAY - $FDOM;
+            $weeks = 0;
         }
-
-        return ceil(((Date_Calc::daysInMonth($month,$year) - $first_week_days) / 7) + 1);
+        $first_week_days %= 7;
+        return (ceil((Date_Calc::daysInMonth($month, $year) - $first_week_days) / 7) + $weeks);
     } // end func weeksInMonth
 
     /**
