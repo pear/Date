@@ -386,7 +386,7 @@ compare(true, Date_Calc::isPastDate('22', '11', '2000'), 'isPastDate 2 str');
 compare(10, Date_Calc::dateDiff(22, 11, 2000, 12, 11, 2000), 'dateDiff 1');
 compare(10, Date_Calc::dateDiff(12, 11, 2000, 22, 11, 2000), 'dateDiff 2');
 compare(61, Date_Calc::dateDiff(22, 11, 2000, 22, 1, 2001), 'dateDiff 3');
-compare(61, Date_Calc::dateDiff('22', '11', '2000', '22, '01', '2001'), 'dateDiff 3 str');
+compare(61, Date_Calc::dateDiff('22', '11', '2000', '22', '01', '2001'), 'dateDiff 3 str');
 
 compare(-1, Date_Calc::compareDates(12, 11, 2000, 22, 11, 2000), 'compareDates 1');
 compare(0, Date_Calc::compareDates(22, 11, 2000, 22, 11, 2000), 'compareDates 2');
