@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE package SYSTEM "package.dtd">
+<package version="1.0">
+  <name>Date</name>
+  <summary>Date and Time Zone Classes</summary>
+  <description>
+Generic classes for representation and manipulation of
+dates, times and time zones.  Includes time zone data,
+time zone conversions and many date/time conversions
+based on Date::Calc.
+  </description>
+  <license>PHP License</license>
+  <maintainers>
+    <maintainer>
+      <user>baba</user>
+      <role>lead</role>
+      <name>Baba Buehler</name>
+      <email>baba@babaz.com</email>
+    </maintainer>
+  </maintainers>
+  <release>
+    <version>1.0</version>
+    <state>stable</state>
+    <date>2002-05-11</date>
+    <notes>First packaged release.</notes>
+    <filelist>
+      <file role="php" baseinstalldir="/">Date.php</file>
+      <dir name="Date">
+        <file role="php">TimeZone.php</file>
+      </dir>
+    </filelist>
+  </release>
+</package>
