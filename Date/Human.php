@@ -28,13 +28,13 @@
  *  Counting of months starts from 0 (zero) so the months will run from 0 to 12
  *  New Years day (00) is a monthless day
  *  Note: Leap Years are not yet accounted for in the Human Calendar system
- * 
+ *
  * @since PHP 4.0.4
  * @author Allan Kent <allan@lodestone.co.za>
  */
 class Date_Human
 {
-    
+
     /**
      * Returns an associative array containing the converted date information
      * in 'Human Calendar' format.
@@ -62,7 +62,7 @@ class Date_Human
      *  Since 0 is a valid month number under the Human Calendar, I have left
      *  the month as -1 for New Years Day.
      */
-    function gregorianToHuman($day=0, $month=0, $year=0) 
+    function gregorianToHuman($day=0, $month=0, $year=0)
     {
         /**
          * Check to see if any of the arguments are empty
@@ -142,7 +142,7 @@ class Date_Human
                      "hwoy" => $humanWeekOfYear,
                      "hmoy" => $humanMonthOfYear );
     }
-    
+
     /**
      * Returns unix timestamp for a given Human Calendar date
      *
@@ -183,6 +183,6 @@ class Date_Human
         $GregorianTimeStamp = mktime(0, 0, 0, 1, $DayOfYear, $year);
         return $GregorianTimeStamp;
     }
-    
+
 }
 ?>

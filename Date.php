@@ -101,21 +101,18 @@ class Date
      * @param mixed $date optional - date/time to initialize
      * @return object Date the new Date object
      */
-    function Date($date = null) {
+    function Date($date = null)
+    {
         $this->tz = Date_TimeZone::getDefault();
         if (is_null($date)) {
             $this->setDate(date('Y-m-d H:i:s'));
-        }
-        elseif (is_object($date) && (get_class($date) == 'date')) {
+        } elseif (is_object($date) && (get_class($date) == 'date')) {
             $this->copy($date);
-        }
-        elseif (preg_match('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $date)) {
+        } elseif (preg_match('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $date)) {
             $this->setDate($date);
-        }
-        elseif (preg_match('/\d{14}/',$date)) {
+        } elseif (preg_match('/\d{14}/',$date)) {
             $this->setDate($date,DATE_FORMAT_TIMESTAMP);
-        }
-        else {
+        } else {
             $this->setDate($date,DATE_FORMAT_UNIXTIME);
         }
     }
@@ -291,7 +288,7 @@ class Date
                         break;
                     case "O":
                         $offms = $this->tz->getOffset($this);
-                        $direction = $offms >= 0 ? "+" : "-";                       
+                        $direction = $offms >= 0 ? "+" : "-";
                         $offmins = abs($offms) / 1000 / 60;
                         $hours = $offmins / 60;
                         $minutes = $offmins % 60;
@@ -299,7 +296,7 @@ class Date
                         break;
                     case "o":
                         $offms = $this->tz->getRawOffset($this);
-                        $direction = $offms >= 0 ? "+" : "-";                       
+                        $direction = $offms >= 0 ? "+" : "-";
                         $offmins = abs($offms) / 1000 / 60;
                         $hours = $offmins / 60;
                         $minutes = $offmins % 60;
@@ -349,8 +346,7 @@ class Date
                         $output .= $char.$nextchar;
                 }
                 $strpos++;
-            }
-            else {
+            } else {
                 $output .= $char;
             }
         }
@@ -471,25 +467,25 @@ class Date
 
     /**
      * Converts this date to a new time zone, given a valid time zone ID
-     * 
+     *
      * Converts this date to a new time zone, given a valid time zone ID
      * WARNING: This may not work correctly if your system does not allow
      * putenv() or if localtime() does not work in your environment.  See
      * Date::TimeZone::inDaylightTime() for more information.
-     * 
+     *
      * @access public
      * @param string id a time zone id
      */
     function convertTZbyID($id)
     {
-	   if(Date_TimeZone::isValidID($id)) {
-		  $tz = new Date_TimeZone($id);
-	   } else {
-		  $tz = Date_TimeZone::getDefault();
-	   }
-	   $this->convertTZ($tz);
+       if(Date_TimeZone::isValidID($id)) {
+          $tz = new Date_TimeZone($id);
+       } else {
+          $tz = Date_TimeZone::getDefault();
+       }
+       $this->convertTZ($tz);
     }
-    
+
     /**
      * Adds a given number of seconds to the date
      *
@@ -625,8 +621,11 @@ class Date
      */
     function before($when)
     {
-        if(Date::compare($this,$when) == -1) return true;
-        else return false;
+        if(Date::compare($this,$when) == -1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -640,8 +639,11 @@ class Date
      */
     function after($when)
     {
-        if(Date::compare($this,$when) == 1) return true;
-        else return false;
+        if(Date::compare($this,$when) == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -655,8 +657,11 @@ class Date
      */
     function equals($when)
     {
-        if(Date::compare($this,$when) == 0) return true;
-        else return false;
+        if(Date::compare($this,$when) == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -670,8 +675,11 @@ class Date
     function isFuture()
     {
         $now = new Date();
-        if($this->after($now)) return true;
-        else return false;
+        if($this->after($now)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -685,8 +693,11 @@ class Date
     function isPast()
     {
         $now = new Date();
-        if($this->before($now)) return true;
-        else return false;
+        if($this->before($now)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -791,10 +802,11 @@ class Date
      */
     function getDayName($abbr = false)
     {
-        if($abbr)
-          return Date_Calc::getWeekdayAbbrname($this->day, $this->month, $this->year);
-        else
-          return Date_Calc::getWeekdayFullname($this->day, $this->month, $this->year);
+        if($abbr) {
+            return Date_Calc::getWeekdayAbbrname($this->day, $this->month, $this->year);
+        } else {
+            return Date_Calc::getWeekdayFullname($this->day, $this->month, $this->year);
+        }
     }
 
     /**
@@ -808,10 +820,11 @@ class Date
      */
     function getMonthName($abbr = false)
     {
-        if($abbr)
-          return Date_Calc::getMonthAbbrname($this->month);
-        else
-          return Date_Calc::getMonthFullname($this->month);
+        if($abbr) {
+            return Date_Calc::getMonthAbbrname($this->month);
+        } else {
+            return Date_Calc::getMonthFullname($this->month);
+        }
     }
 
     /**
