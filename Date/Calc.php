@@ -922,10 +922,6 @@ class Date_Calc
         return $year_array;
     }
 
-
-
-
-insert..................................
     /**
      * Returns date of day before given date
      *
