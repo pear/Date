@@ -13,6 +13,7 @@ pre 1970 and post 2038. This package also provides a class
 to convert date strings between Gregorian and Human calendar formats.
   </description>
   <license>PHP License</license>
+
   <maintainers>
     <maintainer>
       <user>baba</user>
@@ -39,15 +40,17 @@ to convert date strings between Gregorian and Human calendar formats.
       <email>alan@akbkhome.com</email>
     </maintainer>
   </maintainers>
+
   <release>
-    <version>1.4.2</version>
-    <state>stable</state>
-    <date>2004-03-14</date>
-    <notes>- Fix #976 TimeZone default bad global usage
-   only _DATE_TIMEZONE_DEFAULT is used now
-- Fix #683, add optional length argumet to getDayName()
-- Fix PHP5 problems with get_class functions
-</notes>
+    <version>1.5.0RC1</version>
+    <state>beta</state>
+    <date>2005-01-05</date>
+    <notes><![CDATA[
+- Establish the DATE_CALC_FORMAT constant
+  and use it as the default value for each
+  of the Date_Calc class' method's $format
+  parameter.
+    ]]></notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date" role="php">
@@ -63,7 +66,7 @@ to convert date strings between Gregorian and Human calendar formats.
       	<file name="testunit_date_span.php"/>
       	<file name="testunit.php"/>
       	<file name="bug674.php"/>
-        <file name="bug967.php"/>
+       <file name="bug967.php"/>
       	<file name="bug727_1.php"/>
       	<file name="bug727_2.php"/>
       	<file name="bug727_3.php"/>
@@ -75,12 +78,38 @@ to convert date strings between Gregorian and Human calendar formats.
       	<file name="weeksinmonth_rdm_sunday.txt"/>
       </dir>
     </filelist>
+
     <file role="doc" name="TODO" />
     <deps>
       <dep type="php" rel="ge" version="4.2"/>
     </deps>
   </release>
+
   <changelog>
+    <release>
+      <version>1.4.3</version>
+      <state>stable</state>
+      <date>2004-05-16</date>
+      <notes><![CDATA[
+- Fix #1250, wrong name for Bangladesh TZ
+- Fix #1390, add XML Schema datetime support
+  (aashley at optimiser dot com)
+  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
+      ]]></notes>
+    </release>
+
+    <release>
+      <version>1.4.2</version>
+      <state>stable</state>
+      <date>2004-03-14</date>
+      <notes><![CDATA[
+- Fix #976 TimeZone default bad global usage
+  only _DATE_TIMEZONE_DEFAULT is used now
+- Fix #683, add optional length argumet to getDayName()
+- Fix PHP5 problems with get_class functions
+      ]]></notes>
+    </release>
+
     <release>
       <version>1.4.1</version>
       <state>stable</state>
@@ -88,6 +117,7 @@ to convert date strings between Gregorian and Human calendar formats.
 - Fix #727, weeksInMonth (wrong result with some dates)
 - Fix #674 (and old system #22549), check arguments in Date_Span</notes>
     </release>
+
     <release>
       <version>1.4</version>
       <state>stable</state>
