@@ -1589,7 +1589,7 @@ class Date_Calc
     } // end func getMonthFromFullName
 
     /**
-    * Retunrs an array of month names
+    * Returns an array of month names
     *
     * Used to take advantage of the setlocale function to return
     * language specific month names.
@@ -1624,6 +1624,72 @@ class Date_Calc
         return($weekdays);
     } // end func getWeekDays
 
-} // end class Date_calendar
+	/**
+	 * Converts from Gregorian Year-Month-Day to ISO YearNumber-WeekNumber-WeekDay
+	 *
+	 * Uses ISO 8601 definitions.
+	 * Algorithm from Rick McCarty, 1999 at http://personal.ecu.edu/mccartyr/ISOwdALG.txt
+	 * 
+	 * @param int $year
+	 * @param int $month
+	 * @param int $day
+	 * @return string
+	 * @access public
+	 */
+	// Transcribed to PHP by Jesus M. Castagnetto (blame him if it is fubared ;-)
+	function gregorianToISO($year, $month, $day) {
+		$mnth = array (0,31,59,90,120,151,181,212,243,273,304,334);
+		$y_isleap = Date_Calc::isLeapYear($year);
+		$y_1_isleap = Date_Calc::isLeapYear($year - 1);
+		$day_of_year_number = $day + $mnth[$month - 1];
+		if ($y_isleap && $month > 2) {
+			$day_of_year_number++;
+		}
+		// find Jan 1 weekday (monday = 1, sunday = 7)
+		$yy = ($year - 1) % 100;
+		$c = ($year - 1) - $yy;
+		$g = $yy + intval($yy/4);
+		$jan1_weekday = 1 + intval((((($c / 100) % 4) * 5) + $g) % 7);
+		// weekday for year-month-day
+		$h = $day_of_year_number + ($jan1_weekday - 1);
+		$weekday = 1 + intval(($h - 1) % 7);
+		// find if Y M D falls in YearNumber Y-1, WeekNumber 52 or 
+		if ($day_of_year_number <= (8 - $jan1_weekday) && $jan1_weekday > 4){
+			$yearnumber = $year - 1;
+			if ($jan1_weekday == 5 || ($jan1_weekday == 6 && $y_1_isleap)) {
+				$weeknumber = 53;
+			} else {
+				$weeknumber = 52;
+			}
+		} else {
+			$yearnumber = $year;
+		}
+		// find if Y M D falls in YearNumber Y+1, WeekNumber 1
+		if ($yearnumber == $year) {
+			if ($y_isleap) {
+				$i = 366;
+			} else {
+				$i = 365;
+			}
+			if (($i - $day_of_year_number) < (4 - $weekday)) {
+				$yearnumber++;
+				$weeknumber = 1;
+			}
+		}
+		// find if Y M D falls in YearNumber Y, WeekNumber 1 through 53
+		if ($yearnumber == $year) {
+			$j = $day_of_year_number + (7 - $weekday) + ($jan1weekday - 1);
+			$weeknumber = intval($j / 7) + 1; // kludge!!! - JMC
+			if ($jan1_weekday > 4) {
+				$weeknumber--;
+			}
+		}
+		// put it all together
+		if ($weeknumber < 10)
+			$weeknumber = '0'.$weeknumber;
+		return "{$yearnumber}-{$weeknumber}-{$weekday}";
+	}
+
+} // end class Date_Calc
 
 ?>
