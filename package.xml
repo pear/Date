@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <package version="1.0">
+  <!-- $Id: package.xml,v 1.20 2005-01-05 19:53:33 danielc Exp $ -->
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
   <description>
@@ -42,7 +43,7 @@ to convert date strings between Gregorian and Human calendar formats.
   </maintainers>
 
   <release>
-    <version>1.5</version>
+    <version>1.5.0</version>
     <state>alpha</state>
     <date>2005-02-10</date>
     <notes><![CDATA[
@@ -52,32 +53,45 @@ to convert date strings between Gregorian and Human calendar formats.
   parameter.
 - Add beginOfMonthBySpan() and
   endOfMonthBySpan() methods to Date_Calc.
+- Use integers for the parameters in
+  Date_Calc instead of strings.
+- Tweak Date_Calc::NWeekdayOfMonth() so it
+  can calculate the 'last' given weekday of
+  a month.
+- Fix Bug 1640. Make sure all longname's are also
+  keys in $GLOBALS['_DATE_TIMEZONE_DATA'].  Makes
+  Date_TimeZone work under more operating systems.
     ]]></notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date" role="php">
-        <file name="Calc.php"/>
+        <file name="Calc.php">
+          <replace from="@package_version@" to="version" type="package-info" />
+        </file>
         <file name="Human.php"/>
         <file name="TimeZone.php"/>
         <file name="Span.php"/>
       </dir>
       <dir name="tests" role="test">
-      	<file name="test_calc.php"/>
-      	<file name="test_date_methods_span.php"/>
-      	<file name="testunit_date.php"/>
-      	<file name="testunit_date_span.php"/>
-      	<file name="testunit.php"/>
-      	<file name="bug674.php"/>
-       <file name="bug967.php"/>
-      	<file name="bug727_1.php"/>
-      	<file name="bug727_2.php"/>
-      	<file name="bug727_3.php"/>
-      	<file name="bug727_4.php"/>
-      	<file name="wknotest.txt"/>
-      	<file name="weeksinmonth_4_monday.txt"/>
-      	<file name="weeksinmonth_4_sunday.txt"/>
-      	<file name="weeksinmonth_rdm_monday.txt"/>
-      	<file name="weeksinmonth_rdm_sunday.txt"/>
+        <file name="calc.php">
+          <replace from="@include_path@" to="php_dir" type="pear-config" />
+        </file>
+        <file name="test_calc.php"/>
+        <file name="test_date_methods_span.php"/>
+        <file name="testunit_date.php"/>
+        <file name="testunit_date_span.php"/>
+        <file name="testunit.php"/>
+        <file name="bug674.php"/>
+        <file name="bug967.php"/>
+        <file name="bug727_1.php"/>
+        <file name="bug727_2.php"/>
+        <file name="bug727_3.php"/>
+        <file name="bug727_4.php"/>
+        <file name="wknotest.txt"/>
+        <file name="weeksinmonth_4_monday.txt"/>
+        <file name="weeksinmonth_4_sunday.txt"/>
+        <file name="weeksinmonth_rdm_monday.txt"/>
+        <file name="weeksinmonth_rdm_sunday.txt"/>
       </dir>
     </filelist>
 
