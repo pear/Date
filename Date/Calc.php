@@ -858,7 +858,10 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
         $FDOM = Date_Calc::firstOfMonthWeekday($month, $year);
-        if ($FDOM > DATE_CALC_BEGIN_WEEKDAY) {
+        if (DATE_CALC_BEGIN_WEEKDAY==1 && $FDOM==0) {
+            $first_week_days = 7 - $FDOM + DATE_CALC_BEGIN_WEEKDAY;
+            $weeks = 1;
+        } elseif (DATE_CALC_BEGIN_WEEKDAY==0 && $FDOM == 6) {
             $first_week_days = 7 - $FDOM + DATE_CALC_BEGIN_WEEKDAY;
             $weeks = 1;
         } else {
