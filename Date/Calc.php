@@ -90,15 +90,21 @@ class Date_Calc
             $year = Date_Calc::dateNow('%Y');
         }
 
-        if (strlen($year) != 4) {
-            return false;
-        }
-
         if (preg_match('/\D/',$year)) {
             return false;
         }
 
-        return (($year % 4 == 0 && $year % 100 != 0) || $year % 400 == 0);
+        if ($year < 1000) {
+            return false;
+        }
+
+        if ($year < 1582) {
+            // pre Gregorio XIII - 1582
+            return ($year % 4 == 0);
+        } else {
+            // post Gregorio XIII - 1582
+            return ( (($year % 4 == 0) and ($year % 100 != 0)) or ($year % 400 == 0) );
+        }
     } // end func isLeapYear
 
     /**
@@ -811,6 +817,10 @@ class Date_Calc
         }
         if (empty($month)) {
             $month = Date_Calc::dateNow('%m');
+        }
+
+        if ($year == 1582 && $month == 10) {
+            return 21;  // October 1582 only had 1st-4th and 15th-31st
         }
 
         if ($month == 2) {
