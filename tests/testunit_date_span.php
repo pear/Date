@@ -1,5 +1,5 @@
-<?php    
-// vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4:
+<?php
+/* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
 // | PHP Version 4                                                        |
 // +----------------------------------------------------------------------+
@@ -22,7 +22,13 @@
 require_once 'Date.php';
 require_once 'Date/Span.php';
 require_once 'PHPUnit.php';
-    
+
+/**
+ * Test case for Date_Span
+ *
+ * @package Date
+ * @author Leandro Lucarella <llucax@php.net>
+ */
 class Date_SpanTest extends PHPUnit_TestCase {
 
     var $time;
@@ -119,10 +125,10 @@ class Date_SpanTest extends PHPUnit_TestCase {
     function testFormat() {
         $codes = array(
             'C' => '1, 03:05:31',
-            'd' => '1.12883101852',
+            'd' => '1.1288310185185',
             'D' => '1',
-            'e' => '27.0919444444',
-            'f' => '1625.51666667',
+            'e' => '27.091944444444',
+            'f' => '1625.5166666667',
             'g' => '97531',
             'h' => '3',
             'H' => '03',
