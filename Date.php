@@ -47,7 +47,7 @@ define('DATE_FORMAT_UNIXTIME', 3);
  * @author Baba Buehler <baba@babaz.com>
  * @package Date
  * @access public
- * @version 1.0
+ * @version 1.1
  */
 class Date 
 {
@@ -91,16 +91,28 @@ class Date
     /**
      * Constructor
      *
-     * Creates a new Date Object 
+     * Creates a new Date Object
      * initialized to the current date/time in the
-     * system default time zone by default.
-     * 
+     * system default time zone by default.  A date optionally
+     * passed in may be in the ISO, TIMESTAMP or UNIXTIME format,
+     * or another Date object.
+     *
      * @access public
+     * @param mixed $date optional - date/time to initialize
      * @return object Date the new Date object
      */
-    function Date() {
-        $this->setDate(date("Y-m-d H:i:s"));
+    function Date($date = 0) {
         $this->tz = Date_TimeZone::getDefault();
+        if(is_object($date) && (get_class($date) == 'date'))
+            $this->copy($date);
+        elseif(preg_match('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/',$date))
+            $this->setDate($date);
+        elseif(preg_match('/\d{14}/',$date))
+            $this->setDate($date,DATE_FORMAT_TIMESTAMP);
+        elseif(is_int($date))
+            $this->setDate($date,DATE_FORMAT_UNIXTIME);
+        else
+            $this->setDate(date("Y-m-d H:i:s"));
     }
     
     /**
@@ -155,6 +167,25 @@ class Date
         }
     }
     
+    /**
+     * Copy values from another Date object
+     *
+     * Makes this Date a copy of another Date object.
+     *
+     * @access public
+     * @param object Date $date Date to copy from
+     */
+    function copy($date)
+    {
+        $this->year = $date->year;
+        $this->month = $date->month;
+        $this->day = $date->month;
+        $this->hour = $date->hour;
+        $this->minute = $date->minute;
+        $this->second = $date->second;
+        $this->tz = $date->tz;
+    }
+
     /**
      *  Date pretty printing, similar to strftime()
      *

@@ -19,10 +19,10 @@ based on Date::Calc.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.0</version>
+    <version>1.1</version>
     <state>stable</state>
     <date>2002-05-11</date>
-    <notes>First packaged release.</notes>
+    <notes>Made constructor smarter accepting various date formats for initialization.  Added copy() method.</notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date">
