@@ -585,7 +585,7 @@ class Date
      */
     function addSeconds($sec)
     {
-        $this->addSpan(new Date_Span($sec));
+        $this->addSpan(new Date_Span((integer)$sec));
     }
 
     /**
