@@ -40,8 +40,8 @@ to convert date strings between Gregorian and Human calendar formats.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.4</version>
-    <state>stable</state>
+    <version>1.4rc1</version>
+    <state>beta</state>
     <date>2003-12-03</date>
     <notes>
     - improvements in input date parsing
