@@ -23,6 +23,7 @@
 //
 require_once 'Date/TimeZone.php';
 require_once 'Date/Calc.php';
+require_once 'Date/Span.php';
 
 /**
  * "YYYY-MM-DD HH:MM:SS"
@@ -526,20 +527,26 @@ class Date
      */
     function addSeconds($sec)
     {
-        $days = intval($sec/86400);
-        $sec -= $days*86400;
-        $hours = intval($sec/3600);
-        $sec -= $hours*3600;
-        $minutes = intval($sec/60);
-        $sec -= $minutes*60;
+        $this->addSpan(new Date_Span($sec));
+    }
 
-        $this->second += $sec;
+    /**
+     * Adds a time span to the date
+     *
+     * Adds a time span to the date
+     *
+     * @access public
+     * @param object Date_Span $span the time span to add
+     */
+    function addSpan($span)
+    {
+        $this->second += $span->second;
         if($this->second >= 60) {
             $this->minute++;
             $this->second -= 60;
         }
 
-        $this->minute += $minutes;
+        $this->minute += $span->minute;
         if($this->minute >= 60) {
             $this->hour++;
             if($this->hour >= 24) {
@@ -550,7 +557,7 @@ class Date
             $this->minute -= 60;
         }
 
-        $this->hour += $hours;
+        $this->hour += $span->hour;
         if($this->hour >= 24) {
             list($this->year, $this->month, $this->day) =
                 sscanf(Date_Calc::nextDay($this->day, $this->month, $this->year), "%04s%02s%02s");
@@ -558,7 +565,7 @@ class Date
         }
 
         $d = Date_Calc::dateToDays($this->day, $this->month, $this->year);
-        $d += $days;
+        $d += $span->day;
 
         list($this->year, $this->month, $this->day) =
             sscanf(Date_Calc::daysToDate($d), "%04s%02s%02s");
@@ -577,20 +584,26 @@ class Date
      */
     function subtractSeconds($sec)
     {
-        $days = intval($sec/86400);
-        $sec -= $days*86400;
-        $hours = intval($sec/3600);
-        $sec -= $hours*3600;
-        $minutes = intval($sec/60);
-        $sec -= $minutes*60;
+        $this->subtractSpan(new Date_Span($sec));
+    }
 
-        $this->second -= $sec;
+    /**
+     * Subtracts a time span to the date
+     *
+     * Subtracts a time span to the date
+     *
+     * @access public
+     * @param object Date_Span $span the time span to subtract
+     */
+    function subtractSpan($span)
+    {
+        $this->second -= $span->second;
         if($this->second < 0) {
             $this->minute--;
             $this->second += 60;
         }
 
-        $this->minute -= $minutes;
+        $this->minute -= $span->minute;
         if($this->minute < 0) {
             $this->hour--;
             if($this->hour < 0) {
@@ -601,7 +614,7 @@ class Date
             $this->minute += 60;
         }
 
-        $this->hour -= $hours;
+        $this->hour -= $span->hour;
         if($this->hour < 0) {
             list($this->year, $this->month, $this->day) =
                 sscanf(Date_Calc::prevDay($this->day, $this->month, $this->year), "%04s%02s%02s");
@@ -609,7 +622,7 @@ class Date
         }
 
         $d = Date_Calc::dateToDays($this->day, $this->month, $this->year);
-        $d -= $days;
+        $d -= $span->day;
 
         list($this->year, $this->month, $this->day) =
             sscanf(Date_Calc::daysToDate($d), "%04s%02s%02s");

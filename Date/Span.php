@@ -65,8 +65,6 @@ $_DATE_SPAN_INPUT_FORMAT = DATE_SPAN_INPUT_FORMAT_NNSV;
  * @author  Leandro Lucarella <llucax@php.net>
  * @version $Revision$
  * @since   1.4
- * @todo    Integrate more with Date, by adding a
- *          Date::addSpan($date_span) method for example.
  * @todo    Get and set default local input and output formats?
  * @access  public
  */
