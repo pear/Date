@@ -162,7 +162,7 @@ class Date
             // if an offset is defined, convert time to UTC
             // Date currently can't set a timezone only by offset,
             // so it has to store it as UTC
-            if ($regs[8]) {
+            if (isset($regs[8])) {
                 $this->toUTCbyOffset($regs[8]);
             }
         } elseif (is_numeric($date)) {
