@@ -286,7 +286,22 @@ compare('20010331', Date_Calc::endOfMonthBySpan(13, 2, 2000), 'endOfMonthBySpan 
 
 compare(3, Date_Calc::firstOfMonthWeekday(11, 2000), 'firstOfMonthWeekday');
 
-compare('20001122', Date_Calc::NWeekdayOfMonth(4, 3, 11, 2000), 'NWeekdayOfMonth 1');
+compare('20050101', Date_Calc::NWeekdayOfMonth(1, 6, 1, 2005), 'NWeekdayOfMonth 2');
+compare('20050102', Date_Calc::NWeekdayOfMonth(1, 0, 1, 2005), 'NWeekdayOfMonth 2');
+compare('20050103', Date_Calc::NWeekdayOfMonth(1, 1, 1, 2005), 'NWeekdayOfMonth 2');
+compare('20050104', Date_Calc::NWeekdayOfMonth(1, 2, 1, 2005), 'NWeekdayOfMonth 2');
+compare('20050105', Date_Calc::NWeekdayOfMonth(1, 3, 1, 2005), 'NWeekdayOfMonth 2');
+compare('20050106', Date_Calc::NWeekdayOfMonth(1, 4, 1, 2005), 'NWeekdayOfMonth 2');
+compare('20050107', Date_Calc::NWeekdayOfMonth(1, 5, 1, 2005), 'NWeekdayOfMonth 2');
+
+compare('20050108', Date_Calc::NWeekdayOfMonth('2', '6', '01', '2005'), 'NWeekdayOfMonth 2');
+compare('20050109', Date_Calc::NWeekdayOfMonth('2', '0', '01', '2005'), 'NWeekdayOfMonth 2');
+compare('20050110', Date_Calc::NWeekdayOfMonth('2', '1', '01', '2005'), 'NWeekdayOfMonth 2');
+compare('20050111', Date_Calc::NWeekdayOfMonth('2', '2', '01', '2005'), 'NWeekdayOfMonth 2');
+compare('20050112', Date_Calc::NWeekdayOfMonth('2', '3', '01', '2005'), 'NWeekdayOfMonth 2');
+compare('20050113', Date_Calc::NWeekdayOfMonth('2', '4', '01', '2005'), 'NWeekdayOfMonth 2');
+compare('20050114', Date_Calc::NWeekdayOfMonth('2', '5', '01', '2005'), 'NWeekdayOfMonth 2');
+
 compare('20050131', Date_Calc::NWeekdayOfMonth('last', 1, 1, 2005), 'NWeekdayOfMonth 2');
 compare('20050130', Date_Calc::NWeekdayOfMonth('last', 0, 1, 2005), 'NWeekdayOfMonth 3');
 compare('20050129', Date_Calc::NWeekdayOfMonth('last', 6, 1, 2005), 'NWeekdayOfMonth 4');
@@ -302,6 +317,7 @@ compare('20050328', Date_Calc::NWeekdayOfMonth('last', 1, 3, 2005), 'NWeekdayOfM
 compare('20050327', Date_Calc::NWeekdayOfMonth('last', 0, 3, 2005), 'NWeekdayOfMonth 13');
 compare('20050326', Date_Calc::NWeekdayOfMonth('last', 6, 3, 2005), 'NWeekdayOfMonth 14');
 compare('20050325', Date_Calc::NWeekdayOfMonth('last', 5, 3, 2005), 'NWeekdayOfMonth 15');
+
 
 compare(false, Date_Calc::isValidDate(29, 2, 1900), 'isValidDate 1');
 compare(true, Date_Calc::isValidDate(29, 2, 2000), 'isValidDate 2');
