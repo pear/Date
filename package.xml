@@ -28,13 +28,16 @@ to convert date strings between Gregorian and Human calendar formats.
     </maintainer>
   </maintainers>
   <release>
-    <version>1.2</version>
+    <version>1.3</version>
     <state>stable</state>
-    <date>2002-08-06</date>
+    <date>2002-10-17</date>
     <notes>
-    - The Date package now contains Calc and Human
-    - Date/Calc.php -> added compareDates() func
-    - Date.php -> modified format(), %p for am/pm, %P for AM/PM
+    - add %O and %o to Date::format(), outputs +/-HH:MM timezone information, enabling the creation of ISO 8601 date strings with format()
+    - bugfix in Date::copy() method
+    - bugfix for off-by-one errors in Date::format()'s %I, %P, %p and %r output
+    - bugfix for Date::setMinute() typo
+    - bugfix for Date::convertTZ() incorrectly converting some time zones
+    - bugfix in Date_Calc::NWeekdayOfMonth(), fixes bug #19334, dayOfWeek & dateFormat called with incorrect paramaters
     </notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
