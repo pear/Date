@@ -1554,7 +1554,6 @@ class Date_Calc
      *                         Positive numbers go into the future.
      *                         Negative numbers go into the past.
      *                         0 is the month presented in $month.
-     * @param string $day     the day, the default is the last day of the month
      * @param string $month   the month, default is current local month
      * @param string $year    the year in four digit format, default is the
      *                         current local year
@@ -1566,7 +1565,7 @@ class Date_Calc
      * @static
      * @since  Method available since Release 1.5.0
      */
-    function beginOfMonthBySpan($months = 0, $day = 0, $month = 0, $year = 0,
+    function beginOfMonthBySpan($months = 0, $month = 0, $year = 0,
                                 $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
@@ -1612,7 +1611,6 @@ class Date_Calc
      *                         Positive numbers go into the future.
      *                         Negative numbers go into the past.
      *                         0 is the month presented in $month.
-     * @param string $day     the day, the default is the last day of the month
      * @param string $month   the month, default is current local month
      * @param string $year    the year in four digit format, default is the
      *                         current local year
@@ -1624,7 +1622,7 @@ class Date_Calc
      * @static
      * @since  Method available since Release 1.5.0
      */
-    function endOfMonthBySpan($months = 0, $day = 0, $month = 0, $year = 0,
+    function endOfMonthBySpan($months = 0, $month = 0, $year = 0,
                               $format = DATE_CALC_FORMAT)
     {
         if (empty($year)) {
