@@ -1258,15 +1258,16 @@ class Date_Calc
         $month = sprintf("%02d",$month);
 
         $DOW1day = sprintf("%02d",(($occurance - 1) * 7 + 1));
-        $DOW1 = Date_Calc::dayOfWeek($month,$year,$DOW1day);
+        $DOW1 = Date_Calc::dayOfWeek($DOW1day,$month,$year);
 
         $wdate = ($occurance - 1) * 7 + 1 +
                 (7 + $dayOfWeek - $DOW1) % 7;
 
-        if( $wdate > Date_Calc::daysInMonth($month,$year))
-                return -1;
-        else
-                return(Date_Calc::dateFormat($month,$year,$wdate,$format));
+        if( $wdate > Date_Calc::daysInMonth($month,$year)) {
+            return -1;
+        } else {
+            return(Date_Calc::dateFormat($wdate,$month,$year,$format));
+        }
 
     } // end func NWeekdayOfMonth
 
