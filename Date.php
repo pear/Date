@@ -1051,7 +1051,7 @@ class Date
      */
     function getDay()
     {
-        return $this->day;
+        return (int)$this->day;
     }
 
     /**
