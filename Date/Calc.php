@@ -1671,8 +1671,7 @@ class Date_Calc
         // find if Y M D falls in YearNumber Y, WeekNumber 1 through 53
         if ($yearnumber == $year) {
             $j = $day_of_year_number + (7 - $weekday) + ($jan1_weekday - 1);
-            //$weeknumber = intval($j / 7) + 1; // kludge!!! - JMC
-            $weeknumber = intval($j / 7); // kludge!!! - JMC
+            $weeknumber = intval($j / 7);
             if ($jan1_weekday > 4) {
                 $weeknumber--;
             }
