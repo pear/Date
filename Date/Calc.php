@@ -1689,8 +1689,9 @@ class Date_Calc
      * Calculates the date of the Nth weekday of the month,
      * such as the second Saturday of January 2000
      *
-     * @param int    $occurance  the number of the week to get (1 = first, etc.)
-     * @param int    $dayOfWeek  the day of the week (0 = Sunday)
+     * @param int    $occur   the number of the week to get
+     *                         (1 = first, etc.  Also can be 'last'.)
+     * @param int    $dow     the day of the week (0 = Sunday)
      * @param int    $month   the month
      * @param int    $year    the year.  Use the complete year instead of the
      *                         abbreviated version.  E.g. use 2005, not 05.
@@ -1702,18 +1703,31 @@ class Date_Calc
      * @access public
      * @static
      */
-    function NWeekdayOfMonth($occurance, $dayOfWeek, $month, $year,
+    function NWeekdayOfMonth($occur, $dow, $month, $year,
                              $format = DATE_CALC_FORMAT)
     {
-        $DOW1day = ($occurance - 1) * 7 + 1;
-        $DOW1    = Date_Calc::dayOfWeek($DOW1day, $month, $year);
-
-        $wdate = ($occurance - 1) * 7 + 1 + (7 + $dayOfWeek - $DOW1) % 7;
-
-        if ($wdate > Date_Calc::daysInMonth($month, $year)) {
-            return -1;
+        if (is_int($occur)) {
+            $DOW1day = ($occur - 1) * 7 + 1;
+            $DOW1    = Date_Calc::dayOfWeek($DOW1day, $month, $year);
+            $wdate   = ($occur - 1) * 7 + 1 + (7 + $dow - $DOW1) % 7;
+            if ($wdate > Date_Calc::daysInMonth($month, $year)) {
+                return -1;
+            } else {
+                return Date_Calc::dateFormat($wdate, $month, $year, $format);
+            }
+        } elseif ($occur == 'last' && $occur < 7) {
+            $lastday = Date_Calc::daysInMonth($month, $year);
+            $lastdow = Date_Calc::dayOfWeek($lastday, $month, $year);
+            $diff    = $dow - $lastdow;
+            if ($diff > 0) {
+                return Date_Calc::dateFormat($lastday - (7 - $diff), $month,
+                                             $year, $format);
+            } else {
+                return Date_Calc::dateFormat($lastday + $diff, $month,
+                                             $year, $format);
+            }
         } else {
-            return Date_Calc::dateFormat($wdate, $month, $year, $format);
+            return -1;
         }
     }
 
