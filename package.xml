@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<!DOCTYPE package SYSTEM "package.dtd">
 <package version="1.0">
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
@@ -7,7 +6,11 @@
 Generic classes for representation and manipulation of
 dates, times and time zones without the need of timestamps,
 which is a huge limitation for php programs.  Includes time zone data,
-time zone conversions and many date/time conversions based on Date::Calc.
+time zone conversions and many date/time conversions.
+It does not rely on 32-bit system date stamps, so
+you can display calendars and compare dates that date
+pre 1970 and post 2038. This package also provides a class
+to convert date strings between Gregorian and Human calendar formats.
   </description>
   <license>PHP License</license>
   <maintainers>
@@ -17,16 +20,23 @@ time zone conversions and many date/time conversions based on Date::Calc.
       <name>Baba Buehler</name>
       <email>baba@babaz.com</email>
     </maintainer>
+    <maintainer>
+      <user>mohrt</user>
+      <role>lead</role>
+      <name>Monte Ohrt</name>
+      <email>mohrt@php.net</email>
+    </maintainer>
   </maintainers>
   <release>
-    <version>1.1</version>
+    <version>1.X</version>
     <state>stable</state>
-    <date>2002-05-11</date>
-    <notes>Made constructor smarter accepting various date formats for initialization.  Added copy() method.</notes>
+    <date>2002-XX-XX</date>
+    <notes>The Date package now contains Calc and Human</notes>
     <filelist>
       <file role="php" baseinstalldir="/">Date.php</file>
       <dir name="Date">
         <file role="php">Calc.php</file>
+        <file role="php">Human.php</file>
         <file role="php">TimeZone.php</file>
       </dir>
     </filelist>
