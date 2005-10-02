@@ -115,11 +115,19 @@ class Date
      * @var float
      */
     var $partsecond;
+
     /**
      * timezone for this date
      * @var object Date_TimeZone
      */
     var $tz;
+
+    /**
+     * define the default weekday abbreviation length
+     * used by ::format()
+     * @var int
+     */
+    var $getWeekdayAbbrnameLength = 3;
 
 
     /**
@@ -320,7 +328,7 @@ class Date
                 $nextchar = substr($format,$strpos + 1,1);
                 switch ($nextchar) {
                 case "a":
-                    $output .= Date_Calc::getWeekdayAbbrname($this->day,$this->month,$this->year);
+                    $output .= Date_Calc::getWeekdayAbbrname($this->day,$this->month,$this->year, $this->getWeekdayAbbrnameLength);
                     break;
                 case "A":
                     $output .= Date_Calc::getWeekdayFullname($this->day,$this->month,$this->year);
