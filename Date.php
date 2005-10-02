@@ -349,9 +349,16 @@ class Date
                 case "H":
                     $output .= sprintf("%02d", $this->hour);
                     break;
+                case 'h':
+                    $output .= sprintf("%d", $this->hour);
+                    break;
                 case "I":
                     $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%02d", $hour==0 ? 12 : $hour);
+                    break;
+                case "i":
+                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                    $output .= sprintf("%d", $hour==0 ? 12 : $hour);
                     break;
                 case "j":
                     $output .= Date_Calc::julianDate($this->day,$this->month,$this->year);
