@@ -402,7 +402,7 @@ class Date
                     $output .= sprintf("%02d:%02d", $this->hour, $this->minute);
                     break;
                 case "s":
-                    $output .= sprintf("%02f", (float)((float)$this->second + $this->partsecond));
+                    $output .= str_replace(',', '.', sprintf("%02f", (float)((float)$this->second + $this->partsecond)));
                     break;
                 case "S":
                     $output .= sprintf("%02d", $this->second);
