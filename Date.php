@@ -1057,7 +1057,7 @@ class Date
      */
     function getYear()
     {
-        return $this->year;
+        return (int)$this->year;
     }
 
     /**
@@ -1070,7 +1070,7 @@ class Date
      */
     function getMonth()
     {
-        return $this->month;
+        return (int)$this->month;
     }
 
     /**
