@@ -60,14 +60,14 @@ define('DATE_SPAN_INPUT_FORMAT_NNSV', 1);
  *
  * @global string
  */
-$_DATE_SPAN_FORMAT  = '%C';
+$GLOBALS['_DATE_SPAN_FORMAT']  = '%C';
 
 /**
  * Default time format when converting from a string.
  *
  * @global mixed
  */
-$_DATE_SPAN_INPUT_FORMAT = DATE_SPAN_INPUT_FORMAT_NNSV;
+$GLOBAL['_DATE_SPAN_INPUT_FORMAT'] = DATE_SPAN_INPUT_FORMAT_NNSV;
 
 /**
  * Generic time span handling class for PEAR
