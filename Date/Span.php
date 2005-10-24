@@ -67,7 +67,7 @@ $GLOBALS['_DATE_SPAN_FORMAT']  = '%C';
  *
  * @global mixed
  */
-$GLOBAL['_DATE_SPAN_INPUT_FORMAT'] = DATE_SPAN_INPUT_FORMAT_NNSV;
+$GLOBALS['_DATE_SPAN_INPUT_FORMAT'] = DATE_SPAN_INPUT_FORMAT_NNSV;
 
 /**
  * Generic time span handling class for PEAR
@@ -464,7 +464,7 @@ class Date_Span {
      *
      * Set the span from the elapsed time between two dates. The time span
      * is allways positive, so the date's order is not important.
-     * 
+     *
      * @param  object Date $date1 First Date.
      * @param  object Date $date2 Second Date.
      *
