@@ -14,7 +14,7 @@ It does not rely on 32-bit system date stamps, so
 you can display calendars and compare dates that date
 pre 1970 and post 2038. This package also provides a class
 to convert date strings between Gregorian and Human calendar formats.
-  
+
  </description>
  <lead>
   <name>Baba Buehler</name>
@@ -43,35 +43,16 @@ to convert date strings between Gregorian and Human calendar formats.
  <date>2005-10-02</date>
  <time>17:07:36</time>
  <version>
-  <release>1.4.4</release>
-  <api>1.4.4</api>
+  <release>1.4.6</release>
+  <api>1.4.6</api>
  </version>
  <stability>
-  <release>beta</release>
+  <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
- <notes>- Establish the DATE_CALC_FORMAT constant
-  and use it as the default value for each
-  of the Date_Calc class&apos; method&apos;s $format
-  parameter.
-- Add beginOfMonthBySpan() and
-  endOfMonthBySpan() methods to Date_Calc.
-- Use integers for the parameters in
-  Date_Calc instead of strings.
-- Tweak Date_Calc::NWeekdayOfMonth() so it
-  can calculate the &apos;last&apos; given weekday of
-  a month.
-- Fix Bug 1640. Make sure all longname&apos;s are also
-  keys in $GLOBALS[&apos;_DATE_TIMEZONE_DATA&apos;].  Makes
-  Date_TimeZone work under more operating systems.
-- #5420, missing CEST
-- #3846, getYear, getMonth returns integer
-- #2652, add %h and %i support (rob at wildlime dot com
-- #5494, force dot as decimal separator
-- #3022, allow to specify the weekday abbrevation length used in ::format()
-- #4878, %s padding fix when < 10 ( aashley at optimiser dot com)
-- #3059, use GLOBALS in date_span
+ <notes>
+- Bug #5715 fypo, missing s in $GLOBALS
  </notes>
  <contents>
   <dir name="/">
@@ -132,25 +113,55 @@ to convert date strings between Gregorian and Human calendar formats.
 
  <release>
    <version>
-    <release>1.4.3</release>
-    <api>1.4.3</api>
+    <release>1.4.5</release>
+    <api>1.4.5</api>
    </version>
    <stability>
     <release>stable</release>
     <api>stable</api>
    </stability>
-   <date>2004-05-16</date>
+   <date>2005-10-12</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #1250, wrong name for Bangladesh TZ
-- Fix #1390, add XML Schema datetime support
-  (aashley at optimiser dot com)
-  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-      
+   <notes>
+Same code base as 1.4.4-beta
+See 1.4.4 changelog for details
    </notes>
   </release>
 
-
-
+ <release>
+   <version>
+    <release>1.4.4</release>
+    <api>1.4.4</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-16</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Establish the DATE_CALC_FORMAT constant
+  and use it as the default value for each
+  of the Date_Calc class&apos; method&apos;s $format
+  parameter.
+- Add beginOfMonthBySpan() and
+  endOfMonthBySpan() methods to Date_Calc.
+- Use integers for the parameters in
+  Date_Calc instead of strings.
+- Tweak Date_Calc::NWeekdayOfMonth() so it
+  can calculate the &apos;last&apos; given weekday of
+  a month.
+- Fix Bug 1640. Make sure all longname&apos;s are also
+  keys in $GLOBALS[&apos;_DATE_TIMEZONE_DATA&apos;].  Makes
+  Date_TimeZone work under more operating systems.
+- #5420, missing CEST
+- #3846, getYear, getMonth returns integer
+- #2652, add %h and %i support (rob at wildlime dot com
+- #5494, force dot as decimal separator
+- #3022, allow to specify the weekday abbrevation length used in ::format()
+- #4878, %s padding fix when < 10 ( aashley at optimiser dot com)
+- #3059, use GLOBALS in date_span
+   </notes>
+  </release>
 
  <release>
    <version>
@@ -167,27 +178,7 @@ to convert date strings between Gregorian and Human calendar formats.
 - Fix #1390, add XML Schema datetime support
   (aashley at optimiser dot com)
   See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-      
-   </notes>
-  </release>
 
-
- <release>
-   <version>
-    <release>1.4.3</release>
-    <api>1.4.3</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2004-05-16</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #1250, wrong name for Bangladesh TZ
-- Fix #1390, add XML Schema datetime support
-  (aashley at optimiser dot com)
-  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-      
    </notes>
   </release>
 
@@ -207,7 +198,7 @@ to convert date strings between Gregorian and Human calendar formats.
 - Fix #1390, add XML Schema datetime support
   (aashley at optimiser dot com)
   See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-      
+
    </notes>
   </release>
 
@@ -226,7 +217,7 @@ to convert date strings between Gregorian and Human calendar formats.
   only _DATE_TIMEZONE_DEFAULT is used now
 - Fix #683, add optional length argumet to getDayName()
 - Fix PHP5 problems with get_class functions
-      
+
    </notes>
   </release>
 
@@ -263,7 +254,7 @@ to convert date strings between Gregorian and Human calendar formats.
 - improve Date_Calc isLeapYear() and daysInMonth() for year 1582
 - add gregorianToISO() method to Date_Calc
 - add dateSeason() method to Date_Calc
-- add Date_Span class 
+- add Date_Span class
 - bugfix in Date_Calc when century ends in 00, only define DATE_CALC_BEGIN_WEEKDAY if not already defined
 - bugfix in beginOfNextWeek(), beginOfPreviousWeek() (thx to andreas dot kossmeier at bergfex dot at)
 - bugfix in nextDayOfWeek and prevDayOfWeek (thx to koan at gmx dot at)
@@ -272,7 +263,7 @@ to convert date strings between Gregorian and Human calendar formats.
 - bugfix for bug 195: Suppress a notice in setDate()
 - bugfix for bug 271: Date_Calc weeksInMonth() returns wrong number
 - fix abstraction bug, Date constructor accepts now object that extends Date
-- add tests to release package 
+- add tests to release package
 - Fix notices and mins calc in to toUTCbyOffset()
    </notes>
   </release>
