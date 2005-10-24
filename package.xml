@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <package version="1.0">
-  <!-- $Id: package.xml,v 1.23 2005-10-02 15:18:24 pajoye Exp $ -->
+  <!-- $Id: package.xml,v 1.24 2005-10-24 10:47:15 pajoye Exp $ -->
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
   <description>
@@ -43,32 +43,12 @@ to convert date strings between Gregorian and Human calendar formats.
   </maintainers>
 
   <release>
-    <version>1.4.4</version>
-    <state>alpha</state>
-    <date>2005-02-10</date>
+    <version>1.4.5</version>
+    <state>stable</state>
+    <date>2005-10-12</date>
     <notes><![CDATA[
-- Establish the DATE_CALC_FORMAT constant
-  and use it as the default value for each
-  of the Date_Calc class' method's $format
-  parameter.
-- Add beginOfMonthBySpan() and
-  endOfMonthBySpan() methods to Date_Calc.
-- Use integers for the parameters in
-  Date_Calc instead of strings.
-- Tweak Date_Calc::NWeekdayOfMonth() so it
-  can calculate the 'last' given weekday of
-  a month.
-- #1640. Make sure all longname's are also
-  keys in $GLOBALS['_DATE_TIMEZONE_DATA'].  Makes
-  Date_TimeZone work under more operating systems.
-- #5420, missing CEST
-- #3846, getYear, getMonth returns integer
-- #2652, add %h and %i support (rob at wildlime dot com
-- #5494, force dot as decimal separator
-- #3022, allow to specify the weekday abbrevation length used in ::format()
-- #4878, %s padding fix when < 10 ( aashley at optimiser dot com)
-- #3059, use GLOBALS in date_span
-
+Same code base as 1.4.4-beta
+See 1.4.4 changelog for details
     ]]></notes>
     <filelist>
       <file name="Date.php" role="php" baseinstalldir="/">
@@ -118,6 +98,35 @@ to convert date strings between Gregorian and Human calendar formats.
   </release>
 
   <changelog>
+  <release>
+    <version>1.4.4</version>
+    <state>alpha</state>
+    <date>2005-10-02</date>
+    <notes><![CDATA[
+- Establish the DATE_CALC_FORMAT constant
+  and use it as the default value for each
+  of the Date_Calc class' method's $format
+  parameter.
+- Add beginOfMonthBySpan() and
+  endOfMonthBySpan() methods to Date_Calc.
+- Use integers for the parameters in
+  Date_Calc instead of strings.
+- Tweak Date_Calc::NWeekdayOfMonth() so it
+  can calculate the 'last' given weekday of
+  a month.
+- #1640. Make sure all longname's are also
+  keys in $GLOBALS['_DATE_TIMEZONE_DATA'].  Makes
+  Date_TimeZone work under more operating systems.
+- #5420, missing CEST
+- #3846, getYear, getMonth returns integer
+- #2652, add %h and %i support (rob at wildlime dot com
+- #5494, force dot as decimal separator
+- #3022, allow to specify the weekday abbrevation length used in ::format()
+- #4878, %s padding fix when < 10 ( aashley at optimiser dot com)
+- #3059, use GLOBALS in date_span
+
+    ]]></notes>
+    </release>
     <release>
       <version>1.4.3</version>
       <state>stable</state>
