@@ -40,8 +40,7 @@ to convert date strings between Gregorian and Human calendar formats.
   <email>alan@akbkhome.com</email>
   <active>yes</active>
  </developer>
- <date>2005-10-02</date>
- <time>17:07:36</time>
+ <date>2005-11-15</date>
  <version>
   <release>1.4.6</release>
   <api>1.4.6</api>
@@ -50,7 +49,7 @@ to convert date strings between Gregorian and Human calendar formats.
   <release>stable</release>
   <api>stable</api>
  </stability>
- <license uri="http://www.php.net/license">PHP License</license>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
  <notes>
 - Change license from PHP License to new BSD License
 - Bug #5715 fypo, missing s in $GLOBALS
@@ -159,7 +158,7 @@ See 1.4.4 changelog for details
 - #2652, add %h and %i support (rob at wildlime dot com
 - #5494, force dot as decimal separator
 - #3022, allow to specify the weekday abbrevation length used in ::format()
-- #4878, %s padding fix when < 10 ( aashley at optimiser dot com)
+- #4878, %s padding fix when &lt; 10 ( aashley at optimiser dot com)
 - #3059, use GLOBALS in date_span
    </notes>
   </release>

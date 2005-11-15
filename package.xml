@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <package version="1.0">
-  <!-- $Id: package.xml,v 1.26 2005-11-15 00:16:38 pajoye Exp $ -->
+  <!-- $Id: package.xml,v 1.27 2005-11-15 00:27:50 pajoye Exp $ -->
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
   <description>
@@ -44,14 +44,14 @@ to convert date strings between Gregorian and Human calendar formats.
 
   <release>
     <version>1.4.6</version>
-    <state>beta</state>
-    <date>2005-10-12</date>
+    <state>stable</state>
+    <date>2005-11-15</date>
     <notes><![CDATA[
 - Change license from PHP License to new BSD License
 - Bug #5715 fypo, missing s in $GLOBALS
     ]]></notes>
     <filelist>
-      <file role="doc"name="LICENSE" />
+      <file role="doc" name="LICENSE" />
       <file name="Date.php" role="php" baseinstalldir="/">
         <replace from="@package_version@" to="version" type="package-info" />
       </file>
