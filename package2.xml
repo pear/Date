@@ -95,7 +95,7 @@ to convert date strings between Gregorian and Human calendar formats.
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file name="TODO" role="doc" />
-   <file name?"LICENSE" role="doc" />
+   <file name="LICENSE" role="doc" />
   </dir> <!-- / -->
  </contents>
  <dependencies>
