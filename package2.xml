@@ -52,6 +52,7 @@ to convert date strings between Gregorian and Human calendar formats.
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+- Change license from PHP License to new BSD License
 - Bug #5715 fypo, missing s in $GLOBALS
  </notes>
  <contents>

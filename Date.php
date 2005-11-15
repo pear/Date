@@ -1,6 +1,20 @@
 <?php
-
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+//
+// +----------------------------------------------------------------------+
+// | Copyright (c) 1997-2005 Baba Buehler, Pierre-Alain Joye              |
+// +----------------------------------------------------------------------+
+// | This source file is subject to the New BSD license, That is bundled  |
+// | with this package in the file LICENSE, and is available through      |
+// | the world-wide-web at                                                |
+// | http://www.opensource.org/licenses/bsd-license.php                   |
+// | If you did not receive a copy of the new BSDlicense and are unable   |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | pear-dev@lists.php.net so we can mail you a copy immediately.        |
+// +----------------------------------------------------------------------+
+// | Author: Baba Buehler <baba@babaz.com>                                |
+// |         Pierre-Alain Joye <pajoye@php.net>                           |
+// +----------------------------------------------------------------------+
 
 /**
  * Generic date handling class for PEAR
@@ -9,20 +23,12 @@
  * through the Date::TimeZone class.  Supports several operations from
  * Date::Calc on Date objects.
  *
- * PHP versions 4 and 5
- *
- * LICENSE: This source file is subject to version 2.02 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/2_02.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category   Date and Time
  * @package    Date
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @copyright  1997-2005 The PHP Group
- * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  */
@@ -74,7 +80,7 @@ define('DATE_FORMAT_UNIXTIME', 5);
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @copyright  1997-2005 The PHP Group
- * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
  * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Date
  */
@@ -474,9 +480,9 @@ class Date
      * convertTZ().
      *
      * @access public
-     * @param object Date_TimeZone $tz the Date_TimeZone object to use, if called 
+     * @param object Date_TimeZone $tz the Date_TimeZone object to use, if called
      * with a paramater that is not a Date_TimeZone object, will fall through to
-     * setTZbyID(). 
+     * setTZbyID().
      */
     function setTZ($tz)
     {
