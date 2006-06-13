@@ -260,8 +260,9 @@ class Date_TimeZone
     function inDaylightTime($date)
     {
         $env_tz = "";
-        if(getenv("TZ")) {
-            $env_tz = getenv("TZ");
+        $env_tz = getenv('TZ');
+        if(!$env_tz) {
+            return 0;
         }
         putenv("TZ=".$this->id);
         $ltime = localtime($date->getTime(), true);
