@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.4.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-http://pear.php.net/dtd/tasks-1.0.xsd
-http://pear.php.net/dtd/package-2.0
-http://pear.php.net/dtd/package-2.0.xsd">
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.4.1" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>Date</name>
  <channel>pear.php.net</channel>
  <summary>Date and Time Zone Classes</summary>
@@ -40,62 +37,62 @@ to convert date strings between Gregorian and Human calendar formats.
   <email>alan@akbkhome.com</email>
   <active>yes</active>
  </developer>
- <date>2005-11-15</date>
+ <date>2006-06-13</date>
  <version>
-  <release>1.4.6</release>
+  <release>1.4.7</release>
   <api>1.4.6</api>
  </version>
  <stability>
-  <release>stable</release>
+  <release>beta</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD</license>
  <notes>
-- Change license from PHP License to new BSD License
-- Bug #5715 fypo, missing s in $GLOBALS
+- #6435, ::inDaylightTime should not change to UTC if no valid TZ
+  was found
  </notes>
  <contents>
   <dir name="/">
    <dir name="Date">
     <file name="Calc.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
+     <tasks:replace from="@package_version@" to="version" type="package-info"/>
     </file>
     <file name="Human.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
+     <tasks:replace from="@package_version@" to="version" type="package-info"/>
     </file>
     <file name="Span.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
+     <tasks:replace from="@package_version@" to="version" type="package-info"/>
     </file>
     <file name="TimeZone.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
+     <tasks:replace from="@package_version@" to="version" type="package-info"/>
     </file>
    </dir> <!-- /Date -->
    <dir name="tests">
-    <file name="bug674.php" role="test" />
-    <file name="bug727_1.php" role="test" />
-    <file name="bug727_2.php" role="test" />
-    <file name="bug727_3.php" role="test" />
-    <file name="bug727_4.php" role="test" />
-    <file name="bug967.php" role="test" />
+    <file name="bug674.php" role="test"/>
+    <file name="bug727_1.php" role="test"/>
+    <file name="bug727_2.php" role="test"/>
+    <file name="bug727_3.php" role="test"/>
+    <file name="bug727_4.php" role="test"/>
+    <file name="bug967.php" role="test"/>
     <file name="calc.php" role="test">
-     <tasks:replace from="@include_path@" to="php_dir" type="pear-config" />
+     <tasks:replace from="@include_path@" to="php_dir" type="pear-config"/>
     </file>
-    <file name="testunit.php" role="test" />
-    <file name="testunit_date.php" role="test" />
-    <file name="testunit_date_span.php" role="test" />
-    <file name="test_calc.php" role="test" />
-    <file name="test_date_methods_span.php" role="test" />
-    <file name="weeksinmonth_4_monday.txt" role="test" />
-    <file name="weeksinmonth_4_sunday.txt" role="test" />
-    <file name="weeksinmonth_rdm_monday.txt" role="test" />
-    <file name="weeksinmonth_rdm_sunday.txt" role="test" />
-    <file name="wknotest.txt" role="test" />
+    <file name="testunit.php" role="test"/>
+    <file name="testunit_date.php" role="test"/>
+    <file name="testunit_date_span.php" role="test"/>
+    <file name="test_calc.php" role="test"/>
+    <file name="test_date_methods_span.php" role="test"/>
+    <file name="weeksinmonth_4_monday.txt" role="test"/>
+    <file name="weeksinmonth_4_sunday.txt" role="test"/>
+    <file name="weeksinmonth_rdm_monday.txt" role="test"/>
+    <file name="weeksinmonth_rdm_sunday.txt" role="test"/>
+    <file name="wknotest.txt" role="test"/>
    </dir> <!-- /tests -->
    <file baseinstalldir="/" name="Date.php" role="php">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
+    <tasks:replace from="@package_version@" to="version" type="package-info"/>
    </file>
-   <file name="TODO" role="doc" />
-   <file name="LICENSE" role="doc" />
+   <file name="TODO" role="doc"/>
+   <file name="LICENSE" role="doc"/>
   </dir> <!-- / -->
  </contents>
  <dependencies>
@@ -108,10 +105,24 @@ to convert date strings between Gregorian and Human calendar formats.
    </pearinstaller>
   </required>
  </dependencies>
- <phprelease />
+ <phprelease/>
 
  <changelog>
-
+ <release>
+ <date>2005-11-15</date>
+ <version>
+  <release>1.4.6</release>
+  <api>1.4.6</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <notes>
+- Change license from PHP License to new BSD License
+- Bug #5715 fypo, missing s in $GLOBALS
+ </notes>
+ </release>
  <release>
    <version>
     <release>1.4.5</release>
@@ -142,17 +153,17 @@ See 1.4.4 changelog for details
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>- Establish the DATE_CALC_FORMAT constant
   and use it as the default value for each
-  of the Date_Calc class&apos; method&apos;s $format
+  of the Date_Calc class' method's $format
   parameter.
 - Add beginOfMonthBySpan() and
   endOfMonthBySpan() methods to Date_Calc.
 - Use integers for the parameters in
   Date_Calc instead of strings.
 - Tweak Date_Calc::NWeekdayOfMonth() so it
-  can calculate the &apos;last&apos; given weekday of
+  can calculate the 'last' given weekday of
   a month.
-- Fix Bug 1640. Make sure all longname&apos;s are also
-  keys in $GLOBALS[&apos;_DATE_TIMEZONE_DATA&apos;].  Makes
+- Fix Bug 1640. Make sure all longname's are also
+  keys in $GLOBALS['_DATE_TIMEZONE_DATA'].  Makes
   Date_TimeZone work under more operating systems.
 - #5420, missing CEST
 - #3846, getYear, getMonth returns integer

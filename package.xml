@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <package version="1.0">
-  <!-- $Id: package.xml,v 1.27 2005-11-15 00:27:50 pajoye Exp $ -->
+<!-- $Id: package.xml,v 1.28 2006-06-13 18:34:22 pajoye Exp $ -->
   <name>Date</name>
   <summary>Date and Time Zone Classes</summary>
   <description>
@@ -14,7 +14,6 @@ pre 1970 and post 2038. This package also provides a class
 to convert date strings between Gregorian and Human calendar formats.
   </description>
   <license>PHP License</license>
-
   <maintainers>
     <maintainer>
       <user>baba</user>
@@ -41,37 +40,36 @@ to convert date strings between Gregorian and Human calendar formats.
       <email>alan@akbkhome.com</email>
     </maintainer>
   </maintainers>
-
   <release>
-    <version>1.4.6</version>
-    <state>stable</state>
-    <date>2005-11-15</date>
+    <version>1.4.7</version>
+    <state>beta</state>
+    <date>2006-06-13</date>
     <notes><![CDATA[
-- Change license from PHP License to new BSD License
-- Bug #5715 fypo, missing s in $GLOBALS
+- #6435, ::inDaylightTime should not change to UTC if no valid TZ
+  was found
     ]]></notes>
     <filelist>
-      <file role="doc" name="LICENSE" />
+      <file role="doc" name="LICENSE"/>
       <file name="Date.php" role="php" baseinstalldir="/">
-        <replace from="@package_version@" to="version" type="package-info" />
+        <replace from="@package_version@" to="version" type="package-info"/>
       </file>
       <dir name="Date" role="php">
         <file name="Calc.php">
-          <replace from="@package_version@" to="version" type="package-info" />
+          <replace from="@package_version@" to="version" type="package-info"/>
         </file>
         <file name="Human.php">
-          <replace from="@package_version@" to="version" type="package-info" />
+          <replace from="@package_version@" to="version" type="package-info"/>
         </file>
         <file name="TimeZone.php">
-          <replace from="@package_version@" to="version" type="package-info" />
+          <replace from="@package_version@" to="version" type="package-info"/>
         </file>
         <file name="Span.php">
-          <replace from="@package_version@" to="version" type="package-info" />
+          <replace from="@package_version@" to="version" type="package-info"/>
         </file>
       </dir>
       <dir name="tests" role="test">
         <file name="calc.php">
-          <replace from="@include_path@" to="php_dir" type="pear-config" />
+          <replace from="@include_path@" to="php_dir" type="pear-config"/>
         </file>
         <file name="test_calc.php"/>
         <file name="test_date_methods_span.php"/>
@@ -91,23 +89,30 @@ to convert date strings between Gregorian and Human calendar formats.
         <file name="weeksinmonth_rdm_sunday.txt"/>
       </dir>
     </filelist>
-
-    <file role="doc" name="TODO" />
+    <file role="doc" name="TODO"/>
     <deps>
       <dep type="php" rel="ge" version="4.2"/>
     </deps>
   </release>
-
   <changelog>
-  <release>
-    <version>1.4.5</version>
-    <state>stable</state>
-    <date>2005-10-12</date>
-    <notes><![CDATA[
+    <release>
+      <version>1.4.6</version>
+      <state>stable</state>
+      <date>2005-11-15</date>
+      <notes><![CDATA[
+- Change license from PHP License to new BSD License
+- Bug #5715 fypo, missing s in $GLOBALS
+    ]]></notes>
+    </release>
+    <release>
+      <version>1.4.5</version>
+      <state>stable</state>
+      <date>2005-10-12</date>
+      <notes><![CDATA[
 Same code base as 1.4.4-beta
 See 1.4.4 changelog for details
     ]]></notes>
-  </release>
+    </release>
     <release>
       <version>1.4.4</version>
       <state>alpha</state>
@@ -147,7 +152,6 @@ See 1.4.4 changelog for details
   See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
       ]]></notes>
     </release>
-
     <release>
       <version>1.4.2</version>
       <state>stable</state>
@@ -159,7 +163,6 @@ See 1.4.4 changelog for details
 - Fix PHP5 problems with get_class functions
       ]]></notes>
     </release>
-
     <release>
       <version>1.4.1</version>
       <state>stable</state>
@@ -167,7 +170,6 @@ See 1.4.4 changelog for details
 - Fix #727, weeksInMonth (wrong result with some dates)
 - Fix #674 (and old system #22549), check arguments in Date_Span</notes>
     </release>
-
     <release>
       <version>1.4</version>
       <state>stable</state>
