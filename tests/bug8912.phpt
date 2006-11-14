@@ -3,12 +3,12 @@
 // CVS: $Id$
 ?>
 --TEST--
-DateTimeZone::inDaylightTime()
+Bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
 --FILE--
 <?php
 //
-// Test for: Bug #8912 putenv() causes crashes in DateTimeZone::inDaylightTime() under windows.
-// Parts tested: Date_Timezone::inDaylightTime()
+// Test for: Date_TimeZone
+// Parts tested: Date_TimeZone::inDaylightTime()
 //
 
 require_once 'Date.php';
