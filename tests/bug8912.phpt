@@ -25,7 +25,6 @@ $states = array(
 
 $originalTimezone = new Date_TimeZone('Australia/Adelaide'); 
 
-$n = 0;
 foreach ($states as $state) {
     $new_date = new Date(time());
     print 'Original Time (Australia/Adelaide): ' . $new_date->getTime() . "\n";
