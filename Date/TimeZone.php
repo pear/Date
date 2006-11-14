@@ -51,7 +51,7 @@
  * @author     Baba Buehler <baba@babaz.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
- * @version    Release: @package_version@
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/Date
  */
 class Date_TimeZone
@@ -259,14 +259,16 @@ class Date_TimeZone
      */
     function inDaylightTime($date)
     {
-        $env_tz = "";
-        $env_tz = getenv('TZ');
-        if(!$env_tz) {
-            return 0;
+        $env_tz = '';
+        if(isset($_ENV['TZ']) && getenv('TZ')) {
+            $env_tz = getenv('TZ');
         }
-        putenv("TZ=".$this->id);
+
+        putenv('TZ=' . $this->id);
         $ltime = localtime($date->getTime(), true);
-        putenv("TZ=".$env_tz);
+        if ($env_tz != '') {
+            putenv('TZ=' . $env_tz);
+        }
         return $ltime['tm_isdst'];
     }
 
