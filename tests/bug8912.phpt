@@ -12,6 +12,7 @@ Bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windo
 //
 
 require_once 'Date.php';
+
 $states = array(
     'Australia/Adelaide',
     'Australia/Canberra',
