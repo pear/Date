@@ -38,13 +38,13 @@
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @copyright  1997-2005 The PHP Group
- * @license    http://www.opensource.org/licenses/bsd-license.php
- *             BSD License
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  */
 
 // }}}
+
 // {{{ Includes
 
 /**
@@ -97,20 +97,6 @@ define('DATE_FORMAT_TIMESTAMP', 4);
  */
 define('DATE_FORMAT_UNIXTIME', 5);
 
-/**
- * RFC 822 with 4-digits of year.
- *
- * @since Constant available since Release 1.5.0
- */
-define('DATE_FORMAT_RFC822', 6);
-
-/**
- * RFC 822 with 2-digits of year.
- *
- * @since Constant available since Release 1.5.0
- */
-define('DATE_FORMAT_RFC822_SHORT', 7);
-
 // }}}
 
 // }}}
@@ -120,15 +106,14 @@ define('DATE_FORMAT_RFC822_SHORT', 7);
  * Generic date handling class for PEAR
  *
  * Generic date handling class for PEAR.  Attempts to be time zone aware
- * through the Date::TimeZone class. Supports several operations from
+ * through the Date::TimeZone class.  Supports several operations from
  * Date::Calc on Date objects.
  *
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
- * @license    http://www.opensource.org/licenses/bsd-license.php
- *             BSD License
- * @version    Release: @package_version@
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/Date
  */
 class Date
@@ -190,20 +175,6 @@ class Date
      */
     var $getWeekdayAbbrnameLength = 3;
 
-    /**
-     * Regular expression againts RFC 822 Date and Time specification.
-     *
-     * @var string
-     * @access private
-     * @internal
-     */
-    var $_regexRFC822 = '/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \s+)?
-                        (?:(\d{2})?) \s+
-                        (?:(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)?) \s+
-                        (?:(\d{2}(\d{2})?)?) \s+
-                        (?:(\d{2}?)):(?:(\d{2}?))(:(?:(\d{2}?)))? \s+
-                        (?:([+-]\d{4}|UT|GMT|EST|EDT|CST|CDT|MST|MDT|PST|PDT|[A-IK-Za-ik-z]))$/xi';
-
     // }}}
     // {{{ Constructor
 
@@ -250,10 +221,7 @@ class Date
      */
     function setDate($date, $format = DATE_FORMAT_ISO)
     {
-        if (preg_match($this->regexRFC822, $date) && $format != DATE_FORMAT_UNIXTIME) {
-            // It is RFC 822 format, just use strtotime() function for handle it.
-            $this->setDate(date('Y-m-d H:i:s', strtotime($date)));
-        } else if (
+        if (
             preg_match('/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})(\.\d+)?(Z|[\+\-]\d{2}:?\d{2})?)?$/i', $date, $regs)
             && $format != DATE_FORMAT_UNIXTIME) {
             // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
@@ -329,14 +297,6 @@ class Date
             if ($this->tz->getID() == 'UTC') {
                 $format .= "Z";
             }
-            return $this->format($format);
-            break;
-        case DATE_FORMAT_RFC822:
-            $format = "%a, %d %b %Y %H:%M:%S" . $this->tz->getID();
-            return $this->format($format);
-            break;
-        case DATE_FORMAT_RFC822_SHORT:
-            $format = "%a, %d %b %y %H:%M:%S" . $this->tz->getID();
             return $this->format($format);
             break;
         case DATE_FORMAT_TIMESTAMP:
