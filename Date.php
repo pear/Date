@@ -38,7 +38,8 @@
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @copyright  1997-2005 The PHP Group
- * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
+ * @license    http://www.opensource.org/licenses/bsd-license.php
+ *             BSD License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  */
@@ -98,11 +99,15 @@ define('DATE_FORMAT_UNIXTIME', 5);
 
 /**
  * RFC 822 with 4-digits of year.
+ *
+ * @since Constant available since Release 1.5.0
  */
 define('DATE_FORMAT_RFC822', 6);
 
 /**
  * RFC 822 with 2-digits of year.
+ *
+ * @since Constant available since Release 1.5.0
  */
 define('DATE_FORMAT_RFC822_SHORT', 7);
 
@@ -115,14 +120,15 @@ define('DATE_FORMAT_RFC822_SHORT', 7);
  * Generic date handling class for PEAR
  *
  * Generic date handling class for PEAR.  Attempts to be time zone aware
- * through the Date::TimeZone class.  Supports several operations from
+ * through the Date::TimeZone class. Supports several operations from
  * Date::Calc on Date objects.
  *
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  1997-2005 The PHP Group
- * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
- * @version    Release: 1.4.6
+ * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @license    http://www.opensource.org/licenses/bsd-license.php
+ *             BSD License
+ * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Date
  */
 class Date
@@ -186,9 +192,12 @@ class Date
 
     /**
      * Regular expression againts RFC 822 Date and Time specification.
+     *
      * @var string
+     * @access private
+     * @internal
      */
-    var $regexRFC822 = '/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \s+)?
+    var $_regexRFC822 = '/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \s+)?
                         (?:(\d{2})?) \s+
                         (?:(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)?) \s+
                         (?:(\d{2}(\d{2})?)?) \s+
