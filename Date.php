@@ -715,7 +715,15 @@ class Date
      */
     function addSeconds($sec)
     {
-        $this->addSpan(new Date_Span((integer)$sec));
+        settype($sec, 'int');
+
+        // Negative value given.
+        if ($sec < 0) {
+            $this->subtractSeconds(abs($sec));
+            return;
+        }
+
+        $this->addSpan(new Date_Span($sec));
     }
 
     // }}}
@@ -782,6 +790,14 @@ class Date
      */
     function subtractSeconds($sec)
     {
+        settype($sec, 'int');
+
+        // Negative value given.
+        if ($sec < 0) {
+            $this->addSeconds(abs($sec));
+            return;
+        }
+
         $this->subtractSpan(new Date_Span($sec));
     }
 
