@@ -37,8 +37,10 @@
  * @package    Date
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  1997-2005 The PHP Group
- * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
+ * @author     Firman Wandayandi <firman@php.net>
+ * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @license    http://www.opensource.org/licenses/bsd-license.php
+ *             BSD License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  */
@@ -111,9 +113,11 @@ define('DATE_FORMAT_UNIXTIME', 5);
  *
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  1997-2005 The PHP Group
- * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
- * @version    Release: 1.4.6
+ * @author     Firman Wandayandi <firman@php.net>
+ * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @license    http://www.opensource.org/licenses/bsd-license.php
+ *             BSD License
+ * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Date
  */
 class Date
