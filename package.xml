@@ -1,124 +1,229 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<package version="1.0">
-<!-- $Id: package.xml,v 1.28 2006-06-13 18:34:22 pajoye Exp $ -->
-  <name>Date</name>
-  <summary>Date and Time Zone Classes</summary>
-  <description>
-Generic classes for representation and manipulation of
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.5.0a1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Date</name>
+ <channel>pear.php.net</channel>
+ <summary>Generic date/time handling class for PEAR</summary>
+ <description>Generic classes for representation and manipulation of
 dates, times and time zones without the need of timestamps,
 which is a huge limitation for php programs.  Includes time zone data,
 time zone conversions and many date/time conversions.
 It does not rely on 32-bit system date stamps, so
 you can display calendars and compare dates that date
 pre 1970 and post 2038. This package also provides a class
-to convert date strings between Gregorian and Human calendar formats.
-  </description>
-  <license>PHP License</license>
-  <maintainers>
-    <maintainer>
-      <user>baba</user>
-      <role>lead</role>
-      <name>Baba Buehler</name>
-      <email>baba@babaz.com</email>
-    </maintainer>
-    <maintainer>
-      <user>mohrt</user>
-      <role>lead</role>
-      <name>Monte Ohrt</name>
-      <email>mohrt@php.net</email>
-    </maintainer>
-    <maintainer>
-      <user>pajoye</user>
-      <role>lead</role>
-      <name>Pierre-Alain Joye</name>
-      <email>pajoye@pearfr.org</email>
-    </maintainer>
-    <maintainer>
-      <user>alan_k</user>
-      <role>developer</role>
-      <name>Alan Knowles</name>
-      <email>alan@akbkhome.com</email>
-    </maintainer>
-  </maintainers>
+to convert date strings between Gregorian and Human calendar formats.</description>
+ <lead>
+  <name>Baba Buehler</name>
+  <user>baba</user>
+  <email>baba@babaz.com</email>
+  <active>no</active>
+ </lead>
+ <lead>
+  <name>Pierre-Alain Joye</name>
+  <user>pajoye</user>
+  <email>pajoye@php.net</email>
+  <active>no</active>
+ </lead>
+ <lead>
+  <name>Monte Ohrt</name>
+  <user>mohrt</user>
+  <email>mohrt@php.net</email>
+  <active>no</active>
+ </lead>
+ <lead>
+  <name>Firman Wandayandi</name>
+  <user>firman</user>
+  <email>firman@php.net</email>
+  <active>yes</active>
+ </lead>
+ <developer>
+  <name>Alan Knowles</name>
+  <user>alan_k</user>
+  <email>alan@akbkhome.com</email>
+  <active>yes</active>
+ </developer>
+ <helper>
+  <name>Leonardo Dutra</name>
+  <user>scar</user>
+  <email>scar@php.net</email>
+  <active>yes</active>
+ </helper>
+ <date>2006-11-22</date>
+ <time>08:39:01</time>
+ <version>
+  <release>1.4.7</release>
+  <api>1.4</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+ <notes>* Fix bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
+* Fix bug #9409: Date_Calc, fatal error using a non-array variable as an array
+* Fix bug #9414: Date::addSeconds() fails to work properly with negative numbers
+* Many cosmetics update
+* Moved bug test files to tests/bugs/
+* Removed unused files</notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <dir name="Date">
+    <file name="Calc.php" role="php">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="Human.php" role="php">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="Span.php" role="php">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="TimeZone.php" role="php">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+   </dir> <!-- /Date -->
+   <dir name="docs">
+    <file name="LICENSE" role="doc">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="TODO" role="doc">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+   </dir> <!-- /docs -->
+   <dir name="tests">
+    <dir name="bugs">
+     <file name="bug-674.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-727-1.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-727-2.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-727-3.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-727-4.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-967.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-8912.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-9213.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-9414.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+    </dir> <!-- /tests/bugs -->
+    <file name="calc.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="testunit.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="testunit_date.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="testunit_date_span.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_calc.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_date_methods_span.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+   </dir> <!-- /tests -->
+   <file name="Date.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>4.3</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+
+  <!-- 1.4.7 -->
   <release>
-    <version>1.4.7</version>
-    <state>beta</state>
-    <date>2006-06-13</date>
-    <notes><![CDATA[
-- #6435, ::inDaylightTime should not change to UTC if no valid TZ
-  was found
-    ]]></notes>
-    <filelist>
-      <file role="doc" name="LICENSE"/>
-      <file name="Date.php" role="php" baseinstalldir="/">
-        <replace from="@package_version@" to="version" type="package-info"/>
-      </file>
-      <dir name="Date" role="php">
-        <file name="Calc.php">
-          <replace from="@package_version@" to="version" type="package-info"/>
-        </file>
-        <file name="Human.php">
-          <replace from="@package_version@" to="version" type="package-info"/>
-        </file>
-        <file name="TimeZone.php">
-          <replace from="@package_version@" to="version" type="package-info"/>
-        </file>
-        <file name="Span.php">
-          <replace from="@package_version@" to="version" type="package-info"/>
-        </file>
-      </dir>
-      <dir name="tests" role="test">
-        <file name="calc.php">
-          <replace from="@include_path@" to="php_dir" type="pear-config"/>
-        </file>
-        <file name="test_calc.php"/>
-        <file name="test_date_methods_span.php"/>
-        <file name="testunit_date.php"/>
-        <file name="testunit_date_span.php"/>
-        <file name="testunit.php"/>
-        <file name="bug674.php"/>
-        <file name="bug967.php"/>
-        <file name="bug727_1.php"/>
-        <file name="bug727_2.php"/>
-        <file name="bug727_3.php"/>
-        <file name="bug727_4.php"/>
-        <file name="wknotest.txt"/>
-        <file name="weeksinmonth_4_monday.txt"/>
-        <file name="weeksinmonth_4_sunday.txt"/>
-        <file name="weeksinmonth_rdm_monday.txt"/>
-        <file name="weeksinmonth_rdm_sunday.txt"/>
-      </dir>
-    </filelist>
-    <file role="doc" name="TODO"/>
-    <deps>
-      <dep type="php" rel="ge" version="4.2"/>
-    </deps>
+   <version>
+    <release>1.4.7</release>
+    <api>1.4</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2006-11-22</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>* Fix bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
+* Fix bug #9409: Date_Calc, fatal error using a non-array variable as an array
+* Fix bug #9414: Date::addSeconds() fails to work properly with negative numbers
+* Many cosmetics update
+* Moved bug test files to tests/bugs/
+* Removed unused files</notes>
   </release>
-  <changelog>
-    <release>
-      <version>1.4.6</version>
-      <state>stable</state>
-      <date>2005-11-15</date>
-      <notes><![CDATA[
-- Change license from PHP License to new BSD License
+
+  <!-- 1.4.6 -->
+  <release>
+   <date>2005-11-15</date>
+   <version>
+    <release>1.4.6</release>
+    <api>1.4.6</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <notes>- Change license from PHP License to new BSD License
 - Bug #5715 fypo, missing s in $GLOBALS
-    ]]></notes>
-    </release>
-    <release>
-      <version>1.4.5</version>
-      <state>stable</state>
-      <date>2005-10-12</date>
-      <notes><![CDATA[
-Same code base as 1.4.4-beta
+   </notes>
+  </release>
+
+  <!-- 1.4.5 -->
+  <release>
+   <version>
+    <release>1.4.5</release>
+    <api>1.4.5</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-10-12</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>Same code base as 1.4.4-beta
 See 1.4.4 changelog for details
-    ]]></notes>
-    </release>
-    <release>
-      <version>1.4.4</version>
-      <state>alpha</state>
-      <date>2005-02-10</date>
-      <notes><![CDATA[
-- Establish the DATE_CALC_FORMAT constant
+   </notes>
+  </release>
+
+  <!-- 1.4.4 -->
+  <release>
+   <version>
+    <release>1.4.4</release>
+    <api>1.4.4</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-16</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Establish the DATE_CALC_FORMAT constant
   and use it as the default value for each
   of the Date_Calc class' method's $format
   parameter.
@@ -129,7 +234,7 @@ See 1.4.4 changelog for details
 - Tweak Date_Calc::NWeekdayOfMonth() so it
   can calculate the 'last' given weekday of
   a month.
-- #1640. Make sure all longname's are also
+- Fix Bug 1640. Make sure all longname's are also
   keys in $GLOBALS['_DATE_TIMEZONE_DATA'].  Makes
   Date_TimeZone work under more operating systems.
 - #5420, missing CEST
@@ -137,44 +242,99 @@ See 1.4.4 changelog for details
 - #2652, add %h and %i support (rob at wildlime dot com
 - #5494, force dot as decimal separator
 - #3022, allow to specify the weekday abbrevation length used in ::format()
-- #4878, %s padding fix when < 10 ( aashley at optimiser dot com)
+- #4878, %s padding fix when &lt; 10 ( aashley at optimiser dot com)
 - #3059, use GLOBALS in date_span
-      ]]></notes>
-    </release>
-    <release>
-      <version>1.4.3</version>
-      <state>stable</state>
-      <date>2004-05-16</date>
-      <notes><![CDATA[
-- Fix #1250, wrong name for Bangladesh TZ
+   </notes>
+  </release>
+
+  <!-- 1.4.3 -->
+  <release>
+   <version>
+    <release>1.4.3</release>
+    <api>1.4.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-16</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #1250, wrong name for Bangladesh TZ
 - Fix #1390, add XML Schema datetime support
   (aashley at optimiser dot com)
   See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-      ]]></notes>
-    </release>
-    <release>
-      <version>1.4.2</version>
-      <state>stable</state>
-      <date>2004-03-14</date>
-      <notes><![CDATA[
-- Fix #976 TimeZone default bad global usage
+   </notes>
+  </release>
+
+  <!-- 1.4.3 -->
+  <release>
+   <version>
+    <release>1.4.3</release>
+    <api>1.4.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-16</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #1250, wrong name for Bangladesh TZ
+- Fix #1390, add XML Schema datetime support
+  (aashley at optimiser dot com)
+  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
+   </notes>
+  </release>
+
+  <!-- 1.4.2 -->
+  <release>
+   <version>
+    <release>1.4.2</release>
+    <api>1.4.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-03-14</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #976 TimeZone default bad global usage
   only _DATE_TIMEZONE_DEFAULT is used now
 - Fix #683, add optional length argumet to getDayName()
 - Fix PHP5 problems with get_class functions
-      ]]></notes>
-    </release>
-    <release>
-      <version>1.4.1</version>
-      <state>stable</state>
-      <notes>- Fix #674 endOfWeek() beginOfWeek()
+   </notes>
+  </release>
+
+  <!-- 1.4.1 -->
+  <release>
+   <version>
+    <release>1.4.1</release>
+    <api>1.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-10-02</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #674 endOfWeek() beginOfWeek()
 - Fix #727, weeksInMonth (wrong result with some dates)
-- Fix #674 (and old system #22549), check arguments in Date_Span</notes>
-    </release>
-    <release>
-      <version>1.4</version>
-      <state>stable</state>
-      <date>2003-12-21</date>
-      <notes>- improvements in input date parsing
+- Fix #674 (and old system #22549), check arguments in Date_Span
+   </notes>
+  </release>
+
+  <!-- 1.4 -->
+  <release>
+   <version>
+    <release>1.4</release>
+    <api>1.4</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2003-12-21</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- improvements in input date parsing
 - add Date methods addSpan() and subtractSpan()
 - added two more ISO8601 date/time output formats DATE_FORMAT_ISO_BASIC and DATE_FORMAT_ISO_EXTENDED
 - improve Date_Calc isLeapYear() and daysInMonth() for year 1582
@@ -190,7 +350,9 @@ See 1.4.4 changelog for details
 - bugfix for bug 271: Date_Calc weeksInMonth() returns wrong number
 - fix abstraction bug, Date constructor accepts now object that extends Date
 - add tests to release package
-- Fix notices and mins calc in to toUTCbyOffset()</notes>
-    </release>
-  </changelog>
+- Fix notices and mins calc in to toUTCbyOffset()
+   </notes>
+  </release>
+
+ </changelog>
 </package>
