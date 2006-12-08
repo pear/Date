@@ -1821,6 +1821,12 @@ class Date_Calc
             } else {
                 // some time in a prior year
                 $month = 12 + ($tmp_mo % 12);
+
+                // Use a given months if the month is December.
+                if ($tmp_mo % 12 == 0) {
+                    $tmp_mo = $months;
+                }
+
                 $year  = $year + floor($tmp_mo / 12);
             }
         }
