@@ -331,6 +331,7 @@ class Date
         $this->hour = $date->hour;
         $this->minute = $date->minute;
         $this->second = $date->second;
+        $this->partsecond = $date->partsecond;
         $this->tz = $date->tz;
     }
 
