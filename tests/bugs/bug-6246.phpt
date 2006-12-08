@@ -23,7 +23,7 @@ require_once 'Date.php';
  */
 $dates = array(
     '2006-04-02T02:00:00',  // begin of in daylight saving time.
-    '2006-10-29T01:59:00',  // end of in daylight saving time.
+    '2006-10-29T01:59:59',  // end of in daylight saving time.
     '2006-10-30T02:00:00',  // not in daylight saving time.
 );
 
@@ -40,7 +40,7 @@ foreach ($dates as $d) {
 ?>
 --EXPECT--
 2006-04-02 02:00:00 is in daylight saving time? true
-2006-10-29 01:59:00 is in daylight saving time? true
+2006-10-29 01:59:59 is in daylight saving time? true
 2006-10-30 02:00:00 is in daylight saving time? false
 <?php
 /*
