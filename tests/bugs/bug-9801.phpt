@@ -1,0 +1,39 @@
+<?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
+// CVS: $Id$
+?>
+--TEST--
+Bug #9801: Date::compare() modify params on PHP5
+--FILE--
+<?php
+/**
+ * Test for: Date class
+ * Parts tested: Date::compare()
+ */
+
+require_once 'Date.php';
+
+$GLOBALS['_DATE_TIMEZONE_DEFAULT'] = 'Canada/Eastern';
+
+$d1 = new Date();
+$d2 = new Date();
+
+echo 'Timezone (before): ' . $d1->tz->getId() . "\n";
+
+Date::compare($d1, $d2);
+
+echo 'Timezone (after): ' . $d1->tz->getId() . "\n";
+?>
+--EXPECT--
+Timezone (before): Canada/Eastern
+Timezone (after): Canada/Eastern
+<?php
+/*
+ * Local variables:
+ * mode: php
+ * tab-width: 4
+ * c-basic-offset: 4
+ * c-hanging-comment-ender-p: nil
+ * End:
+ */
+?>
