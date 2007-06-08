@@ -874,8 +874,11 @@ class Date
      * @param object Date $d2 the second date
      * @return int 0 if the dates are equal, -1 if d1 is before d2, 1 if d1 is after d2
      */
-    function compare($d1, $d2)
+    function compare($od1, $od2)
     {
+        $d1 = new Date($od1);
+        $d2 = new Date($od2);
+
         $d1->convertTZ(new Date_TimeZone('UTC'));
         $d2->convertTZ(new Date_TimeZone('UTC'));
         $days1 = Date_Calc::dateToDays($d1->day, $d1->month, $d1->year);
