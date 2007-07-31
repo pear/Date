@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #674: strange (wrong?) result of Date_Calc::endOfWeek
 --FILE--
@@ -36,13 +32,3 @@ Begin of week = 20030323, End of week = 20030317, Begin of next week = 20030324,
 Parameters: 23-3-2003
 Begin of week = 20030323, End of week = 20030317, Begin of next week = 20030324, Begin of previous week = 20030310
 
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

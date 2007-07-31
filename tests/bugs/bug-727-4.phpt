@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #727: Date_Calc::weeksInMonth() wrong result
 Tests for weeksInMonth "random"
@@ -502,13 +498,3 @@ foreach ($tests as $date) {
 1927/12 = 5 weeks
 1928/11 = 5 weeks
 1929/11 = 5 weeks
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

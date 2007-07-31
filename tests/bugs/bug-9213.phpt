@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #9213: Date_Calc doesn't like including Date.php
 --FILE--
@@ -26,13 +22,3 @@ print $calc->beginOfWeek() . "\n";
 20060529
 20060605
 (timestamp)
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

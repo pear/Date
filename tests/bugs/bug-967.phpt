@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #967: Date_TimeZone uses a bad global variable
 --FILE--
@@ -29,13 +25,3 @@ echo '$GLOBALS[\'_DATE_TIMEZONE_DEFAULT\'] = ' . $_DATE_TIMEZONE_DEFAULT . "\n";
 Date_TimeZone::$id = Pacific/Chatham
 Date_TimeZone::$id = CST
 $GLOBALS['_DATE_TIMEZONE_DEFAULT'] = CST
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

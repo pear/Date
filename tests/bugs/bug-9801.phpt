@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #9801: Date::compare() modify params on PHP5
 --FILE--
@@ -27,13 +23,3 @@ echo 'Timezone (after): ' . $d1->tz->getId() . "\n";
 --EXPECT--
 Timezone (before): Canada/Eastern
 Timezone (after): Canada/Eastern
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #9568:
 Date_Calc::beginOfMonthBySpan() and Date_Calc::endOfMonthBySpan() -
@@ -101,13 +97,3 @@ for ($months = 1; $months <= $sequence; $months++) {
 23 - 29.02.2004
 24 - 31.01.2004
 25 - 31.12.2003 **
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

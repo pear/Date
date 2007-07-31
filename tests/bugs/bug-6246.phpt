@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #6246: Date::inDaylightTime() crashes Apache 2.0.55 with status 3221225477
 --FILE--
@@ -42,13 +38,3 @@ foreach ($dates as $d) {
 2006-04-02 02:00:00 is in daylight saving time? true
 2006-10-29 01:59:59 is in daylight saving time? true
 2006-10-30 02:00:00 is in daylight saving time? false
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

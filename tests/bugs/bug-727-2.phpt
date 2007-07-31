@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #727: Date_Calc::weeksInMonth() wrong result
 Tests for weeksInMonth, february with 4 weeks
@@ -54,13 +50,3 @@ foreach ($tests as $date) {
 1903/2 = 4 weeks
 1914/2 = 4 weeks
 1925/2 = 4 weeks
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

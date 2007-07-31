@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #8518: Date::copy() doest not copy the parts of a second.
 --FILE--
@@ -34,22 +30,12 @@ Date Object
             [id] => UTC
             [longname] => Coordinated Universal Time
             [shortname] => UTC
-            [hasdst] => 
+            [hasdst] =>
             [dstlongname] => Coordinated Universal Time
             [dstshortname] => UTC
             [offset] => 0
-            [default] => 
+            [default] =>
         )
 
     [getWeekdayAbbrnameLength] => 3
 )
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>

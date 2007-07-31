@@ -1,7 +1,3 @@
-<?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
-// CVS: $Id$
-?>
 --TEST--
 Bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
 --FILE--
@@ -24,12 +20,12 @@ $states = array(
     'Australia/Sydney'
 );
 
-$originalTimezone = new Date_TimeZone('Australia/Adelaide'); 
+$originalTimezone = new Date_TimeZone('Australia/Adelaide');
 
 foreach ($states as $state) {
     $new_date = new Date(time());
     print 'Original Time (Australia/Adelaide): ' . $new_date->getTime() . "\n";
-    $timezone = new Date_TimeZone($state); 
+    $timezone = new Date_TimeZone($state);
     $new_date->setTZ($originalTimezone);
     $new_date->convertTZ($timezone);
     print $state . ': ' . $new_date->getTime() . "\n";
@@ -60,13 +56,3 @@ Australia/Perth: (timestamp)
 
 Original Time (Australia/Adelaide): (timestamp)
 Australia/Sydney: (timestamp)
-<?php
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * c-hanging-comment-ender-p: nil
- * End:
- */
-?>
