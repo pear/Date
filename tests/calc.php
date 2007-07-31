@@ -1,19 +1,6 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-//
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2005 Daniel Convissor <danielc@php.net>           |
-// +----------------------------------------------------------------------+
-// | This source file is subject to the New BSD license, That is bundled  |
-// | with this package in the file LICENSE, and is available through      |
-// | the world-wide-web at                                                |
-// | http://www.opensource.org/licenses/bsd-license.php                   |
-// | If you did not receive a copy of the new BSDlicense and are unable   |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | pear-dev@lists.php.net so we can mail you a copy immediately.        |
-// +----------------------------------------------------------------------+
-// | Author: Daniel Convissor <danielc@php.net>                           |
-// +----------------------------------------------------------------------+
+
 /**
  * Tests for the Date_Calc class
  *
@@ -28,11 +15,27 @@
  * installed version of Date_Calc.  Otherwise, use the local development
  * copy of Date_Calc.
  *
+ * PHP versions 4 and 5
+ *
+ * LICENSE:
+ *
+ * Copyright (c) 1997-2005 Daniel Convissor <danielc@php.net>
+ * All rights reserved.
+ *
+ * This source file is subject to the New BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.opensource.org/licenses/bsd-license.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to pear-dev@lists.php.net so we can send you a copy immediately.
+ *
  * @category   Date and Time
  * @package    Date
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License
+ * @copyright  Copyright (c) 1997-2005 Daniel Convissor <danielc@php.net>
+ * @license    http://www.opensource.org/licenses/bsd-license.php
+ *             BSD License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  * @since      File available since Release 1.5
