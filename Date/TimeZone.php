@@ -376,7 +376,7 @@ class Date_TimeZone
     /**
      * Returns the id for this time zone
      *
-     * Returns the time zone id  for this time zone, i.e. "America/Chicago"
+     * Returns the time zone id for this time zone, i.e. "America/Chicago"
      *
      * @access public
      * @return string the id

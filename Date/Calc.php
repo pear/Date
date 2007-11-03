@@ -80,6 +80,7 @@ if (!defined('DATE_CALC_FORMAT')) {
  *
  * @author     Monte Ohrt <monte@ispi.net>
  * @author     Daniel Convissor <danielc@php.net>
+ * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
  * @copyright  1999-2006 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
@@ -171,7 +172,7 @@ class Date_Calc
                         $output .= Date_Calc::dateToDays($day, $month, $year);
                         break;
                     case 'j':
-                        $output .= Date_Calc::julianDate($day, $month, $year);
+                        $output .= Date_Calc::dayOfYear($day, $month, $year);
                         break;
                     case 'm':
                         $output .= sprintf('%02d', $month);
@@ -374,6 +375,73 @@ class Date_Calc
 
 
     // }}}
+    // {{{ daysToDayOfWeek()
+
+    /**
+     * Returns day of week for specified 'Julian Day'
+     * 
+     * The algorithm is valid for all years (positive and negative), and
+     * also for years preceding 4714 B.C. (i.e. for negative 'Julian Days'),
+     * and so the only limitation is platform-dependent (for 32-bit systems
+     * the maximum year would be something like about 1,465,190 A.D.).
+     *
+     * N.B. Monday, 24th November, 4714 B.C. is Julian Day '0'.
+     *
+     * @param    int        $pn_days                      the number of days since 24th November, 4714 B.C.
+     *
+     * @return   int        integer from 0 to 7 where 0 represents Sunday
+     *
+     * @access   public
+     * @static
+     */
+    function daysToDayOfWeek($pn_days)
+    {
+        $ret = ($pn_days + 1) % 7;
+        return $ret < 0 ? $ret + 7 : $ret;
+    }
+
+
+    // }}}
+    // {{{ firstDayOfYear()
+
+    /**
+     * Returns the Julian Day of the first day of the year (i.e. the no of
+     * days since 24th November, 4714 B.C.)
+     *
+     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     *
+     * @return   integer    the number of days since 24th November, 4714 B.C.
+     *
+     * @access public
+     * @static
+     */
+    function firstDayOfYear($pn_year)
+    {
+        return Date_Calc::dateToDays(1, 1, $pn_year);
+    }
+
+
+    // }}}
+    // {{{ lastDayOfYear()
+
+    /**
+     * Returns the Julian Day of the last day of the year (i.e. the no of
+     * days since 24th November, 4714 B.C.)
+     *
+     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     *
+     * @return   integer    the number of days since 24th November, 4714 B.C.
+     *
+     * @access public
+     * @static
+     */
+    function lastDayOfYear($pn_year)
+    {
+        return Date_Calc::firstDayOfYear($pn_year + 1) - 1;
+    }
+
+
+    // }}}
     // {{{ dateToDaysJulian()
 
     /**
@@ -487,31 +555,42 @@ class Date_Calc
      * N.B. the ISO week day no for Sunday is defined as 7, whereas this
      * class and its related functions defines Sunday as 0.
      *
-     * @param int    $pn_day     the day of the month
-     * @param int    $pn_month   the month
-     * @param int    $pn_year    the year
+     * @param    int        $pn_day                       the day of the month
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
      *
-     * @return array  array of ISO Year, ISO Week No, ISO Day No
+     * @return   array      array of ISO Year, ISO Week No, ISO Day No
      *
-     * @access public
+     * @access   public
      * @static
      */
-    function isoWeekDate($pn_day, $pn_month, $pn_year)
+    function isoWeekDate($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
-        $hn_wd = Date_Calc::dayOfWeek($pn_day, $pn_month, $pn_year);
+        if (is_null($pn_year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($pn_month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if (empty($pn_day)) {
+            $day = Date_Calc::dateNow('%d');
+        }
+
+        $hn_jd = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
+        $hn_wd = Date_Calc::daysToDayOfWeek($hn_jd);
         if ($hn_wd == 0)
             $hn_wd = 7;
 
-        $hn_jd = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
-        $hn_jd1 = Date_Calc::dateToDays(1, 1, $pn_year);
+        $hn_jd1 = Date_Calc::firstDayOfYear($pn_year);
+        $hn_day = $hn_jd - $hn_jd1 + 1;
 
-        if ($pn_month == 12 && $hn_wd <= $pn_day - 28) {
+        if ($hn_wd <= $hn_jd - Date_Calc::lastDayOfYear($pn_year) + 3) {
             // ISO week is the first week of the next ISO year:
             //
             $hn_year = $pn_year + 1;
             $hn_isoweek = 1;
         } else {
-            switch ($hn_wd1 = Date_Calc::dayOfWeek(1, 1, $pn_year)) {
+            switch ($hn_wd1 = Date_Calc::daysToDayOfWeek($hn_jd1)) {
             case 1:
             case 2:
             case 3:
@@ -519,7 +598,7 @@ class Date_Calc
                 // Monday - Thursday:
                 //
                 $hn_year = $pn_year;
-                $hn_isoweek = floor(($hn_jd - $hn_jd1 + $hn_wd1 - 1) / 7) + 1;
+                $hn_isoweek = floor(($hn_day + $hn_wd1 - 2) / 7) + 1;
                 break;
             case 0:
                 $hn_wd1 = 7;
@@ -527,17 +606,14 @@ class Date_Calc
             case 6:
                 // Friday - Sunday:
                 //
-                if ($pn_month == 1 && $pn_day <= 8 - $hn_wd1) {
+                if ($hn_day <= 8 - $hn_wd1) {
                     // ISO week is the last week of the previous ISO year:
                     //
-                    list($hn_pisoyear, $hn_isoweek, $hn_pisoday) = Date_Calc::isoWeekDate(31, 12, $hn_year = $pn_year - 1);
-
-                    if ($hn_pisoday + $pn_day > 7) {
-                        ++$hn_isoweek;
-                    }
+                    list($hn_year, $hn_lastmonth, $hn_lastday) = explode(" ", Date_Calc::daysToDate($hn_jd1 - 1, "%Y %m %d"));
+                    list($hn_year, $hn_isoweek, $hn_pisoday) = Date_Calc::isoWeekDate($hn_lastday, $hn_lastmonth, $hn_year);
                 } else {
                     $hn_year = $pn_year;
-                    $hn_isoweek = floor(($hn_jd - $hn_jd1 + $hn_wd1 - 8) / 7) + 1;
+                    $hn_isoweek = floor(($hn_day + $hn_wd1 - 9) / 7) + 1;
                 }
 
                 break;
@@ -569,7 +645,128 @@ class Date_Calc
     function gregorianToISO($day, $month, $year)
     {
         list($yearnumber, $weeknumber, $weekday) = Date_Calc::isoWeekDate($day, $month, $year);
-        return $yearnumber . '-' . $weeknumber . '-' . $weekday;
+        return sprintf("%04d", $yearnumber) . '-' . sprintf("%02d", $weeknumber) . '-' . $weekday;
+    }
+
+
+    // }}}
+    // {{{ weekOfYear4th()
+
+    /**
+     * Returns week of the year counting week 1 as the week that contains 4th January
+     *
+     * Week 1 is determined to be the week that includes the 4th January, and
+     * therefore can be defined as the first week of the year that has at least 4
+     * days.  The previous week is counted as week 52 or 53 of the previous year.
+     * Note that this definition depends on which day is the first day of the
+     * week, and that if this is not passed as the '$pn_firstdayofweek'
+     * parameter, the default is assumed.
+     *
+     * Note also that the last day week of the year is likely to extend into
+     * the following year, except in the case that the last day of the week
+     * falls on 31st December.
+     *
+     * Also note that this is very similar to the ISO week returned by
+     * 'isoWeekDate()', the difference being that the ISO week always has
+     * 7 days, and if the 4th of January is a Friday, for example,
+     * ISO week 1 would start on Monday, 31st December in the previous year,
+     * whereas the week defined by this function would start on 1st January,
+     * but would be only 6 days long.
+     *
+     * Returned week is an integer from 1 to 53.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
+     *
+     * @return   array      array of year, week no
+     *
+     * @access   public
+     * @static
+     */
+    function weekOfYear4th($pn_day = 0, $pn_month = 0, $pn_year = null, $pn_firstdayofweek = DATE_CALC_BEGIN_WEEKDAY)
+    {
+        if (is_null($pn_year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($pn_month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if (empty($pn_day)) {
+            $day = Date_Calc::dateNow('%d');
+        }
+        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
+        $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
+        $hn_week = floor(($hn_day + (-3 + $hn_wd1 - $pn_firstdayofweek) % 7 + 9) / 7);
+
+        if ($hn_week > 0) {
+            $hn_year = $pn_year;
+        } else {
+            // Week number is the last week of the previous ISO year:
+            //
+            list($hn_year, $hn_lastmonth, $hn_lastday) = explode(" ", Date_Calc::daysToDate(Date_Calc::lastDayOfYear($pn_year - 1), "%Y %m %d"));
+            list($hn_year, $hn_week) = Date_Calc::weekOfYear4th($hn_lastday, $hn_lastmonth, $hn_year, $pn_firstdayofweek);
+        }
+
+        return array($hn_year, $hn_week);
+    }
+
+
+    // }}}
+    // {{{ weekOfYear7th()
+
+    /**
+     * Returns week of the year counting week 1 as the week that contains 7th January
+     *
+     * Week 1 is determined to be the week that includes the 7th January, and
+     * therefore can be defined as the first full week of the year.  The previous
+     * week is counted as week 52 or 53 of the previous year.  Note that this
+     * definition depends on which day is the first day of the week, and that if
+     * this is not passed as the '$pn_firstdayofweek' parameter, the default is
+     * assumed.
+     *
+     * Note also that the last day week of the year is likely to extend into
+     * the following year, except in the case that the last day of the week
+     * falls on 31st December.
+     *
+     * Returned week is an integer from 1 to 53.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
+     *
+     * @return   array      array of year, week no
+     *
+     * @access   public
+     * @static
+     */
+    function weekOfYear7th($pn_day = 0, $pn_month = 0, $pn_year = null, $pn_firstdayofweek = DATE_CALC_BEGIN_WEEKDAY)
+    {
+        if (is_null($pn_year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($pn_month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if (empty($pn_day)) {
+            $day = Date_Calc::dateNow('%d');
+        }
+        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
+        $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
+        $hn_week = floor(($hn_day + (6 + $hn_wd1 - $pn_firstdayofweek) % 7) / 7);
+
+        if ($hn_week > 0) {
+            $hn_year = $pn_year;
+        } else {
+            // Week number is the last week of the previous ISO year:
+            //
+            list($hn_year, $hn_lastmonth, $hn_lastday) = explode(" ", Date_Calc::daysToDate(Date_Calc::lastDayOfYear($pn_year - 1), "%Y %m %d"));
+            list($hn_year, $hn_week) = Date_Calc::weekOfYear7th($hn_lastday, $hn_lastmonth, $hn_year, $pn_firstdayofweek);
+        }
+
+        return array($hn_year, $hn_week);
     }
 
 
@@ -710,37 +907,55 @@ class Date_Calc
 
 
     // }}}
+    // {{{ dayOfYear()
+
+    /**
+     * Returns number of days since 31 December of year before given date
+     *
+     * @param   int         $pn_day                       the day of the month, default is current local day
+     * @param   int         $pn_month                     the month, default is current local month
+     * @param   int         $pn_year                      the year in four digit format, default is current local year
+     *
+     * @return  int
+     *
+     * @access  public
+     * @static
+     */
+    function dayOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
+    {
+        if (is_null($pn_year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($pn_month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if (empty($pn_day)) {
+            $day = Date_Calc::dateNow('%d');
+        }
+        $hn_jd = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
+        $hn_jd1 = Date_Calc::firstDayOfYear($pn_year);
+        return $hn_jd - $hn_jd1 + 1;
+    }
+
+
+    // }}}
     // {{{ julianDate()
 
     /**
      * Returns number of days since 31 December of year before given date
      *
-     * @param int    $day     the day of the month, default is current local day
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param   int         $day                          the day of the month, default is current local day
+     * @param   int         $month                        the month, default is current local month
+     * @param   int         $year                         the year in four digit format, default is current local year
      *
-     * @return int  the julian date for the date
+     * @return  int
      *
-     * @access public
+     * @access  public
      * @static
      */
     function julianDate($day = 0, $month = 0, $year = null)
     {
-        if (is_null($year)) {
-            $year = Date_Calc::dateNow('%Y');
-        }
-        if (empty($month)) {
-            $month = Date_Calc::dateNow('%m');
-        }
-        if (empty($day)) {
-            $day = Date_Calc::dateNow('%d');
-        }
-        $days = array(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334);
-        $julian = ($days[$month - 1] + $day);
-        if ($month > 2 && Date_Calc::isLeapYear($year)) {
-            $julian++;
-        }
-        return $julian;
+        return Date_Calc::dayOfYear($day, $month, $year);
     }
 
 
@@ -960,7 +1175,6 @@ class Date_Calc
      */
     function dayOfWeek($day = null, $month = null, $year = null)
     {
-
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
         }
@@ -988,35 +1202,139 @@ class Date_Calc
 
 
     // }}}
+    // {{{ weekOfYearAbsolute()
+
+    /**
+     * Returns week of the year counting week 1 as 1st-7th January,
+     * regardless of what day 1st January falls on
+     *
+     * Returned value is an integer from 1 to 53.  Week 53 will start on
+     * 31st December and have only one day, except in a leap year, in
+     * which it will start a day earlier and contain two days.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     *
+     * @return   int        integer from 1 to 53
+     *
+     * @access   public
+     * @static
+     */
+    function weekOfYearAbsolute($pn_day = 0, $pn_month = 0, $pn_year = null)
+    {
+        if (is_null($pn_year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($pn_month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if (empty($pn_day)) {
+            $day = Date_Calc::dateNow('%d');
+        }
+        $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
+        return floor(($hn_day + 6) / 7);
+    }
+
+
+    // }}}
+    // {{{ weekOfYear1st()
+
+    /**
+     * Returns week of the year counting week 1 as the week that contains 1st January
+     *
+     * Week 1 is determined to be the week that includes the 1st January, even if
+     * this week extends into the previous year, in which case the week will only
+     * contain between 1 and 6 days of the current year.  Note that this definition
+     * depends on which day is the first day of the week, and that if this
+     * is not passed as the '$pn_firstdayofweek' parameter, the default is assumed.
+     *
+     * Note also that the last day week of the year is also likely to contain
+     * less than seven days, except in the case that the last day of the week
+     * falls on 31st December.
+     *
+     * Returned value is an integer from 1 to 54.  The year will only contain
+     * 54 weeks in the case of a leap year in which 1st January is the last day
+     * of the week, and 31st December is the first day of the week.  In this case,
+     * both weeks 1 and 54 will contain one day only.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
+     *
+     * @return   int        integer from 1 to 54
+     *
+     * @access   public
+     * @static
+     */
+    function weekOfYear1st($pn_day = 0, $pn_month = 0, $pn_year = null, $pn_firstdayofweek = DATE_CALC_BEGIN_WEEKDAY)
+    {
+        if (is_null($pn_year)) {
+            $year = Date_Calc::dateNow('%Y');
+        }
+        if (empty($pn_month)) {
+            $month = Date_Calc::dateNow('%m');
+        }
+        if (empty($pn_day)) {
+            $day = Date_Calc::dateNow('%d');
+        }
+        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
+        $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
+        return floor(($hn_day + (7 + $hn_wd1 - $pn_firstdayofweek) % 7 + 6) / 7);
+    }
+
+
+    // }}}
     // {{{ weekOfYear()
 
     /**
-     * Returns week of the year, first Sunday is first day of first week
+     * Returns week of the year counting week 1 as 1st-7th January,
+     * regardless of what day 1st January falls on
      *
-     * @param int    $day     the day of the month, default is current local day
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * Returned value is an integer from 1 to 53.  Week 53 will start on
+     * 31st December and have only one day, except in a leap year, in
+     * which it will start a day earlier and contain two days.
      *
-     * @return int  the number of the week in the year
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
      *
-     * @access public
+     * @return   int        integer from 1 to 53
+     *
+     * @access   public
      * @static
      */
     function weekOfYear($day = 0, $month = 0, $year = null)
     {
-        if (is_null($year)) {
-            $year = Date_Calc::dateNow('%Y');
+        return Date_Calc::weekOfYearAbsolute($day, $month, $year);
+    }
+
+
+    // }}}
+    // {{{ weekOfMonthAbsolute()
+
+    /**
+     * Returns week of the month counting week 1 as 1st-7th of the month,
+     * regardless of what day the 1st falls on
+     *
+     * Returned value is an integer from 1 to 5.  Week 5 will start on
+     * the 29th of the month and have between 1 and 3 days, except
+     * in February in a non-leap year, when there will be 4 weeks only.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     *
+     * @return   int        integer from 1 to 5
+     *
+     * @access   public
+     * @static
+     */
+    function weekOfMonthAbsolute($pn_day = 0)
+    {
+        if (empty($pn_day)) {
+            $pn_day = Date_Calc::dateNow('%d');
         }
-        if (empty($month)) {
-            $month = Date_Calc::dateNow('%m');
-        }
-        if (empty($day)) {
-            $day = Date_Calc::dateNow('%d');
-        }
-        $iso    = Date_Calc::gregorianToISO($day, $month, $year);
-        $parts  = explode('-', $iso);
-        $week_number = intval($parts[1]);
-        return $week_number;
+        return floor(($pn_day + 6) / 7);
     }
 
 
