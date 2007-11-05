@@ -1,6 +1,13 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
+
+/**#@+
+ * PEAR Error Codes
+ */
+define('DATE_TIMEZONE_ERROR_CODE_INVALIDDATE', 1);
+
+
 // {{{ Header
 
 /**
@@ -73,51 +80,143 @@ class Date_TimeZone
 
     /**
      * Time Zone ID of this time zone
-     * @var string
+     *
+     * @var      string
+     * @since    1.0
+     * @access   private
      */
     var $id;
 
     /**
-     * Long Name of this time zone (ie Central Standard Time)
-     * @var string
-     */
-    var $longname;
-
-    /**
-     * Short Name of this time zone (ie CST)
-     * @var string
-     */
-    var $shortname;
-
-    /**
-     * true if this time zone observes daylight savings time
-     * @var boolean
-     */
-    var $hasdst;
-
-    /**
-     * DST Long Name of this time zone
-     * @var string
-     */
-    var $dstlongname;
-
-    /**
-     * DST Short Name of this timezone
-     * @var string
-     */
-    var $dstshortname;
-
-    /**
      * offset, in milliseconds, of this timezone
-     * @var int
+     *
+     * @var      int
+     * @since    1.0
+     * @access   private
      */
     var $offset;
 
     /**
-     * System Default Time Zone
-     * @var object Date_TimeZone
+     * Short Name of this time zone (e.g. "CST")
+     *
+     * @var      string
+     * @since    1.0
+     * @access   private
      */
-    var $default;
+    var $shortname;
+
+    /**
+     * DST Short Name of this timezone
+     *
+     * @var      string
+     * @since    1.0
+     * @access   private
+     */
+    var $dstshortname;
+
+    /**
+     * Long Name of this time zone (e.g. "Central Standard Time")
+     *
+     * N.B. this is not necessarily unique
+     *
+     * @since    1.0
+     * @access   private
+     * @var      string
+     */
+    var $longname;
+
+    /**
+     * DST Long Name of this time zone
+     *
+     * @var      string
+     * @since    1.0
+     * @access   private
+     */
+    var $dstlongname;
+
+    /**
+     * true if this time zone observes daylight savings time
+     *
+     * @var      boolean
+     * @since    1.0
+     * @access   private
+     */
+    var $hasdst;
+
+    /**
+     * Additional offset of Summer time from the standard time of the
+     * time zone in milli-seconds (usually 3600000, i.e. one hour)
+     * and always positive
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_summertimeoffset;
+
+    /**
+     * Month no (1-12) in which Summer time starts (the clocks go forward)
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_summertimestartmonth;
+
+    /**
+     * Definition of when Summer time starts in the specified month; can
+     * take the following forms:
+     *  5        the fifth of the month
+     *  lastSun  the last Sunday in the month
+     *  lastMon  the last Monday in the month
+     *  Sun>=8   first Sunday on or after the 8th
+     *  Sun<=25  last Sunday on or before the 25th
+     *
+     * @var      string
+     * @since    [next version]
+     * @access   private
+     */
+    var $os_summertimestartday;
+
+    /**
+     * Time in milli-seconds relative to midnight Universal time when
+     * Summer time starts (the clocks go forward)
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_summertimestarttime;
+
+    /**
+     * Month no (1-12) in which Summer time ends (the clocks go back)
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_summertimeendmonth;
+
+    /**
+     * Definition of when Summer time ends in the specified month; can
+     * take the same forms as the start time (see above)
+     *
+     * @var      string
+     * @since    [next version]
+     * @access   private
+     */
+    var $os_summertimeendday;
+
+    /**
+     * Time in milli-seconds relative to midnight Universal time when
+     * Summer time ends (the clocks go back)
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_summertimeendtime;
+
 
     // }}}
     // {{{ Constructor
@@ -127,32 +226,41 @@ class Date_TimeZone
      *
      * Creates a new Date::TimeZone object, representing the time zone
      * specified in $id.  If the supplied ID is invalid, the created
-     * time zone is UTC.
+     * time zone is "UTC".
      *
-     * @access public
-     * @param string $id the time zone id
-     * @return object Date_TimeZone the new Date_TimeZone object
+     * @param    string     $ps_id                        the time zone ID
+     *
+     * @return   void
+     * @access   public
      */
-    function Date_TimeZone($id)
+    function Date_TimeZone($ps_id)
     {
         $_DATE_TIMEZONE_DATA =& $GLOBALS['_DATE_TIMEZONE_DATA'];
-        if(Date_TimeZone::isValidID($id)) {
-            $this->id = $id;
-            $this->longname = $_DATE_TIMEZONE_DATA[$id]['longname'];
-            $this->shortname = $_DATE_TIMEZONE_DATA[$id]['shortname'];
-            $this->offset = $_DATE_TIMEZONE_DATA[$id]['offset'];
-            $this->dstshortname = array_key_exists("dstshortname", $_DATE_TIMEZONE_DATA[$id]) ? $_DATE_TIMEZONE_DATA[$id]['dstshortname'] : null;
-            if ($this->hasdst = !is_null($this->dstshortname)) {
-                $this->dstlongname = array_key_exists("dstlongname", $_DATE_TIMEZONE_DATA[$id]) ? $_DATE_TIMEZONE_DATA[$id]['dstlongname'] : null;
+
+        $this->id = Date_TimeZone::isValidID($ps_id) ? $ps_id : "UTC";
+
+        $this->longname = $_DATE_TIMEZONE_DATA[$ps_id]['longname'];
+        $this->shortname = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
+        $this->offset = $_DATE_TIMEZONE_DATA[$ps_id]['offset'];
+        $this->dstshortname = array_key_exists("dstshortname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
+                              $_DATE_TIMEZONE_DATA[$ps_id]['dstshortname'] : null;
+        if ($this->hasdst = !is_null($this->dstshortname)) {
+            $this->dstlongname = array_key_exists("dstlongname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
+                                 $_DATE_TIMEZONE_DATA[$ps_id]['dstlongname'] : null;
+            if (isset($_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"])) {
+                $this->on_summertimeoffset = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"];
+                $this->on_summertimestartmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartmonth"];
+                $this->os_summertimestartday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartday"];
+                $this->on_summertimestarttime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestarttime"];
+                $this->on_summertimeendmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendmonth"];
+                $this->os_summertimeendday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendday"];
+                $this->on_summertimeendtime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendtime"];
+            } else {
+                $this->on_summertimeoffset = null;
             }
-        } else {
-            $this->id = 'UTC';
-            $this->longname = $_DATE_TIMEZONE_DATA[$this->id]['longname'];
-            $this->shortname = $_DATE_TIMEZONE_DATA[$this->id]['shortname'];
-            $this->hasdst = isset($_DATE_TIMEZONE_DATA[$this->id]['dstshortname']);
-            $this->offset = $_DATE_TIMEZONE_DATA[$this->id]['offset'];
         }
     }
+
 
     // }}}
     // {{{ getDefault()
@@ -247,17 +355,20 @@ class Date_TimeZone
      * know DST rules.
      *
      * @access public
-     * @param object Date_TimeZone $tz the timezone object to test
+     * @param    object     Date_TimeZone $tz the timezone object to test
      * @return boolean true if this time zone is equivalent to the supplied time zone
      */
     function isEquivalent($tz)
     {
-        if($this->offset == $tz->offset && $this->hasdst == $tz->hasdst) {
+        if ($this->offset == $tz->offset &&
+            $this->hasdst == $tz->hasdst
+            ) {
             return true;
         } else {
             return false;
         }
     }
+
 
     // }}}
     // {{{ hasDaylightTime()
@@ -275,38 +386,238 @@ class Date_TimeZone
         return $this->hasdst;
     }
 
+
+    // }}}
+    // }}}
+
+    /**
+     * Returns day on which Summer time starts for given year
+     *
+     * @param    int        $pn_year                      year for which to calculate Summer time start day
+     *
+     * @return   int
+     * @access   public
+     */
+    function getSummerTimeStartDate($pn_year)
+    {
+        if (is_int($this->os_summertimestartday)) {
+            $hn_day = $this->os_summertimestartday;
+        } else {
+            if (!isset($ha_daysofweek))
+                static $ha_daysofweek = array("Sun" => 0, "Mon" => 1, "Tue" => 2, "Wed" => 3, "Thu" => 4, "Fri" => 5, "Sat" => 6);
+
+            if (preg_match('/^last(Sun|Mon|Tue|Wed|Thu|Fri|Sat)$/', $this->os_summertimestartday, $ha_matches)) {
+                list($hn_nmyear, $hn_nextmonth, $hn_nmday) = explode(" ", Date_Calc::beginOfNextMonth($this->on_summertimestartmonth, $pn_year, "%Y %m %d"));
+                list($hn_year, $hn_month, $hn_day) =
+                    explode(" ",
+                            Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],
+                                                     $hn_nmday,
+                                                     $hn_nextmonth, 
+                                                     $hn_nmyear,
+                                                     "%Y %m %d",
+                                                     false       // not including this day
+                                                     )
+                            );
+
+                if ($hn_month != $this->on_summertimestartmonth) {
+                    $hn_day = Date_Calc::getFirstDayOfMonth($this->on_summertimestartmonth, $pn_year);
+                }
+            } else if (preg_match('/^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)([><]=)([0-9]{1,2})$/', $this->os_summertimestartday, $ha_matches)) {
+                if ($ha_matches[2] == "<=") {
+                    list($hn_year, $hn_month, $hn_day) =
+                        explode(" ",
+                                Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],
+                                                         $ha_matches[3],
+                                                         $this->on_summertimestartmonth,
+                                                         $pn_year,
+                                                         "%Y %m %d",
+                                                         true       // including this day
+                                                         )
+                                );
+
+                    if ($hn_month != $this->on_summertimestartmonth) {
+                        $hn_day = Date_Calc::getFirstDayOfMonth($this->on_summertimestartmonth, $pn_year);
+                    }
+                } else {
+                    list($hn_year, $hn_month, $hn_day) =
+                        explode(" ",
+                                Date_Calc::nextDayOfWeek($ha_daysofweek[$ha_matches[1]],
+                                                         $ha_matches[3],
+                                                         $this->on_summertimestartmonth,
+                                                         $pn_year,
+                                                         "%Y %m %d",
+                                                         true       // including this day
+                                                         )
+                                );
+
+                    if ($hn_month != $this->on_summertimestartmonth) {
+                        $hn_day = Date_Calc::daysInMonth($this->on_summertimestartmonth, $pn_year);
+                    }
+                }
+            }
+        }
+
+        return $hn_day;
+    }
+
+
+    // }}}
+    // }}}
+
+    /**
+     * Returns day on which Summer time starts or ends for given year
+     *
+     * The limit (start or end) code can take the following forms:
+     *  5                 the fifth of the month
+     *  lastSun           the last Sunday in the month
+     *  lastMon           the last Monday in the month
+     *  Sun>=8            first Sunday on or after the 8th
+     *  Sun<=25           last Sunday on or before the 25th
+     *
+     * @param    string     $ps_summertimelimitcode       code which specifies Summer time limit day
+     * @param    int        $pn_month                     start or end month
+     * @param    int        $pn_year                      year for which to calculate Summer time limit day
+     *
+     * @return   int
+     * @access   private
+     */
+    function getSummerTimeLimitDay($ps_summertimelimitcode, $pn_month, $pn_year)
+    {
+        if (preg_match('/^[0-9]+$/', $ps_summertimelimitcode)) {
+            $hn_day = $ps_summertimelimitcode;
+        } else {
+            if (!isset($ha_daysofweek))
+                static $ha_daysofweek = array("Sun" => 0, "Mon" => 1, "Tue" => 2, "Wed" => 3, "Thu" => 4, "Fri" => 5, "Sat" => 6);
+
+            if (preg_match('/^last(Sun|Mon|Tue|Wed|Thu|Fri|Sat)$/', $ps_summertimelimitcode, $ha_matches)) {
+                list($hn_nmyear, $hn_nextmonth, $hn_nmday) = explode(" ", Date_Calc::beginOfNextMonth($pn_month, $pn_year, "%Y %m %d"));
+                list($hn_year, $hn_month, $hn_day) =
+                    explode(" ",
+                            Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],
+                                                     $hn_nmday,
+                                                     $hn_nextmonth, 
+                                                     $hn_nmyear,
+                                                     "%Y %m %d",
+                                                     false       // not including this day
+                                                     )
+                            );
+
+                if ($hn_month != $pn_month) {
+                    // This code happen legitimately if the calendar jumped some days
+                    // e.g. in a calendar switch, or the limit day is badly defined:
+                    //
+                    $hn_day = Date_Calc::getFirstDayOfMonth($pn_month, $pn_year);
+                }
+            } else if (preg_match('/^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)([><]=)([0-9]+)$/', $ps_summertimelimitcode, $ha_matches)) {
+                if ($ha_matches[2] == "<=") {
+                    list($hn_year, $hn_month, $hn_day) =
+                        explode(" ",
+                                Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],
+                                                         $ha_matches[3],
+                                                         $pn_month,
+                                                         $pn_year,
+                                                         "%Y %m %d",
+                                                         true       // including this day
+                                                         )
+                                );
+
+                    if ($hn_month != $pn_month) {
+                        $hn_day = Date_Calc::getFirstDayOfMonth($pn_month, $pn_year);
+                    }
+                } else {
+                    list($hn_year, $hn_month, $hn_day) =
+                        explode(" ",
+                                Date_Calc::nextDayOfWeek($ha_daysofweek[$ha_matches[1]],
+                                                         $ha_matches[3],
+                                                         $pn_month,
+                                                         $pn_year,
+                                                         "%Y %m %d",
+                                                         true       // including this day
+                                                         )
+                                );
+
+                    if ($hn_month != $pn_month) {
+                        $hn_day = Date_Calc::daysInMonth($pn_month, $pn_year);
+                    }
+                }
+            }
+        }
+
+        return $hn_day;
+    }
+
+
     // }}}
     // {{{ inDaylightTime()
 
     /**
      * Is the given date/time in DST for this time zone
      *
-     * Attempts to determine if a given Date object represents a date/time
-     * that is in DST for this time zone.  WARNINGS: this basically attempts to
-     * "trick" the system into telling us if we're in DST for a given time zone.
-     * This uses putenv() which may not work in safe mode, and relies on unix time
-     * which is only valid for dates from 1970 to ~2038.  This relies on the
-     * underlying OS calls, so it may not work on Windows or on a system where
-     * zoneinfo is not installed or configured properly.
+     * Works for all years, positive and negative.  Possible problems
+     * are that when the clocks go forward, there is an invalid hour
+     * which is skipped.  If a time in this hour is specified, this
+     * function returns false.  When the clocks go back, there is an
+     * hour which is repeated, that is, the hour is gone through twice -
+     * once in Summer time and once in standard time.  If this time
+     * is specified, then this function returns false, arbitrarily,
+     * because there is no way of knowing which is correct, and
+     * both possibilities are equally likely.
      *
-     * @access public
-     * @param object Date $date the date/time to test
-     * @return boolean true if this date is in DST for this time zone
+     * Also bear in mind that the clocks go forward at the instant of
+     * the hour specified in the time-zone array below, and if this
+     * exact hour is specified then the clocks have actually changed,
+     * and this function reflects this.
+     *
+     * @param    object     $po_date                      Date object to test
+     *
+     * @return   boolean    true if this date is in DST for this time zone
+     * @access   public
      */
-    function inDaylightTime($date)
+    function inDaylightTime($po_date)
     {
-        $env_tz = '';
-        if(isset($_ENV['TZ']) && getenv('TZ')) {
-            $env_tz = getenv('TZ');
-        }
+        $hn_month = $po_date->getMonth();
+        if (($this->on_summertimestartmonth < $this->on_summertimeendmonth &&
+             $hn_month >= $this->on_summertimestartmonth &&
+             $hn_month <= $this->on_summertimeendmonth) ||
+            ($this->on_summertimestartmonth > $this->on_summertimeendmonth &&
+             $hn_month >= $this->on_summertimestartmonth ||
+             $hn_month <= $this->on_summertimeendmonth)
+            ) {
 
-        putenv('TZ=' . $this->id);
-        $ltime = localtime($date->getTime(), true);
-        if ($env_tz != '') {
-            putenv('TZ=' . $env_tz);
+            $hn_day = $po_date->getDay();
+            if ($hn_month == $this->on_summertimestartmonth) {
+                $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $po_date->getYear());
+
+                if ($hn_day < $hn_startday) {
+                    return false;
+                } else if ($hn_day > $hn_startday) {
+                    return true;
+                } else if ($po_date->getSecondsPastMidnight() * 1000 - $this->offset - $this->on_summertimeoffset >= $this->on_summertimestarttime) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if ($hn_month == $this->on_summertimeendmonth) {
+                $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $po_date->getYear());
+
+                if ($hn_day < $hn_endday) {
+                    return true;
+                } else if ($hn_day > $hn_endday) {
+                    return false;
+                } else if (($hn_gmt = $po_date->getSecondsPastMidnight() * 1000 - $this->offset) - $this->on_summertimeoffset >= $this->on_summertimeendtime) {
+                    return false;
+                } else if ($hn_gmt >= $this->on_summertimeendtime) {
+                    // There is a 50:50 chance that it's Summer time, but there is
+                    // no way of knowing (the hour is repeated), so just return false:
+                    //
+                    return false;
+                } else {
+                    return true;
+                }
+            }
         }
-        return $ltime['tm_isdst'];
     }
+
 
     // }}}
     // {{{ getDSTSavings()
@@ -318,17 +629,29 @@ class Date_TimeZone
      * if the zone observes DST, zero otherwise.  Currently the
      * DST offset is hard-coded to one hour.
      *
-     * @access public
-     * @return int the DST offset, in milliseconds or zero if the zone does not observe DST
+     * @return   int        the DST offset, in milliseconds or nought if the zone does not observe DST
+     * @access   public
      */
     function getDSTSavings()
     {
-        if($this->hasdst) {
-            return 3600000;
+        if ($this->hasdst) {
+            // If offset is not specified, guess one hour.  (This is almost
+            // always correct anyway).  This cannot be improved upon, because
+            // where it is unset, the offset is either unknowable because the
+            // time-zone covers more than one political area (which may have
+            // different Summer time policies), or they might all have the
+            // same policy, but there is no way to automatically maintain
+            // this data at the moment, and manually it is simply not worth
+            // the bother.  If a user wants this functionality and refuses
+            // to use the standard time-zone IDs, then he can always update
+            // the array himself.
+            //
+            return isset($this->on_summertimeoffset) ? $this->on_summertimeoffset : 3600000;
         } else {
             return 0;
         }
     }
+
 
     // }}}
     // {{{ getOffset()
@@ -340,19 +663,20 @@ class Date_TimeZone
      * account daylight savings time, if the time zone observes it and if
      * it is in effect.  Please see the WARNINGS on Date::TimeZone::inDaylightTime().
      *
+     * @param    object     $po_date                      Date object to test
      *
-     * @access public
-     * @param object Date $date the Date to test
-     * @return int the corrected offset to UTC in milliseconds
+     * @return   int        the corrected offset to UTC in milliseconds
+     * @access   public
      */
-    function getOffset($date)
+    function getOffset($po_date)
     {
-        if($this->inDaylightTime($date)) {
+        if ($this->inDaylightTime($po_date)) {
             return $this->offset + $this->getDSTSavings();
         } else {
             return $this->offset;
         }
     }
+
 
     // }}}
     // {{{ getAvailableIDs()
@@ -360,15 +684,14 @@ class Date_TimeZone
     /**
      * Returns the list of valid time zone id strings
      *
-     * Returns the list of valid time zone id strings
-     *
-     * @access public
-     * @return mixed an array of strings with the valid time zone IDs
+     * @return   array      an array of strings with the valid time zone IDs
+     * @access   public
      */
     function getAvailableIDs()
     {
         return array_keys($GLOBALS['_DATE_TIMEZONE_DATA']);
     }
+
 
     // }}}
     // {{{ getID()
