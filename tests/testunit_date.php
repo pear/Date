@@ -46,7 +46,7 @@ class Date_Test extends PHPUnit_TestCase {
 
     function setUp()
     {
-        $this->time = new Date("2003-10-04 14:03:24");
+        $this->time = new Date("2003-10-04 14:03:24Z");
     }
 
     function tearDown()

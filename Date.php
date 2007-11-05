@@ -231,16 +231,16 @@ class Date
         if (is_a($date, 'Date')) {
             $this->copy($date);
         } else {
+            // Attempt to get time zone from local machine, or
+            // failing that, set to default time zone:
+            //
+            $this->setTZbyID();
+
             if (is_null($date)) {
                 $this->setDate(date("Y-m-d H:i:s"));
             } else {
                 $this->setDate($date);
             }
-
-            // Attempt to get time zone from local machine, or
-            // failing that, set to default time zone:
-            //
-            $this->setTZbyID();
         }
     }
 
@@ -262,7 +262,7 @@ class Date
     function setDate($date, $format = DATE_FORMAT_ISO)
     {
         if (
-            preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])([T\s]?([01][0-9]|2[0-3]):?([0-5][0-9]):?([0-5][0-9])(\.\d+)?(Z|[\+\-]\d{2}:?\d{2})?)?$/i', $date, $regs)
+            preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])([T\s]?([01][0-9]|2[0-3]):?([0-5][0-9]):?([0-5][0-9])(\.\d+)?(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', $date, $regs)
             && $format != DATE_FORMAT_UNIXTIME) {
             // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
             // These formats are extremely close to each other.  This regex
@@ -277,16 +277,17 @@ class Date
             if (!Date_Calc::isValidDate($this->day, $this->month, $this->year))
                 return PEAR::raiseError("'" . $regs[1] . "-" . $regs[2] . "-" . $regs[3] . "' is invalid calendar date");
 
-            $this->hour       = (int) (isset($regs[5]) ? $regs[5] : 0);
-            $this->minute     = (int) (isset($regs[6]) ? $regs[6] : 0);
-            $this->second     = (int) (isset($regs[7]) ? $regs[7] : 0);
-            $this->partsecond = (float) (isset($regs[8]) ? $regs[8] : 0);
+            $this->hour       = (isset($regs[5]) ? (int) $regs[5] : 0);
+            $this->minute     = (isset($regs[6]) ? (int) $regs[6] : 0);
+            $this->second     = (isset($regs[7]) ? (int) $regs[7] : 0);
+            $this->partsecond = (isset($regs[8]) ? (float) $regs[8] : 0.0);
 
-            // if an offset is defined, convert time to UTC
-            // Date currently can't set a timezone only by offset,
-            // so it has to store it as UTC
             if (isset($regs[9])) {
-                $this->toUTCbyOffset($regs[9]);
+                if ($regs[9] == "Z") {
+                    $this->setTZbyID("UTC");
+                } else {
+                    $this->setTZbyID("UTC" . $regs[9]);
+                }
             }
         } elseif (is_numeric($date)) {
             // UNIXTIME
@@ -1148,8 +1149,8 @@ class Date
                         while (is_numeric(substr($ps_format, $i + $hn_codelen, 1)))
                             ++$hn_codelen;
 
-                        $hn_partsecpad = substr($ps_format, $i + 1, $hn_codelen - 1);
-                        $hs_partsec = substr(round($this->partsecond, $hn_partsecpad), 2);
+                        $hn_partsecdigits = substr($ps_format, $i + 1, $hn_codelen - 1);
+                        $hs_partsec = floor($this->partsecond * pow(10, $hn_partsecdigits));
                     } else {
                         while (strtoupper(substr($ps_format, $i + $hn_codelen, 1)) == "F")
                             ++$hn_codelen;
@@ -1159,12 +1160,22 @@ class Date
                         if ($hn_codelen > 1 && is_numeric(substr($ps_format, $i + $hn_codelen, 1)))
                             --$hn_codelen;
 
-                        $hn_partsecpad = $hn_codelen;
-                        $hs_partsec = substr($this->partsecond, 2, $hn_partsecpad);
+                        $hn_partsecdigits = $hn_codelen;
+                        $hs_partsec = floor($this->partsecond * pow(10, $hn_partsecdigits));
                     }
 
-                    $ret .= $hb_nopad ? $hs_partsec : str_pad($hs_partsec, $hn_partsecpad, "0", STR_PAD_RIGHT);
+                    // 'formatNumber() will not work for this because the part-second is
+                    // an int, and we want it to behave like a float:
+                    //
+                    if ($hb_nopad) {
+                        $hs_partsec = rtrim($hs_partsec, "0");
+                        if ($hs_partsec == "")
+                            $hs_partsec = "0";
+                    } else if ($hs_partsec == 0) {
+                        $hs_partsec = str_pad($hs_partsec, $hn_partsecdigits, "0", STR_PAD_RIGHT);
+                    }
 
+                    $ret .= $hs_partsec;
                     $i += $hn_codelen;
                     break;
                 case "h":

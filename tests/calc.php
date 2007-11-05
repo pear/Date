@@ -109,14 +109,14 @@ compare(date('Y'), Date_Calc::getYear(), 'getYear');
 compare(date('m'), Date_Calc::getMonth(), 'getMonth');
 compare(date('d'), Date_Calc::getDay(), 'getDay');
 
-compare(327, Date_Calc::julianDate(22, 11, 2000), 'julianDate');
+compare(327, Date_Calc::dayOfYear(22, 11, 2000), 'dayOfYear');
 compare('November', Date_Calc::getMonthFullname(11), 'getMonthFullname');
 compare('Nov', Date_Calc::getMonthAbbrname(11), 'getMonthAbbrname');
 compare('Saturday', Date_Calc::getWeekdayFullname(1, 1, 2005), 'getWeekdayFullname');
 compare('Sat', Date_Calc::getWeekdayAbbrname(1, 1, 2005), 'getWeekdayAbbrname');
 compare(11, Date_Calc::getMonthFromFullName('November'), 'getMonthFromFullName');
 
-compare(327, Date_Calc::julianDate('22', '11', '2000'), 'julianDate str');
+compare(327, Date_Calc::dayOfYear('22', '11', '2000'), 'dayOfYear str');
 compare('November', Date_Calc::getMonthFullname('11'), 'getMonthFullname str');
 compare('Nov', Date_Calc::getMonthAbbrname('11'), 'getMonthAbbrname str');
 compare('Saturday', Date_Calc::getWeekdayFullname('01', '01', '2005'), 'getWeekdayFullname str');
@@ -300,15 +300,15 @@ compare('20001127', Date_Calc::beginOfNextWeek('22', '11', '2000'), 'beginOfNext
 compare('20001101', Date_Calc::beginOfMonth(11, 2000), 'beginOfMonth');
 compare('20001101', Date_Calc::beginOfMonth('11', '2000'), 'beginOfMonth str');
 
-compare('20001001', Date_Calc::beginOfPrevMonth(22, 11, 2000), 'beginOfPrevMonth');
-compare('20001031', Date_Calc::endOfPrevMonth(22, 11, 2000), 'endOfPrevMonth');
-compare('20001001', Date_Calc::beginOfPrevMonth('22', '11', '2000'), 'beginOfPrevMonth str');
-compare('20001031', Date_Calc::endOfPrevMonth('22', '11', '2000'), 'endOfPrevMonth str');
+compare('20001001', Date_Calc::beginOfPrevMonth(11, 2000), 'beginOfPrevMonth');
+compare('20001031', Date_Calc::endOfPrevMonth(11, 2000), 'endOfPrevMonth');
+compare('20001001', Date_Calc::beginOfPrevMonth('11', '2000'), 'beginOfPrevMonth str');
+compare('20001031', Date_Calc::endOfPrevMonth('11', '2000'), 'endOfPrevMonth str');
 
-compare('20001201', Date_Calc::beginOfNextMonth(22, 11, 2000), 'beginOfNextMonth');
-compare('20001231', Date_Calc::endOfNextMonth(22, 11, 2000), 'endOfNextMonth');
-compare('20001201', Date_Calc::beginOfNextMonth('22', '11', '2000'), 'beginOfNextMonth str');
-compare('20001231', Date_Calc::endOfNextMonth('22', '11', '2000'), 'endOfNextMonth str');
+compare('20001201', Date_Calc::beginOfNextMonth(11, 2000), 'beginOfNextMonth');
+compare('20001231', Date_Calc::endOfNextMonth(11, 2000), 'endOfNextMonth');
+compare('20001201', Date_Calc::beginOfNextMonth('11', '2000'), 'beginOfNextMonth str');
+compare('20001231', Date_Calc::endOfNextMonth('11', '2000'), 'endOfNextMonth str');
 
 compare('19991001', Date_Calc::beginOfMonthBySpan(-13, 11, 2000), 'beginOfMonthBySpan 1');
 compare('20001001', Date_Calc::beginOfMonthBySpan(-1, 11, 2000), 'beginOfMonthBySpan 2');

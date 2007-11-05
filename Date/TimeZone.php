@@ -237,26 +237,58 @@ class Date_TimeZone
     {
         $_DATE_TIMEZONE_DATA =& $GLOBALS['_DATE_TIMEZONE_DATA'];
 
-        $this->id = Date_TimeZone::isValidID($ps_id) ? $ps_id : "UTC";
+        if (Date_TimeZone::isValidID($ps_id)) {
+            $this->id = $ps_id;
 
-        $this->longname = $_DATE_TIMEZONE_DATA[$ps_id]['longname'];
-        $this->shortname = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
-        $this->offset = $_DATE_TIMEZONE_DATA[$ps_id]['offset'];
-        $this->dstshortname = array_key_exists("dstshortname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
-                              $_DATE_TIMEZONE_DATA[$ps_id]['dstshortname'] : null;
-        if ($this->hasdst = !is_null($this->dstshortname)) {
-            $this->dstlongname = array_key_exists("dstlongname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
-                                 $_DATE_TIMEZONE_DATA[$ps_id]['dstlongname'] : null;
-            if (isset($_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"])) {
-                $this->on_summertimeoffset = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"];
-                $this->on_summertimestartmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartmonth"];
-                $this->os_summertimestartday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartday"];
-                $this->on_summertimestarttime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestarttime"];
-                $this->on_summertimeendmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendmonth"];
-                $this->os_summertimeendday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendday"];
-                $this->on_summertimeendtime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendtime"];
+            $this->shortname = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
+            $this->longname = $_DATE_TIMEZONE_DATA[$ps_id]['longname'];
+            $this->offset = $_DATE_TIMEZONE_DATA[$ps_id]['offset'];
+            $this->dstshortname = array_key_exists("dstshortname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
+                                  $_DATE_TIMEZONE_DATA[$ps_id]['dstshortname'] : null;
+            if ($this->hasdst = !is_null($this->dstshortname)) {
+                $this->dstlongname = array_key_exists("dstlongname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
+                                     $_DATE_TIMEZONE_DATA[$ps_id]['dstlongname'] : null;
+                if (isset($_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"])) {
+                    $this->on_summertimeoffset = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"];
+                    $this->on_summertimestartmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartmonth"];
+                    $this->os_summertimestartday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartday"];
+                    $this->on_summertimestarttime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestarttime"];
+                    $this->on_summertimeendmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendmonth"];
+                    $this->os_summertimeendday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendday"];
+                    $this->on_summertimeendtime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendtime"];
+                } else {
+                    $this->on_summertimeoffset = null;
+                }
+            }
+        } else {
+            $this->hasdst = false;
+
+            if (preg_match('/^UTC([+\-])([0-9]{2,2}):?([0-5][0-9])$/', $ps_id, $ha_matches)) {
+                $this->id = $ps_id;
+                $this->offset = ($ha_matches[1] . ($ha_matches[2] * 3600 + $ha_matches[3] * 60)) * 1000;
+
+                if (!($hb_isutc = $this->offset == 0)) {
+                    $this->id = $ps_id;
+                    $this->shortname = "UTC" . $ha_matches[1] . ($ha_matches[3] == "00" ? ltrim($ha_matches[2], "0") : $ha_matches[2] . $ha_matches[3]);
+                    $this->longname = "UTC" . $ha_matches[1] . $ha_matches[2] . ":" . $ha_matches[3];
+                }
+            } else if (preg_match('/^UTC([+\-])([0-9]{1,2})$/', $ps_id, $ha_matches)) {
+                $this->id = $ps_id;
+                $this->offset = ($ha_matches[1] . ($ha_matches[2] * 3600)) * 1000;
+
+                if (!($hb_isutc = $this->offset == 0)) {
+                    $this->shortname = "UTC" . $ha_matches[1] . ltrim($ha_matches[2], "0");
+                    $this->longname = "UTC" . $ha_matches[1] . sprintf("%02d", $ha_matches[2]) . ":00";
+                }
             } else {
-                $this->on_summertimeoffset = null;
+                $this->id = "UTC";
+                $hb_isutc = true;
+            }
+
+            if ($hb_isutc) {
+                $this->shortname = $_DATE_TIMEZONE_DATA["UTC"]['shortname'];
+                $this->longname = $_DATE_TIMEZONE_DATA["UTC"]['longname'];
+                $this->offset = $_DATE_TIMEZONE_DATA["UTC"]['offset'];
             }
         }
     }

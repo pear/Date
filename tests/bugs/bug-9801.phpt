@@ -9,10 +9,12 @@ Bug #9801: Date::compare() modify params on PHP5
 
 require_once 'Date.php';
 
-$GLOBALS['_DATE_TIMEZONE_DEFAULT'] = 'Canada/Eastern';
+// $GLOBALS['_DATE_TIMEZONE_DEFAULT'] = 'Canada/Eastern';
 
 $d1 = new Date();
 $d2 = new Date();
+$d1->setTZbyID('Canada/Eastern');
+$d2->setTZbyID('Canada/Eastern');
 
 echo 'Timezone (before): ' . $d1->tz->getId() . "\n";
 
