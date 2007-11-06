@@ -540,8 +540,8 @@ class Date_TimeZone
              $hn_month <= $this->on_summertimeendmonth)
             ) {
 
-            $hn_day = $po_date->getDay();
             if ($hn_month == $this->on_summertimestartmonth) {
+                $hn_day = $po_date->getDay();
                 $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $po_date->getYear());
 
                 if ($hn_day < $hn_startday) {
@@ -554,6 +554,7 @@ class Date_TimeZone
                     return false;
                 }
             } else if ($hn_month == $this->on_summertimeendmonth) {
+                $hn_day = $po_date->getDay();
                 $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $po_date->getYear());
 
                 if ($hn_day < $hn_endday) {
@@ -571,7 +572,11 @@ class Date_TimeZone
                     return true;
                 }
             }
+
+            return true;
         }
+
+        return false;
     }
 
 
