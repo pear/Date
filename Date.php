@@ -46,8 +46,8 @@
  * @link       http://pear.php.net/package/Date
  */
 
-// }}}
 
+// }}}
 // {{{ Includes
 
 
@@ -68,10 +68,20 @@ require_once 'Date/Calc.php';
  */
 require_once 'Date/Span.php';
 
-// }}}
-// {{{ Constants
 
-// {{{ Output formats Pass this to getDate().
+// }}}
+// {{{ General constants
+
+/**
+ * Whether to capture the micro-time (in microseconds) by default
+ * in calls to 'Date::setNow()'.  Note that this makes a call to
+ * 'gettimeofday()', which may not work on all systems.
+ */
+define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
+
+
+// }}}
+// {{{ Output format constants (used in 'Date::getDate()')
 
 /**
  * "YYYY-MM-DD HH:MM:SS"
@@ -103,7 +113,6 @@ define('DATE_FORMAT_TIMESTAMP', 4);
  */
 define('DATE_FORMAT_UNIXTIME', 5);
 
-// }}}
 
 // }}}
 // {{{ Class: Date
@@ -378,12 +387,14 @@ class Date
      * is set to the default time zone (which itself, if not set by
      * the user, defaults to UTC).
      *
-     * @param    bool       $pb_setmicrotime              whether to set micro-time (defaults to false)
+     * @param    bool       $pb_setmicrotime              whether to set micro-time (defaults to
+     *                                                    the value of the constant
+     *                                                    DATE_CAPTURE_MICROTIME_BY_DEFAULT)
      *
      * @return   void
      * @access   public
      */
-    function setNow($pb_setmicrotime = false)
+    function setNow($pb_setmicrotime = DATE_CAPTURE_MICROTIME_BY_DEFAULT)
     {
         $this->setTZbyID();
 
@@ -1310,7 +1321,6 @@ class Date
                             ++$hn_codelen;
 
                         $hn_partsecdigits = substr($ps_format, $i + 1, $hn_codelen - 1);
-                        $hs_partsec = floor($this->partsecond * pow(10, $hn_partsecdigits));
                     } else {
                         while (strtoupper(substr($ps_format, $i + $hn_codelen, 1)) == "F")
                             ++$hn_codelen;
@@ -1321,8 +1331,15 @@ class Date
                             --$hn_codelen;
 
                         $hn_partsecdigits = $hn_codelen;
-                        $hs_partsec = floor($this->partsecond * pow(10, $hn_partsecdigits));
                     }
+
+                    $hs_partsec = (string) $this->partsecond;
+                    if (preg_match('/^([0-9]+)(\.([0-9]+))?E-([0-9]+)$/i', $hs_partsec, $ha_matches)) {
+                        $hs_partsec = str_repeat("0", $ha_matches[4] - strlen($ha_matches[1])) . $ha_matches[1] . $ha_matches[3];
+                    } else {
+                        $hs_partsec = substr($hs_partsec, 2);
+                    }
+                    $hs_partsec = substr($hs_partsec, 0, $hn_partsecdigits);
 
                     // 'formatNumber() will not work for this because the part-second is
                     // an int, and we want it to behave like a float:
@@ -1331,7 +1348,7 @@ class Date
                         $hs_partsec = rtrim($hs_partsec, "0");
                         if ($hs_partsec == "")
                             $hs_partsec = "0";
-                    } else if ($hs_partsec == 0) {
+                    } else {
                         $hs_partsec = str_pad($hs_partsec, $hn_partsecdigits, "0", STR_PAD_RIGHT);
                     }
 
