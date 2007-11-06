@@ -240,16 +240,14 @@ class Date
         if (is_a($date, 'Date')) {
             $this->copy($date);
         } else {
-            // Attempt to get time zone from local machine, or
-            // failing that, set to default time zone:
-            //
-            $this->setTZbyID();
-
             if (!is_null($date)) {
+                // Attempt to get time zone from local machine, or
+                // failing that, set to default time zone:
+                //
+                $this->setTZbyID();
                 $this->setDate($date);
             } else {
-                $ha_timestamp = gettimeofday();
-                $this->setDate(date("Y-m-d H:i:s") . (isset($ha_timestamp["usec"]) ? "." . sprintf("%06d", $ha_timestamp["usec"]) : ""));
+                $this->setNow();
             }
         }
     }
@@ -305,23 +303,34 @@ class Date
 
     // }}}
     // {{{ setDate()
-
     /**
      * Sets the fields of a Date object based on the input date and format
      *
-     * Sets the fields of a Date object based on the input date and format,
-     * which is specified by the DATE_FORMAT_* constants.
+     * Format parameter should be one of the specified DATE_FORMAT_* constants:
      *
-     * @access public
-     * @param string $date input date
-     * @param int $format Optional format constant (DATE_FORMAT_*) of the input date.
-     *                    This parameter isn't really needed anymore, but you could
-     *                    use it to force DATE_FORMAT_UNIXTIME.
+     *  <code>DATE_FORMAT_ISO</code>                    - 'YYYY-MM-DD HH:MI:SS'
+     *  <code>DATE_FORMAT_ISO_BASIC</code>              - 'YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?'
+     *  <code>DATE_FORMAT_ISO_EXTENDED</code>           - 'YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?'
+     *  <code>DATE_FORMAT_ISO_EXTENDED_MICROTIME</code> - 'YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
+     *  <code>DATE_FORMAT_TIMESTAMP</code>              - 'YYYYMMDDHHMMSS'
+     *  <code>DATE_FORMAT_UNIXTIME'</code>              - long integer of the no of
+     *                                                    seconds since the Unix Epoch
+     *                                                    (1st January 1970 00.00.00 GMT)
+     *
+     * @param    string     $date                         input date
+     * @param    int        $format                       optional format constant (DATE_FORMAT_*) of the input date.
+     *                                                    This parameter isn't really needed anymore, but you could
+     *                                                    use it to force DATE_FORMAT_UNIXTIME.
+     *
+     * @return   void
+     * @access   public
      */
     function setDate($date, $format = DATE_FORMAT_ISO)
     {
         if (
-            preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])([T\s]?([01][0-9]|2[0-3]):?([0-5][0-9]):?([0-5][0-9])(\.\d+)?(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', $date, $regs)
+            preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])' .
+                         '([T\s]?([01][0-9]|2[0-3]):?([0-5][0-9]):?([0-5][0-9])(\.\d+)?' .
+                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', $date, $regs)
             && $format != DATE_FORMAT_UNIXTIME) {
             // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
             // These formats are extremely close to each other.  This regex
@@ -349,12 +358,46 @@ class Date
                 }
             }
         } elseif (is_numeric($date)) {
-            // UNIXTIME
-            $this->setDate(date("Y-m-d H:i:s", $date));
+            // Unix Time; N.B. Unix Time is defined relative to GMT,
+            // so it needs to be adjusted for the current time zone:
+            //
+            $this->setDate(date("Y-m-d H:i:s", $date + $this->getTZOffset() / 1000));
         } else {
             return PEAR::raiseError("Date not in ISO 8601 format");
         }
     }
+
+
+    // }}}
+    // {{{ setNow()
+    /**
+     * Sets to local current time and time zone
+     *
+     * If PHP version >= 5.1.0 then the local time zone is set
+     * automatically from the local machine, or else the time zone
+     * is set to the default time zone (which itself, if not set by
+     * the user, defaults to UTC).
+     *
+     * @param    bool       $pb_setmicrotime              whether to set micro-time (defaults to false)
+     *
+     * @return   void
+     * @access   public
+     */
+    function setNow($pb_setmicrotime = false)
+    {
+        $this->setTZbyID();
+
+        if ($pb_setmicrotime) {
+            $ha_unixtime = gettimeofday();
+        } else {
+            $ha_unixtime = array("sec" => time());
+        }
+
+        $this->setDate(date("Y-m-d H:i:s", $ha_unixtime["sec"]) .
+                       (isset($ha_unixtime["usec"]) ? "." . sprintf("%06d", $ha_unixtime["usec"]) : "")
+                       );
+    }
+
 
     // }}}
     // {{{ getDate()
@@ -400,7 +443,7 @@ class Date
             return $this->format("%Y%m%d%H%M%S");
             break;
         case DATE_FORMAT_UNIXTIME:
-            return mktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year);
+            return gmmktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year) - $this->getTZOffset() / 1000;
             break;
         }
     }
@@ -1804,9 +1847,11 @@ class Date
     function setTZ($tz)
     {
         if(is_a($tz, 'Date_Timezone')) {
-            $this->tz = $tz;
+            $this->setTZbyID($tz->getID());
         } else {
-            $this->setTZbyID($tz);
+            $res = $this->setTZbyID($tz);
+            if (PEAR::isError($res))
+                return $res;
         }
     }
 
@@ -1829,13 +1874,18 @@ class Date
      */
     function setTZbyID($ps_id = null)
     {
-        if (is_null($ps_id) && function_exists('version_compare') && version_compare(phpversion(), "5.1.0", ">=")) {
-            $ps_id = date("e");
-        }
-        if (Date_TimeZone::isValidID($ps_id)) {
+        if (is_null($ps_id)) {
+            if (function_exists('version_compare') &&
+                version_compare(phpversion(), "5.1.0", ">=") &&
+                Date_TimeZone::isValidID($ps_id = date("e"))) {
+                $this->tz = new Date_TimeZone($ps_id);
+            } else {
+                $this->tz = Date_TimeZone::getDefault();
+            }
+        } else if (Date_TimeZone::isValidID($ps_id)) {
             $this->tz = new Date_TimeZone($ps_id);
         } else {
-            $this->tz = Date_TimeZone::getDefault();
+            return PEAR::raiseError("Invalid time zone ID '$ps_id'");
         }
     }
 
@@ -1938,8 +1988,6 @@ class Date
     /**
      * Converts this date to UTC and sets this date's timezone to UTC
      *
-     * Converts this date to UTC and sets this date's timezone to UTC
-     *
      * @access public
      */
     function toUTC()
@@ -1949,8 +1997,9 @@ class Date
         } else {
             $this->addSeconds(intval(abs($this->getTZOffset()) / 1000));
         }
-        $this->tz = new Date_TimeZone('UTC');
+        $this->setTZbyID('UTC');
     }
+
 
     // }}}
     // {{{ convertTZ()
@@ -1958,30 +2007,35 @@ class Date
     /**
      * Converts this date to a new time zone
      *
-     * Converts this date to a new time zone.
-     * WARNING: This may not work correctly if your system does not allow
-     * putenv() or if localtime() does not work in your environment.  See
-     * Date::TimeZone::inDaylightTime() for more information.
+     * Previously this might not have worked correctly if your system did
+     * not allow putenv() or if localtime() does not work in your
+     * environment, but this implementation is no longer used.
      *
-     * @access public
-     * @param object Date_TimeZone $tz the Date::TimeZone object for the conversion time zone
+     * @param    object     $tz                           Date_TimeZone object to convert to
+     *
+     * @return   void
+     * @access   public
      */
     function convertTZ($tz)
     {
         // convert to UTC
-        if ($this->getTZOffset() > 0) {
-            $this->subtractSeconds(intval(abs($this->getTZOffset()) / 1000));
+        if (($hn_oldoffset = $this->getTZOffset()) > 0) {
+            $this->subtractSeconds(intval(abs($hn_oldoffset) / 1000));
         } else {
-            $this->addSeconds(intval(abs($this->getTZOffset()) / 1000));
+            $this->addSeconds(intval(abs($hn_oldoffset) / 1000));
         }
         // convert UTC to new timezone
-        if ($tz->getOffset($this) > 0) {
-            $this->addSeconds(intval(abs($tz->getOffset($this)) / 1000));
+        if (($hn_newoffset = $tz->getOffset($this)) > 0) {
+            $this->addSeconds(intval(abs($hn_newoffset) / 1000));
         } else {
-            $this->subtractSeconds(intval(abs($tz->getOffset($this)) / 1000));
+            $this->subtractSeconds(intval(abs($hn_newoffset) / 1000));
         }
-        $this->tz = $tz;
+
+        // In PHP5 the TimeZone object must be deep-copied:
+        //
+        $this->setTZbyID($tz->getID());
     }
+
 
     // }}}
     // {{{ convertTZbyID()
@@ -1989,23 +2043,24 @@ class Date
     /**
      * Converts this date to a new time zone, given a valid time zone ID
      *
-     * Converts this date to a new time zone, given a valid time zone ID
-     * WARNING: This may not work correctly if your system does not allow
-     * putenv() or if localtime() does not work in your environment.  See
-     * Date::TimeZone::inDaylightTime() for more information.
+     * Previously this might not have worked correctly if your system did
+     * not allow putenv() or if localtime() does not work in your
+     * environment, but this implementation is no longer used.
      *
-     * @access public
-     * @param string id a time zone id
+     * @param    string     $ps_id                        a valid time zone id, e.g. 'Europe/London'
+     *
+     * @return   void
+     * @access   public
      */
-    function convertTZbyID($id)
+    function convertTZbyID($ps_id)
     {
-       if (Date_TimeZone::isValidID($id)) {
-          $tz = new Date_TimeZone($id);
-       } else {
-          $tz = Date_TimeZone::getDefault();
-       }
-       $this->convertTZ($tz);
+        if (!Date_TimeZone::isValidID($ps_id)) {
+            return PEAR::raiseError("Invalid time zone ID '$ps_id'");
+        }
+
+        $this->convertTZ(new Date_TimeZone($ps_id));
     }
+
 
     // }}}
     // {{{ toUTCbyOffset()
@@ -2032,12 +2087,13 @@ class Date
                 $this->addSeconds(intval(abs($offset)));
             }
 
-            $this->tz = new Date_TimeZone('UTC');
+            $this->setTZbyID('UTC');
             return true;
         }
 
         return false;
     }
+
 
     // }}}
     // {{{ addYears()

@@ -239,7 +239,7 @@ class Date_TimeZone
     {
         $_DATE_TIMEZONE_DATA =& $GLOBALS['_DATE_TIMEZONE_DATA'];
 
-        if (Date_TimeZone::isValidID($ps_id)) {
+        if (isset($GLOBALS['_DATE_TIMEZONE_DATA'][$ps_id])) {
             $this->id = $ps_id;
 
             $this->shortname = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
@@ -324,8 +324,10 @@ class Date_TimeZone
      */
     function setDefault($id)
     {
-        if(Date_TimeZone::isValidID($id)) {
+        if (Date_TimeZone::isValidID($id)) {
             $GLOBALS['_DATE_TIMEZONE_DEFAULT'] = $id;
+        } else {
+            return PEAR::raiseError("Invalid time zone ID '$id'");
         }
     }
 
@@ -333,15 +335,58 @@ class Date_TimeZone
     // {{{ isValidID()
 
     /**
-     * Tests if given id is represented in the $_DATE_TIMEZONE_DATA time zone data
+     * Tests if given time zone ID (e.g. 'London/Europe') is valid and unique
      *
-     * @access public
-     * @param string $id the id to test
-     * @return boolean true if the supplied ID is valid
+     * Checks if given ID is either represented in the $_DATE_TIMEZONE_DATA
+     * time zone data, or is a UTC offset in one of the following forms,
+     * i.e. an offset with no geographical or political base:
+     *
+     *  UTC[+/-][hh]:[mm] - e.g. UTC+03:00
+     *  UTC[+/-][hh][mm]  - e.g. UTC-0530
+     *  UTC[+/-][hh]      - e.g. UTC+03
+     *  UTC[+/-][h]       - e.g. UTC-1     (the last is not ISO 8601
+     *                                     standard but is the preferred
+     *                                     form)
+     *
+     * N.B. these are not sanctioned by any ISO standard, but the form of
+     * the offset itself, i.e. the part after the characters 'UTC', is the
+     * ISO 8601 standard form for representing this part.
+     *
+     * The form '[+/-][h]' is not ISO conformant, but ISO 8601 only
+     * defines the form of the time zone offset of a particular time, that
+     * is, it actually defines the form '<time>UTC[+/-][hh]', and its
+     * purview does not apparently cover the name of the time zone itself.
+     * For this there is no official international standard (or even a non-
+     * international standard).  The closest thing to a sanctioning body
+     * is the 'tz' database (http://www.twinsun.com/tz/tz-link.htm) which
+     * is run by volunteers but which is heavily relied upon by various
+     * programming languages and the internet community.  However they
+     * mainly define geographical/political time zone names of the
+     * form 'London/Europe' because their main aim is to collate the time
+     * zone definitions which are set by individual countries/states, not
+     * to prescribe any standard.
+     *
+     * However it seems that the de facto standard to describe time zones
+     * as non-geographically/politically-based areas where the local time
+     * on all clocks reads the same seems to be the form 'UTC[+/-][h]'
+     * for integral numbers of hours, and 'UTC[+/-][hh]:[mm]' otherwise.
+     * (See http://en.wikipedia.org/wiki/List_of_time_zones)
+     *
+     * N.B. 'GMT' is also commonly used instead of 'UTC', but 'UTC' seems
+     * to be technically preferred.  GMT-based IDs still exist in the 'tz'
+     * data-base, but beware of POSIX-style offsets which are the opposite
+     * way round to what people normally expect.
+     *
+     * @param    string     $ps_id                        the time zone ID to test
+     *
+     * @return   boolean    true if the supplied ID is valid
+     * @access   public
      */
-    function isValidID($id)
+    function isValidID($ps_id)
     {
-        if(isset($GLOBALS['_DATE_TIMEZONE_DATA'][$id])) {
+        if (isset($GLOBALS['_DATE_TIMEZONE_DATA'][$ps_id])) {
+            return true;
+        } else if (preg_match('/^UTC[+\-]([0-9]{2,2}:?[0-5][0-9]|[0-9]{1,2})$/', $ps_id)) {
             return true;
         } else {
             return false;
@@ -531,12 +576,16 @@ class Date_TimeZone
      */
     function inDaylightTime($po_date)
     {
+        if (!$this->hasdst) {
+            return false;
+        }
+
         $hn_month = $po_date->getMonth();
         if (($this->on_summertimestartmonth < $this->on_summertimeendmonth &&
              $hn_month >= $this->on_summertimestartmonth &&
              $hn_month <= $this->on_summertimeendmonth) ||
             ($this->on_summertimestartmonth > $this->on_summertimeendmonth &&
-             $hn_month >= $this->on_summertimestartmonth ||
+             $hn_month >= $this->on_summertimestartmonth &&
              $hn_month <= $this->on_summertimeendmonth)
             ) {
 
