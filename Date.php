@@ -248,7 +248,8 @@ class Date
             if (!is_null($date)) {
                 $this->setDate($date);
             } else {
-                $this->setDate(date("Y-m-d H:i:s"));
+                $ha_timestamp = gettimeofday();
+                $this->setDate(date("Y-m-d H:i:s") . (isset($ha_timestamp["usec"]) ? "." . sprintf("%06d", $ha_timestamp["usec"]) : ""));
             }
         }
     }
@@ -1502,7 +1503,8 @@ class Date
                     //
                     if (strtoupper(substr($ps_format, $i, 5)) == "SSSSS") {
                         $hs_numberformat = substr($ps_format, $i + 5, 4);
-                        $hs_second = $this->formatNumber(Date_Calc::secondsPastMidnight, $hs_numberformat, 5, $hb_nopad, true, $ps_locale);
+                        $hn_second = Date_Calc::secondsPastMidnight($this->hour, $this->minute, $this->second);
+                        $hs_second = $this->formatNumber($hn_second, $hs_numberformat, 5, $hb_nopad, true, $ps_locale);
                         if (Pear::isError($hs_second))
                             return $hs_second;
 
