@@ -17,7 +17,7 @@ define('DATE_TIMEZONE_ERROR_CODE_INVALIDDATE', 1);
  *
  * LICENSE:
  *
- * Copyright (c) 1997-2006 Baba Buehler, Pierre-Alain Joye
+ * Copyright (c) 1997-2007 Baba Buehler, Pierre-Alain Joye, C.A. Woodcock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,8 @@ define('DATE_TIMEZONE_ERROR_CODE_INVALIDDATE', 1);
  * @package    Date
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
+ * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
@@ -68,7 +69,8 @@ define('DATE_TIMEZONE_ERROR_CODE_INVALIDDATE', 1);
  * global array, $_DATE_TIMEZONE_DATA.
  *
  * @author     Baba Buehler <baba@babaz.com>
- * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
+ * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    Release: @package_version@
@@ -317,8 +319,6 @@ class Date_TimeZone
     /**
      * Sets the system default time zone to the time zone in $id
      *
-     * Sets the system default time zone to the time zone in $id
-     *
      * @access public
      * @param string $id the time zone id to use
      */
@@ -333,8 +333,6 @@ class Date_TimeZone
     // {{{ isValidID()
 
     /**
-     * Tests if given id is represented in the $_DATE_TIMEZONE_DATA time zone data
-     *
      * Tests if given id is represented in the $_DATE_TIMEZONE_DATA time zone data
      *
      * @access public
@@ -420,7 +418,7 @@ class Date_TimeZone
 
 
     // }}}
-    // }}}
+    // {{{ getSummerTimeLimitDay()
 
     /**
      * Returns day on which Summer time starts or ends for given year
@@ -528,7 +526,7 @@ class Date_TimeZone
      *
      * @param    object     $po_date                      Date object to test
      *
-     * @return   boolean    true if this date is in DST for this time zone
+     * @return   bool       true if this date is in Summer time for this time zone
      * @access   public
      */
     function inDaylightTime($po_date)
@@ -612,14 +610,39 @@ class Date_TimeZone
 
 
     // }}}
+    // {{{ getRawOffset()
+
+    /**
+     * Returns the raw (non-DST-corrected) offset from UTC/GMT for this time zone
+     *
+     * @access public
+     * @return int the offset, in milliseconds
+     */
+    function getRawOffset()
+    {
+        return $this->offset;
+    }
+
+    // }}}
     // {{{ getOffset()
 
     /**
-     * Get the DST-corrected offset to UTC for the given date
+     * Returns the DST-corrected offset from UTC for the given date
      *
-     * Attempts to get the offset to UTC for a given date/time, taking into
+     * Gets the offset to UTC for a given date/time, taking into
      * account daylight savings time, if the time zone observes it and if
-     * it is in effect.  Please see the WARNINGS on Date::TimeZone::inDaylightTime().
+     * it is in effect.
+     *
+     * N.B. that the offset is calculated historically
+     * and in the future according to the current Summer time rules,
+     * and so this function is proleptically correct, but not necessarily
+     * historically correct.  (Although if you want to be correct about
+     * times in the distant past, this class is probably not for you
+     * because the whole notion of time zones does not apply, and
+     * historically there are so many time zone changes, Summer time
+     * rule changes, name changes, calendar changes, that calculating
+     * this sort of information is beyond the scope of this package
+     * altogether.)
      *
      * @param    object     $po_date                      Date object to test
      *
@@ -655,17 +678,16 @@ class Date_TimeZone
     // {{{ getID()
 
     /**
-     * Returns the id for this time zone
-     *
      * Returns the time zone id for this time zone, i.e. "America/Chicago"
      *
-     * @access public
-     * @return string the id
+     * @return   string     the time zone ID
+     * @access   public
      */
     function getID()
     {
         return $this->id;
     }
+
 
     // }}}
     // {{{ getLongName()
@@ -673,16 +695,27 @@ class Date_TimeZone
     /**
      * Returns the long name for this time zone
      *
-     * Returns the long name for this time zone,
-     * i.e. "Central Standard Time"
+     * Long form of time zone name, e.g. 'Greenwich Mean Time'. Additionally
+     * a Date object can be passed in which case the Summer time name will
+     * be returned instead if the date falls in Summer time, e.g. 'British
+     * Summer Time'.
      *
-     * @access public
-     * @return string the long name
+     * N.B. this is not a unique identifier - for this purpose use the
+     * time zone ID.
+     *
+     * @param    object     $po_date                      Date object to test
+     *
+     * @return   string     the long name
+     * @access   public
      */
-    function getLongName()
+    function getLongName($po_date = null)
     {
-        return $this->longname;
+        if (!is_null($po_date) && $this->inDaylightTime($po_date))
+            return $this->dstlongname;
+        else
+            return $this->longname;
     }
+
 
     // }}}
     // {{{ getShortName()
@@ -690,63 +723,56 @@ class Date_TimeZone
     /**
      * Returns the short name for this time zone
      *
-     * Returns the short name for this time zone, i.e. "CST"
+     * Returns abbreviated form of time zone name, e.g. 'GMT'. Additionally
+     * a Date object can be passed in which case the Summer time name will
+     * be returned instead if the date falls in Summer time, e.g. 'BST'.
      *
-     * @access public
-     * @return string the short name
+     * N.B. this is not a unique identifier - for this purpose use the
+     * time zone ID.
+     *
+     * @param    object     $po_date                      Date object to test
+     *
+     * @return   string     the short name
+     * @access   public
      */
-    function getShortName()
+    function getShortName($po_date = null)
     {
-        return $this->shortname;
+        if (!is_null($po_date) && $this->inDaylightTime($po_date))
+            return $this->dstshortname;
+        else
+            return $this->shortname;
     }
+
 
     // }}}
     // {{{ getDSTLongName()
 
     /**
-     * Returns the DST long name for this time zone
+     * Returns the DST long name for this time zone, e.g. 'Central Daylight Time'
      *
-     * Returns the DST long name for this time zone, i.e. "Central Daylight Time"
-     *
-     * @access public
-     * @return string the daylight savings time long name
+     * @return   string     the daylight savings time long name
+     * @access   public
      */
     function getDSTLongName()
     {
         return $this->hasdst ? $this->dstlongname : $this->longname;
     }
 
+
     // }}}
     // {{{ getDSTShortName()
 
     /**
-     * Returns the DST short name for this time zone
+     * Returns the DST short name for this time zone, e.g. 'CDT'
      *
-     * Returns the DST short name for this time zone, i.e. "CDT"
-     *
-     * @access public
-     * @return string the daylight savings time short name
+     * @return   string     the daylight savings time short name
+     * @access   public
      */
     function getDSTShortName()
     {
         return $this->hasdst ? $this->dstshortname : $this->shortname;
     }
 
-    // }}}
-    // {{{ getRawOffset()
-
-    /**
-     * Returns the raw (non-DST-corrected) offset from UTC/GMT for this time zone
-     *
-     * Returns the raw (non-DST-corrected) offset from UTC/GMT for this time zone
-     *
-     * @access public
-     * @return int the offset, in milliseconds
-     */
-    function getRawOffset()
-    {
-        return $this->offset;
-    }
 
     // }}}
 }

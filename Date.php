@@ -14,7 +14,7 @@
  *
  * LICENSE:
  *
- * Copyright (c) 1997-2006 Baba Buehler, Pierre-Alain Joye
+ * Copyright (c) 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,8 @@
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Firman Wandayandi <firman@php.net>
- * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
+ * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
@@ -117,7 +118,8 @@ define('DATE_FORMAT_UNIXTIME', 5);
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Firman Wandayandi <firman@php.net>
- * @copyright  1997-2006 Baba Buehler, Pierre-Alain Joye
+ * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
+ * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    Release: @package_version@
@@ -209,6 +211,7 @@ class Date
      */
     var $getWeekdayAbbrnameLength = 3;
 
+
     // }}}
     // {{{ Constructor
 
@@ -221,10 +224,16 @@ class Date
      * or another Date object.  If no date is passed, the current date/time
      * is used.
      *
-     * @access public
-     * @see setDate()
-     * @param mixed $date optional - date/time to initialize
-     * @return object Date the new Date object
+     * If a date is passed and an exception is returned by 'setDate()'
+     * there is nothing that this function can do, so for this reason, it
+     * is advisable to pass no parameter and to make a separate call to
+     * 'setDate()'.
+     *
+     * @param    mixed      $date                         optional - date/time to initialize
+     *
+     * @return   void
+     * @access   public
+     * @see      setDate()
      */
     function Date($date = null)
     {
@@ -236,13 +245,62 @@ class Date
             //
             $this->setTZbyID();
 
-            if (is_null($date)) {
-                $this->setDate(date("Y-m-d H:i:s"));
-            } else {
+            if (!is_null($date)) {
                 $this->setDate($date);
+            } else {
+                $this->setDate(date("Y-m-d H:i:s"));
             }
         }
     }
+
+
+    // }}}
+    // {{{ copy()
+
+    /**
+     * Copy values from another Date object
+     *
+     * Makes this Date a copy of another Date object.
+     *
+     * @param    object     $date                         Date object to copy
+     *
+     * @return   void
+     * @access   public
+     */
+    function copy($date)
+    {
+        $this->year = $date->getYear();
+        $this->month = $date->getMonth();
+        $this->day = $date->getDay();
+        $this->hour = $date->getHour();
+        $this->minute = $date->getMinute();
+        $this->second = $date->getSecond();
+        $this->partsecond = $date->getPartSecond();
+        $this->setTZByID($date->getTZID());
+    }
+
+
+    // }}}
+    // {{{ __clone()
+
+    /**
+     * Copy values from another Date object
+     *
+     * Makes this Date a copy of another Date object.
+     *
+     * @return   void
+     * @access   public
+     */
+    function __clone()
+    {
+        // This line of code would only be acceptable, but
+        // preferable, in PHP5:
+        //
+//        $this->tz = clone $this->tz;
+
+        $this->setTZByID($date->getTZID());
+    }
+
 
     // }}}
     // {{{ setDate()
@@ -348,39 +406,6 @@ class Date
 
 
     // }}}
-    // {{{ copy()
-
-    /**
-     * Copy values from another Date object
-     *
-     * Makes this Date a copy of another Date object.
-     *
-     * @access public
-     * @param object Date $date Date to copy from
-     */
-    function copy($date)
-    {
-        $this->year = $date->getYear();
-        $this->month = $date->getMonth();
-        $this->day = $date->getDay();
-        $this->hour = $date->getHour();
-        $this->minute = $date->getMinute();
-        $this->second = $date->getSecond();
-        $this->partsecond = $date->getPartSecond();
-        $this->setTZByID($date->getTZID());
-    }
-
-
-    // }}}
-/*
- * PHP5 only:
- *
-    function __clone()
-    {
-        $this->tz = clone $this->tz;
-    }
- *
- */
     // {{{ format()
 
     /**
@@ -389,7 +414,7 @@ class Date
      *  Formats the date in the given format, much like
      *  strftime().  Most strftime() options are supported.<br><br>
      *
-     *  formatting options:<br><br>
+     *  Formatting options:<br><br>
      *
      *  <code>%a  </code>  abbreviated weekday name (Sun, Mon, Tue) <br>
      *  <code>%A  </code>  full weekday name (Sunday, Monday, Tuesday) <br>
@@ -490,7 +515,7 @@ class Date
                     $output .= "\n";
                     break;
                 case "O":
-                    $offms = $this->tz->getOffset($this);
+                    $offms = $this->getTZOffset();
                     $direction = $offms >= 0 ? "+" : "-";
                     $offmins = abs($offms) / 1000 / 60;
                     $hours = $offmins / 60;
@@ -543,7 +568,7 @@ class Date
                     $output .= sprintf("%04d", $this->year);
                     break;
                 case "Z":
-                    $output .= $this->tz->inDaylightTime($this) ? $this->tz->getDSTShortName() : $this->tz->getShortName();
+                    $output .= $this->getTZShortName();
                     break;
                 case "%":
                     $output .= "%";
@@ -805,132 +830,222 @@ class Date
 
     // }}}
     // {{{ format2()
-
     /**
-     * Extended version of 'format2()' with variable-length formatting codes
+     * Extended version of 'format()' with variable-length formatting codes
      *
-     * Formatting options:
+     * Most codes reproduce the no of digits equal to the length of the code,
+     * for example, 'YYY' will return the last 3 digits of the year, and so
+     * the year 2007 will produce '007', and the year 89 will produce '089',
+     * unless the no-padding code is used as in 'NPYYY', which will return
+     * '89'.
      *
-     *  <code>-</code>Punctuation, white-space and quoted text is reproduced in the result<br />
+     * For negative values, the sign will be discarded, unless the 'S' code
+     * is used in combination, but note that for positive values the value
+     * will be padded with a leading space unless it is suppressed with
+     * the no-padding modifier, for example for 2007:
+     *
+     *  <code>YYYY</code>returns '2007'
+     *  <code>SYYYY</code>returns ' 2007'
+     *  <code>NPSYYYY</code>returns '2007'
+     *
+     * The no-padding modifier 'NP' can be used with numeric codes to
+     * suppress leading (or trailing in the case of code 'F') noughts, and
+     * with character-returning codes such as 'DAY' to suppress trailing
+     * spaces, which will otherwise be padded to the maximum possible length
+     * of the return-value of the code; for example, for Monday:
+     *
+     *  <code>Day</code>returns 'Monday   ' because the maximum length of
+     *                  this code is 'Wednesday';
+     *  <code>NPDay</code>returns 'Monday'
+     *
+     * N.B. this code affects the code immediately following only, and
+     * without this code the default is always to apply padding.
+     *
+     * The codes are case-insensitive, except when the return-values contain
+     * characters, in which case the case of the return-value matches the
+     * code.  For example, for Monday:
+     *
+     *  <code>DAY</code>returns 'MONDAY'
+     *  <code>Day</code>returns 'Monday'
+     *  <code>day</code>returns 'monday'
+     *
+     * Where it makes sense, numeric codes can be combined with a following
+     * 'SP' code which spells out the number, or with a 'TH' code, which
+     * renders the code as an ordinal ('TH' only works in English), for
+     * example, for 31st December:
+     *
+     *  <code>DD</code>returns '31'
+     *  <code>DDTH</code>returns '31ST'
+     *  <code>DDth</code>returns '31st'
+     *  <code>DDSP</code>returns 'THIRTY-ONE'
+     *  <code>DDSp</code>returns 'Thirty-one'
+     *  <code>DDsp</code>returns 'thirty-one'
+     *  <code>DDSPTH</code>returns 'THIRTY-FIRST'
+     *  <code>DDSpth</code>returns 'Thirty-first'
+     *  <code>DDspth</code>returns 'thirty-first'
+     *
+     *
+     * All formatting options:
+     *
+     *  <code>-</code>All punctuation and white-space is reproduced unchanged
      *  <code>/</code><br />
      *  <code>,</code><br />
      *  <code>.</code><br />
      *  <code>;</code><br />
      *  <code>:</code><br />
      *  <code> </code><br />
-     *  <code>"text"</code><br />
-     *  <code>AD</code>AD indicator with or without full stops<br />
-     *  <code>A.D.</code><br />
-     *  <code>AM</code>Meridian indicator with or without full stops<br />
-     *  <code>A.M.</code><br />
-     *  <code>BC</code>BC indicator with or without full stops<br />
-     *  <code>B.C.</code><br />
-     *  <code>BCE</code>BCE indicator with or without full stops<br />
-     *  <code>B.C.E.</code><br />
-     *  <code>CC</code>Century, i.e. the year divided by 100, discarding the remainder; 'S' prefixes negative years with a minus sign<br />
-     *  <code>SCC</code><br />
-     *  <code>CE</code>CE indicator with or without full stops<br />
-     *  <code>C.E.</code><br />
-     *  <code>D</code>Day of week (0-6), where 0 represents Sunday<br />
-     *  <code>DAY</code>Name of day, padded with blanks to display width of the widest name of day in the date language used for this element<br />
-     *  <code>DD</code>Day of month (1-31)<br />
-     *  <code>DDD</code>Day of year (1-366)<br />
-     *  <code>DY</code>Abbreviated name of day<br />
-     *  <code>F [1..9]</code>Fractional seconds; no radix character is printed (use the X format element to add the radix character)<br />
-     *                       Use the numbers 1 to 9 after FF to specify the number of digits in the fractional second portion of the datetime value returned<br />
-                             If you do not specify a digit, then Oracle Database uses the precision specified for the datetime datatype or the datatype's default precision<br />
-     *                       e.g. 'HH:MI:SS.F'<br />
-     *  <code>HH</code>Hour of day (0-23)<br />
-     *  <code>HH12</code>Hour of day (1-12)<br />
-     *  <code>HH24</code>Hour of day (0-23)<br />
-     *  <code>ID</code>Day of week (1-7) based on the ISO standard<br />
-     *  <code>IW</code>Week of year (1-52 or 1-53) based on the ISO standard<br />
-     *  <code>IYY</code>Last 3, 2, or 1 digit(s) of ISO year<br />
-     *  <code>IY</code><br />
-     *  <code>I</code><br />
-     *  <code>IYYY</code>4-digit year based on the ISO standard; 'S' prefixes negative years with a minus sign<br />
-     *  <code>SIYYY</code><br />
-     *  <code>J</code>Julian day; the number of days since Monday, November 24, 4714 B.C. (Proleptic Gregorian
-     *                calendar); number specified with J must be integers<br />
-     *  <code>MI</code>Minute (0-59)<br />
-     *  <code>MM</code>Month (01-12; January = 01)<br />
-     *  <code>MON</code>Abbreviated name of month<br />
-     *  <code>MONTH</code>Name of month, padded with blanks to display width of the widest name of month in the date language used for this element<br />
-     *  <code>PM</code>Meridian indicator with or without full stops<br />
-     *  <code>P.M.</code><br />
-     *  <code>Q</code>Quarter of year (1, 2, 3, 4; January - March = 1)<br />
-     *  <code>RM</code>Roman numeral month (I-XII; January = I)<br />
-     *  <code>SS</code>Second (0-59)<br />
-     *  <code>SSSSS</code>Seconds past midnight (0-86399)<br />
-     *  <code>TZD</code>Daylight savings information; the TZD value is an abbreviated time zone string with daylight savings information<br />
-     *                  It must correspond with the region specified in TZR<br />
-     *                  e.g. PST (for US/Pacific standard time); PDT (for US/Pacific daylight time)<br />
-     *  <code>TZH</code>Time zone hour (See TZM format element)<br />
-     *                  e.g. 'HH:MI:SS.FFTZH:TZM'<br />
-     *  <code>TZM</code>Time zone minute (See TZH format element)<br />
-     *                  e.g. 'HH:MI:SS.FFTZH:TZM'<br />
-     *  <code>TZR</code>Time zone region, that is, the name or ID of the time zone<br />
-     *                  e.g. 'Europe/London';  N.B. this value is unique for each
-     *                  time zone<br />
-     *  <code>U</code>Seconds since the Unix Epoch - January 1 1970 00:00:00 GMT<br />
-     *  <code>WW</code>'Absolute' week of year (1-53), counting week 1 as 1st-7th of the year, regardless of the day<br />
-     *  <code>W1</code>Week of year (1-54), counting week 1 as the week that contains 1st January<br />
-     *  <code>W4</code>Week of year (1-53), counting week 1 as the week that contains 4th January (i.e. first week with at least 4 days)<br />
-     *  <code>W7</code>Week of year (1-53), counting week 1 as the week that contains 7th January (i.e. first full week)<br />
-     *  <code>W</code>'Absolute' week of month (1-5), counting week 1 as 1st-7th of the year, regardless of the day<br />
-     *  <code>Y,YYY</code>Year with thousands-separator in this position; five possible separators<br />
-     *  <code>Y.YYY</code><br />
-     *  <code>Y·YYY</code>N.B. space-dot (mid-dot, interpunct) is valid only in ISO 8859-1<br />
-     *  <code>Y'YYY</code><br />
-     *  <code>Y YYY</code><br />
-     *  <code>YEAR</code>Year, spelled out; 'S' prefixes negative years with 'MINUS'<br />
-     *                   N.B. 'YEAR' differs from 'YYYYSP' in that the first will render 1923, for example,<br />
-     *                   as 'NINETEEN TWENTY-THREE, and the second as 'ONE THOUSAND NINE HUNDRED TWENTY-THREE'<br />
-     *  <code>SYEAR</code><br />
-     *  <code>YYYY</code>4-digit year; 'S' prefixes negative years with a minus sign<br />
-     *  <code>SYYYY</code><br />
-     *  <code>YYY</code>Last 3, 2, or 1 digit(s) of year<br />
-     *  <code>YY</code><br />
-     *  <code>Y</code><br />
+     *  <code>"text"</code>Quoted text is reproduced unchanged (escape using
+     *                     '\')
+     *  <code>AD</code>AD indicator with or without full stops; N.B. if you
+     *                 are using 'Astronomical' year numbering then 'A.D./B.C.'
+     *                 indicators will be out for negative years
+     *  <code>A.D.</code>
+     *  <code>AM</code>Meridian indicator with or without full stops
+     *  <code>A.M.</code>
+     *  <code>BC</code>BC indicator with or without full stops
+     *  <code>B.C.</code>
+     *  <code>BCE</code>BCE indicator with or without full stops
+     *  <code>B.C.E.</code>
+     *  <code>CC</code>Century, i.e. the year divided by 100, discarding the
+     *                 remainder; 'S' prefixes negative years with a minus sign
+     *  <code>SCC</code>
+     *  <code>CE</code>CE indicator with or without full stops
+     *  <code>C.E.</code>
+     *  <code>D</code>Day of week (0-6), where 0 represents Sunday
+     *  <code>DAY</code>Name of day, padded with blanks to display width of the
+     *                  widest name of day in the locale of the machine
+     *  <code>DD</code>Day of month (1-31)
+     *  <code>DDD</code>Day of year (1-366)
+     *  <code>DY</code>Abbreviated name of day
+     *  <code>FFF</code>Fractional seconds; no radix character is printed.  The
+     *                  no of 'F's determines the no of digits of the
+     *                  part-second to return; e.g. 'HH:MI:SS.FF'
+     *  <code>F[integer]</code>The integer after 'F' specifies the number of
+     *                         digits of the part-second to return.  This is an
+     *                         alternative to using F[integer], and 'F3' is thus
+     *                         equivalent to using 'FFF'.
+     *  <code>HH</code>Hour of day (0-23)
+     *  <code>HH12</code>Hour of day (1-12)
+     *  <code>HH24</code>Hour of day (0-23)
+     *  <code>ID</code>Day of week (1-7) based on the ISO standard
+     *  <code>IW</code>Week of year (1-52 or 1-53) based on the ISO standard
+     *  <code>IYYY</code>4-digit year based on the ISO 8601 standard; 'S'
+     *                   prefixes negative years with a minus sign
+     *  <code>SIYYY</code>
+     *  <code>IYY</code>Last 3, 2, or 1 digit(s) of ISO year
+     *  <code>IY</code>
+     *  <code>I</code>
+     *  <code>J</code>Julian day; the number of days since Monday, November 24,
+     *                4714 B.C. (Proleptic Gregorian calendar)
+     *  <code>MI</code>Minute (0-59)
+     *  <code>MM</code>Month (01-12; January = 01)
+     *  <code>MON</code>Abbreviated name of month
+     *  <code>MONTH</code>Name of month, padded with blanks to display width of
+     *                    the widest name of month in the date language used for
+     *  <code>PM</code>Meridian indicator with or without full stops
+     *  <code>P.M.</code>
+     *  <code>Q</code>Quarter of year (1, 2, 3, 4; January - March = 1)
+     *  <code>RM</code>Roman numeral month (I-XII; January = I)
+     *  <code>SS</code>Second (0-59)
+     *  <code>SSSSS</code>Seconds past midnight (0-86399)
+     *  <code>TZC</code>Abbreviated form of time zone name, e.g. 'GMT', or the
+     *                  abbreviation for Summer time if the date falls in Summer
+     *                  time, e.g. 'BST'.
+     *                  N.B. this is not a unique identifier - for this purpose
+     *                  use the time zone region (code 'TZR').
+     *  <code>TZH</code>Time zone hour, including the +/- sign, which cannot be
+     *                  suppressed (although the leading nought can be
+     *                  suppressed with the no-padding code 'NP').  Also note
+     *                  that if you combine with the 'SP' code, the sign will
+     *                  not be spelled out.  'TZH:TZM' will produce, for
+     *                  example, '+05:30'.  (Also see 'TZM' format code)
+     *  <code>TZI</code>Whether or not the date is in Summer time (daylight
+     *                  saving time).  Returns '1' if Summer time, else '0'.
+     *  <code>TZM</code>Time zone minute, without any +/- sign.  (Also see 'TZH'
+     *                  format element)
+     *  <code>TZN</code>Long form of time zone name, e.g. 'Greenwich Mean Time',
+     *                  or the name of the Summer time if the date falls in
+     *                  Summer time, e.g. 'British Summer Time'.
+     *                  N.B. this is not a unique identifier - for this purpose
+     *                  use the time zone region (code 'TZR').
+     *  <code>TZO</code>Time zone offset in seconds, with negative sign '-' if
+     *                  negative, and no sign if positive (i.e. -43200 to
+     *                  50400). (Note that the sign cannot be suppressed.)
+     *  <code>TZR</code>Time zone region, that is, the name or ID of the time
+     *                  zone e.g. 'Europe/London'.  This value is unique for
+     *                  each time zone.
+     *  <code>U</code>Seconds since the Unix Epoch - January 1 1970 00:00:00 GMT
+     *  <code>WW</code>'Absolute' week of year (1-53), counting week 1 as
+     *                 1st-7th of the year, regardless of the day
+     *  <code>W1</code>Week of year (1-54), counting week 1 as the week that
+     *                 contains 1st January
+     *  <code>W4</code>Week of year (1-53), counting week 1 as the week that
+     *                 contains 4th January (i.e. first week with at least 4
+     *                 days)
+     *  <code>W7</code>Week of year (1-53), counting week 1 as the week that
+     *                 contains 7th January (i.e. first full week)
+     *  <code>W</code>'Absolute' week of month (1-5), counting week 1 as 1st-7th
+     *                 of the year, regardless of the day
+     *  <code>YEAR</code>Year, spelled out; 'S' prefixes negative years with
+     *                  'MINUS'; N.B. 'YEAR' differs from 'YYYYSP' in that the
+     *                   first will render 1923, for example, as 'NINETEEN
+     *                   TWENTY-THREE, and the second as 'ONE THOUSAND NINE
+     *                   HUNDRED TWENTY-THREE'
+     *  <code>SYEAR</code>
+     *  <code>YYYY</code>4-digit year; 'S' prefixes negative years with a minus
+     *                   sign
+     *  <code>SYYYY</code>
+     *  <code>YYY</code>Last 3, 2, or 1 digit(s) of year
+     *  <code>YY</code>
+     *  <code>Y</code>
+     *  <code>Y,YYY</code>Year with thousands-separator in this position; five
+     *                    possible separators
+     *  <code>Y.YYY</code>
+     *  <code>Y·YYY</code>N.B. space-dot (mid-dot, interpunct) is valid only in
+     *                    ISO 8859-1 (so take care when using UTF-8 in
+     *                    particular)
+     *  <code>Y'YYY</code>
+     *  <code>Y YYY</code>
      *
      * Most character-returning codes, such as 'MONTH', will
      * set the capitalization according to the code, so for example:
      *
-     *  <code>MONTH</code>returns upper-case spelling, e.g. 'JANUARY'<br />
-     *  <code>Month</code>returns spelling with first character of each word<br />
-     *                 capitalized, e.g. 'January'<br />
-     *  <code>month</code>returns lower-case spelling, e.g. 'january'<br />
+     *  <code>MONTH</code>returns upper-case spelling, e.g. 'JANUARY'
+     *  <code>Month</code>returns spelling with first character of each word
+     *                    capitalized, e.g. 'January'
+     *  <code>month</code>returns lower-case spelling, e.g. 'january'
      *
      * In addition the following codes can be used in combination with other
      * codes;
      *  Codes that modify the next code in the format string:
      *
-     *  <code>NP</code>'No Padding' - Returns a value with no trailing blanks and<br />
-     *                  no leading or trailing noughts; N.B. that the default is to
-     *                  include this padding in the return string<br />
+     *  <code>NP</code>'No Padding' - Returns a value with no trailing blanks
+     *                 and no leading or trailing noughts; N.B. that the
+     *                 default is to include this padding in the return string.
+     *                 N.B. affects the code immediately following only.
      *
      *  Codes that modify the previous code in the format string (can only
      *  be used with integral codes such as 'MM'):
      *
-     *  <code>TH</code>Ordinal number<br />
-     *  <code>SP</code>Spelled cardinal number<br />
-     *  <code>SPTH</code>Spelled ordinal number (combination of 'SP' and 'TH'<br />
-     *                   in any order)<br />
-     *  <code>THSP</code><br />
+     *  <code>TH</code>Ordinal number
+     *  <code>SP</code>Spelled cardinal number
+     *  <code>SPTH</code>Spelled ordinal number (combination of 'SP' and 'TH'
+     *                   in any order)
+     *  <code>THSP</code>
      *
      * Code 'SP' can have the following three variations (which can also be used
      * in combination with 'TH'):
      *
-     *  <code>SP</code>returns upper-case spelling, e.g. 'FOUR HUNDRED'<br />
-     *  <code>Sp</code>returns spelling with first character of each word<br />
-     *                 capitalized, e.g. 'Four Hundred'<br />
-     *  <code>sp</code>returns lower-case spelling, e.g. 'four hundred'<br />
+     *  <code>SP</code>returns upper-case spelling, e.g. 'FOUR HUNDRED'
+     *  <code>Sp</code>returns spelling with first character of each word
+     *                 capitalized, e.g. 'Four Hundred'
+     *  <code>sp</code>returns lower-case spelling, e.g. 'four hundred'
      *
      * Code 'TH' can have the following two variations (although in combination
      * with code 'SP', the case specification of 'SP' takes precedence):
      *
-     *  <code>TH</code>returns upper-case ordinal suffix, e.g. 400TH<br />
-     *  <code>th</code>returns lower-case ordinal suffix, e.g. 400th<br />
+     *  <code>TH</code>returns upper-case ordinal suffix, e.g. 400TH
+     *  <code>th</code>returns lower-case ordinal suffix, e.g. 400th
      *
      * @param    string     $ps_format                    format string for returned date/time
      * @param    string     $ps_locale                    language name abbreviation used for formatting
@@ -941,7 +1056,7 @@ class Date
      */
     function format2($ps_format, $ps_locale = "en_GB")
     {
-        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F([1-9][0-9]*)?|MON(TH)?|NP|PM|P\.M\.|RM|R{2,}|TS|TZ[DHMR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
+        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|TZ[HMO]|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
             return PEAR::raiseError("Invalid date format '$ps_format'");
         }
 
@@ -955,6 +1070,7 @@ class Date
         $hn_isoyear = null;
         $hn_isoweek = null;
         $hn_isoday = null;
+        $hn_tzoffset = null;
 
         while ($i < strlen($ps_format)) {
             $hb_lower = false;
@@ -1410,6 +1526,66 @@ class Date
                     }
 
                     break;
+                case "t":
+                case "T":
+                    // Code TZ[...]:
+                    //
+                    if (is_null($hn_tzoffset))
+                        $hn_tzoffset = $this->getTZOffset();
+
+                    if (strtoupper(substr($ps_format, $i, 3)) == "TZC") {
+                        $ret .= $this->getTZShortName();
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZH") {
+                        $hs_numberformat = substr($ps_format, $i + 3, 4);
+                        $hn_tzh = intval($hn_tzoffset / 3600000);
+
+                        // Suppress sign here (it is added later):
+                        //
+                        $hs_tzh = $this->formatNumber($hn_tzh, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
+                        if (Pear::isError($hs_tzh))
+                            return $hs_tzh;
+
+                        // Force sign:
+                        //
+                        $ret .= ($hn_tzh >= 0 ? '+' : '-') . $hs_tzh;
+                        $i += 3 + strlen($hs_numberformat);
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZI") {
+                        $ret .= ($this->inDaylightTime() ? '1' : '0');
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZM") {
+                        $hs_numberformat = substr($ps_format, $i + 3, 4);
+                        $hn_tzm = intval(($hn_tzoffset % 3600000) / 60000);
+
+                        // Suppress sign:
+                        //
+                        $hs_tzm = $this->formatNumber($hn_tzm, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
+                        if (Pear::isError($hs_tzm))
+                            return $hs_tzm;
+
+                        $ret .= $hs_tzm;
+                        $i += 3 + strlen($hs_numberformat);
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZN") {
+                        $ret .= $this->getTZLongName();
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZO") {
+                        $hs_numberformat = substr($ps_format, $i + 3, 4);
+                        $hn_tzo = intval($hn_tzoffset / 1000);
+
+                        // Allow sign if negative; allow all digits (specify nought); suppress padding:
+                        //
+                        $hs_tzo = $this->formatNumber($hn_tzo, $hs_numberformat, 0, true, false, $ps_locale);
+                        if (Pear::isError($hs_tzo))
+                            return $hs_tzo;
+
+                        $ret .= $hs_tzo;
+                        $i += 3 + strlen($hs_numberformat);
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZR") {
+                        $ret .= $this->getTZID();
+                        $i += 3;
+                    }
+
+                    break;
                 case "u":
                 case "U":
                     $hn_unixtime = $this->getTime();
@@ -1562,10 +1738,15 @@ class Date
                     }
 
                     break;
+                default:
+                    $ret .= $hs_char;
+                    ++$i;
+                    break;
             }
         }
         return $ret;
     }
+
 
     // }}}
     // {{{ getTime()
@@ -1584,20 +1765,21 @@ class Date
         return $this->getDate(DATE_FORMAT_UNIXTIME);
     }
 
+
     // }}}
     // {{{ getTZID()
 
     /**
-     * Returns the time zone ID of the object
+     * Returns the unique ID of the time zone, e.g. 'America/Chicago'
      *
-     * Returns the time zone ID of the object, e.g. "America/Chicago"
-     *
-     * @access public
+     * @return   string     the time zone ID
+     * @access   public
      */
     function getTZID()
     {
         return $this->tz->getID();
     }
+
 
     // }}}
     // {{{ setTZ()
@@ -1657,6 +1839,80 @@ class Date
 
 
     // }}}
+    // {{{ getTZLongName()
+
+    /**
+     * Returns the long name of the time zone
+     *
+     * Returns long form of time zone name, e.g. 'Greenwich Mean Time'.
+     * N.B. if the date falls in Summer time, the Summer time name will be
+     * returned instead, e.g. 'British Summer Time'.
+     *
+     * N.B. this is not a unique identifier for the time zone - for this
+     * purpose use the time zone ID.
+     *
+     * @return   string     the long name of the time zone
+     * @access   public
+     */
+    function getTZLongName()
+    {
+        return $this->tz->getLongName($this);
+    }
+
+
+    // }}}
+    // {{{ getTZShortName()
+
+    /**
+     * Returns the short name of the time zone
+     *
+     * Returns abbreviated form of time zone name, e.g. 'GMT'.  N.B. if the
+     * date falls in Summer time, the Summer time name will be returned
+     * instead, e.g. 'BST'.
+     *
+     * N.B. this is not a unique identifier - for this purpose use the
+     * time zone ID.
+     *
+     * @return   string     the short name of the time zone
+     * @access   public
+     */
+    function getTZShortName()
+    {
+        return $this->tz->getShortName($this);
+    }
+
+
+    // }}}
+    // {{{ getTZOffset()
+
+    /**
+     * Returns the DST-corrected offset from UTC for the given date
+     *
+     * Gets the offset to UTC for a given date/time, taking into
+     * account daylight savings time, if the time zone observes it and if
+     * it is in effect.
+     *
+     * N.B. that the offset is calculated historically
+     * and in the future according to the current Summer time rules,
+     * and so this function is proleptically correct, but not necessarily
+     * historically correct.  (Although if you want to be correct about
+     * times in the distant past, this class is probably not for you
+     * because the whole notion of time zones does not apply, and
+     * historically there are so many time zone changes, Summer time
+     * rule changes, name changes, calendar changes, that calculating
+     * this sort of information is beyond the scope of this package
+     * altogether.)
+     *
+     * @return   int        the corrected offset to UTC in milliseconds
+     * @access   public
+     */
+    function getTZOffset()
+    {
+        return $this->tz->getOffset($this);
+    }
+
+
+    // }}}
     // {{{ inDaylightTime()
 
     /**
@@ -1686,10 +1942,10 @@ class Date
      */
     function toUTC()
     {
-        if ($this->tz->getOffset($this) > 0) {
-            $this->subtractSeconds(intval($this->tz->getOffset($this) / 1000));
+        if ($this->getTZOffset() > 0) {
+            $this->subtractSeconds(intval($this->getTZOffset() / 1000));
         } else {
-            $this->addSeconds(intval(abs($this->tz->getOffset($this)) / 1000));
+            $this->addSeconds(intval(abs($this->getTZOffset()) / 1000));
         }
         $this->tz = new Date_TimeZone('UTC');
     }
@@ -1711,10 +1967,10 @@ class Date
     function convertTZ($tz)
     {
         // convert to UTC
-        if ($this->tz->getOffset($this) > 0) {
-            $this->subtractSeconds(intval(abs($this->tz->getOffset($this)) / 1000));
+        if ($this->getTZOffset() > 0) {
+            $this->subtractSeconds(intval(abs($this->getTZOffset()) / 1000));
         } else {
-            $this->addSeconds(intval(abs($this->tz->getOffset($this)) / 1000));
+            $this->addSeconds(intval(abs($this->getTZOffset()) / 1000));
         }
         // convert UTC to new timezone
         if ($tz->getOffset($this) > 0) {
