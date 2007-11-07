@@ -120,9 +120,8 @@ define('DATE_FORMAT_UNIXTIME', 5);
 /**
  * Generic date handling class for PEAR
  *
- * Generic date handling class for PEAR.  Attempts to be time zone aware
- * through the Date::TimeZone class.  Supports several operations from
- * Date::Calc on Date objects.
+ * Supports time zones with the Date_TimeZone class.  Supports several
+ * operations from Date_Calc on Date objects.
  *
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
@@ -328,8 +327,8 @@ class Date
      *
      * @param    string     $date                         input date
      * @param    int        $format                       optional format constant (DATE_FORMAT_*) of the input date.
-     *                                                    This parameter isn't really needed anymore, but you could
-     *                                                    use it to force DATE_FORMAT_UNIXTIME.
+     *                                                    This parameter is not needed, except to force the setting
+     *                                                    of the date from a Unix time-stamp (DATE_FORMAT_UNIXTIME).
      *
      * @return   void
      * @access   public
@@ -481,31 +480,44 @@ class Date
      *  <code>%A  </code>  full weekday name (Sunday, Monday, Tuesday) <br>
      *  <code>%b  </code>  abbreviated month name (Jan, Feb, Mar) <br>
      *  <code>%B  </code>  full month name (January, February, March) <br>
-     *  <code>%C  </code>  century number (the year divided by 100 and truncated to an integer, range 00 to 99) <br>
+     *  <code>%C  </code>  century number (the year divided by 100 and truncated
+     *                     to an integer, range 00 to 99) <br>
      *  <code>%d  </code>  day of month (range 00 to 31) <br>
-     *  <code>%D  </code>  same as "%m/%d/%y" <br>
-     *  <code>%e  </code>  day of month, single digit (range 0 to 31) <br>
-     *  <code>%E  </code>  number of days since unspecified epoch (integer, Date_Calc::dateToDays()) <br>
+     *  <code>%D  </code>  equivalent to "%m/%d/%y" <br>
+     *  <code>%e  </code>  day of month without leading noughts (range 0 to 31) <br>
+     *  <code>%E  </code>  Julian day - no of days since Monday, 24th November,
+     *                     4714 B.C. (in the proleptic Gregorian calendar)<br>
+     *  <code>%h  </code>  hour as decimal number without leading noughts (0
+     *                     to 23) <br>
      *  <code>%H  </code>  hour as decimal number (00 to 23) <br>
+     *  <code>%i  </code>  hour as decimal number on 12-hour clock without
+     *                     leading noughts (1 to 12) <br>
      *  <code>%I  </code>  hour as decimal number on 12-hour clock (01 to 12) <br>
      *  <code>%j  </code>  day of year (range 001 to 366) <br>
      *  <code>%m  </code>  month as decimal number (range 01 to 12) <br>
      *  <code>%M  </code>  minute as a decimal number (00 to 59) <br>
-     *  <code>%n  </code>  newline character (\n) <br>
-     *  <code>%O  </code>  dst-corrected timezone offset expressed as "+/-HH:MM" <br>
-     *  <code>%o  </code>  raw timezone offset expressed as "+/-HH:MM" <br>
+     *  <code>%n  </code>  newline character ("\n") <br>
+     *  <code>%o  </code>  raw timezone offset expressed as '+/-HH:MM' <br>
+     *  <code>%O  </code>  dst-corrected timezone offset expressed as '+/-HH:MM' <br>
      *  <code>%p  </code>  either 'am' or 'pm' depending on the time <br>
      *  <code>%P  </code>  either 'AM' or 'PM' depending on the time <br>
-     *  <code>%r  </code>  time in am/pm notation, same as "%I:%M:%S %p" <br>
-     *  <code>%R  </code>  time in 24-hour notation, same as "%H:%M" <br>
-     *  <code>%s  </code>  seconds including the decimal representation smaller than one second <br>
+     *  <code>%r  </code>  time in am/pm notation; equivalent to "%I:%M:%S %p" <br>
+     *  <code>%R  </code>  time in 24-hour notation; equivalent to "%H:%M" <br>
+     *  <code>%s  </code>  seconds including the micro-time (the decimal
+     *                     representation less than one second to six decimal
+     *                     places<br>
      *  <code>%S  </code>  seconds as a decimal number (00 to 59) <br>
-     *  <code>%t  </code>  tab character (\t) <br>
-     *  <code>%T  </code>  current time, same as "%H:%M:%S" <br>
-     *  <code>%w  </code>  weekday as decimal (0 = Sunday) <br>
-     *  <code>%U  </code>  week number of current year, first sunday as first week <br>
+     *  <code>%t  </code>  tab character ("\t") <br>
+     *  <code>%T  </code>  current time; equivalent to "%H:%M:%S" <br>
+     *  <code>%w  </code>  weekday as decimal (0 to 7; where 0 = Sunday) <br>
+     *  <code>%U  </code>  'Absolute' week of year (1-53), counting week 1 as
+     *                     1st-7th of the year, regardless of the day <br>
      *  <code>%y  </code>  year as decimal (range 00 to 99) <br>
-     *  <code>%Y  </code>  year as decimal including century (range 0000 to 9999) <br>
+     *  <code>%Y  </code>  year as decimal including century (range 0000 to
+     *                     9999) <br>
+     *  <code>%Z  </code>  Abbreviated form of time zone name, e.g. 'GMT', or
+     *                     the abbreviation for Summer time if the date falls
+     *                     in Summer time, e.g. 'BST'. <br>
      *  <code>%%  </code>  literal '%' <br>
      * <br>
      *
@@ -549,19 +561,19 @@ class Date
                 case "E":
                     $output .= Date_Calc::dateToDays($this->day,$this->month,$this->year);
                     break;
-                case "H":
-                    $output .= sprintf("%02d", $this->hour);
-                    break;
                 case 'h':
                     $output .= sprintf("%d", $this->hour);
                     break;
-                case "I":
-                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
-                    $output .= sprintf("%02d", $hour==0 ? 12 : $hour);
+                case "H":
+                    $output .= sprintf("%02d", $this->hour);
                     break;
                 case "i":
                     $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%d", $hour==0 ? 12 : $hour);
+                    break;
+                case "I":
+                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                    $output .= sprintf("%02d", $hour==0 ? 12 : $hour);
                     break;
                 case "j":
                     $output .= sprintf("%03d", Date_Calc::dayOfYear($this->day,$this->month,$this->year));
@@ -919,13 +931,13 @@ class Date
      * N.B. this code affects the code immediately following only, and
      * without this code the default is always to apply padding.
      *
-     * The codes are case-insensitive, except when the return-values contain
-     * characters, in which case the case of the return-value matches the
-     * code.  For example, for Monday:
+     * Most character-returning codes, such as 'MONTH', will
+     * set the capitalization according to the code, so for example:
      *
-     *  <code>DAY</code>returns 'MONDAY'
-     *  <code>Day</code>returns 'Monday'
-     *  <code>day</code>returns 'monday'
+     *  <code>MONTH</code>returns upper-case spelling, e.g. 'JANUARY'
+     *  <code>Month</code>returns spelling with first character of each word
+     *                    capitalized, e.g. 'January'
+     *  <code>month</code>returns lower-case spelling, e.g. 'january'
      *
      * Where it makes sense, numeric codes can be combined with a following
      * 'SP' code which spells out the number, or with a 'TH' code, which
@@ -993,8 +1005,8 @@ class Date
      *  <code>IYY</code>Last 3, 2, or 1 digit(s) of ISO year
      *  <code>IY</code>
      *  <code>I</code>
-     *  <code>J</code>Julian day; the number of days since Monday, November 24,
-     *                4714 B.C. (Proleptic Gregorian calendar)
+     *  <code>J</code>Julian day - the number of days since Monday, 24th
+     *                November, 4714 B.C. (proleptic Gregorian calendar)
      *  <code>MI</code>Minute (0-59)
      *  <code>MM</code>Month (01-12; January = 01)
      *  <code>MON</code>Abbreviated name of month
@@ -1012,12 +1024,14 @@ class Date
      *                  time, e.g. 'BST'.
      *                  N.B. this is not a unique identifier - for this purpose
      *                  use the time zone region (code 'TZR').
-     *  <code>TZH</code>Time zone hour, including the +/- sign, which cannot be
-     *                  suppressed (although the leading nought can be
-     *                  suppressed with the no-padding code 'NP').  Also note
-     *                  that if you combine with the 'SP' code, the sign will
-     *                  not be spelled out.  'TZH:TZM' will produce, for
-     *                  example, '+05:30'.  (Also see 'TZM' format code)
+     *  <code>TZH</code>Time zone hour; 'S' prefixes the hour with the correct
+     *                  sign, (+/-), which otherwise is not displayed.  Note
+     *                  that the leading nought can be suppressed with the
+     *                  no-padding code 'NP').  Also note that if you combine
+     *                  with the 'SP' code, the sign will not be spelled out.
+     *                  'TZH:TZM' will produce, for example, '+05:30'.  (Also
+     *                  see 'TZM' format code)
+     *  <code>STZH</code>
      *  <code>TZI</code>Whether or not the date is in Summer time (daylight
      *                  saving time).  Returns '1' if Summer time, else '0'.
      *  <code>TZM</code>Time zone minute, without any +/- sign.  (Also see 'TZH'
@@ -1066,14 +1080,6 @@ class Date
      *  <code>Y'YYY</code>
      *  <code>Y YYY</code>
      *
-     * Most character-returning codes, such as 'MONTH', will
-     * set the capitalization according to the code, so for example:
-     *
-     *  <code>MONTH</code>returns upper-case spelling, e.g. 'JANUARY'
-     *  <code>Month</code>returns spelling with first character of each word
-     *                    capitalized, e.g. 'January'
-     *  <code>month</code>returns lower-case spelling, e.g. 'january'
-     *
      * In addition the following codes can be used in combination with other
      * codes;
      *  Codes that modify the next code in the format string:
@@ -1115,7 +1121,7 @@ class Date
      */
     function format2($ps_format, $ps_locale = "en_GB")
     {
-        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|TZ[HMO]|U|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
+        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|S?TZH|TZ[MO]|U|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
             return PEAR::raiseError("Invalid date format '$ps_format'");
         }
 
@@ -1612,9 +1618,9 @@ class Date
                         if (Pear::isError($hs_tzh))
                             return $hs_tzh;
 
-                        // Force sign:
+                        // Display sign:
                         //
-                        $ret .= ($hn_tzh >= 0 ? '+' : '-') . $hs_tzh;
+                        $ret .= ($hb_nosign ? "" : ($hn_tzh >= 0 ? '+' : '-')) . $hs_tzh;
                         $i += 3 + strlen($hs_numberformat);
                     } else if (strtoupper(substr($ps_format, $i, 3)) == "TZI") {
                         $ret .= ($this->inDaylightTime() ? '1' : '0');
