@@ -1089,7 +1089,8 @@ class Date_Calc
      * 7 days, and if the 4th of January is a Friday, for example,
      * ISO week 1 would start on Monday, 31st December in the previous year,
      * whereas the week defined by this function would start on 1st January,
-     * but would be only 6 days long.
+     * but would be only 6 days long.  Of course you can also set the day
+     * of the week, whereas the ISO week starts on a Monday by definition.
      *
      * Returned week is an integer from 1 to 53.
      *
@@ -1115,8 +1116,9 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
         $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
+
         $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
-        $hn_week = floor(($hn_day + (-3 + $hn_wd1 - $pn_firstdayofweek) % 7 + 9) / 7);
+        $hn_week = floor(($hn_day + (10 + $hn_wd1 - $pn_firstdayofweek) % 7 + 3) / 7);
 
         if ($hn_week > 0) {
             $hn_year = $pn_year;
@@ -1496,6 +1498,8 @@ class Date_Calc
      */
     function daysToDayOfWeek($pn_days)
     {
+        // On Julian day 0 the day is Monday (PHP day 1):
+        //
         $ret = ($pn_days + 1) % 7;
         return $ret < 0 ? $ret + 7 : $ret;
     }
