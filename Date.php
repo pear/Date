@@ -347,12 +347,14 @@ class Date
             // throw at it.  e.g. 2003-10-07 19:45:15 and 2003-10071945:15
             // are the same thing in the eyes of this regex, even though the
             // latter is not a valid ISO 8601 date.
+
+            if (!Date_Calc::isValidDate($regs[3], $regs[2], $regs[1])) {
+                return PEAR::raiseError("'" . $regs[1] . "-" . $regs[2] . "-" . $regs[3] . "' is invalid calendar date");
+            }
+
             $this->year       = (int) $regs[1];
             $this->month      = (int) $regs[2];
             $this->day        = (int) $regs[3];
-
-            if (!Date_Calc::isValidDate($this->day, $this->month, $this->year))
-                return PEAR::raiseError("'" . $regs[1] . "-" . $regs[2] . "-" . $regs[3] . "' is invalid calendar date");
 
             $this->hour       = (isset($regs[5]) ? (int) $regs[5] : 0);
             $this->minute     = (isset($regs[6]) ? (int) $regs[6] : 0);
@@ -454,6 +456,10 @@ class Date
             return $this->format("%Y%m%d%H%M%S");
             break;
         case DATE_FORMAT_UNIXTIME:
+            // Enter a time in UTC, so use 'gmmktime()' (the alternative
+            // is to offset additionally by the local time, but the object
+            // is not necessarily using local time).
+            //
             return gmmktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year) - $this->getTZOffset() / 1000;
             break;
         }
@@ -728,9 +734,6 @@ class Date
                 case 3:
                     $hs_words = substr($hs_words, 0, -3) . "ird";
                     break;
-                case 4:
-                    $hs_words = substr($hs_words, 0, -2) . "rth";
-                    break;
                 case 5:
                     $hs_words = substr($hs_words, 0, -2) . "fth";
                     break;
@@ -1000,7 +1003,8 @@ class Date
      *  <code>PM</code>Meridian indicator with or without full stops
      *  <code>P.M.</code>
      *  <code>Q</code>Quarter of year (1, 2, 3, 4; January - March = 1)
-     *  <code>RM</code>Roman numeral month (I-XII; January = I)
+     *  <code>RM</code>Roman numeral month (I-XII; January = I); N.B. padded
+     *                 with leading spaces.
      *  <code>SS</code>Second (0-59)
      *  <code>SSSSS</code>Seconds past midnight (0-86399)
      *  <code>TZC</code>Abbreviated form of time zone name, e.g. 'GMT', or the
@@ -1030,8 +1034,8 @@ class Date
      *                  zone e.g. 'Europe/London'.  This value is unique for
      *                  each time zone.
      *  <code>U</code>Seconds since the Unix Epoch - January 1 1970 00:00:00 GMT
-     *  <code>WW</code>'Absolute' week of year (1-53), counting week 1 as
-     *                 1st-7th of the year, regardless of the day
+     *  <code>W</code>'Absolute' week of month (1-5), counting week 1 as 1st-7th
+     *                 of the year, regardless of the day
      *  <code>W1</code>Week of year (1-54), counting week 1 as the week that
      *                 contains 1st January
      *  <code>W4</code>Week of year (1-53), counting week 1 as the week that
@@ -1039,8 +1043,8 @@ class Date
      *                 days)
      *  <code>W7</code>Week of year (1-53), counting week 1 as the week that
      *                 contains 7th January (i.e. first full week)
-     *  <code>W</code>'Absolute' week of month (1-5), counting week 1 as 1st-7th
-     *                 of the year, regardless of the day
+     *  <code>WW</code>'Absolute' week of year (1-53), counting week 1 as
+     *                 1st-7th of the year, regardless of the day
      *  <code>YEAR</code>Year, spelled out; 'S' prefixes negative years with
      *                  'MINUS'; N.B. 'YEAR' differs from 'YYYYSP' in that the
      *                   first will render 1923, for example, as 'NINETEEN
@@ -1111,7 +1115,7 @@ class Date
      */
     function format2($ps_format, $ps_locale = "en_GB")
     {
-        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|TZ[HMO]|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
+        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|TZ[HMO]|U|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
             return PEAR::raiseError("Invalid date format '$ps_format'");
         }
 
@@ -1387,7 +1391,7 @@ class Date
                         strtoupper(substr($ps_format, $i + 1, 3)) != "DAY"
                         ) {
                         $hs_numberformat = substr($ps_format, $i + 2, 4);
-                        $hs_isoday = $this->formatNumber($hn_isoday, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
+                        $hs_isoday = $this->formatNumber($hn_isoday, $hs_numberformat, 1, $hb_nopad, true, $ps_locale);
                         if (Pear::isError($hs_isoday))
                             return $hs_isoday;
 
@@ -1554,7 +1558,7 @@ class Date
                     }
 
                     $hs_monthroman = $hb_lower ? $hs_monthroman : strtoupper($hs_monthroman);
-                    $ret .= $hb_nopad ? $hs_monthroman : str_pad($hs_monthroman, 4, " ", STR_PAD_RIGHT);
+                    $ret .= $hb_nopad ? $hs_monthroman : str_pad($hs_monthroman, 4, " ", STR_PAD_LEFT);
                     $i += 2;
                     break;
                 case "s":
@@ -1685,7 +1689,8 @@ class Date
                         $ret .= $hs_week;
                         $i += 2 + strlen($hs_numberformat);
                     } else if (strtoupper(substr($ps_format, $i, 2)) == "W4") {
-                        $hn_week = Date_Calc::weekOfYear4th($this->day, $this->month, $this->year);
+                        $ha_week = Date_Calc::weekOfYear4th($this->day, $this->month, $this->year);
+                        $hn_week = $ha_week[1];
                         $hs_numberformat = substr($ps_format, $i + 2, 4);
                         $hs_week = $this->formatNumber($hn_week, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
                         if (Pear::isError($hs_week))
@@ -1694,7 +1699,8 @@ class Date
                         $ret .= $hs_week;
                         $i += 2 + strlen($hs_numberformat);
                     } else if (strtoupper(substr($ps_format, $i, 2)) == "W7") {
-                        $hn_week = Date_Calc::weekOfYear7th($this->day, $this->month, $this->year);
+                        $ha_week = Date_Calc::weekOfYear7th($this->day, $this->month, $this->year);
+                        $hn_week = $ha_week[1];
                         $hs_numberformat = substr($ps_format, $i + 2, 4);
                         $hs_week = $this->formatNumber($hn_week, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
                         if (Pear::isError($hs_week))
