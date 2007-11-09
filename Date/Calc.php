@@ -13,7 +13,7 @@
  *
  * LICENSE:
  *
- * Copyright (c) 1999-2006 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor
+ * Copyright (c) 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1999-2006 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor
+ * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
@@ -46,7 +46,9 @@
  * @since      File available since Release 1.2
  */
 
+
 // }}}
+// {{{ General constants:
 
 if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
     /**
@@ -70,6 +72,20 @@ if (!defined('DATE_CALC_FORMAT')) {
     define('DATE_CALC_FORMAT', '%Y%m%d');
 }
 
+
+// {{{ Date precision constants (used in 'round()' and 'trunc()'):
+
+define('DATE_PRECISION_YEAR', -2);
+define('DATE_PRECISION_MONTH', -1);
+define('DATE_PRECISION_DAY', 0);
+define('DATE_PRECISION_HOUR', 1);
+define('DATE_PRECISION_10MINUTES', 2);
+define('DATE_PRECISION_MINUTE', 3);
+define('DATE_PRECISION_10SECONDS', 4);
+define('DATE_PRECISION_SECOND', 5);
+
+
+// }}}
 // {{{ Class: Date_Calc
 
 /**
@@ -81,7 +97,7 @@ if (!defined('DATE_CALC_FORMAT')) {
  * @author     Monte Ohrt <monte@ispi.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1999-2006 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor
+ * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    Release: @package_version@
@@ -331,6 +347,81 @@ class Date_Calc
 
 
     // }}}
+    // {{{ getSecondsInDay()
+
+    /**
+     * Returns the total number of seconds in the day of the given date
+     *
+     * This allows for future implementation of leap seconds.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     *
+     * @return   int
+     * @access   public
+     * @static
+     */
+    function getSecondsInDay($pn_day, $pn_month, $pn_year)
+    {
+        return 86400;
+    }
+
+
+    // }}}
+    // {{{ getSecondsInHour()
+
+    /**
+     * Returns the total number of seconds in the hour of the given date
+     *
+     * This allows for future implementation of leap seconds.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param    int        $pn_hour                      the hour
+     *
+     * @return   int
+     * @access   public
+     * @static
+     */
+    function getSecondsInHour($pn_day, $pn_month, $pn_year, $pn_hour)
+    {
+        if ($pn_hour < 23)
+            return 3600;
+        else
+            return Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) - 82800;
+    }
+
+
+    // }}}
+    // {{{ getSecondsInMinute()
+
+    /**
+     * Returns the total number of seconds in the minute of the given hour
+     *
+     * This allows for future implementation of leap seconds.
+     *
+     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param    int        $pn_month                     the month, default is current local month
+     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     *
+     * @return   int
+     * @access   public
+     * @static
+     */
+    function getSecondsInMinute($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute)
+    {
+        if ($pn_hour < 23 || $pn_minute < 59)
+            return 60;
+        else
+            return Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) - 86340;
+    }
+
+
+    // }}}
     // {{{ secondsPastMidnight()
 
     /**
@@ -338,15 +429,213 @@ class Date_Calc
      *
      * @param    int        $pn_hour                      the hour of the day
      * @param    int        $pn_minute                    the minute
-     * @param    int        $pn_second                    the second
+     * @param    mixed      $pn_second                    the second as integer or float
      *
-     * @return   int        integer from 0-86399
+     * @return   mixed      integer or float from 0-86399
      * @access   public
      * @static
      */
     function secondsPastMidnight($pn_hour, $pn_minute, $pn_second)
     {
         return 3600 * $pn_hour + 60 * $pn_minute + $pn_second;
+    }
+
+
+    // }}}
+    // {{{ secondsPastTheHour()
+
+    /**
+     * Returns the no of seconds since the last hour o'clock (0-3599)
+     *
+     * @param    int        $pn_minute                    the minute
+     * @param    mixed      $pn_second                    the second as integer or float
+     *
+     * @return   mixed      integer or float from 0-3599
+     * @access   public
+     * @static
+     */
+    function secondsPastTheHour($pn_minute, $pn_second)
+    {
+        return 60 * $pn_minute + $pn_second;
+    }
+
+
+    // }}}
+    // {{{ addHours()
+
+    /**
+     * Returns the date the specified no of hours from the given date
+     *
+     * To subtract hours use a negative value for the '$pn_hours'
+     * parameter
+     *
+     * @param    mixed      $pn_hours                     hours to add as integer or float
+     * @param    int        $pn_day                       the day of the month
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     *
+     * @return   array      array of year, month, day, hour
+     * @access   public
+     * @static
+     */
+    function addHours($pn_hours, $pn_day, $pn_month, $pn_year, $pn_hour)
+    {
+        if ($pn_hours == 0)
+            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour);
+
+        $hn_days = intval($pn_hours / 24);
+        $hn_hour = $pn_hour + $pn_hours % 24;
+
+        if ($hn_hour >= 24) {
+            ++$hn_days;
+            $hn_hour -= 24;
+        } else if ($hn_hour < 0) {
+            --$hn_days;
+            $hn_hour += 24;
+        }
+
+        if ($hn_days == 0) {
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_day = $pn_day;
+        } else {
+            list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $pn_day, $pn_month, $pn_year, "%Y %m %d"));
+        }
+
+        return array((int) $hn_year, (int) $hn_month, (int) $hn_day, $hn_hour);
+    }
+
+
+    // }}}
+    // {{{ addMinutes()
+
+    /**
+     * Returns the date the specified no of minutes from the given date
+     *
+     * To subtract minutes use a negative value for the '$pn_minutes'
+     * parameter
+     *
+     * @param    mixed      $pn_minutes                   minutes to add as integer or float
+     * @param    int        $pn_day                       the day of the month
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     * @param    mixed      $pn_second                    the second as integer or float
+     *
+     * @return   array      array of year, month, day, hour, minute
+     * @access   public
+     * @static
+     */
+    function addMinutes($pn_minutes, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute)
+    {
+        if ($pn_minutes == 0)
+            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute);
+
+        $hn_hours = intval($pn_minutes / 60);
+        $hn_minute = $pn_minute + $pn_minutes % 60;
+
+        if ($hn_minute >= 60) {
+            ++$hn_hours;
+            $hn_minute -= 60;
+        } else if ($hn_minute < 0) {
+            --$hn_hours;
+            $hn_minute += 60;
+        }
+
+        if ($hn_hours == 0) {
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_day = $pn_day;
+            $hn_hour = $pn_hour;
+        } else {
+            list($hn_year, $hn_month, $hn_day, $hn_hour) = Date_Calc::addHours($hn_hours, $pn_day, $pn_month, $pn_year, $pn_hour);
+        }
+
+        return array($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute);
+    }
+
+
+    // }}}
+    // {{{ addSeconds()
+
+    /**
+     * Returns the date the specified no of seconds from the given date
+     *
+     * To subtract seconds use a negative value for the '$pn_seconds'
+     * parameter
+     *
+     * @param    mixed      $pn_seconds                   seconds to add as integer or float
+     * @param    int        $pn_day                       the day of the month
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     * @param    mixed      $pn_second                    the second as integer or float
+     * @param    bool       $pb_countleap                 whether to count leap seconds (defaults to true)
+     *
+     * @return   array      array of year, month, day, hour, minute, second
+     * @access   public
+     * @static
+     */
+    function addSeconds($pn_seconds, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pb_countleap = true)
+    {
+        if ($pn_seconds == 0)
+            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute, (int) $pn_second);
+
+        if ($pb_countleap) {
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_day = $pn_day;
+            $hn_hour = $pn_hour;
+            $hn_minute = $pn_minute;
+            $hn_second = $pn_second + $pn_seconds;
+
+            if ($hn_second > 0) {
+                while ($hn_second >= ($hn_secondsinmin = Date_Calc::getSecondsInMinute($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute))) {
+                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes(1, $hn_day, $hn_month, $hn_year, $hn_hour, $hn_minute);
+                    $hn_second -= $hn_secondsinmin;
+                }
+            } else {
+                while ($hn_second < 0) {
+                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes(-1, $hn_day, $hn_month, $hn_year, $hn_hour, $hn_minute);
+                    $hn_second += Date_Calc::getSecondsInMinute($hn_day, $hn_month, $hn_year, $hn_hour, $hn_minute);
+                }
+            }
+
+            return array($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second);
+        } else {
+            // Assume every day has 86400 seconds exactly (no leap seconds):
+            //
+            $hn_minutes = intval($pn_seconds / 60);
+
+            if (is_float($pn_seconds)) {
+                $hn_second = $pn_second + fmod($pn_seconds, 60);
+            } else {
+                $hn_second = $pn_second + $pn_seconds % 60;
+            }
+
+            if ($hn_second >= 60) {
+                ++$hn_minutes;
+                $hn_second -= 60;
+            } else if ($hn_second < 0) {
+                --$hn_minutes;
+                $hn_second += 60;
+            }
+
+            if ($hn_minutes == 0) {
+                $hn_year = $pn_year;
+                $hn_month = $pn_month;
+                $hn_day = $pn_day;
+                $hn_hour = $pn_hour;
+                $hn_minute = $pn_minute;
+            } else {
+                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes($hn_minutes, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute);
+            }
+
+            return array($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second);
+        }
     }
 
 
@@ -389,7 +678,7 @@ class Date_Calc
 
         $hb_negativeyear = $year < 0;
         $century = intval($year / 100);
-        $year = (int) $year % 100;
+        $year = $year % 100;
 
         if ($hb_negativeyear) {
             // Subtract 1 because year 0 is a leap year;
@@ -397,15 +686,15 @@ class Date_Calc
             // one year earlier than they do, because for the purposes
             // of calculation, the year starts on 1st March:
             //
-            return (intval((14609700 * $century + ($year == 0 ? 1 : 0)) / 400) +
-                    intval((1461 * $year + 1) / 4) +
-                    floor((153 * $month + 2) / 5) +
-                    $day + 1721118);
+            return intval((14609700 * $century + ($year == 0 ? 1 : 0)) / 400) +
+                   intval((1461 * $year + 1) / 4) +
+                   intval((153 * $month + 2) / 5) +
+                   $day + 1721118;
         } else {
-            return (intval(146097 * $century / 4) +
-                    intval(1461 * $year / 4) +
-                    floor((153 * $month + 2) / 5) +
-                    $day + 1721119);
+            return intval(146097 * $century / 4) +
+                   intval(1461 * $year / 4) +
+                   intval((153 * $month + 2) / 5) +
+                   $day + 1721119;
         }
     }
 
@@ -527,7 +816,7 @@ class Date_Calc
         $ha_months = Date_Calc::getMonths($pn_year);
         $hn_monthkey = array_search($pn_month, $ha_months);
         if (array_key_exists($hn_monthkey - 1, $ha_months)) {
-            return array($pn_year, $ha_months[$hn_monthkey - 1]);
+            return array((int) $pn_year, $ha_months[$hn_monthkey - 1]);
         } else {
             $ha_months = Date_Calc::getMonths($pn_year - 1);
             return array($pn_year - 1, end($ha_months));
@@ -554,7 +843,7 @@ class Date_Calc
         $ha_months = Date_Calc::getMonths($pn_year);
         $hn_monthkey = array_search($pn_month, $ha_months);
         if (array_key_exists($hn_monthkey + 1, $ha_months)) {
-            return array($pn_year, $ha_months[$hn_monthkey + 1]);
+            return array((int) $pn_year, $ha_months[$hn_monthkey + 1]);
         } else {
             $ha_months = Date_Calc::getMonths($pn_year + 1);
             return array($pn_year + 1, $ha_months[0]);
@@ -581,6 +870,9 @@ class Date_Calc
      */
     function addMonthsToDays($pn_months, $pn_days)
     {
+        if ($pn_months == 0)
+            return (int) $pn_days;
+
         list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::daysToDate($pn_days, "%Y %m %d"));
 
         // Calculate days since first of month:
@@ -630,14 +922,17 @@ class Date_Calc
     function addMonths($pn_months, $pn_day, $pn_month, $pn_year, $ps_format = DATE_CALC_FORMAT)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
+        if ($pn_months == 0)
+            return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
 
         $hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
         return Date_Calc::daysToDate(Date_Calc::addMonthsToDays($pn_months, $hn_days), $ps_format);
@@ -689,14 +984,17 @@ class Date_Calc
     function addYears($pn_years, $pn_day, $pn_month, $pn_year, $ps_format = DATE_CALC_FORMAT)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
+        if ($pn_years == 0)
+            return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
 
         $hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
         return Date_Calc::daysToDate(Date_Calc::addYearsToDays($pn_years, $hn_days), $ps_format);
@@ -724,14 +1022,17 @@ class Date_Calc
     function addDays($pn_days, $pn_day, $pn_month, $pn_year, $ps_format = DATE_CALC_FORMAT)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
+        if ($pn_days == 0)
+            return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
 
         return Date_Calc::daysToDate(Date_Calc::dateToDays($pn_day, $pn_month, $pn_year) + $pn_days, $ps_format);
     }
@@ -905,13 +1206,13 @@ class Date_Calc
             // one year earlier than they do, because for the purposes
             // of calculation, the year starts on 1st March:
             //
-            return (intval((1461 * $year + 1) / 4) +
-                    floor((153 * $month + 2) / 5) +
-                    $day + 1721116);
+            return intval((1461 * $year + 1) / 4) +
+                   intval((153 * $month + 2) / 5) +
+                   $day + 1721116;
         } else {
-            return (intval(1461 * $year / 4) +
-                    floor((153 * $month + 2) / 5) +
-                    $day + 1721117);
+            return intval(1461 * $year / 4) +
+                   floor((153 * $month + 2) / 5) +
+                   $day + 1721117;
         }
     }
 
@@ -977,7 +1278,7 @@ class Date_Calc
      * @param    int        $pn_month                     the month
      * @param    int        $pn_year                      the year
      *
-     * @return   array      array of ISO Year, ISO Week No, ISO Day No
+     * @return   array      array of ISO Year, ISO Week No, ISO Day No as integers
      *
      * @access   public
      * @static
@@ -985,13 +1286,13 @@ class Date_Calc
     function isoWeekDate($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
 
         $hn_jd = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
@@ -1038,7 +1339,7 @@ class Date_Calc
             }
         }
 
-        return array($hn_year, $hn_isoweek, $hn_wd);
+        return array((int) $hn_year, (int) $hn_isoweek, (int) $hn_wd);
     }
 
 
@@ -1099,7 +1400,7 @@ class Date_Calc
      * @param    int        $pn_year                      the year in four digit format, default is current local year
      * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
      *
-     * @return   array      array of year, week no
+     * @return   array      array of year, week no as integers
      *
      * @access   public
      * @static
@@ -1107,16 +1408,16 @@ class Date_Calc
     function weekOfYear4th($pn_day = 0, $pn_month = 0, $pn_year = null, $pn_firstdayofweek = DATE_CALC_BEGIN_WEEKDAY)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
-        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
 
+        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
         $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
         $hn_week = floor(($hn_day + (10 + $hn_wd1 - $pn_firstdayofweek) % 7 + 3) / 7);
 
@@ -1129,7 +1430,7 @@ class Date_Calc
             list($hn_year, $hn_week) = Date_Calc::weekOfYear4th($hn_lastday, $hn_lastmonth, $hn_year, $pn_firstdayofweek);
         }
 
-        return array($hn_year, $hn_week);
+        return array((int) $hn_year, (int) $hn_week);
     }
 
 
@@ -1157,7 +1458,7 @@ class Date_Calc
      * @param    int        $pn_year                      the year in four digit format, default is current local year
      * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
      *
-     * @return   array      array of year, week no
+     * @return   array      array of year, week no as integers
      *
      * @access   public
      * @static
@@ -1165,14 +1466,15 @@ class Date_Calc
     function weekOfYear7th($pn_day = 0, $pn_month = 0, $pn_year = null, $pn_firstdayofweek = DATE_CALC_BEGIN_WEEKDAY)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
         $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
         $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
         $hn_week = floor(($hn_day + (6 + $hn_wd1 - $pn_firstdayofweek) % 7) / 7);
@@ -1186,7 +1488,7 @@ class Date_Calc
             list($hn_year, $hn_week) = Date_Calc::weekOfYear7th($hn_lastday, $hn_lastmonth, $hn_year, $pn_firstdayofweek);
         }
 
-        return array($hn_year, $hn_week);
+        return array((int) $hn_year, (int) $hn_week);
     }
 
 
@@ -1264,21 +1566,21 @@ class Date_Calc
      * @param   int         $pn_year                      the year in four digit format, default is current local year
      *
      * @return  int
-     *
      * @access  public
      * @static
      */
     function dayOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
         $hn_jd = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
         $hn_jd1 = Date_Calc::firstDayOfYear($pn_year);
         return $hn_jd - $hn_jd1 + 1;
@@ -1296,7 +1598,6 @@ class Date_Calc
      * @param   int         $year                         the year in four digit format, default is current local year
      *
      * @return  int
-     *
      * @access  public
      * @static
      */
@@ -1317,7 +1618,6 @@ class Date_Calc
      * @param int    $year    the year in four digit format, default is current local year
      *
      * @return string  the full name of the day of the week
-     *
      * @access public
      * @static
      */
@@ -1332,6 +1632,7 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
+
         $weekday_names = Date_Calc::getWeekDays();
         $weekday = Date_Calc::dayOfWeek($day, $month, $year);
         return $weekday_names[$weekday];
@@ -1366,6 +1667,7 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
+
         return substr(Date_Calc::getWeekdayFullname($day, $month, $year),
                       0, $length);
     }
@@ -1492,7 +1794,6 @@ class Date_Calc
      * @param    int        $pn_days                      the number of days since 24th November, 4714 B.C.
      *
      * @return   int        integer from 0 to 7 where 0 represents Sunday
-     *
      * @access   public
      * @static
      */
@@ -1518,7 +1819,6 @@ class Date_Calc
      * @param int    $year    the year in four digit format, default is current local year
      *
      * @return int  the number of the day in the week
-     *
      * @access public
      * @static
      */
@@ -1533,20 +1833,21 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
+
 //        if ($month <= 2) {
 //            $month += 12;
 //            --$year;
 //        }
 
 //        $wd = ($day +
-//               floor((13 * $month + 3) / 5) +
+//               intval((13 * $month + 3) / 5) +
 //               $year +
 //               floor($year / 4) -
 //               floor($year / 100) +
 //               floor($year / 400) +
 //               1) % 7;
 
-//        return $wd < 0 ? $wd + 7 : $wd;
+//        return (int) ($wd < 0 ? $wd + 7 : $wd);
 
         return Date_Calc::daysToDayOfWeek(Date_Calc::dateToDays($day, $month, $year));
     }
@@ -1568,23 +1869,23 @@ class Date_Calc
      * @param    int        $pn_year                      the year in four digit format, default is current local year
      *
      * @return   int        integer from 1 to 53
-     *
      * @access   public
      * @static
      */
     function weekOfYearAbsolute($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
         $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
-        return floor(($hn_day + 6) / 7);
+        return intval(($hn_day + 6) / 7);
     }
 
 
@@ -1615,21 +1916,21 @@ class Date_Calc
      * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
      *
      * @return   int        integer from 1 to 54
-     *
      * @access   public
      * @static
      */
     function weekOfYear1st($pn_day = 0, $pn_month = 0, $pn_year = null, $pn_firstdayofweek = DATE_CALC_BEGIN_WEEKDAY)
     {
         if (is_null($pn_year)) {
-            $year = Date_Calc::dateNow('%Y');
+            $pn_year = Date_Calc::dateNow('%Y');
         }
         if (empty($pn_month)) {
-            $month = Date_Calc::dateNow('%m');
+            $pn_month = Date_Calc::dateNow('%m');
         }
         if (empty($pn_day)) {
-            $day = Date_Calc::dateNow('%d');
+            $pn_day = Date_Calc::dateNow('%d');
         }
+
         $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
         $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
         return floor(($hn_day + (7 + $hn_wd1 - $pn_firstdayofweek) % 7 + 6) / 7);
@@ -1652,7 +1953,6 @@ class Date_Calc
      * @param    int        $pn_year                      the year in four digit format, default is current local year
      *
      * @return   int        integer from 1 to 53
-     *
      * @access   public
      * @static
      */
@@ -1676,7 +1976,6 @@ class Date_Calc
      * @param    int        $pn_day                       the day of the month, default is current local day
      *
      * @return   int        integer from 1 to 5
-     *
      * @access   public
      * @static
      */
@@ -1685,7 +1984,7 @@ class Date_Calc
         if (empty($pn_day)) {
             $pn_day = Date_Calc::dateNow('%d');
         }
-        return floor(($pn_day + 6) / 7);
+        return intval(($pn_day + 6) / 7);
     }
 
 
@@ -1698,7 +1997,6 @@ class Date_Calc
      * @param    int        $pn_day                       the day of the month, default is current local day
      *
      * @return   int        integer from 1 to 5
-     *
      * @access   public
      * @static
      */
@@ -1719,7 +2017,6 @@ class Date_Calc
      * @param int    $year    the year in four digit format, default is current local year
      *
      * @return int  the number of the quarter in the year
-     *
      * @access public
      * @static
      */
@@ -1728,7 +2025,7 @@ class Date_Calc
         if (empty($month)) {
             $month = Date_Calc::dateNow('%m');
         }
-        return floor(($month - 1) / 3 + 1);
+        return intval(($month - 1) / 3 + 1);
     }
 
 
@@ -1965,7 +2262,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -1981,8 +2277,8 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
-        $days = Date_Calc::dateToDays($day, $month, $year);
-        return Date_Calc::daysToDate($days - 1, $format);
+
+        return Date_Calc::addDays(-1, $day, $month, $year, $format);
     }
 
 
@@ -1998,12 +2294,10 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
-    function nextDay($day = 0, $month = 0, $year = null,
-                     $format = DATE_CALC_FORMAT)
+    function nextDay($day = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -2014,8 +2308,8 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
-        $days = Date_Calc::dateToDays($day, $month, $year);
-        return Date_Calc::daysToDate($days + 1, $format);
+
+        return Date_Calc::addDays(1, $day, $month, $year, $format);
     }
 
 
@@ -2031,7 +2325,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -2047,6 +2340,7 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
+
         $days = Date_Calc::dateToDays($day, $month, $year);
         if (Date_Calc::dayOfWeek($day, $month, $year) == 1) {
             $days -= 3;
@@ -2055,6 +2349,7 @@ class Date_Calc
         } else {
             $days -= 1;
         }
+
         return Date_Calc::daysToDate($days, $format);
     }
 
@@ -2072,7 +2367,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -2088,6 +2382,7 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
+
         $days = Date_Calc::dateToDays($day, $month, $year);
         if (Date_Calc::dayOfWeek($day, $month, $year) == 5) {
             $days += 3;
@@ -2096,6 +2391,7 @@ class Date_Calc
         } else {
             $days += 1;
         }
+
         return Date_Calc::daysToDate($days, $format);
     }
 
@@ -2161,6 +2457,7 @@ class Date_Calc
         if (empty($day)) {
             $day = Date_Calc::dateNow('%d');
         }
+
         $days = Date_Calc::dateToDays($day, $month, $year);
         $days = Date_Calc::daysToPrevDayOfWeek($dow, $days, $onorbefore);
         return Date_Calc::daysToDate($days, $format);
@@ -2335,7 +2632,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -2374,7 +2670,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -2411,7 +2706,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -2733,7 +3027,6 @@ class Date_Calc
      * @param string $format  the string indicating how to format the output
      *
      * @return string  the date in the desired format
-     *
      * @access public
      * @static
      */
@@ -2816,7 +3109,6 @@ class Date_Calc
      *                         abbreviated version.  E.g. use 2005, not 05.
      *
      * @return boolean
-     *
      * @access public
      * @static
      */
@@ -2843,7 +3135,6 @@ class Date_Calc
      *                         abbreviated version.  E.g. use 2005, not 05.
      *
      * @return boolean
-     *
      * @access public
      * @static
      */
@@ -2867,7 +3158,6 @@ class Date_Calc
      *                         Do not add leading 0's for years prior to 1000.
      *
      * @return boolean
-     *
      * @access public
      * @static
      */
@@ -2899,7 +3189,6 @@ class Date_Calc
      *                         Do not add leading 0's for years prior to 1000.
      *
      * @return boolean
-     *
      * @access public
      * @static
      */
@@ -2937,7 +3226,6 @@ class Date_Calc
      *                         Do not add leading 0's for years prior to 1000.
      *
      * @return boolean
-     *
      * @access public
      * @static
      */
@@ -2981,7 +3269,6 @@ class Date_Calc
      *
      * @return int  the absolute number of days between the two dates.
      *               If an error occurs, -1 is returned.
-     *
      * @access public
      * @static
      */
@@ -3017,7 +3304,6 @@ class Date_Calc
      *
      * @return int  0 if the dates are equal. 1 if date 1 is later, -1 if
      *               date 1 is earlier.
-     *
      * @access public
      * @static
      */
@@ -3033,6 +3319,226 @@ class Date_Calc
 
 
     // }}}
+    // {{{ round()
+
+    /**
+     * Rounds the date according to the specified precision
+     *
+     * The precision parameter must be one of the following constants:
+     *
+     *  <code>DATE_PRECISION_YEAR</code>
+     *  <code>DATE_PRECISION_MONTH</code>
+     *  <code>DATE_PRECISION_DAY</code>
+     *  <code>DATE_PRECISION_HOUR</code>
+     *  <code>DATE_PRECISION_10MINUTES</code>
+     *  <code>DATE_PRECISION_MINUTE</code>
+     *  <code>DATE_PRECISION_10SECONDS</code>
+     *  <code>DATE_PRECISION_SECOND</code>
+     *
+     * The precision can also be specified as an integral offset from
+     * one of these constants, where the offset reflects a precision
+     * of 10 to the power of the offset greater than the constant.
+     * For example:
+     *
+     *  <code>DATE_PRECISION_YEAR - 1</code> rounds the date to the nearest 10
+     *                                      years
+     *  <code>DATE_PRECISION_YEAR - 3</code> rounds the date to the nearest 1000
+     *                                      years
+     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to 1 decimal
+     *                                        point of a second
+     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to 3 decimal
+     *                                        points of a second
+     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to the nearest 10
+     *                                        seconds (thus it is equivalent to
+     *                                        DATE_PRECISION_10SECONDS)
+     *
+     * @param    int        $pn_precision                 a 'DATE_PRECISION_*' constant
+     * @param    int        $pn_day                       the day of the month
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     * @param    int        $pn_second                    the second
+     * @param    float      $pn_partsecond                the part-second (less than 1)
+     *
+     * @return   array of year, month, day, hour, minute, second, part-second (types as corresponding arguments)
+     * @access   public
+     * @static
+     */
+    function round($pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour = 0, $pn_minute = 0, $pn_second = 0, $pn_partsecond = 0.0)
+    {
+        if ($pn_precision <= DATE_PRECISION_YEAR) {
+            $hn_month = 0;
+            $hn_day = 0;
+            $hn_hour = 0;
+            $hn_minute = 0;
+            $hn_second = 0;
+            $hn_partsecond = 0.0;
+
+            if ($pn_precision < DATE_PRECISION_YEAR) {
+                $hn_year = round($pn_year, $pn_precision - DATE_PRECISION_YEAR);
+            } else {
+                // Check part-year:
+                //
+                $hn_midyear = (Date_Calc::firstDayOfYear($pn_year + 1) - Date_Calc::firstDayOfYear($pn_year)) / 2;
+                if (($hn_days = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year)) <= $hn_midyear - 1) {
+                    $hn_year = $pn_year;
+                } else if ($hn_days >= $hn_midyear) {
+                    // Round up:
+                    //
+                    $hn_year = $pn_year + 1;
+                } else {
+                    // Take time into account:
+                    //
+                    $hn_partday = (Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $hn_partsecond) / Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year);
+                    if ($hn_partday >= $hn_midyear - $hn_days) {
+                        // Round up:
+                        //
+                        $hn_year = $pn_year + 1;
+                    } else {
+                        $hn_year = $pn_year;
+                    }
+                }
+            }
+        } else if ($pn_precision == DATE_PRECISION_MONTH) {
+            $hn_year = $pn_year;
+            $hn_day = 0;
+            $hn_hour = 0;
+            $hn_minute = 0;
+            $hn_second = 0;
+            $hn_partsecond = 0.0;
+
+            $hn_firstofmonth = Date_Calc::firstDayOfMonth($pn_month, $pn_year);
+            $hn_midmonth = (Date_Calc::lastDayOfMonth($pn_month, $pn_year) + 1 - $hn_firstofmonth) / 2;
+            if (($hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year) - $hn_firstofmonth) <= $hn_midmonth - 1) {
+                $hn_month = $pn_month;
+            } else if ($hn_days >= $hn_midmonth) {
+                // Round up:
+                //
+                list($hn_year, $hn_month) = Date_Calc::nextMonth($pn_month, $pn_year);
+            } else {
+                // Take time into account:
+                //
+                $hn_partday = (Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $hn_partsecond) / Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year);
+                if ($hn_partday >= $hn_midmonth - $hn_days) {
+                    // Round up:
+                    //
+                    list($hn_year, $hn_month) = Date_Calc::nextMonth($pn_month, $pn_year);
+                } else {
+                    $hn_month = $pn_month;
+                }
+            }
+        } else if ($pn_precision == DATE_PRECISION_DAY) {
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_hour = 0;
+            $hn_minute = 0;
+            $hn_second = 0;
+            $hn_partsecond = 0.0;
+
+            $hn_midday = Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) / 2;
+            if (($hn_seconds = Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $hn_partsecond) >= $hn_midday) {
+                // Round up:
+                //
+                list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::nextDay($pn_day, $pn_month, $pn_year, "%Y %m %d"));
+            } else {
+                $hn_day = $pn_day;
+            }
+        } else if ($pn_precision == DATE_PRECISION_HOUR) {
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_day = $pn_day;
+            $hn_minute = 0;
+            $hn_second = 0;
+            $hn_partsecond = 0.0;
+
+            $hn_midhour = Date_Calc::getSecondsInHour($pn_day, $pn_month, $pn_year, $pn_hour) / 2;
+            if (($hn_seconds = Date_Calc::secondsPastTheHour($pn_minute, $pn_second) + $hn_partsecond) >= $hn_midhour) {
+                // Round up:
+                //
+                list($hn_year, $hn_month, $hn_day, $hn_hour) = Date_Calc::addHours(1, $pn_day, $pn_month, $pn_year, $pn_hour);
+            } else {
+                $hn_hour = $pn_hour;
+            }
+        } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_day = $pn_day;
+            $hn_hour = $pn_hour;
+            $hn_second = 0;
+            $hn_partsecond = 0.0;
+
+            if ($pn_precision < DATE_PRECISION_MINUTE) {
+                $hn_minute = round($pn_minute, $pn_precision - DATE_PRECISION_MINUTE);
+            } else {
+                // Check seconds:
+                //
+                $hn_midminute = Date_Calc::getSecondsInMinute($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute) / 2;
+                if (($hn_seconds = $pn_second + $hn_partsecond) >= $hn_midminute) {
+                    // Round up:
+                    //
+                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes(1, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute);
+                } else {
+                    $hn_minute = $pn_minute;
+                }
+            }
+        } else {
+            // Precision is at least (DATE_PRECISION_SECOND - 1):
+            //
+            $hn_year = $pn_year;
+            $hn_month = $pn_month;
+            $hn_day = $pn_day;
+            $hn_hour = $pn_hour;
+            $hn_minute = $pn_minute;
+
+            if ($pn_precision < DATE_PRECISION_SECOND) {
+                $hn_second = round($pn_second, $pn_precision - DATE_PRECISION_SECOND);
+                $hn_partsecond = 0.0;
+            } else {
+                $hn_partsecond = round($pn_partsecond, $pn_precision - DATE_PRECISION_SECOND);
+
+                if ($hn_partsecond == 1.0) {
+                    // Part-second was rounded up:
+                    //
+                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second) = Date_Calc::addSeconds(1, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second);
+                    $hn_partsecond = 0.0;
+                } else {
+                    $hn_second = $pn_second;
+                }
+            }
+        }
+
+        return array((int) $hn_year, (int) $hn_month, (int) $hn_day, (int) $hn_hour, (int) $hn_minute, (int) $hn_second, (float) $hn_partsecond);
+    }
+
+
+    // }}}
+    // {{{ roundSeconds()
+
+    /**
+     * Rounds seconds up or down to the nearest specified unit
+     *
+     * @param    int        $pn_precision                 number of digits after the decimal point
+     * @param    int        $pn_day                       the day of the month
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     * @param    int        $pn_second                    the second
+     * @param    float      $pn_partsecond                the part-second (less than 1)
+     *
+     * @return   array of year, month, day, hour, minute, second, part-second (types as corresponding arguments)
+     * @access   public
+     * @static
+     */
+    function roundSeconds($pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond = 0.0)
+    {
+        return Date_Calc::round(DATE_PRECISION_SECOND + $pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond);
+    }
+
+
+    // }}}
+
 
 }
 

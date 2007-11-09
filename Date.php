@@ -50,7 +50,6 @@
 // }}}
 // {{{ Includes
 
-
 require_once 'PEAR.php';
 
 /**
@@ -412,17 +411,205 @@ class Date
 
 
     // }}}
+    // {{{ round()
+
+    /**
+     * Rounds the date according to the specified precision (defaults
+     * to nearest day)
+     *
+     * The precision parameter must be one of the following constants:
+     *
+     *  <code>DATE_PRECISION_YEAR</code>
+     *  <code>DATE_PRECISION_MONTH</code>
+     *  <code>DATE_PRECISION_DAY</code>
+     *  <code>DATE_PRECISION_HOUR</code>
+     *  <code>DATE_PRECISION_10MINUTES</code>
+     *  <code>DATE_PRECISION_MINUTE</code>
+     *  <code>DATE_PRECISION_10SECONDS</code>
+     *  <code>DATE_PRECISION_SECOND</code>
+     *
+     * N.B. the default is DATE_PRECISION_DAY
+     *
+     * The precision can also be specified as an integral offset from
+     * one of these constants, where the offset reflects a precision
+     * of 10 to the power of the offset greater than the constant.
+     * For example:
+     *
+     *  <code>DATE_PRECISION_YEAR - 1</code> rounds the date to the nearest 10
+     *                                      years
+     *  <code>DATE_PRECISION_YEAR - 3</code> rounds the date to the nearest 1000
+     *                                      years
+     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to 1 decimal
+     *                                        point of a second
+     *  <code>DATE_PRECISION_SECOND + 3</code> rounds the date to 3 decimal
+     *                                        points of a second
+     *  <code>DATE_PRECISION_SECOND - 1</code> rounds the date to the nearest 10
+     *                                        seconds (thus it is equivalent to
+     *                                        DATE_PRECISION_10SECONDS)
+     *
+     * @param    int        $pn_precision                 a 'DATE_PRECISION_*' constant
+     *
+     * @return   void
+     * @access   public
+     */
+    function round($pn_precision = DATE_PRECISION_DAY)
+    {
+        list($this->year, $this->month, $this->day, $this->hour, $this->minute, $this->second, $this->partsecond) =
+            Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+    }
+
+
+    // }}}
+    // {{{ roundSeconds()
+
+    /**
+     * Rounds seconds up or down to the nearest specified unit
+     *
+     * N.B. this function is equivalent to calling:
+     *  <code>'Date::round(DATE_PRECISION_SECOND + $pn_precision)'</code>
+     *
+     * @param    int        $pn_precision                 number of digits after the decimal point
+     *
+     * @return   void
+     * @access   public
+     */
+    function roundSeconds($pn_precision = 0)
+    {
+        list($this->year, $this->month, $this->day, $this->hour, $this->minute, $this->second, $this->partsecond) =
+            Date_Calc::roundSeconds($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+    }
+
+
+    // }}}
+    // {{{ trunc()
+
+    /**
+     * Truncates the date according to the specified precision (by
+     * default, it truncates the time part of the date)
+     *
+     * The precision parameter must be one of the following constants:
+     *
+     *  <code>DATE_PRECISION_YEAR</code>
+     *  <code>DATE_PRECISION_MONTH</code>
+     *  <code>DATE_PRECISION_DAY</code>
+     *  <code>DATE_PRECISION_HOUR</code>
+     *  <code>DATE_PRECISION_10MINUTES</code>
+     *  <code>DATE_PRECISION_MINUTE</code>
+     *  <code>DATE_PRECISION_10SECONDS</code>
+     *  <code>DATE_PRECISION_SECOND</code>
+     *
+     * N.B. the default is DATE_PRECISION_DAY
+     *
+     * The precision can also be specified as an integral offset from
+     * one of these constants, where the offset reflects a precision
+     * of 10 to the power of the offset greater than the constant.
+     * For example:
+     *
+     *  <code>DATE_PRECISION_YEAR</code> truncates the month, day and time
+     *                                      part of the year
+     *  <code>DATE_PRECISION_YEAR - 1</code> truncates the unit part of the
+     *                                      year, e.g. 1987 becomes 1980
+     *  <code>DATE_PRECISION_YEAR - 3</code> truncates the hundreds part of the
+     *                                      year, e.g. 1987 becomes 1000
+     *  <code>DATE_PRECISION_SECOND + 1</code> truncates the part of the second
+     *                                       less than 0.1 of a second, e.g.
+     *                                       3.26301 becomes 3.2 seconds
+     *  <code>DATE_PRECISION_SECOND + 3</code> truncates the part of the second
+     *                                       less than 0.001 of a second, e.g.
+     *                                       3.26301 becomes 3.263 seconds
+     *  <code>DATE_PRECISION_SECOND - 1</code> truncates the unit part of the
+     *                                        seconds (thus it is equivalent to
+     *                                        DATE_PRECISION_10SECONDS)
+     *
+     * @param    int        $pn_precision                 a 'DATE_PRECISION_*' constant
+     *
+     * @return   void
+     * @access   public
+     */
+    function trunc($pn_precision = DATE_PRECISION_DAY)
+    {
+        if ($pn_precision <= DATE_PRECISION_YEAR) {
+            $this->month = 0;
+            $this->day = 0;
+            $this->hour = 0;
+            $this->minute = 0;
+            $this->second = 0;
+            $this->partsecond = 0.0;
+
+            $hn_invprecision = DATE_PRECISION_YEAR - $pn_precision;
+            if ($hn_invprecision > 0) {
+                $this->year = (int) (intval($this->year / pow(10, $hn_invprecision)) * pow(10, $hn_invprecision));
+                //
+                // (Conversion to int necessary for PHP <= 4.0.6)
+            }
+        } else if ($pn_precision == DATE_PRECISION_MONTH) {
+            $this->day = 0;
+            $this->hour = 0;
+            $this->minute = 0;
+            $this->second = 0;
+            $this->partsecond = 0.0;
+        } else if ($pn_precision == DATE_PRECISION_DAY) {
+            $this->hour = 0;
+            $this->minute = 0;
+            $this->second = 0;
+            $this->partsecond = 0.0;
+        } else if ($pn_precision == DATE_PRECISION_HOUR) {
+            $this->minute = 0;
+            $this->second = 0;
+            $this->partsecond = 0.0;
+        } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
+            $this->second = 0;
+            $this->partsecond = 0.0;
+
+            if ($pn_precision == DATE_PRECISION_10MINUTES) {
+                $this->minute = intval($this->minute / 10) * 10;
+            }
+        } else {
+            // Precision is at least (DATE_PRECISION_SECOND - 1):
+            //
+            if ($pn_precision == DATE_PRECISION_10SECONDS) {
+                $this->partsecond = 0.0;
+                $this->second = intval($this->second / 10) * 10;
+            } else {
+                $hn_precision = $pn_precision - DATE_PRECISION_SECOND;
+                $this->partsecond = intval($this->partsecond * pow(10, $hn_precision)) / pow(10, $hn_precision);
+            }
+        }
+    }
+
+
+    // }}}
+    // {{{ truncSeconds()
+
+    /**
+     * Truncates seconds according to the specified precision
+     *
+     * N.B. this function is equivalent to calling:
+     *  <code>'Date::trunc(DATE_PRECISION_SECOND + $pn_precision)'</code>
+     *
+     * @param    int        $pn_precision                 number of digits after the decimal point
+     *
+     * @return   void
+     * @access   public
+     */
+    function truncSeconds($pn_precision = 0)
+    {
+        $this->trunc(DATE_PRECISION_SECOND + $pn_precision);
+    }
+
+
+    // }}}
     // {{{ getDate()
 
     /**
-     * Get a string (or other) representation of this date
+     * Gets a string (or other) representation of this date
      *
-     * Get a string (or other) representation of this date in the
-     * format specified by the DATE_FORMAT_* constants.
+     * Returns a date in the format specified by the DATE_FORMAT_* constants.
      *
-     * @access public
-     * @param int $format format constant (DATE_FORMAT_*) of the output date
-     * @return string the date in the requested format
+     * @param    int        $format                       format constant (DATE_FORMAT_*) of the output date
+     *
+     * @return   string     the date in the requested format
+     * @access   public
      */
     function getDate($format = DATE_FORMAT_ISO)
     {
@@ -791,25 +978,25 @@ class Date
      * Private helper function, for 'format2()', which interprets the
      * codes 'SP' and 'TH' and the combination of the two as follows:
      *
-     *  <code>TH</code>Ordinal number<br />
-     *  <code>SP</code>Spelled cardinal number<br />
-     *  <code>SPTH</code>Spelled ordinal number (combination of 'SP' and 'TH'<br />
+     *  <code>TH</code> Ordinal number<br />
+     *  <code>SP</code> Spelled cardinal number<br />
+     *  <code>SPTH</code> Spelled ordinal number (combination of 'SP' and 'TH'<br />
      *                   in any order)<br />
-     *  <code>THSP</code><br />
+     *  <code>THSP</code> <br />
      *
      * Code 'SP' can have the following three variations (which can also be used
      * in combination with 'TH'):
      *
-     *  <code>SP</code>returns upper-case spelling, e.g. 'FOUR HUNDRED'<br />
-     *  <code>Sp</code>returns spelling with first character of each word<br />
+     *  <code>SP</code> returns upper-case spelling, e.g. 'FOUR HUNDRED'<br />
+     *  <code>Sp</code> returns spelling with first character of each word<br />
      *                 capitalized, e.g. 'Four Hundred'<br />
-     *  <code>sp</code>returns lower-case spelling, e.g. 'four hundred'<br />
+     *  <code>sp</code> returns lower-case spelling, e.g. 'four hundred'<br />
      *
      * Code 'TH' can have the following two variations (although in combination
      * with code 'SP', the case specification of 'SP' takes precedence):
      *
-     *  <code>TH</code>returns upper-case ordinal suffix, e.g. 400TH<br />
-     *  <code>th</code>returns lower-case ordinal suffix, e.g. 400th<br />
+     *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH<br />
+     *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th<br />
      *
      * N.B. The format string is passed by reference, in order to pass back
      * the part of the format string that matches the valid codes 'SP' and
@@ -914,9 +1101,9 @@ class Date
      * will be padded with a leading space unless it is suppressed with
      * the no-padding modifier, for example for 2007:
      *
-     *  <code>YYYY</code>returns '2007'
-     *  <code>SYYYY</code>returns ' 2007'
-     *  <code>NPSYYYY</code>returns '2007'
+     *  <code>YYYY</code> returns '2007'
+     *  <code>SYYYY</code> returns ' 2007'
+     *  <code>NPSYYYY</code> returns '2007'
      *
      * The no-padding modifier 'NP' can be used with numeric codes to
      * suppress leading (or trailing in the case of code 'F') noughts, and
@@ -924,9 +1111,9 @@ class Date
      * spaces, which will otherwise be padded to the maximum possible length
      * of the return-value of the code; for example, for Monday:
      *
-     *  <code>Day</code>returns 'Monday   ' because the maximum length of
+     *  <code>Day</code> returns 'Monday   ' because the maximum length of
      *                  this code is 'Wednesday';
-     *  <code>NPDay</code>returns 'Monday'
+     *  <code>NPDay</code> returns 'Monday'
      *
      * N.B. this code affects the code immediately following only, and
      * without this code the default is always to apply padding.
@@ -934,157 +1121,159 @@ class Date
      * Most character-returning codes, such as 'MONTH', will
      * set the capitalization according to the code, so for example:
      *
-     *  <code>MONTH</code>returns upper-case spelling, e.g. 'JANUARY'
-     *  <code>Month</code>returns spelling with first character of each word
+     *  <code>MONTH</code> returns upper-case spelling, e.g. 'JANUARY'
+     *  <code>Month</code> returns spelling with first character of each word
      *                    capitalized, e.g. 'January'
-     *  <code>month</code>returns lower-case spelling, e.g. 'january'
+     *  <code>month</code> returns lower-case spelling, e.g. 'january'
      *
      * Where it makes sense, numeric codes can be combined with a following
      * 'SP' code which spells out the number, or with a 'TH' code, which
      * renders the code as an ordinal ('TH' only works in English), for
      * example, for 31st December:
      *
-     *  <code>DD</code>returns '31'
-     *  <code>DDTH</code>returns '31ST'
-     *  <code>DDth</code>returns '31st'
-     *  <code>DDSP</code>returns 'THIRTY-ONE'
-     *  <code>DDSp</code>returns 'Thirty-one'
-     *  <code>DDsp</code>returns 'thirty-one'
-     *  <code>DDSPTH</code>returns 'THIRTY-FIRST'
-     *  <code>DDSpth</code>returns 'Thirty-first'
-     *  <code>DDspth</code>returns 'thirty-first'
+     *  <code>DD</code> returns '31'
+     *  <code>DDTH</code> returns '31ST'
+     *  <code>DDth</code> returns '31st'
+     *  <code>DDSP</code> returns 'THIRTY-ONE'
+     *  <code>DDSp</code> returns 'Thirty-one'
+     *  <code>DDsp</code> returns 'thirty-one'
+     *  <code>DDSPTH</code> returns 'THIRTY-FIRST'
+     *  <code>DDSpth</code> returns 'Thirty-first'
+     *  <code>DDspth</code> returns 'thirty-first'
      *
      *
      * All formatting options:
      *
-     *  <code>-</code>All punctuation and white-space is reproduced unchanged
-     *  <code>/</code><br />
-     *  <code>,</code><br />
-     *  <code>.</code><br />
-     *  <code>;</code><br />
-     *  <code>:</code><br />
-     *  <code> </code><br />
-     *  <code>"text"</code>Quoted text is reproduced unchanged (escape using
+     *  <code>-</code> All punctuation and white-space is reproduced unchanged
+     *  <code>/</code> <br />
+     *  <code>,</code> <br />
+     *  <code>.</code> <br />
+     *  <code>;</code> <br />
+     *  <code>:</code> <br />
+     *  <code> </code> <br />
+     *  <code>"text"</code> Quoted text is reproduced unchanged (escape using
      *                     '\')
-     *  <code>AD</code>AD indicator with or without full stops; N.B. if you
+     *  <code>AD</code> AD indicator with or without full stops; N.B. if you
      *                 are using 'Astronomical' year numbering then 'A.D./B.C.'
      *                 indicators will be out for negative years
-     *  <code>A.D.</code>
-     *  <code>AM</code>Meridian indicator with or without full stops
-     *  <code>A.M.</code>
-     *  <code>BC</code>BC indicator with or without full stops
-     *  <code>B.C.</code>
-     *  <code>BCE</code>BCE indicator with or without full stops
-     *  <code>B.C.E.</code>
-     *  <code>CC</code>Century, i.e. the year divided by 100, discarding the
+     *  <code>A.D.</code> 
+     *  <code>AM</code> Meridian indicator with or without full stops
+     *  <code>A.M.</code> 
+     *  <code>BC</code> BC indicator with or without full stops
+     *  <code>B.C.</code> 
+     *  <code>BCE</code> BCE indicator with or without full stops
+     *  <code>B.C.E.</code> 
+     *  <code>CC</code> Century, i.e. the year divided by 100, discarding the
      *                 remainder; 'S' prefixes negative years with a minus sign
-     *  <code>SCC</code>
-     *  <code>CE</code>CE indicator with or without full stops
-     *  <code>C.E.</code>
-     *  <code>D</code>Day of week (0-6), where 0 represents Sunday
-     *  <code>DAY</code>Name of day, padded with blanks to display width of the
+     *  <code>SCC</code> 
+     *  <code>CE</code> CE indicator with or without full stops
+     *  <code>C.E.</code> 
+     *  <code>D</code> Day of week (0-6), where 0 represents Sunday
+     *  <code>DAY</code> Name of day, padded with blanks to display width of the
      *                  widest name of day in the locale of the machine
-     *  <code>DD</code>Day of month (1-31)
-     *  <code>DDD</code>Day of year (1-366)
-     *  <code>DY</code>Abbreviated name of day
-     *  <code>FFF</code>Fractional seconds; no radix character is printed.  The
+     *  <code>DD</code> Day of month (1-31)
+     *  <code>DDD</code> Day of year (1-366)
+     *  <code>DY</code> Abbreviated name of day
+     *  <code>FFF</code> Fractional seconds; no radix character is printed.  The
      *                  no of 'F's determines the no of digits of the
      *                  part-second to return; e.g. 'HH:MI:SS.FF'
-     *  <code>F[integer]</code>The integer after 'F' specifies the number of
+     *  <code>F[integer]</code> The integer after 'F' specifies the number of
      *                         digits of the part-second to return.  This is an
      *                         alternative to using F[integer], and 'F3' is thus
      *                         equivalent to using 'FFF'.
-     *  <code>HH</code>Hour of day (0-23)
-     *  <code>HH12</code>Hour of day (1-12)
-     *  <code>HH24</code>Hour of day (0-23)
-     *  <code>ID</code>Day of week (1-7) based on the ISO standard
-     *  <code>IW</code>Week of year (1-52 or 1-53) based on the ISO standard
-     *  <code>IYYY</code>4-digit year based on the ISO 8601 standard; 'S'
+     *  <code>HH</code> Hour of day (0-23)
+     *  <code>HH12</code> Hour of day (1-12)
+     *  <code>HH24</code> Hour of day (0-23)
+     *  <code>ID</code> Day of week (1-7) based on the ISO standard
+     *  <code>IW</code> Week of year (1-52 or 1-53) based on the ISO standard
+     *  <code>IYYY</code> 4-digit year based on the ISO 8601 standard; 'S'
      *                   prefixes negative years with a minus sign
-     *  <code>SIYYY</code>
-     *  <code>IYY</code>Last 3, 2, or 1 digit(s) of ISO year
-     *  <code>IY</code>
-     *  <code>I</code>
-     *  <code>J</code>Julian day - the number of days since Monday, 24th
+     *  <code>SIYYY</code> 
+     *  <code>IYY</code> Last 3, 2, or 1 digit(s) of ISO year
+     *  <code>IY</code> 
+     *  <code>I</code> 
+     *  <code>J</code> Julian day - the number of days since Monday, 24th
      *                November, 4714 B.C. (proleptic Gregorian calendar)
-     *  <code>MI</code>Minute (0-59)
-     *  <code>MM</code>Month (01-12; January = 01)
-     *  <code>MON</code>Abbreviated name of month
-     *  <code>MONTH</code>Name of month, padded with blanks to display width of
+     *  <code>MI</code> Minute (0-59)
+     *  <code>MM</code> Month (01-12; January = 01)
+     *  <code>MON</code> Abbreviated name of month
+     *  <code>MONTH</code> Name of month, padded with blanks to display width of
      *                    the widest name of month in the date language used for
-     *  <code>PM</code>Meridian indicator with or without full stops
-     *  <code>P.M.</code>
-     *  <code>Q</code>Quarter of year (1, 2, 3, 4; January - March = 1)
-     *  <code>RM</code>Roman numeral month (I-XII; January = I); N.B. padded
+     *  <code>PM</code> Meridian indicator with or without full stops
+     *  <code>P.M.</code> 
+     *  <code>Q</code> Quarter of year (1, 2, 3, 4; January - March = 1)
+     *  <code>RM</code> Roman numeral month (I-XII; January = I); N.B. padded
      *                 with leading spaces.
-     *  <code>SS</code>Second (0-59)
-     *  <code>SSSSS</code>Seconds past midnight (0-86399)
-     *  <code>TZC</code>Abbreviated form of time zone name, e.g. 'GMT', or the
+     *  <code>SS</code> Second (0-59)
+     *  <code>SSSSS</code> Seconds past midnight (0-86399)
+     *  <code>TZC</code> Abbreviated form of time zone name, e.g. 'GMT', or the
      *                  abbreviation for Summer time if the date falls in Summer
      *                  time, e.g. 'BST'.
      *                  N.B. this is not a unique identifier - for this purpose
      *                  use the time zone region (code 'TZR').
-     *  <code>TZH</code>Time zone hour; 'S' prefixes the hour with the correct
+     *  <code>TZH</code> Time zone hour; 'S' prefixes the hour with the correct
      *                  sign, (+/-), which otherwise is not displayed.  Note
      *                  that the leading nought can be suppressed with the
      *                  no-padding code 'NP').  Also note that if you combine
      *                  with the 'SP' code, the sign will not be spelled out.
      *                  'TZH:TZM' will produce, for example, '+05:30'.  (Also
      *                  see 'TZM' format code)
-     *  <code>STZH</code>
-     *  <code>TZI</code>Whether or not the date is in Summer time (daylight
+     *  <code>STZH</code> 
+     *  <code>TZI</code> Whether or not the date is in Summer time (daylight
      *                  saving time).  Returns '1' if Summer time, else '0'.
-     *  <code>TZM</code>Time zone minute, without any +/- sign.  (Also see 'TZH'
-     *                  format element)
-     *  <code>TZN</code>Long form of time zone name, e.g. 'Greenwich Mean Time',
-     *                  or the name of the Summer time if the date falls in
-     *                  Summer time, e.g. 'British Summer Time'.
-     *                  N.B. this is not a unique identifier - for this purpose
-     *                  use the time zone region (code 'TZR').
-     *  <code>TZO</code>Time zone offset in seconds, with negative sign '-' if
+     *  <code>TZM</code> Time zone minute, without any +/- sign.  (Also see
+     *                  'TZH' format element)
+     *  <code>TZN</code> Long form of time zone name, e.g.
+     *                  'Greenwich Mean Time', or the name of the Summer time if
+     *                  the date falls in Summer time, e.g.
+     *                  'British Summer Time'.  N.B. this is not a unique
+     *                  identifier - for this purpose use the time zone region
+     *                  (code 'TZR').
+     *  <code>TZO</code> Time zone offset in seconds, with negative sign '-' if
      *                  negative, and no sign if positive (i.e. -43200 to
      *                  50400). (Note that the sign cannot be suppressed.)
-     *  <code>TZR</code>Time zone region, that is, the name or ID of the time
+     *  <code>TZR</code> Time zone region, that is, the name or ID of the time
      *                  zone e.g. 'Europe/London'.  This value is unique for
      *                  each time zone.
-     *  <code>U</code>Seconds since the Unix Epoch - January 1 1970 00:00:00 GMT
-     *  <code>W</code>'Absolute' week of month (1-5), counting week 1 as 1st-7th
-     *                 of the year, regardless of the day
-     *  <code>W1</code>Week of year (1-54), counting week 1 as the week that
+     *  <code>U</code> Seconds since the Unix Epoch -
+     *                January 1 1970 00:00:00 GMT
+     *  <code>W</code> 'Absolute' week of month (1-5), counting week 1 as
+     *                1st-7th of the year, regardless of the day
+     *  <code>W1</code> Week of year (1-54), counting week 1 as the week that
      *                 contains 1st January
-     *  <code>W4</code>Week of year (1-53), counting week 1 as the week that
+     *  <code>W4</code> Week of year (1-53), counting week 1 as the week that
      *                 contains 4th January (i.e. first week with at least 4
      *                 days)
-     *  <code>W7</code>Week of year (1-53), counting week 1 as the week that
+     *  <code>W7</code> Week of year (1-53), counting week 1 as the week that
      *                 contains 7th January (i.e. first full week)
-     *  <code>WW</code>'Absolute' week of year (1-53), counting week 1 as
+     *  <code>WW</code> 'Absolute' week of year (1-53), counting week 1 as
      *                 1st-7th of the year, regardless of the day
-     *  <code>YEAR</code>Year, spelled out; 'S' prefixes negative years with
+     *  <code>YEAR</code> Year, spelled out; 'S' prefixes negative years with
      *                  'MINUS'; N.B. 'YEAR' differs from 'YYYYSP' in that the
      *                   first will render 1923, for example, as 'NINETEEN
      *                   TWENTY-THREE, and the second as 'ONE THOUSAND NINE
      *                   HUNDRED TWENTY-THREE'
-     *  <code>SYEAR</code>
-     *  <code>YYYY</code>4-digit year; 'S' prefixes negative years with a minus
+     *  <code>SYEAR</code> 
+     *  <code>YYYY</code> 4-digit year; 'S' prefixes negative years with a minus
      *                   sign
-     *  <code>SYYYY</code>
-     *  <code>YYY</code>Last 3, 2, or 1 digit(s) of year
-     *  <code>YY</code>
-     *  <code>Y</code>
-     *  <code>Y,YYY</code>Year with thousands-separator in this position; five
+     *  <code>SYYYY</code> 
+     *  <code>YYY</code> Last 3, 2, or 1 digit(s) of year
+     *  <code>YY</code> 
+     *  <code>Y</code> 
+     *  <code>Y,YYY</code> Year with thousands-separator in this position; five
      *                    possible separators
-     *  <code>Y.YYY</code>
-     *  <code>Y·YYY</code>N.B. space-dot (mid-dot, interpunct) is valid only in
+     *  <code>Y.YYY</code> 
+     *  <code>Y·YYY</code> N.B. space-dot (mid-dot, interpunct) is valid only in
      *                    ISO 8859-1 (so take care when using UTF-8 in
      *                    particular)
-     *  <code>Y'YYY</code>
-     *  <code>Y YYY</code>
+     *  <code>Y'YYY</code> 
+     *  <code>Y YYY</code> 
      *
      * In addition the following codes can be used in combination with other
      * codes;
      *  Codes that modify the next code in the format string:
      *
-     *  <code>NP</code>'No Padding' - Returns a value with no trailing blanks
+     *  <code>NP</code> 'No Padding' - Returns a value with no trailing blanks
      *                 and no leading or trailing noughts; N.B. that the
      *                 default is to include this padding in the return string.
      *                 N.B. affects the code immediately following only.
@@ -1092,25 +1281,25 @@ class Date
      *  Codes that modify the previous code in the format string (can only
      *  be used with integral codes such as 'MM'):
      *
-     *  <code>TH</code>Ordinal number
-     *  <code>SP</code>Spelled cardinal number
-     *  <code>SPTH</code>Spelled ordinal number (combination of 'SP' and 'TH'
+     *  <code>TH</code> Ordinal number
+     *  <code>SP</code> Spelled cardinal number
+     *  <code>SPTH</code> Spelled ordinal number (combination of 'SP' and 'TH'
      *                   in any order)
-     *  <code>THSP</code>
+     *  <code>THSP</code> 
      *
      * Code 'SP' can have the following three variations (which can also be used
      * in combination with 'TH'):
      *
-     *  <code>SP</code>returns upper-case spelling, e.g. 'FOUR HUNDRED'
-     *  <code>Sp</code>returns spelling with first character of each word
+     *  <code>SP</code> returns upper-case spelling, e.g. 'FOUR HUNDRED'
+     *  <code>Sp</code> returns spelling with first character of each word
      *                 capitalized, e.g. 'Four Hundred'
-     *  <code>sp</code>returns lower-case spelling, e.g. 'four hundred'
+     *  <code>sp</code> returns lower-case spelling, e.g. 'four hundred'
      *
      * Code 'TH' can have the following two variations (although in combination
      * with code 'SP', the case specification of 'SP' takes precedence):
      *
-     *  <code>TH</code>returns upper-case ordinal suffix, e.g. 400TH
-     *  <code>th</code>returns lower-case ordinal suffix, e.g. 400th
+     *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH
+     *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th
      *
      * @param    string     $ps_format                    format string for returned date/time
      * @param    string     $ps_locale                    language name abbreviation used for formatting
@@ -2200,8 +2389,12 @@ class Date
     function addSpan($span)
     {
         if (!is_a($span, 'Date_Span')) {
+            return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
+        } else if ($span->isEmpty()) {
             return;
         }
+
+        $hn_days = 0;
 
         $this->second += $span->second;
         if ($this->second >= 60) {
@@ -2212,29 +2405,21 @@ class Date
         $this->minute += $span->minute;
         if ($this->minute >= 60) {
             $this->hour++;
-            if ($this->hour >= 24) {
-                list($this->year, $this->month, $this->day) =
-                    sscanf(Date_Calc::nextDay($this->day, $this->month, $this->year), "%04s%02s%02s");
-                $this->hour -= 24;
-            }
             $this->minute -= 60;
         }
 
         $this->hour += $span->hour;
         if ($this->hour >= 24) {
-            list($this->year, $this->month, $this->day) =
-                sscanf(Date_Calc::nextDay($this->day, $this->month, $this->year), "%04s%02s%02s");
+            ++$hn_days;
             $this->hour -= 24;
         }
 
-        $d = Date_Calc::dateToDays($this->day, $this->month, $this->year);
-        $d += $span->day;
+        $hn_days += $span->day;
+        list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $this->day, $this->month, $this->year, "%Y %m %d"));
 
-        list($this->year, $this->month, $this->day) =
-            sscanf(Date_Calc::daysToDate($d), "%04s%02s%02s");
-        $this->year  = intval($this->year);
-        $this->month = intval($this->month);
-        $this->day   = intval($this->day);
+        $this->year  = (int) $hn_year;
+        $this->month = (int) $hn_month;
+        $this->day   = (int) $hn_day;
     }
 
 
@@ -2242,7 +2427,7 @@ class Date
     // {{{ subtractSpan()
 
     /**
-     * Subtracts a time span to the date
+     * Subtracts a time span from the date
      *
      * @param object Date_Span $span the time span to subtract
      *
@@ -2252,11 +2437,12 @@ class Date
     function subtractSpan($span)
     {
         if (!is_a($span, 'Date_Span')) {
+            return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
+        } else if ($span->isEmpty()) {
             return;
         }
-        if ($span->isEmpty()) {
-            return;
-        }
+
+        $hn_days = 0;
 
         $this->second -= $span->second;
         if ($this->second < 0) {
@@ -2267,30 +2453,23 @@ class Date
         $this->minute -= $span->minute;
         if ($this->minute < 0) {
             $this->hour--;
-            if ($this->hour < 0) {
-                list($this->year, $this->month, $this->day) =
-                    sscanf(Date_Calc::prevDay($this->day, $this->month, $this->year), "%04s%02s%02s");
-                $this->hour += 24;
-            }
             $this->minute += 60;
         }
 
         $this->hour -= $span->hour;
         if ($this->hour < 0) {
-            list($this->year, $this->month, $this->day) =
-                sscanf(Date_Calc::prevDay($this->day, $this->month, $this->year), "%04s%02s%02s");
+            --$hn_days;
             $this->hour += 24;
         }
 
-        $d = Date_Calc::dateToDays($this->day, $this->month, $this->year);
-        $d -= $span->day;
+        $hn_days -= $span->day;
+        list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $this->day, $this->month, $this->year, "%Y %m %d"));
 
-        list($this->year, $this->month, $this->day) =
-            sscanf(Date_Calc::daysToDate($d), "%04s%02s%02s");
-        $this->year  = intval($this->year);
-        $this->month = intval($this->month);
-        $this->day   = intval($this->day);
+        $this->year  = (int) $hn_year;
+        $this->month = (int) $hn_month;
+        $this->day   = (int) $hn_day;
     }
+
 
     // }}}
     // {{{ addSeconds()
