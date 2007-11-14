@@ -832,7 +832,7 @@ class Date_Span
     }
 
     // }}}
-    // {{{ substract()
+    // {{{ subtract()
 
     /**
      * Subtracts a time span.
@@ -1047,24 +1047,6 @@ class Date_Span
     function getDefaultFormat()
     {
         return $GLOBALS['_DATE_SPAN_FORMAT'];
-    }
-
-    // }}}
-    // {{{ __clone()
-
-    /**
-     * Returns a copy of the object (workarround for PHP5 forward compatibility).
-     *
-     * @return object Date_Span Copy of the object.
-     */
-    function __clone() {
-        $c = get_class($this);
-        $s = new $c;
-        $s->day    = $this->day;
-        $s->hour   = $this->hour;
-        $s->minute = $this->minute;
-        $s->second = $this->second;
-        return $s;
     }
 
     // }}}

@@ -522,7 +522,6 @@ class Date_Calc
      * @param    int        $pn_year                      the year
      * @param    int        $pn_hour                      the hour
      * @param    int        $pn_minute                    the minute
-     * @param    mixed      $pn_second                    the second as integer or float
      *
      * @return   array      array of year, month, day, hour, minute
      * @access   public
@@ -564,7 +563,11 @@ class Date_Calc
      * Returns the date the specified no of seconds from the given date
      *
      * To subtract seconds use a negative value for the '$pn_seconds'
-     * parameter
+     * parameter.
+     *
+     * N.B. the return type of the second part of the date is float if
+     * either '$pn_seconds' or '$pn_second' is a float; otherwise, it
+     * is integer.
      *
      * @param    mixed      $pn_seconds                   seconds to add as integer or float
      * @param    int        $pn_day                       the day of the month
@@ -582,7 +585,7 @@ class Date_Calc
     function addSeconds($pn_seconds, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pb_countleap = true)
     {
         if ($pn_seconds == 0)
-            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute, (int) $pn_second);
+            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute, $pn_second);
 
         if ($pb_countleap) {
             $hn_year = $pn_year;

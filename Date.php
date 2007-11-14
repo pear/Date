@@ -6,15 +6,16 @@
 /**
  * Generic date handling class for PEAR
  *
- * Generic date handling class for PEAR.  Attempts to be time zone aware
- * through the Date::TimeZone class.  Supports several operations from
- * Date::Calc on Date objects.
+ * Handles time zones and changes from local standard to local Summer
+ * time (daylight-saving time) through the Date_TimeZone class.
+ * Supports several operations from Date_Calc on Date objects.
  *
  * PHP versions 4 and 5
  *
  * LICENSE:
  *
- * Copyright (c) 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
+ * Copyright (c) 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman
+ * Wandayandi, C.A. Woodcock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,12 +40,21 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Firman Wandayandi <firman@php.net>
  * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
+ * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, Firman
+ *             Wandayandi, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  */
+
+
+// }}}
+// {{{ Error constants
+
+define('DATE_ERROR_INVALIDDATE', 1);
+define('DATE_ERROR_INVALIDTIME', 2);
+define('DATE_ERROR_INVALIDTIMEZONE', 3);
 
 
 // }}}
@@ -121,6 +131,12 @@ define('DATE_FORMAT_UNIXTIME', 5);
  *
  * Supports time zones with the Date_TimeZone class.  Supports several
  * operations from Date_Calc on Date objects.
+ *
+ * Note to developers: the class stores the local time and date in the
+ * local standard time.  That is, it does not store the time as the
+ * local Summer time when and if the time zone is in Summer time.  It
+ * is much easier to store local standard time and remember to offset
+ * it when the user requests it.
  *
  * @author     Baba Buehler <baba@babaz.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
@@ -200,6 +216,98 @@ class Date
     var $partsecond;
 
     /**
+     * the year in local standard time
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardyear;
+
+    /**
+     * the month in local standard time
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardmonth;
+
+    /**
+     * the day in local standard time
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardday;
+
+    /**
+     * the hour in local standard time
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardhour;
+
+    /**
+     * the minute in local standard time
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardminute;
+
+    /**
+     * the second in local standard time
+     *
+     * @var      int
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardsecond;
+
+    /**
+     * the part-second in local standard time
+     *
+     * @var      float
+     * @since    [next version]
+     * @access   private
+     */
+    var $on_standardpartsecond;
+
+    /**
+     * Whether the time is valid as a local time (an invalid time
+     * is one that lies in the 'skipped hour' at the point that
+     * the clocks go forward)
+     *
+     * Note that the object is able to store such a time because a
+     * user might unwittingly and correctly store a valid time,
+     * and then add one day so as to put the object in the skipped
+     * hour.  This could be corrected by a conversion to Summer
+     * time (by adding one hour); however, if the user then added
+     * another day, and had no need for or interest in the time
+     * anyway, the behaviour may be rather unexpected.  And anyway
+     * in this situation, the time originally specified would now,
+     * two days on, be valid again.
+     *
+     * So this class allows an invalid time like this so long as
+     * the user does not in any way make use of or request the
+     * time while it is in this semi-invalid state, in order to
+     * allow for for the fact that he might be only interested
+     * in the date, and not the time, and in order not to behave
+     * in an unexpected way, especially without throwing an
+     * exception to tell the user about it.
+     *
+     * @var      bool
+     * @since    [next version]
+     * @access   private
+     */
+    var $ob_invalidtime = null;
+
+    /**
      * timezone for this date
      *
      * @var      object Date_TimeZone
@@ -266,7 +374,8 @@ class Date
     /**
      * Copy values from another Date object
      *
-     * Makes this Date a copy of another Date object.
+     * Makes this Date a copy of another Date object.  This is a
+     * PHP4-compatible implementation of '__clone()' in PHP5.
      *
      * @param    object     $date                         Date object to copy
      *
@@ -275,13 +384,24 @@ class Date
      */
     function copy($date)
     {
-        $this->year = $date->getYear();
-        $this->month = $date->getMonth();
-        $this->day = $date->getDay();
-        $this->hour = $date->getHour();
-        $this->minute = $date->getMinute();
-        $this->second = $date->getSecond();
-        $this->partsecond = $date->getPartSecond();
+        $this->year = $date->year;
+        $this->month = $date->month;
+        $this->day = $date->day;
+        $this->hour = $date->hour;
+        $this->minute = $date->minute;
+        $this->second = $date->second;
+        $this->partsecond = $date->partsecond;
+
+        $this->on_standardyear = $date->on_standardyear;
+        $this->on_standardmonth = $date->on_standardyear;
+        $this->on_standardday = $date->on_standardyear;
+        $this->on_standardhour = $date->on_standardyear;
+        $this->on_standardminute = $date->on_standardyear;
+        $this->on_standardsecond = $date->on_standardyear;
+        $this->on_standardpartsecond = $date->on_standardyear;
+
+        $this->ob_invalidtime = $date->ob_invalidtime;
+
         $this->setTZByID($date->getTZID());
     }
 
@@ -292,7 +412,8 @@ class Date
     /**
      * Copy values from another Date object
      *
-     * Makes this Date a copy of another Date object.
+     * Makes this Date a copy of another Date object.  For PHP5
+     * only.
      *
      * @return   void
      * @access   public
@@ -332,13 +453,13 @@ class Date
      * @return   void
      * @access   public
      */
-    function setDate($date, $format = DATE_FORMAT_ISO)
+    function setDate($date, $format = DATE_FORMAT_ISO, $pb_repeatedhourdefault = false)
     {
-        if (
-            preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])' .
+        if (preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])' .
                          '([T\s]?([01][0-9]|2[0-3]):?([0-5][0-9]):?([0-5][0-9])(\.\d+)?' .
-                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', $date, $regs)
-            && $format != DATE_FORMAT_UNIXTIME) {
+                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', $date, $regs) &&
+            $format != DATE_FORMAT_UNIXTIME
+            ) {
             // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
             // These formats are extremely close to each other.  This regex
             // is very loose and accepts almost any butchered format you could
@@ -347,17 +468,21 @@ class Date
             // latter is not a valid ISO 8601 date.
 
             if (!Date_Calc::isValidDate($regs[3], $regs[2], $regs[1])) {
-                return PEAR::raiseError("'" . $regs[1] . "-" . $regs[2] . "-" . $regs[3] . "' is invalid calendar date");
+                return PEAR::raiseError("'" . Date_Calc::dateFormat($regs[1], $regs[2], $regs[3], "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
             }
 
             $this->year       = (int) $regs[1];
             $this->month      = (int) $regs[2];
             $this->day        = (int) $regs[3];
 
-            $this->hour       = (isset($regs[5]) ? (int) $regs[5] : 0);
-            $this->minute     = (isset($regs[6]) ? (int) $regs[6] : 0);
-            $this->second     = (isset($regs[7]) ? (int) $regs[7] : 0);
-            $this->partsecond = (isset($regs[8]) ? (float) $regs[8] : 0.0);
+            $this->setLocalTime($this->day,
+                                $this->month,
+                                $this->year,
+                                isset($regs[5]) ? $regs[5] : 0,
+                                isset($regs[6]) ? $regs[6] : 0,
+                                isset($regs[7]) ? $regs[7] : 0,
+                                isset($regs[8]) ? $regs[8] : 0.0,
+                                $pb_repeatedhourdefault);
 
             if (isset($regs[9])) {
                 if ($regs[9] == "Z") {
@@ -366,11 +491,26 @@ class Date
                     $this->setTZbyID("UTC" . $regs[9]);
                 }
             }
-        } elseif (is_numeric($date)) {
+        } else if (is_numeric($date)) {
             // Unix Time; N.B. Unix Time is defined relative to GMT,
-            // so it needs to be adjusted for the current time zone:
+            // so it needs to be adjusted for the current time zone;
+            // however we do not know if it is in Summer time until
+            // we have converted it from Unix time:
             //
-            $this->setDate(date("Y-m-d H:i:s", $date + $this->getTZOffset() / 1000));
+
+            // Get current time zone details:
+            //
+            $hs_id = $this->getTZID();
+            $hn_rawoffset = $this->tz->getRawOffset();
+
+            // Input Unix time as UTC:
+            //
+            $this->setTZbyID("UTC");
+            $this->setDate(date("Y-m-d H:i:s", $date + $hn_rawoffset / 1000));
+
+            // Convert back to correct time zone:
+            //
+            $this->convertTZbyID($hs_id);
         } else {
             return PEAR::raiseError("Date not in ISO 8601 format");
         }
@@ -381,11 +521,6 @@ class Date
     // {{{ setNow()
     /**
      * Sets to local current time and time zone
-     *
-     * If PHP version >= 5.1.0 then the local time zone is set
-     * automatically from the local machine, or else the time zone
-     * is set to the default time zone (which itself, if not set by
-     * the user, defaults to UTC).
      *
      * @param    bool       $pb_setmicrotime              whether to set micro-time (defaults to
      *                                                    the value of the constant
@@ -454,8 +589,55 @@ class Date
      */
     function round($pn_precision = DATE_PRECISION_DAY)
     {
-        list($this->year, $this->month, $this->day, $this->hour, $this->minute, $this->second, $this->partsecond) =
-            Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+        if ($this->tz->getDSTSavings() % 3600000 == 0) {
+            if ($pn_precision >= DATE_PRECISION_HOUR) {
+                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
+                    Date_Calc::round($pn_precision, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, $this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardpartsecond);
+
+                $this->setStandardTime($hn_day,
+                                       $hn_month,
+                                       $hn_year,
+                                       $hn_hour,
+                                       $hn_minute,
+                                       $hn_second,
+                                       $hn_partsecond);
+            } else {
+                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
+                    Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+
+                $this->setLocalTime($hn_day,
+                                    $hn_month,
+                                    $hn_year,
+                                    $hn_hour,
+                                    $hn_minute,
+                                    $hn_second,
+                                    $hn_partsecond,
+                                    true,    // This is unlikely, but the day starts with the repeated hour the
+                                             // first time around
+                                    false);  // This is unlikely anyway, but the time is less important than the
+                                             // day (this behaviour is debatable though)
+            }
+        } else {
+            // Very unlikely anyway (as I write, the only time zone like this
+            // is Lord Howe Island in Australia (offset of half an hour)):
+            //
+            // (This algorithm could be better)
+            //
+            list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
+                Date_Calc::round($pn_precision, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, $this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardpartsecond);
+
+            $this->setLocalTime($hn_day,
+                                $hn_month,
+                                $hn_year,
+                                $hn_hour,
+                                $hn_minute,
+                                $hn_second,
+                                $hn_partsecond,
+                                true,    // This is unlikely, but the day starts with the repeated hour the
+                                         // first time around
+                                false);  // This is unlikely anyway, but the time is less important than the
+                                         // day (this behaviour is debatable though)
+        }
     }
 
 
@@ -619,21 +801,21 @@ class Date
             break;
         case DATE_FORMAT_ISO_BASIC:
             $format = "%Y%m%dT%H%M%S";
-            if ($this->tz->getID() == 'UTC') {
+            if ($this->getTZID() == 'UTC') {
                 $format .= "Z";
             }
             return $this->format($format);
             break;
         case DATE_FORMAT_ISO_EXTENDED:
             $format = "%Y-%m-%dT%H:%M:%S";
-            if ($this->tz->getID() == 'UTC') {
+            if ($this->getTZID() == 'UTC') {
                 $format .= "Z";
             }
             return $this->format($format);
             break;
         case DATE_FORMAT_ISO_EXTENDED_MICROTIME:
             $format = "%Y-%m-%dT%H:%M:%s";
-            if ($this->tz->getID() == 'UTC') {
+            if ($this->getTZID() == 'UTC') {
                 $format .= "Z";
             }
             return $this->format($format);
@@ -646,7 +828,10 @@ class Date
             // is to offset additionally by the local time, but the object
             // is not necessarily using local time).
             //
-            return gmmktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year) - $this->getTZOffset() / 1000;
+            if ($this->ob_invalidtime)
+                return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+            return gmmktime($this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardmonth, $this->on_standardday, $this->on_standardyear) - $this->tz->getRawOffset() / 1000;
             break;
         }
     }
@@ -708,6 +893,16 @@ class Date
      *  <code>%%  </code>  literal '%' <br>
      * <br>
      *
+     * The following codes render exactly the same output as the function
+     * 'date()' (and thus the other codes all differ in output):
+     *
+     *  <code>%d</code>
+     *  <code>%H</code>
+     *  <code>%m</code>
+     *  <code>%w</code>
+     *  <code>%y</code>
+     *  <code>%Y</code>
+     *
      * @access public
      * @param string format the format string for returned date/time
      * @return string date/time in given format
@@ -749,16 +944,24 @@ class Date
                     $output .= Date_Calc::dateToDays($this->day,$this->month,$this->year);
                     break;
                 case 'h':
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= sprintf("%d", $this->hour);
                     break;
                 case "H":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= sprintf("%02d", $this->hour);
                     break;
                 case "i":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%d", $hour==0 ? 12 : $hour);
                     break;
                 case "I":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%02d", $hour==0 ? 12 : $hour);
                     break;
@@ -775,6 +978,8 @@ class Date
                     $output .= "\n";
                     break;
                 case "O":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $offms = $this->getTZOffset();
                     $direction = $offms >= 0 ? "+" : "-";
                     $offmins = abs($offms) / 1000 / 60;
@@ -791,16 +996,24 @@ class Date
                     $output .= sprintf("%s%02d:%02d", $direction, $hours, $minutes);
                     break;
                 case "p":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= $this->hour >= 12 ? "pm" : "am";
                     break;
                 case "P":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= $this->hour >= 12 ? "PM" : "AM";
                     break;
                 case "r":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%02d:%02d:%02d %s", $hour==0 ?  12 : $hour, $this->minute, $this->second, $this->hour >= 12 ? "PM" : "AM");
                     break;
                 case "R":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= sprintf("%02d:%02d", $this->hour, $this->minute);
                     break;
                 case "s":
@@ -813,6 +1026,8 @@ class Date
                     $output .= "\t";
                     break;
                 case "T":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= sprintf("%02d:%02d:%02d", $this->hour, $this->minute, $this->second);
                     break;
                 case "w":
@@ -1367,12 +1582,16 @@ class Date
                     } else if (strtoupper(substr($ps_format, $i, 2)) == "AD") {
                         $ret .= $this->year >= 0 ? ($hb_lower ? "ad" : "AD") : ($hb_lower ? "bc" : "BC");
                         $i += 2;
-                    } else if (strtoupper(substr($ps_format, $i, 4)) == "A.M.") {
-                        $ret .= $this->hour < 12 ? ($hb_lower ? "a.m." : "A.M.") : ($hb_lower ? "p.m." : "P.M.");
-                        $i += 4;
-                    } else if (strtoupper(substr($ps_format, $i, 2)) == "AM") {
-                        $ret .= $this->hour < 12 ? ($hb_lower ? "am" : "AM") : ($hb_lower ? "pm" : "PM");
-                        $i += 2;
+                    } else {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+                        if (strtoupper(substr($ps_format, $i, 4)) == "A.M.") {
+                            $ret .= $this->hour < 12 ? ($hb_lower ? "a.m." : "A.M.") : ($hb_lower ? "p.m." : "P.M.");
+                            $i += 4;
+                        } else if (strtoupper(substr($ps_format, $i, 2)) == "AM") {
+                            $ret .= $this->hour < 12 ? ($hb_lower ? "am" : "AM") : ($hb_lower ? "pm" : "PM");
+                            $i += 2;
+                        }
                     }
 
                     break;
@@ -1513,6 +1732,8 @@ class Date
                     break;
                 case "f":
                 case "F":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $hn_codelen = 1;
                     if (is_numeric(substr($ps_format, $i + $hn_codelen, 1))) {
                         ++$hn_codelen;
@@ -1556,6 +1777,8 @@ class Date
                     break;
                 case "h":
                 case "H":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     if (strtoupper(substr($ps_format, $i, 4)) == "HH12") {
                         $hn_hour = $this->hour % 12;
                         if ($hn_hour == 0)
@@ -1635,6 +1858,8 @@ class Date
                     $hb_lower = true;
                 case "M":
                     if (strtoupper(substr($ps_format, $i, 2)) == "MI") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                         $hs_numberformat = substr($ps_format, $i + 2, 4);
                         $hs_minute = $this->formatNumber($this->minute, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
                         if (Pear::isError($hs_minute))
@@ -1684,6 +1909,8 @@ class Date
                 case "p":
                     $hb_lower = true;
                 case "P":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     if (strtoupper(substr($ps_format, $i, 4)) == "P.M.") {
                         $ret .= $this->hour < 12 ? ($hb_lower ? "a.m." : "A.M.") : ($hb_lower ? "p.m." : "P.M.");
                         $i += 4;
@@ -1761,6 +1988,8 @@ class Date
                     // Check for 'SSSSS' before 'SS':
                     //
                     if (strtoupper(substr($ps_format, $i, 5)) == "SSSSS") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                         $hs_numberformat = substr($ps_format, $i + 5, 4);
                         $hn_second = Date_Calc::secondsPastMidnight($this->hour, $this->minute, $this->second);
                         $hs_second = $this->formatNumber($hn_second, $hs_numberformat, 5, $hb_nopad, true, $ps_locale);
@@ -1770,6 +1999,8 @@ class Date
                         $ret .= $hs_second;
                         $i += 5 + strlen($hs_numberformat);
                     } else if (strtoupper(substr($ps_format, $i, 2)) == "SS") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                         $hs_numberformat = substr($ps_format, $i + 2, 4);
                         $hs_second = $this->formatNumber($this->second, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
                         if (Pear::isError($hs_second))
@@ -1791,13 +2022,15 @@ class Date
                 case "T":
                     // Code TZ[...]:
                     //
-                    if (is_null($hn_tzoffset))
-                        $hn_tzoffset = $this->getTZOffset();
 
                     if (strtoupper(substr($ps_format, $i, 3)) == "TZC") {
                         $ret .= $this->getTZShortName();
                         $i += 3;
                     } else if (strtoupper(substr($ps_format, $i, 3)) == "TZH") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
                         $hs_numberformat = substr($ps_format, $i + 3, 4);
                         $hn_tzh = intval($hn_tzoffset / 3600000);
 
@@ -1812,9 +2045,15 @@ class Date
                         $ret .= ($hb_nosign ? "" : ($hn_tzh >= 0 ? '+' : '-')) . $hs_tzh;
                         $i += 3 + strlen($hs_numberformat);
                     } else if (strtoupper(substr($ps_format, $i, 3)) == "TZI") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                         $ret .= ($this->inDaylightTime() ? '1' : '0');
                         $i += 3;
                     } else if (strtoupper(substr($ps_format, $i, 3)) == "TZM") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
                         $hs_numberformat = substr($ps_format, $i + 3, 4);
                         $hn_tzm = intval(($hn_tzoffset % 3600000) / 60000);
 
@@ -1830,6 +2069,10 @@ class Date
                         $ret .= $this->getTZLongName();
                         $i += 3;
                     } else if (strtoupper(substr($ps_format, $i, 3)) == "TZO") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
                         $hs_numberformat = substr($ps_format, $i + 3, 4);
                         $hn_tzo = intval($hn_tzoffset / 1000);
 
@@ -1849,6 +2092,8 @@ class Date
                     break;
                 case "u":
                 case "U":
+                    if ($this->ob_invalidtime)
+                        return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $hn_unixtime = $this->getTime();
                     $hs_numberformat = substr($ps_format, $i + 1, 4);
 
@@ -2080,10 +2325,42 @@ class Date
     /**
      * Sets the time zone of this date with the given time zone ID
      *
-     * If no time-zone is specified and PHP version >= 5.1.0, the time-zone
-     * is set automatically.  Sets the time zone to the system default if the
-     * given ID is invalid.  Does not alter the date/time, only assigns a
-     * new time zone.  For conversion, use 'convertTZ()'.
+     * The time zone IDs are drawn from the 'tz data-base' (see 
+     * http://en.wikipedia.org/wiki/Zoneinfo), which is the de facto
+     * internet and IT standard.  (There is no official standard, and
+     * the tz data-base is not intended to be a regulating body
+     * anyway.)  Lists of valid IDs are maintained at:
+     *
+     *  http://en.wikipedia.org/wiki/List_of_zoneinfo_timezones
+     *  http://www.php.net/manual/en/timezones.php
+     *
+     * If no time-zone is specified and PHP version >= 5.1.0, the time
+     * zone is set automatically to the php.ini configuration directive
+     * 'date.timezone' if set and valid, else the value returned by
+     * 'date("e")' if valid, else the default specified if the global
+     * constant '$GLOBALS["_DATE_TIMEZONE_DEFAULT"]', which if itself
+     * left unset, defaults to "UTC".
+     *
+     * N.B. this function preserves the local date and time, that is,
+     * whether in local Summer time or local standard time.  For example,
+     * if the time is set to 11.00 Summer time, and the time zone is then
+     * set to another time zone, using this function, in which the date
+     * falls in standard time, then the time will remain set to 11.00 UTC,
+     * and not 10.00.  You can convert a date to another time zone by
+     * calling 'convertTZ()'.
+     *
+     * The ID can also be specified as a UTC offset in one of the following
+     * forms, i.e. an offset with no geographical or political base:
+     *
+     *  UTC[+/-][h]       - e.g. UTC-1     (the preferred form)
+     *  UTC[+/-][hh]      - e.g. UTC+03
+     *  UTC[+/-][hh][mm]  - e.g. UTC-0530
+     *  UTC[+/-][hh]:[mm] - e.g. UTC+03:00
+     *
+     * N.B. 'UTC' seems to be technically preferred over 'GMT'.  GMT-based
+     * IDs still exist in the tz data-base, but beware of POSIX-style
+     * offsets which are the opposite way round to what people normally
+     * expect.
      *
      * @param    string     $ps_id                        a valid time zone id, e.g. 'Europe/London'
      *
@@ -2092,10 +2369,30 @@ class Date
      */
     function setTZbyID($ps_id = null)
     {
+        // Whether the date is in Summer time forms the default for
+        // the new time zone (if needed, which is very unlikely anyway).
+        // This is mainly to prevent unexpected (defaulting) behaviour
+        // if the user is in the repeated hour, and switches to a time
+        // zone that is also in the repeated hour (e.g. anywhere that
+        // uses EU Summer time rules, so between 'Europe/London' and
+        // 'Europe/Paris' for example).
+        //
+        $hb_insummertime = $this->inDaylightTime();
+        if (PEAR::isError($hb_insummertime)) {
+            if ($hb_insummertime->getCode() != DATE_ERROR_INVALIDTIME) {
+                $hb_insummertime = false;
+            } else {
+                return $hb_insummertime;
+            }
+        }
+
         if (is_null($ps_id)) {
             if (function_exists('version_compare') &&
                 version_compare(phpversion(), "5.1.0", ">=") &&
-                Date_TimeZone::isValidID($ps_id = date("e"))) {
+                (Date_TimeZone::isValidID($ps_id = ini_get("date.timezone")) ||
+                 Date_TimeZone::isValidID($ps_id = date("e"))
+                 )
+                ) {
                 $this->tz = new Date_TimeZone($ps_id);
             } else {
                 $this->tz = Date_TimeZone::getDefault();
@@ -2103,8 +2400,10 @@ class Date
         } else if (Date_TimeZone::isValidID($ps_id)) {
             $this->tz = new Date_TimeZone($ps_id);
         } else {
-            return PEAR::raiseError("Invalid time zone ID '$ps_id'");
+            return PEAR::raiseError("Invalid time zone ID '$ps_id'", DATE_ERROR_INVALIDTIMEZONE);
         }
+
+        $this->setLocalTime($this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond, $hb_insummertime);
     }
 
 
@@ -2178,7 +2477,10 @@ class Date
      */
     function getTZOffset()
     {
-        return $this->tz->getOffset($this);
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return $this->tz->getRawOffset() + ($this->inDaylightTime() ? $this->tz->getDSTSavings() : 0);
     }
 
 
@@ -2189,16 +2491,30 @@ class Date
      * Tests if this date/time is in DST
      *
      * Returns true if daylight savings time is in effect for
-     * this date in this date's time zone.  See Date_TimeZone::inDaylightTime()
-     * for compatability information.
+     * this date in this date's time zone.
      *
-     * @access public
-     * @return boolean true if DST is in effect for this date
+     * @param    bool       $pb_repeatedhourdefault       value to return if repeated hour
+     *                                                     is specified (defaults to false)
+     *
+     * @return   boolean    true if DST is in effect for this date
+     * @access   public
      */
-    function inDaylightTime()
+    function inDaylightTime($pb_repeatedhourdefault = false)
     {
-        return $this->tz->inDaylightTime($this);
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        // The return value is 'cached' whenever the date/time is set:
+        //
+        return $this->hour != $this->on_standardhour ||
+               $this->minute != $this->on_standardminute ||
+               $this->second != $this->on_standardsecond ||
+               $this->partsecond != $this->on_standardpartsecond ||
+               $this->day != $this->on_standardday ||                // these last 3 conditions are theoretical
+               $this->month != $this->on_standardmonth ||            // possibilities but normally will never occur:
+               $this->year != $this->on_standardyear;
     }
+
 
     // }}}
     // {{{ toUTC()
@@ -2206,16 +2522,19 @@ class Date
     /**
      * Converts this date to UTC and sets this date's timezone to UTC
      *
-     * @access public
+     * @return   void
+     * @access   public
      */
     function toUTC()
     {
-        if ($this->getTZOffset() > 0) {
-            $this->subtractSeconds(intval($this->getTZOffset() / 1000));
-        } else {
-            $this->addSeconds(intval(abs($this->getTZOffset()) / 1000));
-        }
-        $this->setTZbyID('UTC');
+        if ($this->getTZID() == "UTC")
+            return;
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        $hn_rawoffset = $this->tz->getRawOffset();
+        $this->tz = new Date_TimeZone("UTC");
+        $this->addSeconds($hn_rawoffset / -1000, false);
     }
 
 
@@ -2226,7 +2545,7 @@ class Date
      * Converts this date to a new time zone
      *
      * Previously this might not have worked correctly if your system did
-     * not allow putenv() or if localtime() does not work in your
+     * not allow putenv() or if localtime() did not work in your
      * environment, but this implementation is no longer used.
      *
      * @param    object     $tz                           Date_TimeZone object to convert to
@@ -2236,22 +2555,14 @@ class Date
      */
     function convertTZ($tz)
     {
-        // convert to UTC
-        if (($hn_oldoffset = $this->getTZOffset()) > 0) {
-            $this->subtractSeconds(intval(abs($hn_oldoffset) / 1000));
-        } else {
-            $this->addSeconds(intval(abs($hn_oldoffset) / 1000));
-        }
-        // convert UTC to new timezone
-        if (($hn_newoffset = $tz->getOffset($this)) > 0) {
-            $this->addSeconds(intval(abs($hn_newoffset) / 1000));
-        } else {
-            $this->subtractSeconds(intval(abs($hn_newoffset) / 1000));
-        }
+        if ($this->getTZID() == $tz->getID())
+            return;
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
 
-        // In PHP5 the TimeZone object must be deep-copied:
-        //
-        $this->setTZbyID($tz->getID());
+        $hn_rawoffset = $tz->getRawOffset() - $this->tz->getRawOffset();
+        $this->tz = new Date_TimeZone($tz->getID());
+        $this->addSeconds($hn_rawoffset / 1000, false);
     }
 
 
@@ -2273,36 +2584,50 @@ class Date
     function convertTZbyID($ps_id)
     {
         if (!Date_TimeZone::isValidID($ps_id)) {
-            return PEAR::raiseError("Invalid time zone ID '$ps_id'");
+            return PEAR::raiseError("Invalid time zone ID '$ps_id'", DATE_ERROR_INVALIDTIMEZONE);
         }
 
-        $this->convertTZ(new Date_TimeZone($ps_id));
+        $res = $this->convertTZ(new Date_TimeZone($ps_id));
+
+        if (PEAR::isError($res))
+            return $res;
     }
 
 
     // }}}
     // {{{ toUTCbyOffset()
 
-    function toUTCbyOffset($offset)
+    /**
+     * ? Undocumented function
+     *
+     * I don't know what this function is for.
+     *
+     * @param    string     $ps_offset                    offset of the form '[+/-][hh]:[mm]', '[+/-][hh][mm]', or 'Z'
+     *
+     * @return   bool
+     * @access   private
+     */
+    function toUTCbyOffset($ps_offset)
     {
-        if ($offset == "Z" || $offset == "+00:00" || $offset == "+0000") {
+        if ($ps_offset == "Z" || $ps_offset == "+00:00" || $ps_offset == "+0000") {
             $this->toUTC();
             return true;
         }
 
-        if (preg_match('/([\+\-])(\d{2}):?(\d{2})/', $offset, $regs)) {
+        if (preg_match('/([\+\-])(\d{2}):?(\d{2})/', $ps_offset, $regs)) {
             // convert offset to seconds
             $hours  = (int) isset($regs[2])?$regs[2]:0;
             $mins   = (int) isset($regs[3])?$regs[3]:0;
-            $offset = ($hours * 3600) + ($mins * 60);
+            $ps_offset = ($hours * 3600) + ($mins * 60);
 
-            if (isset($regs[1]) && $regs[1] == "-") {                $offset *= -1;
+            if (isset($regs[1]) && $regs[1] == "-") {
+                $ps_offset *= -1;
             }
 
-            if ($offset > 0) {
-                $this->subtractSeconds(intval($offset));
+            if ($ps_offset > 0) {
+                $this->subtractSeconds(intval($ps_offset), false);
             } else {
-                $this->addSeconds(intval(abs($offset)));
+                $this->addSeconds(intval(abs($ps_offset)), false);
             }
 
             $this->setTZbyID('UTC');
@@ -2376,10 +2701,219 @@ class Date
 
 
     // }}}
+    // {{{ addHours()
+
+    /**
+     * Converts the date to the specified no of hours from the given date
+     *
+     * To subtract hours use a negative value for the '$pn_hours' parameter
+     *
+     * @param    int        $pn_hours                     hours to add
+     *
+     * @return   void
+     * @access   public
+     */
+    function addHours($pn_hours)
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour) =
+            Date_Calc::addHours($pn_hours,
+                                $this->on_standardday,
+                                $this->on_standardmonth,
+                                $this->on_standardyear,
+                                $this->on_standardhour);
+
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $this->on_standardminute,
+                               $this->on_standardsecond,
+                               $this->on_standardpartsecond);
+    }
+
+
+    // }}}
+    // {{{ addMinutes()
+
+    /**
+     * Converts the date to the specified no of minutes from the given date
+     *
+     * To subtract minutes use a negative value for the '$pn_minutes' parameter
+     *
+     * @param    int        $pn_minutes                   minutes to add
+     *
+     * @return   void
+     * @access   public
+     */
+    function addMinutes($pn_minutes)
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute) =
+            Date_Calc::addMinutes($pn_minutes,
+                                  $this->on_standardday,
+                                  $this->on_standardmonth,
+                                  $this->on_standardyear,
+                                  $this->on_standardhour,
+                                  $this->on_standardminute);
+
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $hn_standardminute,
+                               $this->on_standardsecond,
+                               $this->on_standardpartsecond);
+    }
+
+
+    // }}}
+    // {{{ addSecondsRaw()
+
+    /**
+     * Adds a given number of seconds to the date, without setting
+     * the local time from the new, calculated standard time
+     *
+     * Effectively a wrapper function for 'Date_Calc::addSeconds()'.
+     *
+     * @param    mixed      $sec                          the no of seconds to add as integer or float
+     * @param    bool       $pb_countleap                 whether to count leap seconds (defaults to true)
+     *
+     * @return   array of year, month, day, hour, minute, second, part-second
+     * @access   private
+     */
+    function addSecondsRaw($sec, $pb_countleap = true)
+    {
+        if (!is_int($sec) && !is_float($sec))
+            settype($sec, 'int');
+
+        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute, $hn_secondraw) =
+            Date_Calc::addSeconds($sec,
+                                  $this->on_standardday,
+                                  $this->on_standardmonth,
+                                  $this->on_standardyear,
+                                  $this->on_standardhour,
+                                  $this->on_standardminute,
+                                  $this->on_standardpartsecond == 0.0 ? $this->on_standardsecond : $this->on_standardsecond + $this->on_standardpartsecond,
+                                  $pb_countleap);
+
+        if (is_float($hn_secondraw)) {
+            $hn_standardsecond = intval($hn_secondraw);
+            $hn_standardpartsecond = $hn_secondraw - $hn_standardsecond;
+        } else {
+            $hn_standardsecond = $hn_secondraw;
+            $hn_standardpartsecond = 0.0;
+        }
+
+        return array($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute, $hn_standardsecond, $hn_standardpartsecond);
+    }
+
+
+    // }}}
+    // {{{ addSeconds()
+
+    /**
+     * Adds a given number of seconds to the date
+     *
+     * @param    mixed      $sec                          the no of seconds to add as integer or float
+     * @param    bool       $pb_countleap                 whether to count leap seconds (defaults to true)
+     *
+     * @return   void
+     * @access   public
+     */
+    function addSeconds($sec, $pb_countleap = true)
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute, $hn_standardsecond, $hn_standardpartsecond) =
+            $this->addSecondsRaw($sec, $pb_countleap);
+
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $hn_standardminute,
+                               $hn_standardsecond,
+                               $hn_standardpartsecond);
+    }
+
+
+    // }}}
+    // {{{ subtractSeconds()
+
+    /**
+     * Subtracts a given number of seconds from the date
+     *
+     * @param    mixed      $sec                          the no of seconds to add as integer or float
+     * @param    bool       $pb_countleap                 whether to count leap seconds (defaults to true)
+     *
+     * @return   void
+     * @access   public
+     */
+    function subtractSeconds($sec, $pb_countleap = true)
+    {
+        $res = $this->addSeconds(-$sec, $pb_countleap);
+
+        if (PEAR::isError($res))
+            return $res;
+    }
+
+
+    // }}}
     // {{{ addSpan()
 
     /**
      * Adds a time span to the date
+     *
+     * A time span is defined as a unsigned no of days, hours, minutes
+     * and seconds, where the no of minutes and seconds must be less than
+     * 60, and the no of hours must be less than 24.
+     *
+     * A span is added (and subtracted) according to the following logic:
+     *  
+     *  Hours, minutes and seconds are added such that if they fall over
+     *   a leap second, the leap second is ignored, and not counted.
+     *   For example, if a leap second occurred at 23.59.60, the
+     *   following calculations:
+     *
+     *    23.59.59 + one second
+     *    23.59.00 + one minute
+     *    23.00.00 + one hour
+     *
+     *   would all produce 00.00.00 the next day.
+     *
+     *  A day is treated as equivalent to 24 hours, so if the clocks
+     *   went forward at 01.00, and one day was added to the time 00.30,
+     *   the result would be 23.30 the same day.
+     *
+     * This is the implementation which is thought to yield the behaviour
+     * that the user is most likely to expect, or in another way of
+     * looking at it, it is the implementation that produces the least
+     * unexpected behaviour.  It basically works in hours, that is, a day
+     * is treated as exactly equivalent to 24 hours, and minutes and
+     * seconds are treated as equivalent to 1/60th and 1/3600th of an
+     * hour.  It should be obvious that working in days is impractical;
+     * working in seconds is problematic when it comes to adding days
+     * that fall over leap seconds, where it would appear to most users
+     * that the function adds only 23 hours, 59 minutes and 59 seconds.
+     * It is also problematic to work in any kind of mixture of days,
+     * hours, minutes, and seconds, because then the addition of a span
+     * would sometimes depend on which order you add the constituent
+     * parts, which undermines the concept of a span altogether.
+     *
+     * If you want alternative functionality, you must use a mixture of
+     * the following functions instead:
+     *  addYears()
+     *  addMonths()
+     *  addDays()
+     *  addHours()
+     *  addMinutes()
+     *  addSeconds()
      *
      * @param object Date_Span $span the time span to add
      *
@@ -2392,34 +2926,39 @@ class Date
             return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
         } else if ($span->isEmpty()) {
             return;
+        } else if ($this->ob_invalidtime) {
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
         }
 
-        $hn_days = 0;
+        $hn_days = $span->day;
+        $hn_standardhour = $this->on_standardhour + $span->hour;
+        $hn_standardminute = $this->on_standardminute + $span->minute;
+        $hn_standardsecond = $this->on_standardsecond + $span->second;
 
-        $this->second += $span->second;
-        if ($this->second >= 60) {
-            $this->minute++;
-            $this->second -= 60;
+        if ($hn_standardsecond >= 60) {
+            ++$hn_standardminute;
+            $hn_standardsecond -= 60;
         }
 
-        $this->minute += $span->minute;
-        if ($this->minute >= 60) {
-            $this->hour++;
-            $this->minute -= 60;
+        if ($hn_standardminute >= 60) {
+            ++$hn_standardhour;
+            $hn_standardminute -= 60;
         }
 
-        $this->hour += $span->hour;
-        if ($this->hour >= 24) {
+        if ($hn_standardhour >= 24) {
             ++$hn_days;
-            $this->hour -= 24;
+            $hn_standardhour -= 24;
         }
 
-        $hn_days += $span->day;
-        list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $this->day, $this->month, $this->year, "%Y %m %d"));
+        list($hn_standardyear, $hn_standardmonth, $hn_standardday) = explode(" ", Date_Calc::addDays($hn_days, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, "%Y %m %d"));
 
-        $this->year  = (int) $hn_year;
-        $this->month = (int) $hn_month;
-        $this->day   = (int) $hn_day;
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $hn_standardminute,
+                               $hn_standardsecond,
+                               $this->on_standardpartsecond);
     }
 
 
@@ -2428,6 +2967,12 @@ class Date
 
     /**
      * Subtracts a time span from the date
+     *
+     * N.B. it is impossible for this function to count leap seconds,
+     * because the result would be dependent on which order the consituent
+     * parts of the span are subtracted from the date.  Therefore, leap
+     * seconds are ignored by this function.  If you want to count leap
+     * seconds, use 'subtractSeconds()'.
      *
      * @param object Date_Span $span the time span to subtract
      *
@@ -2440,80 +2985,41 @@ class Date
             return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
         } else if ($span->isEmpty()) {
             return;
+        } else if ($this->ob_invalidtime) {
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
         }
 
-        $hn_days = 0;
+        $hn_days = -$span->day;
+        $hn_standardhour = $this->on_standardhour - $span->hour;
+        $hn_standardminute = $this->on_standardminute - $span->minute;
+        $hn_standardsecond = $this->on_standardsecond - $span->second;
 
-        $this->second -= $span->second;
-        if ($this->second < 0) {
-            $this->minute--;
-            $this->second += 60;
+        if ($hn_standardsecond < 0) {
+            --$hn_standardminute;
+            $hn_standardsecond += 60;
         }
 
-        $this->minute -= $span->minute;
-        if ($this->minute < 0) {
-            $this->hour--;
-            $this->minute += 60;
+        if ($hn_standardminute < 0) {
+            --$hn_standardhour;
+            $hn_standardminute += 60;
         }
 
-        $this->hour -= $span->hour;
-        if ($this->hour < 0) {
+        if ($hn_standardhour < 0) {
             --$hn_days;
-            $this->hour += 24;
+            $hn_standardhour += 24;
         }
 
-        $hn_days -= $span->day;
-        list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $this->day, $this->month, $this->year, "%Y %m %d"));
+        list($hn_standardyear, $hn_standardmonth, $hn_standardday) = explode(" ", Date_Calc::addDays($hn_days, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, "%Y %m %d"));
 
-        $this->year  = (int) $hn_year;
-        $this->month = (int) $hn_month;
-        $this->day   = (int) $hn_day;
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $hn_standardminute,
+                               $hn_standardsecond,
+                               $this->on_standardpartsecond);
     }
 
-
-    // }}}
-    // {{{ addSeconds()
-
-    /**
-     * Adds a given number of seconds to the date
-     *
-     * @access public
-     * @param int $sec the number of seconds to add
-     */
-    function addSeconds($sec)
-    {
-        settype($sec, 'int');
-
-        // Negative value given.
-        if ($sec < 0) {
-            $this->subtractSeconds(abs($sec));
-            return;
-        }
-
-        $this->addSpan(new Date_Span($sec));
-    }
-
-    // }}}
-    // {{{ subtractSeconds()
-
-    /**
-     * Subtracts a given number of seconds from the date
-     *
-     * @access public
-     * @param int $sec the number of seconds to subtract
-     */
-    function subtractSeconds($sec)
-    {
-        settype($sec, 'int');
-
-        // Negative value given.
-        if ($sec < 0) {
-            $this->addSeconds(abs($sec));
-            return;
-        }
-
-        $this->subtractSpan(new Date_Span($sec));
-    }
 
     // }}}
     // {{{ compare()
@@ -2521,33 +3027,52 @@ class Date
     /**
      * Compares two dates
      *
-     * Compares two dates.  Suitable for use
-     * in sorting functions.
+     * Suitable for use in sorting functions.
      *
-     * @access public
-     * @param object Date $d1 the first date
-     * @param object Date $d2 the second date
-     * @return int 0 if the dates are equal, -1 if d1 is before d2, 1 if d1 is after d2
+     * @param    object     $od1                          the first Date object to compare
+     * @param    object     $od2                          the second Date object to compare
+     *
+     * @return   int        0 if the dates are equal, -1 if '$od1' is
+     *                      before d2, 1 if '$od1' is after d2
+     * @access   public
+     * @static
      */
     function compare($od1, $od2)
     {
         $d1 = new Date($od1);
         $d2 = new Date($od2);
 
-        $d1->convertTZ(new Date_TimeZone('UTC'));
-        $d2->convertTZ(new Date_TimeZone('UTC'));
-        $days1 = Date_Calc::dateToDays($d1->day, $d1->month, $d1->year);
-        $days2 = Date_Calc::dateToDays($d2->day, $d2->month, $d2->year);
+        if ($d1->getTZID() != $d2->getTZID()) {
+            $res = $d1->toUTC();
+            if (PEAR::isError($res))
+                return $res;
+            $res = $d2->toUTC();
+            if (PEAR::isError($res))
+                return $res;
+        }
+        $days1 = Date_Calc::dateToDays($d1->getStandardDay(), $d1->getStandardMonth(), $d1->getStandardYear());
+        $days2 = Date_Calc::dateToDays($d2->getStandardDay(), $d2->getStandardMonth(), $d2->getStandardYear());
         if ($days1 < $days2) return -1;
         if ($days1 > $days2) return 1;
-        if ($d1->hour < $d2->hour) return -1;
-        if ($d1->hour > $d2->hour) return 1;
-        if ($d1->minute < $d2->minute) return -1;
-        if ($d1->minute > $d2->minute) return 1;
-        if ($d1->second < $d2->second) return -1;
-        if ($d1->second > $d2->second) return 1;
+
+        $hn_hour1 = $d1->getStandardHour();
+        if (PEAR::isError($hn_hour1))
+            return $hn_hour1;
+        $hn_hour2 = $d2->getStandardHour();
+        if (PEAR::isError($hn_hour2))
+            return $hn_hour2;
+
+        if ($hn_hour1 < $hn_hour2) return -1;
+        if ($hn_hour1 > $hn_hour2) return 1;
+        if ($d1->getStandardMinute() < $d2->getStandardMinute()) return -1;
+        if ($d1->getStandardMinute() > $d2->getStandardMinute()) return 1;
+        if ($d1->getStandardSecond() < $d2->getStandardSecond()) return -1;
+        if ($d1->getStandardSecond() > $d2->getStandardSecond()) return 1;
+        if ($d1->getStandardPartSecond() < $d2->getStandardPartSecond()) return -1;
+        if ($d1->getStandardPartSecond() > $d2->getStandardPartSecond()) return 1;
         return 0;
     }
+
 
     // }}}
     // {{{ before()
@@ -2555,15 +3080,17 @@ class Date
     /**
      * Test if this date/time is before a certain date/time
      *
-     * Test if this date/time is before a certain date/time
-     *
-     * @access public
      * @param object Date $when the date to test against
      * @return boolean true if this date is before $when
+     * @access public
      */
     function before($when)
     {
-        if (Date::compare($this,$when) == -1) {
+        $hn_compare = Date::compare($this, $when);
+        if (PEAR::isError($hn_compare))
+            return $hn_compare;
+
+        if ($hn_compare == -1) {
             return true;
         } else {
             return false;
@@ -2574,17 +3101,19 @@ class Date
     // {{{ after()
 
     /**
-     * Test if this date/time is after a certian date/time
+     * Test if this date/time is after a certain date/time
      *
-     * Test if this date/time is after a certian date/time
-     *
-     * @access public
      * @param object Date $when the date to test against
      * @return boolean true if this date is after $when
+     * @access public
      */
     function after($when)
     {
-        if (Date::compare($this,$when) == 1) {
+        $hn_compare = Date::compare($this, $when);
+        if (PEAR::isError($hn_compare))
+            return $hn_compare;
+
+        if ($hn_compare == 1) {
             return true;
         } else {
             return false;
@@ -2595,17 +3124,19 @@ class Date
     // {{{ equals()
 
     /**
-     * Test if this date/time is exactly equal to a certian date/time
+     * Test if this date/time is exactly equal to a certain date/time
      *
-     * Test if this date/time is exactly equal to a certian date/time
-     *
-     * @access public
      * @param object Date $when the date to test against
      * @return boolean true if this date is exactly equal to $when
+     * @access public
      */
     function equals($when)
     {
-        if (Date::compare($this,$when) == 0) {
+        $hn_compare = Date::compare($this, $when);
+        if (PEAR::isError($hn_compare))
+            return $hn_compare;
+
+        if ($hn_compare == 0) {
             return true;
         } else {
             return false;
@@ -2626,11 +3157,7 @@ class Date
     function isFuture()
     {
         $now = new Date();
-        if ($this->after($now)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->after($now);
     }
 
     // }}}
@@ -2647,11 +3174,7 @@ class Date
     function isPast()
     {
         $now = new Date();
-        if ($this->before($now)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->before($now);
     }
 
     // }}}
@@ -2677,8 +3200,8 @@ class Date
     /**
      * Get the Julian date for this date
      *
-     * @access public
      * @return int the Julian date
+     * @access public
      */
     function getJulianDate()
     {
@@ -2705,12 +3228,10 @@ class Date
     // {{{ getDayOfWeek()
 
     /**
-     * Gets the day of the week for this date
-     *
      * Gets the day of the week for this date (0=Sunday)
      *
-     * @access public
      * @return int the day of the week (0=Sunday)
+     * @access public
      */
     function getDayOfWeek()
     {
@@ -2914,10 +3435,8 @@ class Date
     /**
      * Returns the year field of the date object
      *
-     * Returns the year field of the date object
-     *
-     * @access public
-     * @return int the year
+     * @return   int        the year
+     * @access   public
      */
     function getYear()
     {
@@ -2931,10 +3450,8 @@ class Date
     /**
      * Returns the month field of the date object
      *
-     * Returns the month field of the date object
-     *
-     * @access public
-     * @return int the month
+     * @return   int        the minute
+     * @access   public
      */
     function getMonth()
     {
@@ -2948,10 +3465,8 @@ class Date
     /**
      * Returns the day field of the date object
      *
-     * Returns the day field of the date object
-     *
-     * @access public
-     * @return int the day
+     * @return   int        the day
+     * @access   public
      */
     function getDay()
     {
@@ -2965,13 +3480,14 @@ class Date
     /**
      * Returns the hour field of the date object
      *
-     * Returns the hour field of the date object
-     *
-     * @access public
-     * @return int the hour
+     * @return   int        the hour
+     * @access   public
      */
     function getHour()
     {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
         return $this->hour;
     }
 
@@ -2982,13 +3498,14 @@ class Date
     /**
      * Returns the minute field of the date object
      *
-     * Returns the minute field of the date object
-     *
-     * @access public
-     * @return int the minute
+     * @return   int        the minute
+     * @access   public
      */
     function getMinute()
     {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
         return $this->minute;
     }
 
@@ -2999,14 +3516,15 @@ class Date
     /**
      * Returns the second field of the date object
      *
-     * Returns the second field of the date object
-     *
-     * @access public
-     * @return int the second
+     * @return   int        the second
+     * @access   public
      */
     function getSecond()
     {
-         return $this->second;
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return $this->second;
     }
 
 
@@ -3021,7 +3539,10 @@ class Date
      */
     function getSecondsPastMidnight()
     {
-         return Date_Calc::secondsPastMidnight($this->hour, $this->minute, $this->second) + $this->partsecond;
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return Date_Calc::secondsPastMidnight($this->hour, $this->minute, $this->second) + $this->partsecond;
     }
 
 
@@ -3036,7 +3557,356 @@ class Date
      */
     function getPartSecond()
     {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
         return $this->partsecond;
+    }
+
+
+    // }}}
+    // {{{ getStandardYear()
+
+    /**
+     * Returns the year field of the local standard time
+     *
+     * @return   int        the year
+     * @access   public
+     */
+    function getStandardYear()
+    {
+        return $this->on_standardyear;
+    }
+
+
+    // }}}
+    // {{{ getStandardMonth()
+
+    /**
+     * Returns the month field of the local standard time
+     *
+     * @return   int        the minute
+     * @access   public
+     */
+    function getStandardMonth()
+    {
+        return $this->on_standardmonth;
+    }
+
+
+    // }}}
+    // {{{ getStandardDay()
+
+    /**
+     * Returns the day field of the local standard time
+     *
+     * @return   int        the day
+     * @access   public
+     */
+    function getStandardDay()
+    {
+        return $this->on_standardday;
+    }
+
+
+    // }}}
+    // {{{ getStandardHour()
+
+    /**
+     * Returns the hour field of the local standard time
+     *
+     * @return   int        the hour
+     * @access   public
+     */
+    function getStandardHour()
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return $this->on_standardhour;
+    }
+
+
+    // }}}
+    // {{{ getStandardMinute()
+
+    /**
+     * Returns the minute field of the local standard time
+     *
+     * @return   int        the minute
+     * @access   public
+     */
+    function getStandardMinute()
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return $this->on_standardminute;
+    }
+
+
+    // }}}
+    // {{{ getStandardSecond()
+
+    /**
+     * Returns the second field of the local standard time
+     *
+     * @return   int        the second
+     * @access   public
+     */
+    function getStandardSecond()
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return $this->on_standardsecond;
+    }
+
+
+    // }}}
+    // {{{ getStandardSecondsPastMidnight()
+
+    /**
+     * Returns the no of seconds since midnight (0-86400) of the
+     * local standard time as float
+     *
+     * @return   float      float which is at least 0 and less than 86400
+     * @access   public
+     */
+    function getStandardSecondsPastMidnight()
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return Date_Calc::secondsPastMidnight($this->on_standardhour, $this->on_standardminute, $this->on_standardsecond) + $this->on_standardpartsecond;
+    }
+
+
+    // }}}
+    // {{{ getStandardPartSecond()
+
+    /**
+     * Returns the part-second field of the local standard time
+     *
+     * @return   int        the part-second
+     * @access   public
+     */
+    function getStandardPartSecond()
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return $this->on_standardpartsecond;
+    }
+
+
+    // }}}
+    // {{{ getTimeArray()
+
+    /**
+     * Returns the time as array
+     *
+     * @return   array      array of hour, minute, second and part-second
+     * @access   private
+     */
+    function getTimeArray()
+    {
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+
+        return array($this->hour, $this->minute, $this->second, $this->partsecond);
+    }
+
+
+    // }}}
+    // {{{ setLocalTime()
+
+    /**
+     * Sets local time (Summer-time-adjusted) and then calculates local
+     * standard time
+     *
+     * @return   void
+     * @access   private
+     */
+    function setLocalTime($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    {
+        settype($pn_day, "int");
+        settype($pn_month, "int");
+        settype($pn_year, "int");
+        settype($pn_hour, "int");
+        settype($pn_minute, "int");
+        settype($pn_second, "int");
+        settype($pn_partsecond, "float");
+
+        $hb_insummertime = $this->tz->inDaylightTime(array($pn_day, $pn_month, $pn_year, Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $pn_partsecond), $pb_repeatedhourdefault);
+        if (PEAR::isError($hb_insummertime)) {
+            if ($hb_insummertime->getCode() != DATE_ERROR_INVALIDTIME) {
+                return $hb_insummertime;
+            } else if ($pb_correctinvalidtime) {
+                // Store passed time as local standard time:
+                //
+                $this->on_standardday = $pn_day;
+                $this->on_standardmonth = $pn_month;
+                $this->on_standardyear = $pn_year;
+                $this->on_standardhour = $pn_hour;
+                $this->on_standardminute = $pn_minute;
+                $this->on_standardminute = $pn_second;
+                $this->on_standardminute = $pn_partsecond;
+
+                // Add Summer time offset to passed time:
+                //
+                list($this->year, $this->month, $this->day, $this->hour, $this->minute, $hn_second) =
+                    Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
+                                          $pn_day,
+                                          $pn_month,
+                                          $pn_year,
+                                          $pn_hour,
+                                          $pn_minute,
+                                          $pn_partsecond == 0.0 ? $pn_second : $pn_second + $pn_partsecond,
+                                          false);  // N.B. do not count leap seconds
+
+                // Split second back into integer and part-second:
+                //
+                if (is_float($hn_second)) {
+                    $this->second = intval($hn_second);
+                    $this->partsecond = $hn_second - $this->second;
+                } else {
+                    $this->second = $hn_second;
+                    $this->partsecond = 0.0;
+                }
+
+                $this->ob_invalidtime = false;
+            } else {
+                // Hedge bets - if the user adds/subtracts a day, then the time
+                // will be uncorrupted, and if the user does addition/subtraction
+                // with the time, or requests the time, then return an error at
+                // that point:
+                //
+                $this->day = $pn_day;
+                $this->month = $pn_month;
+                $this->year = $pn_year;
+                $this->hour = $pn_hour;
+                $this->minute = $pn_minute;
+                $this->second = $pn_second;
+                $this->partsecond = $pn_partsecond;
+
+                $this->ob_invalidtime = true;
+            }
+
+            return;
+        } else {
+            // Passed time is valid as local time:
+            //
+            $this->day = $pn_day;
+            $this->month = $pn_month;
+            $this->year = $pn_year;
+            $this->hour = $pn_hour;
+            $this->minute = $pn_minute;
+            $this->second = $pn_second;
+            $this->partsecond = $pn_partsecond;
+        }
+
+        $this->ob_invalidtime = false;
+
+        if ($hb_insummertime) {
+            // Calculate local standard time:
+            //
+            list($this->on_standardyear, $this->on_standardmonth, $this->on_standardday, $this->on_standardhour, $this->on_standardminute, $hn_second) =
+                Date_Calc::addSeconds($this->tz->getDSTSavings() / -1000,
+                                      $pn_day,
+                                      $pn_month,
+                                      $pn_year,
+                                      $pn_hour,
+                                      $pn_minute,
+                                      $pn_partsecond == 0.0 ? $pn_second : $pn_second + $pn_partsecond,
+                                      false);  // N.B. do not count leap seconds
+
+            // Split second back into integer and part-second:
+            //
+            if (is_float($hn_second)) {
+                $this->on_standardsecond = intval($hn_second);
+                $this->on_standardpartsecond = $hn_second - $this->second;
+            } else {
+                $this->on_standardsecond = $hn_second;
+                $this->on_standardpartsecond = 0.0;
+            }
+        } else {
+            // Time is already local standard time:
+            //
+            $this->on_standardday = $pn_day;
+            $this->on_standardmonth = $pn_month;
+            $this->on_standardyear = $pn_year;
+            $this->on_standardhour = $pn_hour;
+            $this->on_standardminute = $pn_minute;
+            $this->on_standardsecond = $pn_second;
+            $this->on_standardpartsecond = $pn_partsecond;
+        }
+    }
+
+
+    // }}}
+    // {{{ setStandardTime()
+
+    /**
+     * Sets local standard time and then calculates local time (i.e.
+     * Summer-time-adjusted)
+     *
+     * @return   void
+     * @access   private
+     */
+    function setStandardTime($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond)
+    {
+        settype($pn_day, "int");
+        settype($pn_month, "int");
+        settype($pn_year, "int");
+        settype($pn_hour, "int");
+        settype($pn_minute, "int");
+        settype($pn_second, "int");
+        settype($pn_partsecond, "float");
+
+        $this->on_standardday = $pn_day;
+        $this->on_standardmonth = $pn_month;
+        $this->on_standardyear = $pn_year;
+        $this->on_standardhour = $pn_hour;
+        $this->on_standardminute = $pn_minute;
+        $this->on_standardsecond = $pn_second;
+        $this->on_standardpartsecond = $pn_partsecond;
+
+        $this->ob_invalidtime = false;
+
+        if ($this->tz->inDaylightTimeStandard(array($pn_day, $pn_month, $pn_year, Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $pn_partsecond))) {
+            // Calculate local time:
+            //
+            list($this->year, $this->month, $this->day, $this->hour, $this->minute, $hn_second) =
+                Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
+                                      $pn_day,
+                                      $pn_month,
+                                      $pn_year,
+                                      $pn_hour,
+                                      $pn_minute,
+                                      $pn_partsecond == 0.0 ? $pn_second : $pn_second + $pn_partsecond,
+                                      false);  // N.B. do not count leap seconds
+
+            // Split second back into integer and part-second:
+            //
+            if (is_float($hn_second)) {
+                $this->second = intval($hn_second);
+                $this->partsecond = $hn_second - $this->second;
+            } else {
+                $this->second = $hn_second;
+                $this->partsecond = 0.0;
+            }
+        } else {
+            // Time is already local time:
+            //
+            $this->day = $pn_day;
+            $this->month = $pn_month;
+            $this->year = $pn_year;
+            $this->hour = $pn_hour;
+            $this->minute = $pn_minute;
+            $this->second = $pn_second;
+            $this->partsecond = $pn_partsecond;
+        }
     }
 
 
@@ -3059,9 +3929,9 @@ class Date
     function setYear($y, $pb_validate = true)
     {
         if ($pb_validate && !Date_Calc::isValidDate($this->day, $this->month, $y)) {
-            return PEAR::raiseError("'" . Date_Calc::dateFormat($this->day, $this->month, $y, "%Y-%m-%d") . "' is invalid calendar date");
+            return PEAR::raiseError("'" . Date_Calc::dateFormat($this->day, $this->month, $y, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
         } else {
-            $this->year = (int) $y;
+            $this->setLocalTime($this->day, $this->month, $y, $this->hour, $this->minute, $this->second, $this->partsecond);
         }
     }
 
@@ -3085,9 +3955,9 @@ class Date
     function setMonth($m, $pb_validate = true)
     {
         if ($pb_validate && !Date_Calc::isValidDate($this->day, $m, $this->year)) {
-            return PEAR::raiseError("'" . Date_Calc::dateFormat($this->day, $m, $this->year, "%Y-%m-%d") . "' is invalid calendar date");
+            return PEAR::raiseError("'" . Date_Calc::dateFormat($this->day, $m, $this->year, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
         } else {
-            $this->month = (int) $m;
+            $this->setLocalTime($this->day, $m, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
         }
     }
 
@@ -3111,9 +3981,9 @@ class Date
     function setDay($d, $pb_validate = true)
     {
         if ($pb_validate && !Date_Calc::isValidDate($d, $this->month, $this->year)) {
-            return PEAR::raiseError("'" . Date_Calc::dateFormat($d, $this->month, $this->year, "%Y-%m-%d") . "' is invalid calendar date");
+            return PEAR::raiseError("'" . Date_Calc::dateFormat($d, $this->month, $this->year, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
         } else {
-            $this->day = (int) $d;
+            $this->setLocalTime($d, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
         }
     }
 
@@ -3141,11 +4011,9 @@ class Date
     function setDayMonthYear($d, $m, $y, $pb_validate = true)
     {
         if ($pb_validate && !Date_Calc::isValidDate($d, $m, $y)) {
-            return PEAR::raiseError("'" . Date_Calc::dateFormat($d, $m, $y, "%Y-%m-%d") . "' is invalid calendar date");
+            return PEAR::raiseError("'" . Date_Calc::dateFormat($d, $m, $y, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
         } else {
-            $this->day = (int) $d;
-            $this->month = (int) $m;
-            $this->year = (int) $y;
+            $this->setLocalTime($d, $m, $y, $this->hour, $this->minute, $this->second, $this->partsecond);
         }
     }
 
@@ -3159,16 +4027,32 @@ class Date
      * Sets the hour field of the date object in 24-hour format.
      * Invalid hours (not 0-23) are set to 0.
      *
-     * @param int $h the hour
+     * @param    int        $h                            the hour
+     * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
+     *                                                     a repeated hour is specified
+     *                                                     (defaults to false)
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     specified time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
+     *
      * @return   void
      * @access   public
      */
-    function setHour($h)
+    function setHour($h, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
     {
         if ($h > 23 || $h < 0) {
-            $this->hour = 0;
+            return PEAR::raiseError("Invalid hour value '$h'");
         } else {
-            $this->hour = (int) $h;
+            $ret = $this->setHourMinuteSecond($h,
+                                              $this->minute,
+                                              $this->partsecond == 0.0 ? $this->second : $this->second + $this->partsecond,
+                                              $pb_repeatedhourdefault,
+                                              $pb_correctinvalidtime);
+
+            if (PEAR::isError($ret))
+                return $ret;
         }
     }
 
@@ -3181,16 +4065,32 @@ class Date
      *
      * Sets the minute field of the date object, invalid minutes (not 0-59) are set to 0.
      *
-     * @param int $m the minute
+     * @param    int        $m                            the minute
+     * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
+     *                                                     a repeated hour is specified
+     *                                                     (defaults to false)
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     specified time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
+     *
      * @return   void
      * @access   public
      */
-    function setMinute($m)
+    function setMinute($m, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
     {
         if ($m > 59 || $m < 0) {
-            $this->minute = 0;
+            return PEAR::raiseError("Invalid minute value '$m'");
         } else {
-            $this->minute = (int) $m;
+            $ret = $this->setHourMinuteSecond($this->hour,
+                                              $m,
+                                              $this->partsecond == 0.0 ? $this->second : $this->second + $this->partsecond,
+                                              $pb_repeatedhourdefault,
+                                              $pb_correctinvalidtime);
+
+            if (PEAR::isError($ret))
+                return $ret;
         }
     }
 
@@ -3201,17 +4101,34 @@ class Date
     /**
      * Sets the second field of the date object
      *
-     * Sets the second field of the date object, invalid seconds (not 0-59) are set to 0.
+     * Invalid seconds (not 0-59) are set to 0.
      *
-     * @param int $s the second
+     * @param    mixed      $s                            the second as integer or float
+     * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
+     *                                                     a repeated hour is specified
+     *                                                     (defaults to false)
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     specified time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
+     *
+     *
      * @return   void
      * @access   public
      */
-    function setSecond($s) {
-        if ($s > 59 || $s < 0) {
-            $this->second = 0;
+    function setSecond($s, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false) {
+        if ($s > Date_Calc::getSecondsInMinute($this->day, $this->month, $this->year, $this->hour, $this->minute) || $s < 0) {
+            return PEAR::raiseError("Invalid second value '$s'");
         } else {
-            $this->second = (int) $s;
+            $ret = $this->setHourMinuteSecond($this->hour,
+                                              $this->minute,
+                                              $s,
+                                              $pb_repeatedhourdefault,
+                                              $pb_correctinvalidtime);
+
+            if (PEAR::isError($ret))
+                return $ret;
         }
     }
 
@@ -3225,21 +4142,81 @@ class Date
      * Invalid part-seconds (not < 1) are set to 0.
      *
      * @param    int        $pn_ps                        the part-second
+     * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
+     *                                                     a repeated hour is specified
+     *                                                     (defaults to false)
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     specified time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
      *
      * @return   void
      * @access   public
      */
-    function setPartSecond($pn_ps)
+    function setPartSecond($pn_ps, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
     {
         if ($pn_ps >= 1 || $pn_ps < 0) {
-            $this->partsecond = (float) 0;
+            return PEAR::raiseError("Invalid part-second value '$pn_ps'");
         } else {
-            $this->partsecond = (float) $pn_ps;
+            $ret = $this->setHourMinuteSecond($this->hour,
+                                              $this->minute,
+                                              $this->second + $pn_ps,
+                                              $pb_repeatedhourdefault,
+                                              $pb_correctinvalidtime);
+
+            if (PEAR::isError($ret))
+                return $ret;
         }
     }
 
 
     // }}}
+    // {{{ setHourMinuteSecond()
+
+    /**
+     * Sets the hour, minute, second and part-second fields of the date object
+     *
+     * N.B. if the repeated hour, due to the clocks going back, is specified
+     * the default is to assume local standard time because this normally
+     * happens very early in the morning.  The same reasoning applies to the
+     * skipped hour when the clocks go forward - it is early in the morning
+     * so the user probably will expect a Summer time to be chosen (if he
+     * chooses not to receive an error).
+     *
+     * @param    int        $h                            the hour
+     * @param    int        $m                            the minute
+     * @param    mixed      $s                            the second as integer or float
+     * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
+     *                                                     a repeated hour is specified
+     *                                                     (defaults to false)
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     specified time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
+     *
+     * @return   void
+     * @access   public
+     */
+    function setHourMinuteSecond($h, $m, $s, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    {
+        // Split second into integer and part-second:
+        //
+        if (is_float($s)) {
+            $hn_second = intval($s);
+            $hn_partsecond = $s - $hn_second;
+        } else {
+            $hn_second = (int) $s;
+            $hn_partsecond = 0.0;
+        }
+
+        $this->setLocalTime($this->day, $this->month, $this->year, $h, $m, $hn_second, $hn_partsecond, $pb_repeatedhourdefault, $pb_correctinvalidtime);
+    }
+
+
+    // }}}
+
 }
 
 // }}}

@@ -2,12 +2,6 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
 
-/**#@+
- * PEAR Error Codes
- */
-define('DATE_TIMEZONE_ERROR_CODE_INVALIDDATE', 1);
-
-
 // {{{ Header
 
 /**
@@ -47,6 +41,7 @@ define('DATE_TIMEZONE_ERROR_CODE_INVALIDDATE', 1);
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Date
  */
+
 
 // }}}
 // {{{ Class: Date_TimeZone
@@ -373,8 +368,8 @@ class Date_TimeZone
      * (See http://en.wikipedia.org/wiki/List_of_time_zones)
      *
      * N.B. 'GMT' is also commonly used instead of 'UTC', but 'UTC' seems
-     * to be technically preferred.  GMT-based IDs still exist in the 'tz'
-     * data-base, but beware of POSIX-style offsets which are the opposite
+     * to be technically preferred.  GMT-based IDs still exist in the 'tz
+     * data-base', but beware of POSIX-style offsets which are the opposite
      * way round to what people normally expect.
      *
      * @param    string     $ps_id                        the time zone ID to test
@@ -557,10 +552,10 @@ class Date_TimeZone
      * Works for all years, positive and negative.  Possible problems
      * are that when the clocks go forward, there is an invalid hour
      * which is skipped.  If a time in this hour is specified, this
-     * function returns false.  When the clocks go back, there is an
+     * function returns an error.  When the clocks go back, there is an
      * hour which is repeated, that is, the hour is gone through twice -
      * once in Summer time and once in standard time.  If this time
-     * is specified, then this function returns false, arbitrarily,
+     * is specified, then this function returns '$pb_repeatedhourdefault',
      * because there is no way of knowing which is correct, and
      * both possibilities are equally likely.
      *
@@ -569,18 +564,33 @@ class Date_TimeZone
      * exact hour is specified then the clocks have actually changed,
      * and this function reflects this.
      *
-     * @param    object     $po_date                      Date object to test
+     * @param    object     $pm_date                      Date object to test or array of
+     *                                                     day, month, year, seconds past
+     *                                                     midnight
+     * @param    bool       $pb_repeatedhourdefault       value to return if repeated hour
+     *                                                     is specified (defaults to false)
      *
      * @return   bool       true if this date is in Summer time for this time zone
      * @access   public
      */
-    function inDaylightTime($po_date)
+    function inDaylightTime($pm_date, $pb_repeatedhourdefault = false)
     {
         if (!$this->hasdst) {
             return false;
         }
 
-        $hn_month = $po_date->getMonth();
+        if (is_a($pm_date, "Date")) {
+            $hn_day = $pm_date->getDay();
+            $hn_month = $pm_date->getMonth();
+            $hn_year = $pm_date->getYear();
+            $hn_seconds = $pm_date->getSecondsPastMidnight();
+        } else {
+            $hn_day = $pm_date[0];
+            $hn_month = $pm_date[1];
+            $hn_year = $pm_date[2];
+            $hn_seconds = $pm_date[3];  // seconds past midnight
+        }
+
         if (($this->on_summertimestartmonth < $this->on_summertimeendmonth &&
              $hn_month >= $this->on_summertimestartmonth &&
              $hn_month <= $this->on_summertimeendmonth) ||
@@ -590,32 +600,115 @@ class Date_TimeZone
             ) {
 
             if ($hn_month == $this->on_summertimestartmonth) {
-                $hn_day = $po_date->getDay();
-                $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $po_date->getYear());
+                $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $hn_year);
 
                 if ($hn_day < $hn_startday) {
                     return false;
                 } else if ($hn_day > $hn_startday) {
                     return true;
-                } else if ($po_date->getSecondsPastMidnight() * 1000 - $this->offset - $this->on_summertimeoffset >= $this->on_summertimestarttime) {
+                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) - $this->on_summertimeoffset >= $this->on_summertimestarttime) {
                     return true;
+                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) >= $this->on_summertimestarttime) {
+                    return PEAR::raiseError("Invalid time specified for date '" . Date_Calc::dateFormat($hn_day, $hn_month, $hn_year, "%Y-%m-%d") . "'", DATE_ERROR_INVALIDTIME);
                 } else {
                     return false;
                 }
             } else if ($hn_month == $this->on_summertimeendmonth) {
-                $hn_day = $po_date->getDay();
-                $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $po_date->getYear());
+                $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $hn_year);
 
                 if ($hn_day < $hn_endday) {
                     return true;
                 } else if ($hn_day > $hn_endday) {
                     return false;
-                } else if (($hn_gmt = $po_date->getSecondsPastMidnight() * 1000 - $this->offset) - $this->on_summertimeoffset >= $this->on_summertimeendtime) {
+                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) - $this->on_summertimeoffset >= $this->on_summertimeendtime) {
                     return false;
                 } else if ($hn_gmt >= $this->on_summertimeendtime) {
                     // There is a 50:50 chance that it's Summer time, but there is
-                    // no way of knowing (the hour is repeated), so just return false:
+                    // no way of knowing (the hour is repeated), so return default:
                     //
+                    return $pb_repeatedhourdefault;
+                } else {
+                    return true;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    // }}}
+    // {{{ inDaylightTimeStandard()
+
+    /**
+     * Returns whether the given date/time in local standard time is
+     * in Summer time
+     *
+     * For example, if the clocks go forward at 1.00 standard time,
+     * then if the specified date/time is at 1.00, the function will
+     * return true, although the correct local time will actually 
+     * be 2.00.
+     *
+     * This function is reliable for all dates and times, unlike the
+     * related function 'inDaylightTime()', which will fail if passed
+     * an invalid time (the skipped hour) and will be wrong half the
+     * time if passed an ambiguous time (the repeated hour).
+     *
+     * @param    object     $pm_date                      Date object to test or array of
+     *                                                     day, month, year, seconds past
+     *                                                     midnight
+     *
+     * @return   bool       true if this date is in Summer time for this time zone
+     * @access   public
+     */
+    function inDaylightTimeStandard($pm_date)
+    {
+        if (!$this->hasdst) {
+            return false;
+        }
+
+        if (is_a($pm_date, "Date")) {
+            $hn_day = $pm_date->getDay();
+            $hn_month = $pm_date->getMonth();
+            $hn_year = $pm_date->getYear();
+            $hn_seconds = $pm_date->getSecondsPastMidnight();
+        } else {
+            $hn_day = $pm_date[0];
+            $hn_month = $pm_date[1];
+            $hn_year = $pm_date[2];
+            $hn_seconds = $pm_date[3];
+        }
+
+        if (($this->on_summertimestartmonth < $this->on_summertimeendmonth &&
+             $hn_month >= $this->on_summertimestartmonth &&
+             $hn_month <= $this->on_summertimeendmonth) ||
+            ($this->on_summertimestartmonth > $this->on_summertimeendmonth &&
+             $hn_month >= $this->on_summertimestartmonth &&
+             $hn_month <= $this->on_summertimeendmonth)
+            ) {
+
+            if ($hn_month == $this->on_summertimestartmonth) {
+                $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $hn_year);
+
+                if ($hn_day < $hn_startday) {
+                    return false;
+                } else if ($hn_day > $hn_startday) {
+                    return true;
+                } else if ($hn_seconds * 1000 - $this->offset >= $this->on_summertimestarttime) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if ($hn_month == $this->on_summertimeendmonth) {
+                $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $hn_year);
+
+                if ($hn_day < $hn_endday) {
+                    return true;
+                } else if ($hn_day > $hn_endday) {
+                    return false;
+                } else if ($hn_seconds * 1000 - $this->offset >= $this->on_summertimeendtime) {
                     return false;
                 } else {
                     return true;
@@ -669,8 +762,8 @@ class Date_TimeZone
     /**
      * Returns the raw (non-DST-corrected) offset from UTC/GMT for this time zone
      *
-     * @access public
-     * @return int the offset, in milliseconds
+     * @return   int        the offset, in milliseconds
+     * @access   public
      */
     function getRawOffset()
     {
@@ -6649,11 +6742,18 @@ if(isset($GLOBALS['_DATE_TIMEZONE_DEFAULT'])
    && Date_TimeZone::isValidID($GLOBALS['_DATE_TIMEZONE_DEFAULT']))
 {
     Date_TimeZone::setDefault($GLOBALS['_DATE_TIMEZONE_DEFAULT']);
-} elseif (getenv('PHP_TZ') && Date_TimeZone::isValidID(getenv('PHP_TZ'))) {
+} else if (function_exists('version_compare') &&
+           version_compare(phpversion(), "5.1.0", ">=") &&
+           (Date_TimeZone::isValidID($ps_id = ini_get("date.timezone")) ||
+            Date_TimeZone::isValidID($ps_id = date("e"))
+            )
+           ) {
+    Date_TimeZone::setDefault($ps_id);
+} else if (getenv('PHP_TZ') && Date_TimeZone::isValidID(getenv('PHP_TZ'))) {
     Date_TimeZone::setDefault(getenv('PHP_TZ'));
-} elseif (getenv('TZ') && Date_TimeZone::isValidID(getenv('TZ'))) {
+} else if (getenv('TZ') && Date_TimeZone::isValidID(getenv('TZ'))) {
     Date_TimeZone::setDefault(getenv('TZ'));
-} elseif (Date_TimeZone::isValidID(date('T'))) {
+} else if (Date_TimeZone::isValidID(date('T'))) {
     Date_TimeZone::setDefault(date('T'));
 } else {
     Date_TimeZone::setDefault('UTC');
