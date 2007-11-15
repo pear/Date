@@ -506,7 +506,7 @@ class Date
             // Input Unix time as UTC:
             //
             $this->setTZbyID("UTC");
-            $this->setDate(date("Y-m-d H:i:s", $date + $hn_rawoffset / 1000));
+            $this->setDate(gmdate("Y-m-d H:i:s", $date));
 
             // Convert back to correct time zone:
             //

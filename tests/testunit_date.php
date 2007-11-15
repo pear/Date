@@ -179,7 +179,7 @@ class Date_Test extends PHPUnit_TestCase {
 
     function testSetDateUnixtime()
     {
-        $this->time->setDate(strtotime("2003-10-04 14:03:24"));
+        $this->time->setDate(strtotime("2003-10-04 14:03:24Z"));
         $this->assertEquals(
             '2003-10-04 14:03:24',
             sprintf('%04d-%02d-%02d %02d:%02d:%02d',
@@ -215,7 +215,7 @@ class Date_Test extends PHPUnit_TestCase {
     function testGetDateUnixtime()
     {
         $date = $this->time->getDate(DATE_FORMAT_UNIXTIME);
-        $this->assertEquals(strtotime('2003-10-04 14:03:24'), $date);
+        $this->assertEquals(strtotime('2003-10-04 14:03:24Z'), $date);
     }
 
     function testFormat()
