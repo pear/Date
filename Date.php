@@ -2932,8 +2932,8 @@ class Date
      *   would all produce 00.00.00 the next day.
      *
      *  A day is treated as equivalent to 24 hours, so if the clocks
-     *   went forward at 01.00, and one day was added to the time 00.30,
-     *   the result would be 23.30 the same day.
+     *   went backwards at 01.00, and one day was added to the time
+     *   00.30, the result would be 23.30 the same day.
      *
      * This is the implementation which is thought to yield the behaviour
      * that the user is most likely to expect, or in another way of
