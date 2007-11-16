@@ -388,8 +388,7 @@ class Date
             $this->copy($date);
         } else {
             if (!is_null($date)) {
-                // Attempt to get time zone from local machine, or
-                // failing that, set to default time zone:
+                // 'setDate()' expects a time zone to be already set:
                 //
                 $this->setTZToDefault();
                 $this->setDate($date);
@@ -2671,10 +2670,14 @@ class Date
         } else {
             return PEAR::raiseError("Invalid offset '$ps_offset'");
         }
-        if ($this->ob_invalidtime)
-            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
 
+        // If the time is invalid, it does not matter here:
+        //
         $this->setTZbyID($hs_tzid);
+
+        // Now the time will be valid because it is a time zone that
+        // does not observe Summer time:
+        //
         $this->toUTC();
     }
 
