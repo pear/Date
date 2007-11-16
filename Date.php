@@ -391,7 +391,7 @@ class Date
                 // Attempt to get time zone from local machine, or
                 // failing that, set to default time zone:
                 //
-                $this->setTZbyID();
+                $this->setTZToDefault();
                 $this->setDate($date);
             } else {
                 $this->setNow();
@@ -434,7 +434,7 @@ class Date
 
         $this->ob_invalidtime = $date->ob_invalidtime;
 
-        $this->setTZByID($date->getTZID());
+        $this->tz = new Date_TimeZone($date->getTZID());
     }
 
 
@@ -457,7 +457,7 @@ class Date
         //
 //        $this->tz = clone $this->tz;
 
-        $this->setTZByID($date->getTZID());
+        $this->tz = new Date_TimeZone($this->getTZID());
     }
 
 
@@ -503,26 +503,23 @@ class Date
                 return PEAR::raiseError("'" . Date_Calc::dateFormat($regs[1], $regs[2], $regs[3], "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
             }
 
-            $this->year       = (int) $regs[1];
-            $this->month      = (int) $regs[2];
-            $this->day        = (int) $regs[3];
+            if (isset($regs[9])) {
+                if ($regs[9] == "Z") {
+                    $this->tz = new Date_TimeZone("UTC");
+                } else {
+                    $this->tz = new Date_TimeZone("UTC" . $regs[9]);
+                }
+            }
 
-            $this->setLocalTime($this->day,
-                                $this->month,
-                                $this->year,
+            $this->setLocalTime($regs[3],
+                                $regs[2],
+                                $regs[1],
                                 isset($regs[5]) ? $regs[5] : 0,
                                 isset($regs[6]) ? $regs[6] : 0,
                                 isset($regs[7]) ? $regs[7] : 0,
                                 isset($regs[8]) ? $regs[8] : 0.0,
                                 $pb_repeatedhourdefault);
 
-            if (isset($regs[9])) {
-                if ($regs[9] == "Z") {
-                    $this->setTZbyID("UTC");
-                } else {
-                    $this->setTZbyID("UTC" . $regs[9]);
-                }
-            }
         } else if (is_numeric($date)) {
             // Unix Time; N.B. Unix Time is defined relative to GMT,
             // so it needs to be adjusted for the current time zone;
@@ -533,11 +530,10 @@ class Date
             // Get current time zone details:
             //
             $hs_id = $this->getTZID();
-            $hn_rawoffset = $this->tz->getRawOffset();
 
             // Input Unix time as UTC:
             //
-            $this->setTZbyID("UTC");
+            $this->tz = new Date_TimeZone("UTC");
             $this->setDate(gmdate("Y-m-d H:i:s", $date));
 
             // Convert back to correct time zone:
@@ -555,15 +551,15 @@ class Date
      * Sets to local current time and time zone
      *
      * @param    bool       $pb_setmicrotime              whether to set micro-time (defaults to
-     *                                                    the value of the constant
-     *                                                    DATE_CAPTURE_MICROTIME_BY_DEFAULT)
+     *                                                     the value of the constant
+     *                                                     DATE_CAPTURE_MICROTIME_BY_DEFAULT)
      *
      * @return   void
      * @access   public
      */
     function setNow($pb_setmicrotime = DATE_CAPTURE_MICROTIME_BY_DEFAULT)
     {
-        $this->setTZbyID();
+        $this->setTZToDefault();
 
         if ($pb_setmicrotime) {
             $ha_unixtime = gettimeofday();
@@ -2322,6 +2318,40 @@ class Date
 
 
     // }}}
+    // {{{ setTZToDefault()
+
+    /**
+     * sets time zone to the default time zone
+     *
+     * If PHP version >= 5.1.0, uses the php.ini configuration directive
+     * 'date.timezone' if set and valid, else the value returned by
+     * 'date("e")' if valid, else the default specified if the global
+     * constant '$GLOBALS["_DATE_TIMEZONE_DEFAULT"]', which if itself
+     * left unset, defaults to "UTC".
+     *
+     * N.B. this is a private method; to set the time zone to the
+     * default publicly you should call 'setTZbyID()', that is, with no
+     * parameter (or a parameter of null).
+     *
+     * @return   object     TimeZone object
+     * @access   private
+     */
+    function setTZToDefault()
+    {
+        if (function_exists('version_compare') &&
+            version_compare(phpversion(), "5.1.0", ">=") &&
+            (Date_TimeZone::isValidID($hs_id = ini_get("date.timezone")) ||
+             Date_TimeZone::isValidID($hs_id = date("e"))
+             )
+            ) {
+            $this->tz = new Date_TimeZone($hs_id);
+        } else {
+            $this->tz = Date_TimeZone::getDefault();
+        }
+    }
+
+
+    // }}}
     // {{{ setTZ()
 
     /**
@@ -2405,13 +2435,12 @@ class Date
         // the new time zone (if needed, which is very unlikely anyway).
         // This is mainly to prevent unexpected (defaulting) behaviour
         // if the user is in the repeated hour, and switches to a time
-        // zone that is also in the repeated hour (e.g. anywhere that
-        // uses EU Summer time rules, so between 'Europe/London' and
-        // 'Europe/Paris' for example).
+        // zone that is also in the repeated hour (e.g. 'Europe/London'
+        // and 'Europe/Lisbon').
         //
         $hb_insummertime = $this->inDaylightTime();
         if (PEAR::isError($hb_insummertime)) {
-            if ($hb_insummertime->getCode() != DATE_ERROR_INVALIDTIME) {
+            if ($hb_insummertime->getCode() == DATE_ERROR_INVALIDTIME) {
                 $hb_insummertime = false;
             } else {
                 return $hb_insummertime;
@@ -2419,16 +2448,7 @@ class Date
         }
 
         if (is_null($ps_id)) {
-            if (function_exists('version_compare') &&
-                version_compare(phpversion(), "5.1.0", ">=") &&
-                (Date_TimeZone::isValidID($ps_id = ini_get("date.timezone")) ||
-                 Date_TimeZone::isValidID($ps_id = date("e"))
-                 )
-                ) {
-                $this->tz = new Date_TimeZone($ps_id);
-            } else {
-                $this->tz = Date_TimeZone::getDefault();
-            }
+            $this->setTZToDefault();
         } else if (Date_TimeZone::isValidID($ps_id)) {
             $this->tz = new Date_TimeZone($ps_id);
         } else {
@@ -2630,9 +2650,12 @@ class Date
     // {{{ toUTCbyOffset()
 
     /**
-     * ? Undocumented function
+     * Converts the date/time to UTC by the offset specified
      *
-     * I don't know what this function is for.
+     * This function is no longer called from within the Date class
+     * itself because a time zone can be set using a pure offset
+     * (e.g. UTC+1), i.e. not a geographical time zone.  However
+     * it is retained for backwards compaibility.
      *
      * @param    string     $ps_offset                    offset of the form '[+/-][hh]:[mm]', '[+/-][hh][mm]', or 'Z'
      *
@@ -2641,32 +2664,18 @@ class Date
      */
     function toUTCbyOffset($ps_offset)
     {
-        if ($ps_offset == "Z" || $ps_offset == "+00:00" || $ps_offset == "+0000") {
-            $this->toUTC();
-            return true;
+        if ($ps_offset == "Z" || preg_match('/^[+\-](00:?00|0{1,2})$/', $ps_offset)) {
+            $hs_tzid = "UTC";
+        } else if (preg_match('/^[+\-]([0-9]{2,2}:?[0-5][0-9]|[0-9]{1,2})$/', $ps_offset)) {
+            $hs_tzid = "UTC" . $ps_offset;
+        } else {
+            return PEAR::raiseError("Invalid offset '$ps_offset'");
         }
+        if ($this->ob_invalidtime)
+            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
 
-        if (preg_match('/([\+\-])(\d{2}):?(\d{2})/', $ps_offset, $regs)) {
-            // convert offset to seconds
-            $hours  = (int) isset($regs[2])?$regs[2]:0;
-            $mins   = (int) isset($regs[3])?$regs[3]:0;
-            $ps_offset = ($hours * 3600) + ($mins * 60);
-
-            if (isset($regs[1]) && $regs[1] == "-") {
-                $ps_offset *= -1;
-            }
-
-            if ($ps_offset > 0) {
-                $this->subtractSeconds(intval($ps_offset), false);
-            } else {
-                $this->addSeconds(intval(abs($ps_offset)), false);
-            }
-
-            $this->setTZbyID('UTC');
-            return true;
-        }
-
-        return false;
+        $this->setTZbyID($hs_tzid);
+        $this->toUTC();
     }
 
 
@@ -2956,8 +2965,6 @@ class Date
     {
         if (!is_a($span, 'Date_Span')) {
             return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
-        } else if ($span->isEmpty()) {
-            return;
         } else if ($this->ob_invalidtime) {
             return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
         }
@@ -3015,8 +3022,6 @@ class Date
     {
         if (!is_a($span, 'Date_Span')) {
             return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
-        } else if ($span->isEmpty()) {
-            return;
         } else if ($this->ob_invalidtime) {
             return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
         }
@@ -3112,9 +3117,9 @@ class Date
     /**
      * Test if this date/time is before a certain date/time
      *
-     * @param object Date $when the date to test against
-     * @return boolean true if this date is before $when
-     * @access public
+     * @param    object     $when                         the Date object to test against
+     * @return   boolean    true if this date is before $when
+     * @access   public
      */
     function before($when)
     {
@@ -3129,15 +3134,16 @@ class Date
         }
     }
 
+
     // }}}
     // {{{ after()
 
     /**
      * Test if this date/time is after a certain date/time
      *
-     * @param object Date $when the date to test against
-     * @return boolean true if this date is after $when
-     * @access public
+     * @param    object     $when                         the Date object to test against
+     * @return   boolean    true if this date is after $when
+     * @access   public
      */
     function after($when)
     {
@@ -3152,15 +3158,16 @@ class Date
         }
     }
 
+
     // }}}
     // {{{ equals()
 
     /**
      * Test if this date/time is exactly equal to a certain date/time
      *
-     * @param object Date $when the date to test against
-     * @return boolean true if this date is exactly equal to $when
-     * @access public
+     * @param    object     $when                         the Date object to test against
+     * @return   boolean    true if this date is exactly equal to $when
+     * @access   public
      */
     function equals($when)
     {
@@ -3175,16 +3182,15 @@ class Date
         }
     }
 
+
     // }}}
     // {{{ isFuture()
 
     /**
      * Determine if this date is in the future
      *
-     * Determine if this date is in the future
-     *
-     * @access public
-     * @return boolean true if this date is in the future
+     * @return   boolean    true if this date is in the future
+     * @access   public
      */
     function isFuture()
     {
@@ -3192,16 +3198,15 @@ class Date
         return $this->after($now);
     }
 
+
     // }}}
     // {{{ isPast()
 
     /**
      * Determine if this date is in the past
      *
-     * Determine if this date is in the past
-     *
-     * @access public
-     * @return boolean true if this date is in the past
+     * @return   boolean    true if this date is in the past
+     * @access   public
      */
     function isPast()
     {
@@ -3209,16 +3214,15 @@ class Date
         return $this->before($now);
     }
 
+
     // }}}
     // {{{ isLeapYear()
 
     /**
      * Determine if the year in this date is a leap year
      *
-     * Determine if the year in this date is a leap year
-     *
-     * @access public
-     * @return boolean true if this year is a leap year
+     * @return   boolean    true if this year is a leap year
+     * @access   public
      */
     function isLeapYear()
     {
