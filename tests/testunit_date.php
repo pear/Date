@@ -133,6 +133,36 @@ class Date_Test extends PHPUnit_TestCase {
         );
     }
 
+    function testDateUnixtime2()
+    {
+        $temp = new Date();
+        $hs_oldtz = $temp->getTZID();
+        $temp->setTZbyID("UTC-05:30");
+        $temp->setDate(strtotime("2003-10-04 14:03:24"));
+        $temp->convertTZbyID($hs_oldtz);
+        $this->assertEquals(
+            '2003-10-04 14:03:24',
+            sprintf('%04d-%02d-%02d %02d:%02d:%02d',
+                $temp->year, $temp->month, $temp->day,
+                $temp->hour, $temp->minute, $temp->second)
+        );
+    }
+
+    function testDateUnixtime3()
+    {
+        $temp = new Date();
+        $hs_oldtz = $temp->getTZID();
+        $temp->setTZbyID("America/Chicago");
+        $temp->setDate(strtotime("2003-10-04 14:03:24"));
+        $temp->convertTZbyID($hs_oldtz);
+        $this->assertEquals(
+            '2003-10-04 14:03:24',
+            sprintf('%04d-%02d-%02d %02d:%02d:%02d',
+                $temp->year, $temp->month, $temp->day,
+                $temp->hour, $temp->minute, $temp->second)
+        );
+    }
+
     function testSetDateISO()
     {
         $this->time->setDate("2003-10-04 14:03:24");
@@ -188,6 +218,34 @@ class Date_Test extends PHPUnit_TestCase {
         );
     }
 
+    function testSetDateUnixtime2()
+    {
+        $hs_oldtz = $this->time->getTZID();
+        $this->time->setTZbyID("UTC-05:30");
+        $this->time->setDate(strtotime("2003-10-04 14:03:24Z"));
+        $this->time->convertTZbyID($hs_oldtz);
+        $this->assertEquals(
+            '2003-10-04 14:03:24',
+            sprintf('%04d-%02d-%02d %02d:%02d:%02d',
+                $this->time->year, $this->time->month, $this->time->day,
+                $this->time->hour, $this->time->minute, $this->time->second)
+        );
+    }
+
+    function testSetDateUnixtime3()
+    {
+        $hs_oldtz = $this->time->getTZID();
+        $this->time->setTZbyID("America/Chicago");
+        $this->time->setDate(strtotime("2003-10-04 14:03:24Z"));
+        $this->time->convertTZbyID($hs_oldtz);
+        $this->assertEquals(
+            '2003-10-04 14:03:24',
+            sprintf('%04d-%02d-%02d %02d:%02d:%02d',
+                $this->time->year, $this->time->month, $this->time->day,
+                $this->time->hour, $this->time->minute, $this->time->second)
+        );
+    }
+
     function testGetDateISO()
     {
         $date = $this->time->getDate(DATE_FORMAT_ISO);
@@ -216,6 +274,24 @@ class Date_Test extends PHPUnit_TestCase {
     {
         $date = $this->time->getDate(DATE_FORMAT_UNIXTIME);
         $this->assertEquals(strtotime('2003-10-04 14:03:24Z'), $date);
+    }
+
+    function testGetDateUnixtime2()
+    {
+        $hs_oldtz = $this->time->getTZID();
+        $this->time->convertTZbyID("UTC-05:30");
+        $date = $this->time->getDate(DATE_FORMAT_UNIXTIME);
+        $this->assertEquals(strtotime('2003-10-04 14:03:24Z'), $date);
+        $this->time->convertTZbyID($hs_oldtz);
+    }
+
+    function testGetDateUnixtime3()
+    {
+        $hs_oldtz = $this->time->getTZID();
+        $this->time->convertTZbyID("America/Chicago");
+        $date = $this->time->getDate(DATE_FORMAT_UNIXTIME);
+        $this->assertEquals(strtotime('2003-10-04 14:03:24Z'), $date);
+        $this->time->convertTZbyID($hs_oldtz);
     }
 
     function testFormat()

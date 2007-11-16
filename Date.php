@@ -88,6 +88,38 @@ require_once 'Date/Span.php';
  */
 define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
 
+/**
+ * whether to correct, by adding the local Summer time offset, the
+ * specified time if it falls in the 'skipped hour' (encountered
+ * when the clocks go forward).
+ *
+ * N.B. if specified as 'false', and if a time zone that adjusts
+ * for Summer time is specified, then an object of this class will
+ * be set to a semi-invalid state if an invalid time is set.  That
+ * is, an error will not be returned, unless the user then calls
+ * a function, directly or indirectly, that accesses the time
+ * part of the object.  So, for example, if the user calls:
+ *
+ *  <code>$date_object->format2('HH.MI.SS')</code> or:
+ *  <code>$date->object->addSeconds(30)</code>,
+ *
+ * an error will be returned if the time is invalid.  However,
+ * if the user calls:
+ *
+ *  <code>$date->object->addDays(1)</code>,
+ *
+ * for example, such that the time is no longer invalid, then the
+ * object will no longer be in this invalid state.  This behaviour
+ * is intended to minimize unexpected errors when a user uses the
+ * class to do addition with days only, and does not intend to
+ * access the time.
+ *
+ * Of course, this constant will be unused if the user chooses to
+ * work in UTC or a time zone without Summer time, in which case
+ * this situation will never arise.
+ */
+define('DATE_CORRECTINVALIDTIME_DEFAULT', false);
+
 
 // }}}
 // {{{ Output format constants (used in 'Date::getDate()')
@@ -3725,10 +3757,26 @@ class Date
      * Sets local time (Summer-time-adjusted) and then calculates local
      * standard time
      *
+     * @param    int        $pn_day                       the day
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     * @param    int        $pn_second                    the second
+     * @param    int        $pn_partsecond                the part-second
+     * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
+     *                                                     a repeated hour is specified
+     *                                                     (defaults to false)
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     specified time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
+     *
      * @return   void
      * @access   private
      */
-    function setLocalTime($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    function setLocalTime($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
     {
         settype($pn_day, "int");
         settype($pn_month, "int");
@@ -3850,6 +3898,14 @@ class Date
     /**
      * Sets local standard time and then calculates local time (i.e.
      * Summer-time-adjusted)
+     *
+     * @param    int        $pn_day                       the day
+     * @param    int        $pn_month                     the month
+     * @param    int        $pn_year                      the year
+     * @param    int        $pn_hour                      the hour
+     * @param    int        $pn_minute                    the minute
+     * @param    int        $pn_second                    the second
+     * @param    int        $pn_partsecond                the part-second
      *
      * @return   void
      * @access   private
@@ -4031,16 +4087,11 @@ class Date
      * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
      *                                                     a repeated hour is specified
      *                                                     (defaults to false)
-     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
-     *                                                     local Summer time offset, the
-     *                                                     specified time if it falls in
-     *                                                     the skipped hour (defaults to
-     *                                                     false)
      *
      * @return   void
      * @access   public
      */
-    function setHour($h, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    function setHour($h, $pb_repeatedhourdefault = false)
     {
         if ($h > 23 || $h < 0) {
             return PEAR::raiseError("Invalid hour value '$h'");
@@ -4048,8 +4099,7 @@ class Date
             $ret = $this->setHourMinuteSecond($h,
                                               $this->minute,
                                               $this->partsecond == 0.0 ? $this->second : $this->second + $this->partsecond,
-                                              $pb_repeatedhourdefault,
-                                              $pb_correctinvalidtime);
+                                              $pb_repeatedhourdefault);
 
             if (PEAR::isError($ret))
                 return $ret;
@@ -4069,16 +4119,11 @@ class Date
      * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
      *                                                     a repeated hour is specified
      *                                                     (defaults to false)
-     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
-     *                                                     local Summer time offset, the
-     *                                                     specified time if it falls in
-     *                                                     the skipped hour (defaults to
-     *                                                     false)
      *
      * @return   void
      * @access   public
      */
-    function setMinute($m, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    function setMinute($m, $pb_repeatedhourdefault = false)
     {
         if ($m > 59 || $m < 0) {
             return PEAR::raiseError("Invalid minute value '$m'");
@@ -4086,8 +4131,7 @@ class Date
             $ret = $this->setHourMinuteSecond($this->hour,
                                               $m,
                                               $this->partsecond == 0.0 ? $this->second : $this->second + $this->partsecond,
-                                              $pb_repeatedhourdefault,
-                                              $pb_correctinvalidtime);
+                                              $pb_repeatedhourdefault);
 
             if (PEAR::isError($ret))
                 return $ret;
@@ -4107,25 +4151,19 @@ class Date
      * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
      *                                                     a repeated hour is specified
      *                                                     (defaults to false)
-     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
-     *                                                     local Summer time offset, the
-     *                                                     specified time if it falls in
-     *                                                     the skipped hour (defaults to
-     *                                                     false)
      *
      *
      * @return   void
      * @access   public
      */
-    function setSecond($s, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false) {
+    function setSecond($s, $pb_repeatedhourdefault = false) {
         if ($s > Date_Calc::getSecondsInMinute($this->day, $this->month, $this->year, $this->hour, $this->minute) || $s < 0) {
             return PEAR::raiseError("Invalid second value '$s'");
         } else {
             $ret = $this->setHourMinuteSecond($this->hour,
                                               $this->minute,
                                               $s,
-                                              $pb_repeatedhourdefault,
-                                              $pb_correctinvalidtime);
+                                              $pb_repeatedhourdefault);
 
             if (PEAR::isError($ret))
                 return $ret;
@@ -4145,16 +4183,11 @@ class Date
      * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
      *                                                     a repeated hour is specified
      *                                                     (defaults to false)
-     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
-     *                                                     local Summer time offset, the
-     *                                                     specified time if it falls in
-     *                                                     the skipped hour (defaults to
-     *                                                     false)
      *
      * @return   void
      * @access   public
      */
-    function setPartSecond($pn_ps, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    function setPartSecond($pn_ps, $pb_repeatedhourdefault = false)
     {
         if ($pn_ps >= 1 || $pn_ps < 0) {
             return PEAR::raiseError("Invalid part-second value '$pn_ps'");
@@ -4162,8 +4195,7 @@ class Date
             $ret = $this->setHourMinuteSecond($this->hour,
                                               $this->minute,
                                               $this->second + $pn_ps,
-                                              $pb_repeatedhourdefault,
-                                              $pb_correctinvalidtime);
+                                              $pb_repeatedhourdefault);
 
             if (PEAR::isError($ret))
                 return $ret;
@@ -4190,16 +4222,11 @@ class Date
      * @param    bool       $pb_repeatedhourdefault       whether to assume Summer time if
      *                                                     a repeated hour is specified
      *                                                     (defaults to false)
-     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
-     *                                                     local Summer time offset, the
-     *                                                     specified time if it falls in
-     *                                                     the skipped hour (defaults to
-     *                                                     false)
      *
      * @return   void
      * @access   public
      */
-    function setHourMinuteSecond($h, $m, $s, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = false)
+    function setHourMinuteSecond($h, $m, $s, $pb_repeatedhourdefault = false)
     {
         // Split second into integer and part-second:
         //
@@ -4211,7 +4238,7 @@ class Date
             $hn_partsecond = 0.0;
         }
 
-        $this->setLocalTime($this->day, $this->month, $this->year, $h, $m, $hn_second, $hn_partsecond, $pb_repeatedhourdefault, $pb_correctinvalidtime);
+        $this->setLocalTime($this->day, $this->month, $this->year, $h, $m, $hn_second, $hn_partsecond, $pb_repeatedhourdefault);
     }
 
 
