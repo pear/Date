@@ -618,7 +618,7 @@ class Date
      * @return   void
      * @access   public
      */
-    function round($pn_precision = DATE_PRECISION_DAY)
+    function round($pn_precision = DATE_PRECISION_DAY, $pb_correctinvalidtime = false)
     {
         if ($pn_precision <= DATE_PRECISION_DAY) {
             list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
@@ -633,8 +633,7 @@ class Date
                                 $hn_partsecond,
                                 true,    // This is unlikely anyway, but the day starts with the repeated
                                          // hour the first time around
-                                false);  // This is unlikely anyway, but the time is less important than the
-                                         // day (this behaviour is debatable though)
+                                $pb_correctinvalidtime);
             return;
         }
 
@@ -673,7 +672,7 @@ class Date
                             $hn_second,
                             $hn_partsecond,
                             false,   // This will be right half the time
-                            true);   // This will be right some of the time (depends on Summer time offset)
+                            $pb_correctinvalidtime);   // This will be right some of the time (depends on Summer time offset)
     }
 
 
