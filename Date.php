@@ -424,12 +424,12 @@ class Date
         $this->partsecond = $date->partsecond;
 
         $this->on_standardyear = $date->on_standardyear;
-        $this->on_standardmonth = $date->on_standardyear;
-        $this->on_standardday = $date->on_standardyear;
-        $this->on_standardhour = $date->on_standardyear;
-        $this->on_standardminute = $date->on_standardyear;
-        $this->on_standardsecond = $date->on_standardyear;
-        $this->on_standardpartsecond = $date->on_standardyear;
+        $this->on_standardmonth = $date->on_standardmonth;
+        $this->on_standardday = $date->on_standardday;
+        $this->on_standardhour = $date->on_standardhour;
+        $this->on_standardminute = $date->on_standardminute;
+        $this->on_standardsecond = $date->on_standardsecond;
+        $this->on_standardpartsecond = $date->on_standardpartsecond;
 
         $this->ob_invalidtime = $date->ob_invalidtime;
 
@@ -610,48 +610,19 @@ class Date
      *                                        DATE_PRECISION_10SECONDS)
      *
      * @param    int        $pn_precision                 a 'DATE_PRECISION_*' constant
-     *
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     rounded time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
      * @return   void
      * @access   public
      */
     function round($pn_precision = DATE_PRECISION_DAY)
     {
-        if ($this->tz->getDSTSavings() % 3600000 == 0) {
-            if ($pn_precision >= DATE_PRECISION_HOUR) {
-                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
-                    Date_Calc::round($pn_precision, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, $this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardpartsecond);
-
-                $this->setStandardTime($hn_day,
-                                       $hn_month,
-                                       $hn_year,
-                                       $hn_hour,
-                                       $hn_minute,
-                                       $hn_second,
-                                       $hn_partsecond);
-            } else {
-                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
-                    Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
-
-                $this->setLocalTime($hn_day,
-                                    $hn_month,
-                                    $hn_year,
-                                    $hn_hour,
-                                    $hn_minute,
-                                    $hn_second,
-                                    $hn_partsecond,
-                                    true,    // This is unlikely, but the day starts with the repeated hour the
-                                             // first time around
-                                    false);  // This is unlikely anyway, but the time is less important than the
-                                             // day (this behaviour is debatable though)
-            }
-        } else {
-            // Very unlikely anyway (as I write, the only time zone like this
-            // is Lord Howe Island in Australia (offset of half an hour)):
-            //
-            // (This algorithm could be better)
-            //
+        if ($pn_precision <= DATE_PRECISION_DAY) {
             list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
-                Date_Calc::round($pn_precision, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, $this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardpartsecond);
+                Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
 
             $this->setLocalTime($hn_day,
                                 $hn_month,
@@ -660,11 +631,49 @@ class Date
                                 $hn_minute,
                                 $hn_second,
                                 $hn_partsecond,
-                                true,    // This is unlikely, but the day starts with the repeated hour the
-                                         // first time around
+                                true,    // This is unlikely anyway, but the day starts with the repeated
+                                         // hour the first time around
                                 false);  // This is unlikely anyway, but the time is less important than the
                                          // day (this behaviour is debatable though)
+            return;
         }
+
+        // ($pn_precision >= DATE_PRECISION_HOUR)
+        //
+        if ($this->tz->getDSTSavings() % 3600000 == 0 ||
+            ($this->tz->getDSTSavings() % 60000 == 0 &&
+             $pn_precision >= DATE_PRECISION_MINUTE)
+            ) {
+            list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
+                Date_Calc::round($pn_precision, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, $this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardpartsecond);
+
+            $this->setStandardTime($hn_day,
+                                   $hn_month,
+                                   $hn_year,
+                                   $hn_hour,
+                                   $hn_minute,
+                                   $hn_second,
+                                   $hn_partsecond);
+            return;
+        }
+
+        // Very unlikely anyway (as I write, the only time zone like this
+        // is Lord Howe Island in Australia (offset of half an hour)):
+        //
+        // (This algorithm could be better)
+        //
+        list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
+            Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+
+        $this->setLocalTime($hn_day,
+                            $hn_month,
+                            $hn_year,
+                            $hn_hour,
+                            $hn_minute,
+                            $hn_second,
+                            $hn_partsecond,
+                            false,   // This will be right half the time
+                            true);   // This will be right some of the time (depends on Summer time offset)
     }
 
 
@@ -675,7 +684,7 @@ class Date
      * Rounds seconds up or down to the nearest specified unit
      *
      * N.B. this function is equivalent to calling:
-     *  <code>'Date::round(DATE_PRECISION_SECOND + $pn_precision)'</code>
+     *  <code>'round(DATE_PRECISION_SECOND + $pn_precision)'</code>
      *
      * @param    int        $pn_precision                 number of digits after the decimal point
      *
@@ -684,8 +693,7 @@ class Date
      */
     function roundSeconds($pn_precision = 0)
     {
-        list($this->year, $this->month, $this->day, $this->hour, $this->minute, $this->second, $this->partsecond) =
-            Date_Calc::roundSeconds($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+        $this->round(DATE_PRECISION_SECOND + $pn_precision);
     }
 
 
@@ -731,58 +739,90 @@ class Date
      *                                        DATE_PRECISION_10SECONDS)
      *
      * @param    int        $pn_precision                 a 'DATE_PRECISION_*' constant
+     * @param    bool       $pb_correctinvalidtime        whether to correct, by adding the
+     *                                                     local Summer time offset, the
+     *                                                     truncated time if it falls in
+     *                                                     the skipped hour (defaults to
+     *                                                     false)
      *
      * @return   void
      * @access   public
      */
-    function trunc($pn_precision = DATE_PRECISION_DAY)
+    function trunc($pn_precision = DATE_PRECISION_DAY, $pb_correctinvalidtime = false)
     {
-        if ($pn_precision <= DATE_PRECISION_YEAR) {
-            $this->month = 0;
-            $this->day = 0;
-            $this->hour = 0;
-            $this->minute = 0;
-            $this->second = 0;
-            $this->partsecond = 0.0;
+        if ($pn_precision <= DATE_PRECISION_DAY) {
+            if ($pn_precision <= DATE_PRECISION_YEAR) {
+                $hn_month = 0;
+                $hn_day = 0;
+                $hn_hour = 0;
+                $hn_minute = 0;
+                $hn_second = 0;
+                $hn_partsecond = 0.0;
 
-            $hn_invprecision = DATE_PRECISION_YEAR - $pn_precision;
-            if ($hn_invprecision > 0) {
-                $this->year = (int) (intval($this->year / pow(10, $hn_invprecision)) * pow(10, $hn_invprecision));
-                //
-                // (Conversion to int necessary for PHP <= 4.0.6)
+                $hn_invprecision = DATE_PRECISION_YEAR - $pn_precision;
+                if ($hn_invprecision > 0) {
+                    $hn_year = intval($this->year / pow(10, $hn_invprecision)) * pow(10, $hn_invprecision);
+                    //
+                    // (Conversion to int necessary for PHP <= 4.0.6)
+                } else {
+                    $hn_year = $this->year;
+                }
+            } else if ($pn_precision == DATE_PRECISION_MONTH) {
+                $hn_year = $this->year;
+                $hn_month = $this->month;
+                $hn_day = 0;
+                $hn_hour = 0;
+                $hn_minute = 0;
+                $hn_second = 0;
+                $hn_partsecond = 0.0;
+            } else if ($pn_precision == DATE_PRECISION_DAY) {
+                $hn_year = $this->year;
+                $hn_month = $this->month;
+                $hn_day = $this->day;
+                $hn_hour = 0;
+                $hn_minute = 0;
+                $hn_second = 0;
+                $hn_partsecond = 0.0;
             }
-        } else if ($pn_precision == DATE_PRECISION_MONTH) {
-            $this->day = 0;
-            $this->hour = 0;
-            $this->minute = 0;
-            $this->second = 0;
-            $this->partsecond = 0.0;
-        } else if ($pn_precision == DATE_PRECISION_DAY) {
-            $this->hour = 0;
-            $this->minute = 0;
-            $this->second = 0;
-            $this->partsecond = 0.0;
-        } else if ($pn_precision == DATE_PRECISION_HOUR) {
-            $this->minute = 0;
-            $this->second = 0;
-            $this->partsecond = 0.0;
+
+            $this->setLocalTime($hn_day,
+                                $hn_month,
+                                $hn_year,
+                                $hn_hour,
+                                $hn_minute,
+                                $hn_second,
+                                $hn_partsecond,
+                                true,    // This is unlikely anyway, but the day starts with the repeated
+                                         // hour the first time around
+                                $pb_correctinvalidtime);
+            return;
+        }
+
+        // Precision is at least equal to DATE_PRECISION_HOUR
+        //
+        if ($pn_precision == DATE_PRECISION_HOUR) {
+            $this->addSeconds($this->partsecond == 0.0 ? -$this->second : -$this->second - $this->partsecond);
+            $this->addMinutes(-$this->minute);
         } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
-            $this->second = 0;
-            $this->partsecond = 0.0;
-
             if ($pn_precision == DATE_PRECISION_10MINUTES) {
-                $this->minute = intval($this->minute / 10) * 10;
+                $this->addMinutes(-$this->minute % 10);
             }
+
+            $this->addSeconds($this->partsecond == 0.0 ? -$this->second : -$this->second - $this->partsecond);
+        } else if ($pn_precision == DATE_PRECISION_10SECONDS) {
+            $this->addSeconds($this->partsecond == 0.0 ? -$this->second % 10 : (-$this->second % 10) - $this->partsecond);
         } else {
-            // Precision is at least (DATE_PRECISION_SECOND - 1):
+            // Assume Summer time offset cannot be composed of part-seconds:
             //
-            if ($pn_precision == DATE_PRECISION_10SECONDS) {
-                $this->partsecond = 0.0;
-                $this->second = intval($this->second / 10) * 10;
-            } else {
-                $hn_precision = $pn_precision - DATE_PRECISION_SECOND;
-                $this->partsecond = intval($this->partsecond * pow(10, $hn_precision)) / pow(10, $hn_precision);
-            }
+            $hn_precision = $pn_precision - DATE_PRECISION_SECOND;
+            $hn_partsecond = intval($this->on_standardpartsecond * pow(10, $hn_precision)) / pow(10, $hn_precision);
+            $this->setStandardTime($this->on_standardday,
+                                   $this->on_standardmonth,
+                                   $this->on_standardyear,
+                                   $this->on_standardhour,
+                                   $this->on_standardminute,
+                                   $this->on_standardsecond,
+                                   $hn_partsecond);
         }
     }
 
@@ -1458,6 +1498,8 @@ class Date
      *                  that the leading nought can be suppressed with the
      *                  no-padding code 'NP').  Also note that if you combine
      *                  with the 'SP' code, the sign will not be spelled out.
+     *                  (I.e. 'STZHSp' will produce '+One', for example, and
+     *                  not 'Plus One'.
      *                  'TZH:TZM' will produce, for example, '+05:30'.  (Also
      *                  see 'TZM' format code)
      *  <code>STZH</code> 
@@ -1471,9 +1513,14 @@ class Date
      *                  'British Summer Time'.  N.B. this is not a unique
      *                  identifier - for this purpose use the time zone region
      *                  (code 'TZR').
-     *  <code>TZO</code> Time zone offset in seconds, with negative sign '-' if
-     *                  negative, and no sign if positive (i.e. -43200 to
-     *                  50400). (Note that the sign cannot be suppressed.)
+     *  <code>TZO</code> Time zone offset in ISO 8601 form - that is, 'Z' if
+     *                  UTC, else [+/-][hh]:[mm] (which would be equivalent
+     *                  to 'STZH:TZM').  Note that this result is right padded
+     *                  with spaces by default, (i.e. if 'Z').
+     *  <code>TZS</code> Time zone offset in seconds; 'S' prefixes negative
+     *                  sign with minus sign '-' if negative, and no sign if
+     *                  positive (i.e. -43200 to 50400).
+     *  <code>STZS</code>
      *  <code>TZR</code> Time zone region, that is, the name or ID of the time
      *                  zone e.g. 'Europe/London'.  This value is unique for
      *                  each time zone.
@@ -1552,7 +1599,7 @@ class Date
      */
     function format2($ps_format, $ps_locale = "en_GB")
     {
-        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|S?TZH|TZ[MO]|U|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
+        if (!preg_match($h='/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|S?TZ[HS]|TZM|U|W[W147]?|S?Y{1,3}([,.·\' ]?YYY)*)(SP(TH)?|TH(SP)?)?|AD|A\.D\.|AM|A\.M\.|BCE?|B\.C\.(E\.)?|CE|C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|P\.M\.|RM|TZ[CINOR]|S?YEAR|[^A-Z0-9"])*$/i', $ps_format)) {
             return PEAR::raiseError("Invalid date format '$ps_format'");
         }
 
@@ -2036,7 +2083,13 @@ class Date
                         $ret .= $hs_second;
                         $i += 2 + strlen($hs_numberformat);
                     } else {
-                        // Code 'SC(CCC...)', 'SY(YYY...)', 'SIY(YYY...)', or 'SYEAR':
+                        // One of the following codes:
+                        //  'SC(CCC...)'
+                        //  'SY(YYY...)'
+                        //  'SIY(YYY...)'
+                        //  'STZH'
+                        //  'STZS'
+                        //  'SYEAR'
                         //
                         $hb_showsignflag = true;
                         if ($hb_nopad)
@@ -2067,7 +2120,7 @@ class Date
                         if (Pear::isError($hs_tzh))
                             return $hs_tzh;
 
-                        // Display sign:
+                        // Display sign, even if positive:
                         //
                         $ret .= ($hb_nosign ? "" : ($hn_tzh >= 0 ? '+' : '-')) . $hs_tzh;
                         $i += 3 + strlen($hs_numberformat);
@@ -2100,16 +2153,30 @@ class Date
                             return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                         if (is_null($hn_tzoffset))
                             $hn_tzoffset = $this->getTZOffset();
+
+                        $hn_tzh = intval(abs($hn_tzoffset) / 3600000);
+                        $hn_tzm = intval((abs($hn_tzoffset) % 3600000) / 60000);
+
+                        if ($hn_tzoffset == 0) {
+                            $ret .= $hb_nopad ? "Z" : "Z     ";
+                        } else {
+                            // Display sign, even if positive:
+                            //
+                            $ret .= ($hn_tzoffset >= 0 ? '+' : '-') . sprintf("%02d", $hn_tzh) . ":" . sprintf("%02d", $hn_tzm);
+                        }
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZS") {
+                        if ($this->ob_invalidtime)
+                            return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
                         $hs_numberformat = substr($ps_format, $i + 3, 4);
-                        $hn_tzo = intval($hn_tzoffset / 1000);
+                        $hn_tzs = intval($hn_tzoffset / 1000);
+                        $hs_tzs = $this->formatNumber($hn_tzs, $hs_numberformat, 5, $hb_nopad, $hb_nosign, $ps_locale);
+                        if (Pear::isError($hs_tzs))
+                            return $hs_tzs;
 
-                        // Allow sign if negative; allow all digits (specify nought); suppress padding:
-                        //
-                        $hs_tzo = $this->formatNumber($hn_tzo, $hs_numberformat, 0, true, false, $ps_locale);
-                        if (Pear::isError($hs_tzo))
-                            return $hs_tzo;
-
-                        $ret .= $hs_tzo;
+                        $ret .= $hs_tzs;
                         $i += 3 + strlen($hs_numberformat);
                     } else if (strtoupper(substr($ps_format, $i, 3)) == "TZR") {
                         $ret .= $this->getTZID();
@@ -3090,6 +3157,7 @@ class Date
             if (PEAR::isError($res))
                 return $res;
         }
+
         $days1 = Date_Calc::dateToDays($d1->getStandardDay(), $d1->getStandardMonth(), $d1->getStandardYear());
         $days2 = Date_Calc::dateToDays($d2->getStandardDay(), $d2->getStandardMonth(), $d2->getStandardYear());
         if ($days1 < $days2) return -1;

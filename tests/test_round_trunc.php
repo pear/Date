@@ -218,4 +218,14 @@ $od->trunc(14);
 compare('1987-11-09 16.12.24.171878000', $od->format2('YYYY-MM-DD HH.MI.SS.FFFFFFFFF'), '14 (1)');
 
 
+$od = new Date("19870709T12:00:00");
+$od->round(DATE_PRECISION_DAY);
+compare('1987-07-10 00.00.00', $od->format2('YYYY-MM-DD HH.MI.SS'), 'Midday test 1');
+$od = new Date("19870709T11:59:59.999999");
+$od->round(DATE_PRECISION_DAY);
+compare('1987-07-09 00.00.00', $od->format2('YYYY-MM-DD HH.MI.SS'), 'Midday test 2');
+
+
+
+
 ?>
