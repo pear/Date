@@ -2416,7 +2416,7 @@ class Date
      *
      * http://www.php.net/manual/en/ref.datetime.php#datetime.constants
      *
-     * Formatting options:<br><br>
+     * Formatting options:
      *
      * (Day)
      *
@@ -2432,7 +2432,7 @@ class Date
      *                characters ('st', 'nd', 'rd' or 'th')
      *  <code>w</code> Numeric representation of the day of the week (0 (for
      *                Sunday) to 6 (for Saturday))
-     *  <code>z</code> The day of the year (starting from 0) (0 to 365)
+     *  <code>z</code> The day of the year, starting from 0 (0 to 365)
      *
      * (Week)
      *
@@ -2619,7 +2619,10 @@ class Date
                 break;
             case '\\':
                 $hs_char = substr($ps_format, ++$i, 1);
-                $hs_format2str .= '"' . $hs_char . '"';
+                $hs_format2str .= '"' . ($hs_char == '\\' ? '\\\\' : $hs_char) . '"';
+                break;
+            case '"':
+                $hs_format2str .= '"\\""';
                 break;
             default:
                 $hs_format2str .= '"' . $hs_char . '"';
