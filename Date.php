@@ -176,7 +176,8 @@ define('DATE_FORMAT_UNIXTIME', 5);
  * @author    Pierre-Alain Joye <pajoye@php.net>
  * @author    Firman Wandayandi <firman@php.net>
  * @author    C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
+ * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi,
+ *            C.A. Woodcock
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
  * @version   Release: @package_version@
@@ -378,7 +379,8 @@ class Date
      * is advisable to pass no parameter and to make a separate call to
      * 'setDate()'.
      *
-     * @param mixed $date                         optional - date/time to initialize
+     * @param mixed $date                         optional - date/time to
+     *                                             initialize
      *
      * @return   void
      * @access   public
@@ -453,8 +455,8 @@ class Date
      */
     function __clone()
     {
-        // This line of code would only be acceptable, but
-        // preferable, in PHP5:
+        // This line of code would be preferable, but only
+        // acceptable in PHP5:
         //
         // $this->tz = clone $this->tz;
 
@@ -469,30 +471,46 @@ class Date
      *
      * Format parameter should be one of the specified DATE_FORMAT_* constants:
      *
-     *  <code>DATE_FORMAT_ISO</code>                    - 'YYYY-MM-DD HH:MI:SS'
-     *  <code>DATE_FORMAT_ISO_BASIC</code>              - 'YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?'
-     *  <code>DATE_FORMAT_ISO_EXTENDED</code>           - 'YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?'
-     *  <code>DATE_FORMAT_ISO_EXTENDED_MICROTIME</code> - 'YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
-     *  <code>DATE_FORMAT_TIMESTAMP</code>              - 'YYYYMMDDHHMMSS'
-     *  <code>DATE_FORMAT_UNIXTIME'</code>              - long integer of the no of
-     *                                                    seconds since the Unix Epoch
-     *                                                    (1st January 1970 00.00.00 GMT)
+     *  <code>DATE_FORMAT_ISO</code>
+     *                              - 'YYYY-MM-DD HH:MI:SS'
+     *  <code>DATE_FORMAT_ISO_BASIC</code>
+     *                              - 'YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?'
+     *  <code>DATE_FORMAT_ISO_EXTENDED</code>
+     *                              - 'YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?'
+     *  <code>DATE_FORMAT_ISO_EXTENDED_MICROTIME</code>
+     *                              - 'YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
+     *  <code>DATE_FORMAT_TIMESTAMP</code>
+     *                              - 'YYYYMMDDHHMMSS'
+     *  <code>DATE_FORMAT_UNIXTIME'</code>
+     *                              - long integer of the no of seconds since
+     *                                 the Unix Epoch
+     *                                 (1st January 1970 00.00.00 GMT)
      *
      * @param string $date                         input date
-     * @param int    $format                       optional format constant (DATE_FORMAT_*) of the input date.
-     *                                              This parameter is not needed, except to force the setting
-     *                                              of the date from a Unix time-stamp (DATE_FORMAT_UNIXTIME).
-     * @param bool   $pb_repeatedhourdefault       value to return if repeated hour
-     *                                              is specified (defaults to false)
+     * @param int    $format                       optional format constant
+     *                                              (DATE_FORMAT_*) of the input
+     *                                              date.  This parameter is not
+     *                                              needed, except to force the
+     *                                              setting of the date from a
+     *                                              Unix time-stamp
+     *                                              (DATE_FORMAT_UNIXTIME).
+     * @param bool   $pb_repeatedhourdefault       value to return if repeated
+     *                                              hour is specified (defaults
+     *                                              to false)
      *
      * @return   void
      * @access   public
      */
-    function setDate($date, $format = DATE_FORMAT_ISO, $pb_repeatedhourdefault = false)
+    function setDate($date,
+                     $format = DATE_FORMAT_ISO,
+                     $pb_repeatedhourdefault = false)
     {
+
         if (preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])' .
-                         '([T\s]?([01][0-9]|2[0-3]):?([0-5][0-9]):?([0-5][0-9])(\.\d+)?' .
-                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', $date, $regs) &&
+                         '([T\s]?([01][0-9]|2[0-3]):?' .
+                         '([0-5][0-9]):?([0-5][0-9])(\.\d+)?' .
+                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i',
+                         $date, $regs) &&
             $format != DATE_FORMAT_UNIXTIME
             ) {
             // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
@@ -503,7 +521,13 @@ class Date
             // latter is not a valid ISO 8601 date.
 
             if (!Date_Calc::isValidDate($regs[3], $regs[2], $regs[1])) {
-                return PEAR::raiseError("'" . Date_Calc::dateFormat($regs[1], $regs[2], $regs[3], "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
+                return PEAR::raiseError("'" .
+                                        Date_Calc::dateFormat($regs[1],
+                                                              $regs[2],
+                                                              $regs[3],
+                                                              "%Y-%m-%d") .
+                                        "' is invalid calendar date",
+                                        DATE_ERROR_INVALIDDATE);
             }
 
             if (isset($regs[9])) {
@@ -553,8 +577,9 @@ class Date
     /**
      * Sets to local current time and time zone
      *
-     * @param bool $pb_setmicrotime              whether to set micro-time (defaults to
-     *                                            the value of the constant
+     * @param bool $pb_setmicrotime              whether to set micro-time
+     *                                            (defaults to the value of the
+     *                                            constant
      *                                            DATE_CAPTURE_MICROTIME_BY_DEFAULT)
      *
      * @return   void
@@ -571,7 +596,9 @@ class Date
         }
 
         $this->setDate(date("Y-m-d H:i:s", $ha_unixtime["sec"]) .
-                       (isset($ha_unixtime["usec"]) ? "." . sprintf("%06d", $ha_unixtime["usec"]) : ""));
+                       (isset($ha_unixtime["usec"]) ?
+                        "." . sprintf("%06d", $ha_unixtime["usec"]) :
+                        ""));
     }
 
 
@@ -613,20 +640,34 @@ class Date
      *                                        DATE_PRECISION_10SECONDS)
      *
      * @param int  $pn_precision                 a 'DATE_PRECISION_*' constant
-     * @param bool $pb_correctinvalidtime        whether to correct, by adding the
-     *                                            local Summer time offset, the
-     *                                            rounded time if it falls in
-     *                                            the skipped hour (defaults to
-     *                                            false)
+     * @param bool $pb_correctinvalidtime        whether to correct, by adding
+     *                                            the local Summer time offset,
+     *                                            the rounded time if it falls
+     *                                            in the skipped hour (defaults
+     *                                            to false)
      *
      * @return   void
      * @access   public
      */
-    function round($pn_precision = DATE_PRECISION_DAY, $pb_correctinvalidtime = false)
+    function round($pn_precision = DATE_PRECISION_DAY,
+                   $pb_correctinvalidtime = false)
     {
         if ($pn_precision <= DATE_PRECISION_DAY) {
-            list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
-                Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+            list($hn_year,
+                 $hn_month,
+                 $hn_day,
+                 $hn_hour,
+                 $hn_minute,
+                 $hn_second,
+                 $hn_partsecond) =
+                 Date_Calc::round($pn_precision,
+                                  $this->day,
+                                  $this->month,
+                                  $this->year,
+                                  $this->hour,
+                                  $this->minute,
+                                  $this->second,
+                                  $this->partsecond);
 
             $this->setLocalTime($hn_day,
                                 $hn_month,
@@ -635,8 +676,9 @@ class Date
                                 $hn_minute,
                                 $hn_second,
                                 $hn_partsecond,
-                                true,    // This is unlikely anyway, but the day starts with the repeated
-                                         // hour the first time around
+                                true,    // This is unlikely anyway, but the
+                                         // day starts with the repeated hour
+                                         // the first time around
                                 $pb_correctinvalidtime);
             return;
         }
@@ -647,8 +689,21 @@ class Date
             ($this->tz->getDSTSavings() % 60000 == 0 &&
              $pn_precision >= DATE_PRECISION_MINUTE)
             ) {
-            list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
-                Date_Calc::round($pn_precision, $this->on_standardday, $this->on_standardmonth, $this->on_standardyear, $this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardpartsecond);
+            list($hn_year,
+                 $hn_month,
+                 $hn_day,
+                 $hn_hour,
+                 $hn_minute,
+                 $hn_second,
+                 $hn_partsecond) =
+                 Date_Calc::round($pn_precision,
+                                  $this->on_standardday,
+                                  $this->on_standardmonth,
+                                  $this->on_standardyear,
+                                  $this->on_standardhour,
+                                  $this->on_standardminute,
+                                  $this->on_standardsecond,
+                                  $this->on_standardpartsecond);
 
             $this->setStandardTime($hn_day,
                                    $hn_month,
@@ -665,8 +720,21 @@ class Date
         //
         // (This algorithm could be better)
         //
-        list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second, $hn_partsecond) =
-            Date_Calc::round($pn_precision, $this->day, $this->month, $this->year, $this->hour, $this->minute, $this->second, $this->partsecond);
+        list($hn_year,
+             $hn_month,
+             $hn_day,
+             $hn_hour,
+             $hn_minute,
+             $hn_second,
+             $hn_partsecond) =
+             Date_Calc::round($pn_precision,
+                              $this->day,
+                              $this->month,
+                              $this->year,
+                              $this->hour,
+                              $this->minute,
+                              $this->second,
+                              $this->partsecond);
 
         $this->setLocalTime($hn_day,
                             $hn_month,
@@ -676,7 +744,10 @@ class Date
                             $hn_second,
                             $hn_partsecond,
                             false,     // This will be right half the time
-                            $pb_correctinvalidtime);   // This will be right some of the time (depends on Summer time offset)
+                            $pb_correctinvalidtime);   // This will be right
+                                                       // some of the time
+                                                       // (depends on Summer
+                                                       // time offset)
     }
 
 
@@ -689,7 +760,8 @@ class Date
      * N.B. this function is equivalent to calling:
      *  <code>'round(DATE_PRECISION_SECOND + $pn_precision)'</code>
      *
-     * @param int $pn_precision                 number of digits after the decimal point
+     * @param int $pn_precision                 number of digits after the
+     *                                           decimal point
      *
      * @return   void
      * @access   public
@@ -742,16 +814,17 @@ class Date
      *                                        DATE_PRECISION_10SECONDS)
      *
      * @param int  $pn_precision                 a 'DATE_PRECISION_*' constant
-     * @param bool $pb_correctinvalidtime        whether to correct, by adding the
-     *                                            local Summer time offset, the
-     *                                            truncated time if it falls in
-     *                                            the skipped hour (defaults to
-     *                                            false)
+     * @param bool $pb_correctinvalidtime        whether to correct, by adding
+     *                                            the local Summer time offset,
+     *                                            the truncated time if it falls
+     *                                            in  the skipped hour (defaults
+     *                                            to false)
      *
      * @return   void
      * @access   public
      */
-    function trunc($pn_precision = DATE_PRECISION_DAY, $pb_correctinvalidtime = false)
+    function trunc($pn_precision = DATE_PRECISION_DAY,
+                   $pb_correctinvalidtime = false)
     {
         if ($pn_precision <= DATE_PRECISION_DAY) {
             if ($pn_precision <= DATE_PRECISION_YEAR) {
@@ -764,7 +837,8 @@ class Date
 
                 $hn_invprecision = DATE_PRECISION_YEAR - $pn_precision;
                 if ($hn_invprecision > 0) {
-                    $hn_year = intval($this->year / pow(10, $hn_invprecision)) * pow(10, $hn_invprecision);
+                    $hn_year = intval($this->year / pow(10, $hn_invprecision)) *
+                               pow(10, $hn_invprecision);
                     //
                     // (Conversion to int necessary for PHP <= 4.0.6)
                 } else {
@@ -795,7 +869,8 @@ class Date
                                 $hn_minute,
                                 $hn_second,
                                 $hn_partsecond,
-                                true,    // This is unlikely anyway, but the day starts with the repeated
+                                true,    // This is unlikely anyway, but the
+                                         // day starts with the repeated
                                          // hour the first time around
                                 $pb_correctinvalidtime);
             return;
@@ -804,21 +879,29 @@ class Date
         // Precision is at least equal to DATE_PRECISION_HOUR
         //
         if ($pn_precision == DATE_PRECISION_HOUR) {
-            $this->addSeconds($this->partsecond == 0.0 ? -$this->second : -$this->second - $this->partsecond);
+            $this->addSeconds($this->partsecond == 0.0 ?
+                              -$this->second :
+                              -$this->second - $this->partsecond);
             $this->addMinutes(-$this->minute);
         } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
             if ($pn_precision == DATE_PRECISION_10MINUTES) {
                 $this->addMinutes(-$this->minute % 10);
             }
 
-            $this->addSeconds($this->partsecond == 0.0 ? -$this->second : -$this->second - $this->partsecond);
+            $this->addSeconds($this->partsecond == 0.0 ?
+                              -$this->second :
+                              -$this->second - $this->partsecond);
         } else if ($pn_precision == DATE_PRECISION_10SECONDS) {
-            $this->addSeconds($this->partsecond == 0.0 ? -$this->second % 10 : (-$this->second % 10) - $this->partsecond);
+            $this->addSeconds($this->partsecond == 0.0 ?
+                              -$this->second % 10 :
+                              (-$this->second % 10) - $this->partsecond);
         } else {
             // Assume Summer time offset cannot be composed of part-seconds:
             //
             $hn_precision = $pn_precision - DATE_PRECISION_SECOND;
-            $hn_partsecond = intval($this->on_standardpartsecond * pow(10, $hn_precision)) / pow(10, $hn_precision);
+            $hn_partsecond = intval($this->on_standardpartsecond *
+                                    pow(10, $hn_precision)) /
+                                    pow(10, $hn_precision);
             $this->setStandardTime($this->on_standardday,
                                    $this->on_standardmonth,
                                    $this->on_standardyear,
@@ -839,7 +922,8 @@ class Date
      * N.B. this function is equivalent to calling:
      *  <code>'Date::trunc(DATE_PRECISION_SECOND + $pn_precision)'</code>
      *
-     * @param int $pn_precision                 number of digits after the decimal point
+     * @param int $pn_precision                 number of digits after the
+     *                                           decimal point
      *
      * @return   void
      * @access   public
@@ -858,7 +942,8 @@ class Date
      *
      * Returns a date in the format specified by the DATE_FORMAT_* constants.
      *
-     * @param int $format                       format constant (DATE_FORMAT_*) of the output date
+     * @param int $format                       format constant (DATE_FORMAT_*)
+     *                                           of the output date
      *
      * @return   string     the date in the requested format
      * @access   public
@@ -901,7 +986,13 @@ class Date
             if ($this->ob_invalidtime)
                 return getErrorInvalidTime();
 
-            return gmmktime($this->on_standardhour, $this->on_standardminute, $this->on_standardsecond, $this->on_standardmonth, $this->on_standardday, $this->on_standardyear) - $this->tz->getRawOffset() / 1000;
+            return gmmktime($this->on_standardhour,
+                            $this->on_standardminute,
+                            $this->on_standardsecond,
+                            $this->on_standardmonth,
+                            $this->on_standardday,
+                            $this->on_standardyear) -
+                   $this->tz->getRawOffset() / 1000;
             break;
         }
     }
@@ -995,7 +1086,8 @@ class Date
      *                  the week is counted as the last of the previous year.
      *  <code>%W</code>
      *
-     * @param string $format                       the format string for returned date/time
+     * @param string $format                       the format string for
+     *                                              returned date/time
      *
      * @return   string     date/time in given format
      * @access   public
@@ -1014,10 +1106,13 @@ class Date
                 $nextchar = substr($format, $strpos + 1, 1);
                 switch ($nextchar) {
                 case "a":
-                    $output .= Date_Calc::getWeekdayAbbrname($this->day, $this->month, $this->year, $this->getWeekdayAbbrnameLength);
+                    $output .= Date_Calc::getWeekdayAbbrname($this->day,
+                                   $this->month, $this->year,
+                                   $this->getWeekdayAbbrnameLength);
                     break;
                 case "A":
-                    $output .= Date_Calc::getWeekdayFullname($this->day, $this->month, $this->year);
+                    $output .= Date_Calc::getWeekdayFullname($this->day,
+                                   $this->month, $this->year);
                     break;
                 case "b":
                     $output .= Date_Calc::getMonthAbbrname($this->month);
@@ -1032,23 +1127,31 @@ class Date
                     $output .= sprintf("%02d", $this->day);
                     break;
                 case "D":
-                    $output .= sprintf("%02d/%02d/%02d", $this->month, $this->day, $this->year);
+                    $output .= sprintf("%02d/%02d/%02d", $this->month,
+                                   $this->day, $this->year);
                     break;
                 case "e":
                     $output .= $this->day;
                     break;
                 case "E":
-                    $output .= Date_Calc::dateToDays($this->day, $this->month, $this->year);
+                    $output .= Date_Calc::dateToDays($this->day, $this->month,
+                                   $this->year);
                     break;
                 case "g":
                     if (is_null($hn_isoyear))
-                        list($hn_isoyear, $hn_isoweek, $hn_isoday) = Date_Calc::isoWeekDate($this->day, $this->month, $this->year);
+                        list($hn_isoyear, $hn_isoweek, $hn_isoday) =
+                            Date_Calc::isoWeekDate($this->day,
+                                                   $this->month,
+                                                   $this->year);
 
                     $output .= sprintf("%02d", $hn_isoyear % 100);
                     break;
                 case "G":
                     if (is_null($hn_isoyear))
-                        list($hn_isoyear, $hn_isoweek, $hn_isoday) = Date_Calc::isoWeekDate($this->day, $this->month, $this->year);
+                        list($hn_isoyear, $hn_isoweek, $hn_isoday) =
+                            Date_Calc::isoWeekDate($this->day,
+                                                   $this->month,
+                                                   $this->year);
 
                     $output .= sprintf("%04d", $hn_isoyear);
                     break;
@@ -1065,17 +1168,24 @@ class Date
                 case "i":
                     if ($this->ob_invalidtime)
                         return getErrorInvalidTime();
-                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                    $hour = ($this->hour + 1) > 12 ?
+                             $this->hour - 12 :
+                             $this->hour;
                     $output .= sprintf("%d", $hour == 0 ? 12 : $hour);
                     break;
                 case "I":
                     if ($this->ob_invalidtime)
                         return getErrorInvalidTime();
-                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                    $hour = ($this->hour + 1) > 12 ?
+                             $this->hour - 12 :
+                             $this->hour;
                     $output .= sprintf("%02d", $hour == 0 ? 12 : $hour);
                     break;
                 case "j":
-                    $output .= sprintf("%03d", Date_Calc::dayOfYear($this->day, $this->month, $this->year));
+                    $output .= sprintf("%03d",
+                                       Date_Calc::dayOfYear($this->day,
+                                                            $this->month,
+                                                            $this->year));
                     break;
                 case "m":
                     $output .= sprintf("%02d", $this->month);
@@ -1191,10 +1301,12 @@ class Date
     // {{{ getOrdinalSuffix()
 
     /**
-     * Returns appropriate ordinal suffix (i.e. 'th', 'st', 'nd' or 'rd') for integer
+     * Returns appropriate ordinal suffix (i.e. 'th', 'st', 'nd' or 'rd')
      *
-     * @param int  $pn_num                       number with which to determine suffix
-     * @param bool $pb_uppercase                 boolean specifying if the suffix should be capitalized
+     * @param int  $pn_num                       number with which to determine
+     *                                            suffix
+     * @param bool $pb_uppercase                 boolean specifying if the
+     *                                            suffix should be capitalized
      *
      * @return   string
      * @access   private
@@ -1241,16 +1353,23 @@ class Date
      *         capitalized, e.g. 'Four Hundred'
      *  'sp' - returns lower-case spelling, e.g. 'four hundred'
      *
-     * @param int    $pn_num                       number to be converted to words
-     * @param bool   $pb_ordinal                   boolean specifying if the number should be ordinal
-     * @param string $ps_capitalization            string for specifying capitalization options
-     * @param string $ps_locale                    language name abbreviation used for formatting
-     *                                              numbers as spelled-out words
+     * @param int    $pn_num                       number to be converted to
+     *                                              words
+     * @param bool   $pb_ordinal                   boolean specifying if the
+     *                                              number should be ordinal
+     * @param string $ps_capitalization            string for specifying
+     *                                              capitalization options
+     * @param string $ps_locale                    language name abbreviation
+     *                                              used for formatting numbers
+     *                                              as spelled-out words
      *
      * @return   string
      * @access   private
      */
-    function spellNumber($pn_num, $pb_ordinal = false, $ps_capitalization = "SP", $ps_locale = "en_GB")
+    function spellNumber($pn_num,
+                         $pb_ordinal = false,
+                         $ps_capitalization = "SP",
+                         $ps_locale = "en_GB")
     {
         include_once "Numbers/Words.php";
         $hs_words = Numbers_Words::toWords($pn_num, $ps_locale);
@@ -1295,10 +1414,12 @@ class Date
             }
         }
 
-        if (($hs_char = substr($ps_capitalization, 0, 1)) == strtolower($hs_char)) {
+        if (($hs_char = substr($ps_capitalization, 0, 1)) ==
+            strtolower($hs_char)) {
             $hb_upper = false;
             $hs_words = strtolower($hs_words);
-        } else if (($hs_char = substr($ps_capitalization, 1, 1)) == strtolower($hs_char)) {
+        } else if (($hs_char = substr($ps_capitalization, 1, 1)) ==
+                   strtolower($hs_char)) {
             $hb_upper = false;
             $hs_words = ucwords($hs_words);
         } else {
@@ -1319,25 +1440,25 @@ class Date
      * Private helper function, for 'format2()', which interprets the
      * codes 'SP' and 'TH' and the combination of the two as follows:
      *
-     *  <code>TH</code> Ordinal number<br />
-     *  <code>SP</code> Spelled cardinal number<br />
-     *  <code>SPTH</code> Spelled ordinal number (combination of 'SP' and 'TH'<br />
-     *                   in any order)<br />
-     *  <code>THSP</code> <br />
+     *  <code>TH</code> Ordinal number
+     *  <code>SP</code> Spelled cardinal number
+     *  <code>SPTH</code> Spelled ordinal number (combination of 'SP' and 'TH'
+     *                   in any order)
+     *  <code>THSP</code> 
      *
      * Code 'SP' can have the following three variations (which can also be used
      * in combination with 'TH'):
      *
-     *  <code>SP</code> returns upper-case spelling, e.g. 'FOUR HUNDRED'<br />
-     *  <code>Sp</code> returns spelling with first character of each word<br />
-     *                 capitalized, e.g. 'Four Hundred'<br />
-     *  <code>sp</code> returns lower-case spelling, e.g. 'four hundred'<br />
+     *  <code>SP</code> returns upper-case spelling, e.g. 'FOUR HUNDRED'
+     *  <code>Sp</code> returns spelling with first character of each word
+     *                 capitalized, e.g. 'Four Hundred'
+     *  <code>sp</code> returns lower-case spelling, e.g. 'four hundred'
      *
      * Code 'TH' can have the following two variations (although in combination
      * with code 'SP', the case specification of 'SP' takes precedence):
      *
-     *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH<br />
-     *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th<br />
+     *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH
+     *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th
      *
      * N.B. The format string is passed by reference, in order to pass back
      * the part of the format string that matches the valid codes 'SP' and
@@ -1345,27 +1466,45 @@ class Date
      * If both codes are found then a string is returned with code 'SP'
      * preceding code 'TH' (i.e. 'SPTH', 'Spth' or 'spth').
      *
-     * @param int    $pn_num                       integer to be converted to words
-     * @param string &$ps_format                   string of formatting codes (max. length 4)
-     * @param int    $pn_numofdigits               no of digits to display if displayed as
-     *                                              numeral (i.e. not spelled out), not including
-     *                                              the sign (if negative); to allow all digits
-     *                                              specify 0
-     * @param bool   $pb_nopad                     boolean specifying whether to suppress padding
-     *                                              with leading noughts (if displayed as numeral)
-     * @param bool   $pb_nosign                    boolean specifying whether to suppress the
-     *                                              display of the sign (if negative)
-     * @param string $ps_locale                    language name abbreviation used for formatting
-     * @param string $ps_thousandsep               optional thousand-separator (e.g. a comma)
-     *                                              numbers as spelled-out words
-     * @param int    $pn_padtype                   optional integer to specify padding (if
-     *                                              displayed as numeral) - can be STR_PAD_LEFT
-     *                                              or STR_PAD_RIGHT
+     * @param int    $pn_num                       integer to be converted to
+     *                                              words
+     * @param string &$ps_format                   string of formatting codes
+     *                                              (max. length 4)
+     * @param int    $pn_numofdigits               no of digits to display if
+     *                                              displayed as numeral (i.e.
+     *                                              not spelled out), not
+     *                                              including the sign (if
+     *                                              negative); to allow all
+     *                                              digits specify 0
+     * @param bool   $pb_nopad                     boolean specifying whether to
+     *                                              suppress padding with
+     *                                              leading noughts (if
+     *                                              displayed as numeral)
+     * @param bool   $pb_nosign                    boolean specifying whether to
+     *                                              suppress the display of the
+     *                                              sign (if negative)
+     * @param string $ps_locale                    language name abbreviation
+     *                                              used for formatting
+     * @param string $ps_thousandsep               optional thousand-separator
+     *                                              (e.g. a comma) numbers as
+     *                                              spelled-out words
+     * @param int    $pn_padtype                   optional integer to specify
+     *                                              padding (if displayed as
+     *                                              numeral) - can be
+     *                                              STR_PAD_LEFT or
+     *                                              STR_PAD_RIGHT
      *
      * @return   string
      * @access   private
      */
-    function formatNumber($pn_num, &$ps_format, $pn_numofdigits, $pb_nopad = false, $pb_nosign = false, $ps_locale = "en_GB", $ps_thousandsep = null, $pn_padtype = STR_PAD_LEFT)
+    function formatNumber($pn_num,
+                          &$ps_format,
+                          $pn_numofdigits,
+                          $pb_nopad = false,
+                          $pb_nosign = false,
+                          $ps_locale = "en_GB",
+                          $ps_thousandsep = null,
+                          $pn_padtype = STR_PAD_LEFT)
     {
         $hs_code1 = substr($ps_format, 0, 2);
         $hs_code2 = substr($ps_format, 2, 2);
@@ -1394,7 +1533,12 @@ class Date
             // Spell out number:
             //
             $ps_format = $hs_sp . (is_null($hs_th) ? "" : ($hs_sp == "SP" ? "TH" : "th"));
-            return $this->spellNumber(!$pb_nosign && $pn_num < 0 ? $hn_absnum * -1 : $hn_absnum, !is_null($hs_th), $hs_sp, $ps_locale);
+            return $this->spellNumber(!$pb_nosign && $pn_num < 0 ?
+                                          $hn_absnum * -1 :
+                                          $hn_absnum,
+                                      !is_null($hs_th),
+                                      $hs_sp,
+                                      $ps_locale);
         } else {
             // Display number as Arabic numeral:
             //
@@ -1404,7 +1548,9 @@ class Date
 
             if (!is_null($ps_thousandsep)) {
                 for ($i = strlen($hs_num) - 3; $i > 0; $i -= 3) {
-                    $hs_num = substr($hs_num, 0, $i) . $ps_thousandsep . substr($hs_num, $i);
+                    $hs_num = substr($hs_num, 0, $i) .
+                              $ps_thousandsep .
+                              substr($hs_num, $i);
                 }
             }
 
@@ -1417,7 +1563,9 @@ class Date
 
             if (!is_null($hs_th)) {
                 $ps_format = $hs_th;
-                return $hs_num . $this->getOrdinalSuffix($pn_num, substr($hs_th, 0, 1) == "T");
+                return $hs_num .
+                       $this->getOrdinalSuffix($pn_num,
+                                               substr($hs_th, 0, 1) == "T");
             } else {
                 $ps_format = "";
                 return $hs_num;
@@ -1486,12 +1634,12 @@ class Date
      * All formatting options:
      *
      *  <code>-</code> All punctuation and white-space is reproduced unchanged
-     *  <code>/</code> <br />
-     *  <code>,</code> <br />
-     *  <code>.</code> <br />
-     *  <code>;</code> <br />
-     *  <code>:</code> <br />
-     *  <code> </code> <br />
+     *  <code>/</code>
+     *  <code>,</code>
+     *  <code>.</code>
+     *  <code>;</code>
+     *  <code>:</code>
+     *  <code> </code>
      *  <code>"text"</code> Quoted text is reproduced unchanged (escape using
      *                     '\')
      *  <code>AD</code> AD indicator with or without full stops; N.B. if you
@@ -1649,9 +1797,11 @@ class Date
      *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH
      *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th
      *
-     * @param string $ps_format                    format string for returned date/time
-     * @param string $ps_locale                    language name abbreviation used for formatting
-     *                                              numbers as spelled-out words
+     * @param string $ps_format                    format string for returned
+     *                                              date/time
+     * @param string $ps_locale                    language name abbreviation
+     *                                              used for formatting numbers
+     *                                              as spelled-out words
      *
      * @return   string     date/time in given format
      * @access   public
@@ -1709,27 +1859,41 @@ class Date
                 $i += 1;
                 break;
             case "\"":
-                preg_match('/(([^"\\\\]|\\\\\\\\|\\\\")*)"/', $ps_format, $ha_matches, PREG_OFFSET_CAPTURE, $i + 1);
-                $ret .= str_replace(array('\\\\', '\\"'), array('\\', '"'), $ha_matches[1][0]);
+                preg_match('/(([^"\\\\]|\\\\\\\\|\\\\")*)"/',
+                           $ps_format,
+                           $ha_matches,
+                           PREG_OFFSET_CAPTURE,
+                           $i + 1);
+                $ret .= str_replace(array('\\\\', '\\"'),
+                                    array('\\', '"'),
+                                    $ha_matches[1][0]);
                 $i += strlen($ha_matches[0][0]) + 1;
                 break;
             case "a":
                 $hb_lower = true;
             case "A":
                 if (strtoupper(substr($ps_format, $i, 4)) == "A.D.") {
-                    $ret .= $this->year >= 0 ? ($hb_lower ? "a.d." : "A.D.") : ($hb_lower ? "b.c." : "B.C.");
+                    $ret .= $this->year >= 0 ?
+                            ($hb_lower ? "a.d." : "A.D.") :
+                            ($hb_lower ? "b.c." : "B.C.");
                     $i += 4;
                 } else if (strtoupper(substr($ps_format, $i, 2)) == "AD") {
-                    $ret .= $this->year >= 0 ? ($hb_lower ? "ad" : "AD") : ($hb_lower ? "bc" : "BC");
+                    $ret .= $this->year >= 0 ?
+                            ($hb_lower ? "ad" : "AD") :
+                            ($hb_lower ? "bc" : "BC");
                     $i += 2;
                 } else {
                     if ($this->ob_invalidtime)
                         return getErrorInvalidTime();
                     if (strtoupper(substr($ps_format, $i, 4)) == "A.M.") {
-                        $ret .= $this->hour < 12 ? ($hb_lower ? "a.m." : "A.M.") : ($hb_lower ? "p.m." : "P.M.");
+                        $ret .= $this->hour < 12 ?
+                                ($hb_lower ? "a.m." : "A.M.") :
+                                ($hb_lower ? "p.m." : "P.M.");
                         $i += 4;
                     } else if (strtoupper(substr($ps_format, $i, 2)) == "AM") {
-                        $ret .= $this->hour < 12 ? ($hb_lower ? "am" : "AM") : ($hb_lower ? "pm" : "PM");
+                        $ret .= $this->hour < 12 ?
+                                ($hb_lower ? "am" : "AM") :
+                                ($hb_lower ? "pm" : "PM");
                         $i += 2;
                     }
                 }
@@ -2429,6 +2593,7 @@ class Date
      *
      * http://www.php.net/manual/en/ref.datetime.php#datetime.constants
      *
+     *
      * Formatting options:
      *
      * (Day)
@@ -2509,9 +2674,9 @@ class Date
      *                'Thu, 21 Dec 2000 16:01:07 +0200'
      *  <code>U</code> Seconds since the Unix Epoch
      *                (January 1 1970 00:00:00 GMT)
-     * <br>
      *
-     * @param string $ps_format                    the format string for returned date/time
+     * @param string $ps_format                    the format string for
+     *                                              returned date/time
      *
      * @return   string     date/time in given format
      * @access   public
@@ -2650,10 +2815,10 @@ class Date
     // {{{ getTime()
 
     /**
-     * Get this date/time in Unix time() format
+     * Returns the date/time in Unix time() format
      *
-     * Get a representation of this date in Unix time() format.  This may only be
-     * valid for dates from 1970 to ~2038.
+     * Returns a representation of this date in Unix time() format.  This may
+     * only be valid for dates from 1970 to ~2038.
      *
      * @return   int        number of seconds since the unix epoch
      * @access   public
@@ -2695,7 +2860,7 @@ class Date
      * default publicly you should call 'setTZbyID()', that is, with no
      * parameter (or a parameter of null).
      *
-     * @return   object     TimeZone object
+     * @return   void
      * @access   private
      */
     function setTZToDefault()
@@ -2786,7 +2951,8 @@ class Date
      * offsets which are the opposite way round to what people normally
      * expect.
      *
-     * @param string $ps_id                        a valid time zone id, e.g. 'Europe/London'
+     * @param string $ps_id                        a valid time zone id, e.g.
+     *                                              'Europe/London'
      *
      * @return   void
      * @access   public
@@ -2962,7 +3128,8 @@ class Date
      * not allow putenv() or if localtime() did not work in your
      * environment, but this implementation is no longer used.
      *
-     * @param object $tz                           Date_TimeZone object to convert to
+     * @param object $tz                           Date_TimeZone object to
+     *                                              convert to
      *
      * @return   void
      * @access   public
@@ -2990,7 +3157,8 @@ class Date
      * not allow putenv() or if localtime() does not work in your
      * environment, but this implementation is no longer used.
      *
-     * @param string $ps_id                        a valid time zone id, e.g. 'Europe/London'
+     * @param string $ps_id                        a valid time zone id, e.g.
+     *                                              'Europe/London'
      *
      * @return   void
      * @access   public
@@ -3019,16 +3187,21 @@ class Date
      * (e.g. UTC+1), i.e. not a geographical time zone.  However
      * it is retained for backwards compaibility.
      *
-     * @param string $ps_offset                    offset of the form '[+/-][hh]:[mm]', '[+/-][hh][mm]', or 'Z'
+     * @param string $ps_offset                    offset of the form
+     *                                              '[+/-][hh]:[mm]',
+     *                                              '[+/-][hh][mm]', or
+     *                                              'Z'
      *
      * @return   bool
      * @access   private
      */
     function toUTCbyOffset($ps_offset)
     {
-        if ($ps_offset == "Z" || preg_match('/^[+\-](00:?00|0{1,2})$/', $ps_offset)) {
+        if ($ps_offset == "Z" ||
+            preg_match('/^[+\-](00:?00|0{1,2})$/', $ps_offset)) {
             $hs_tzid = "UTC";
-        } else if (preg_match('/^[+\-]([0-9]{2,2}:?[0-5][0-9]|[0-9]{1,2})$/', $ps_offset)) {
+        } else if (preg_match('/^[+\-]([0-9]{2,2}:?[0-5][0-9]|[0-9]{1,2})$/',
+                   $ps_offset)) {
             $hs_tzid = "UTC" . $ps_offset;
         } else {
             return PEAR::raiseError("Invalid offset '$ps_offset'");
@@ -3061,7 +3234,12 @@ class Date
      */
     function addYears($pn_years)
     {
-        list($hs_year, $hs_month, $hs_day) = explode(" ", Date_Calc::addYears($pn_years, $this->day, $this->month, $this->year, "%Y %m %d"));
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::addYears($pn_years,
+                                             $this->day,
+                                             $this->month,
+                                             $this->year,
+                                             "%Y %m %d"));
         $this->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
     }
 
@@ -3082,7 +3260,12 @@ class Date
      */
     function addMonths($pn_months)
     {
-        list($hs_year, $hs_month, $hs_day) = explode(" ", Date_Calc::addMonths($pn_months, $this->day, $this->month, $this->year, "%Y %m %d"));
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::addMonths($pn_months,
+                                              $this->day,
+                                              $this->month,
+                                              $this->year,
+                                              "%Y %m %d"));
         $this->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
     }
 
@@ -3102,7 +3285,12 @@ class Date
      */
     function addDays($pn_days)
     {
-        list($hs_year, $hs_month, $hs_day) = explode(" ", Date_Calc::addDays($pn_days, $this->day, $this->month, $this->year, "%Y %m %d"));
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::addDays($pn_days,
+                                            $this->day,
+                                            $this->month,
+                                            $this->year,
+                                            "%Y %m %d"));
         $this->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
     }
 
@@ -3125,12 +3313,15 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour) =
-            Date_Calc::addHours($pn_hours,
-                                $this->on_standardday,
-                                $this->on_standardmonth,
-                                $this->on_standardyear,
-                                $this->on_standardhour);
+        list($hn_standardyear,
+             $hn_standardmonth,
+             $hn_standardday,
+             $hn_standardhour) =
+             Date_Calc::addHours($pn_hours,
+                                 $this->on_standardday,
+                                 $this->on_standardmonth,
+                                 $this->on_standardyear,
+                                 $this->on_standardhour);
 
         $this->setStandardTime($hn_standardday,
                                $hn_standardmonth,
@@ -3160,13 +3351,17 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute) =
-            Date_Calc::addMinutes($pn_minutes,
-                                  $this->on_standardday,
-                                  $this->on_standardmonth,
-                                  $this->on_standardyear,
-                                  $this->on_standardhour,
-                                  $this->on_standardminute);
+        list($hn_standardyear,
+             $hn_standardmonth,
+             $hn_standardday,
+             $hn_standardhour,
+             $hn_standardminute) =
+             Date_Calc::addMinutes($pn_minutes,
+                                   $this->on_standardday,
+                                   $this->on_standardmonth,
+                                   $this->on_standardyear,
+                                   $this->on_standardhour,
+                                   $this->on_standardminute);
 
         $this->setStandardTime($hn_standardday,
                                $hn_standardmonth,
@@ -3187,10 +3382,13 @@ class Date
      *
      * Effectively a wrapper function for 'Date_Calc::addSeconds()'.
      *
-     * @param mixed $sec                          the no of seconds to add as integer or float
-     * @param bool  $pb_countleap                 whether to count leap seconds (defaults to true)
+     * @param mixed $sec                          the no of seconds to add as
+     *                                             integer or float
+     * @param bool  $pb_countleap                 whether to count leap seconds
+     *                                             (defaults to true)
      *
-     * @return   array      array of year, month, day, hour, minute, second, part-second
+     * @return   array      array of year, month, day, hour, minute, second,
+     *                       part-second
      * @access   private
      */
     function addSecondsRaw($sec, $pb_countleap = true)
@@ -3205,7 +3403,10 @@ class Date
                                   $this->on_standardyear,
                                   $this->on_standardhour,
                                   $this->on_standardminute,
-                                  $this->on_standardpartsecond == 0.0 ? $this->on_standardsecond : $this->on_standardsecond + $this->on_standardpartsecond,
+                                  $this->on_standardpartsecond == 0.0 ?
+                                      $this->on_standardsecond :
+                                      $this->on_standardsecond +
+                                      $this->on_standardpartsecond,
                                   $pb_countleap);
 
         if (is_float($hn_secondraw)) {
@@ -3216,7 +3417,13 @@ class Date
             $hn_standardpartsecond = 0.0;
         }
 
-        return array($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute, $hn_standardsecond, $hn_standardpartsecond);
+        return array($hn_standardyear,
+                     $hn_standardmonth,
+                     $hn_standardday,
+                     $hn_standardhour,
+                     $hn_standardminute,
+                     $hn_standardsecond,
+                     $hn_standardpartsecond);
     }
 
 
@@ -3226,8 +3433,10 @@ class Date
     /**
      * Adds a given number of seconds to the date
      *
-     * @param mixed $sec                          the no of seconds to add as integer or float
-     * @param bool  $pb_countleap                 whether to count leap seconds (defaults to true)
+     * @param mixed $sec                          the no of seconds to add as
+     *                                             integer or float
+     * @param bool  $pb_countleap                 whether to count leap seconds
+     *                                             (defaults to true)
      *
      * @return   void
      * @access   public
@@ -3432,8 +3641,10 @@ class Date
      *
      * Suitable for use in sorting functions.
      *
-     * @param object $od1                          the first Date object to compare
-     * @param object $od2                          the second Date object to compare
+     * @param object $od1                          the first Date object to
+     *                                              compare
+     * @param object $od2                          the second Date object to
+     *                                              compare
      *
      * @return   int        0 if the dates are equal, -1 if '$od1' is
      *                       before '$od2', 1 if '$od1' is after '$od2'
@@ -3454,8 +3665,12 @@ class Date
                 return $res;
         }
 
-        $days1 = Date_Calc::dateToDays($d1->getStandardDay(), $d1->getStandardMonth(), $d1->getStandardYear());
-        $days2 = Date_Calc::dateToDays($d2->getStandardDay(), $d2->getStandardMonth(), $d2->getStandardYear());
+        $days1 = Date_Calc::dateToDays($d1->getStandardDay(),
+                                       $d1->getStandardMonth(),
+                                       $d1->getStandardYear());
+        $days2 = Date_Calc::dateToDays($d2->getStandardDay(),
+                                       $d2->getStandardMonth(),
+                                       $d2->getStandardYear());
         if ($days1 < $days2) return -1;
         if ($days1 > $days2) return 1;
 
@@ -3484,7 +3699,8 @@ class Date
     /**
      * Test if this date/time is before a certain date/time
      *
-     * @param object $when                         the Date object to test against
+     * @param object $when                         the Date object to test
+     *                                              against
      *
      * @return   boolean    true if this date is before $when
      * @access   public
@@ -3509,7 +3725,8 @@ class Date
     /**
      * Test if this date/time is after a certain date/time
      *
-     * @param object $when                         the Date object to test against
+     * @param object $when                         the Date object to test
+     *                                              against
      *
      * @return   boolean    true if this date is after $when
      * @access   public
@@ -3534,7 +3751,8 @@ class Date
     /**
      * Test if this date/time is exactly equal to a certain date/time
      *
-     * @param object $when                         the Date object to test against
+     * @param object $when                         the Date object to test
+     *                                              against
      *
      * @return   boolean    true if this date is exactly equal to $when
      * @access   public
@@ -3725,7 +3943,7 @@ class Date
     // {{{ getDayName()
 
     /**
-     * Gets the full name or abbriviated name of this weekday
+     * Gets the full name or abbreviated name of this weekday
      *
      * @param bool $abbr   abbreviate the name
      * @param int  $length length of abbreviation
@@ -3736,9 +3954,14 @@ class Date
     function getDayName($abbr = false, $length = 3)
     {
         if ($abbr) {
-            return Date_Calc::getWeekdayAbbrname($this->day, $this->month, $this->year, $length);
+            return Date_Calc::getWeekdayAbbrname($this->day,
+                                                 $this->month,
+                                                 $this->year,
+                                                 $length);
         } else {
-            return Date_Calc::getWeekdayFullname($this->day, $this->month, $this->year);
+            return Date_Calc::getWeekdayFullname($this->day,
+                                                 $this->month,
+                                                 $this->year);
         }
     }
 
@@ -3747,7 +3970,7 @@ class Date
     // {{{ getMonthName()
 
     /**
-     * Gets the full name or abbriviated name of this month
+     * Gets the full name or abbreviated name of this month
      *
      * @param boolean $abbr abbrivate the name
      *
@@ -3777,11 +4000,14 @@ class Date
      */
     function getNextDay()
     {
-        $day = Date_Calc::nextDay($this->day, $this->month, $this->year, "%Y-%m-%d");
-        $date = sprintf("%s %02d:%02d:%02d", $day, $this->hour, $this->minute, $this->second);
-        $newDate = new Date();
-        $newDate->setDate($date);
-        return $newDate;
+        $ret = new Date($this);
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::nextDay($this->day,
+                                            $this->month,
+                                            $this->year,
+                                            "%Y %m %d"));
+        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        return $ret;
     }
 
 
@@ -3798,11 +4024,14 @@ class Date
      */
     function getPrevDay()
     {
-        $day = Date_Calc::prevDay($this->day, $this->month, $this->year, "%Y-%m-%d");
-        $date = sprintf("%s %02d:%02d:%02d", $day, $this->hour, $this->minute, $this->second);
-        $newDate = new Date();
-        $newDate->setDate($date);
-        return $newDate;
+        $ret = new Date($this);
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::prevDay($this->day,
+                                            $this->month,
+                                            $this->year,
+                                            "%Y %m %d"));
+        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        return $ret;
     }
 
 
@@ -3814,16 +4043,19 @@ class Date
      *
      * The time of the returned Date object is the same as this time.
      *
-     * @return   object     Date object representing the next weekday
+     * @return   object     Date object representing the next week-day
      * @access   public
      */
     function getNextWeekday()
     {
-        $day = Date_Calc::nextWeekday($this->day, $this->month, $this->year, "%Y-%m-%d");
-        $date = sprintf("%s %02d:%02d:%02d", $day, $this->hour, $this->minute, $this->second);
-        $newDate = new Date();
-        $newDate->setDate($date);
-        return $newDate;
+        $ret = new Date($this);
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::nextWeekday($this->day,
+                                                $this->month,
+                                                $this->year,
+                                                "%Y %m %d"));
+        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        return $ret;
     }
 
 
@@ -3835,16 +4067,19 @@ class Date
      *
      * The time of the returned Date object is the same as this time.
      *
-     * @return   object     Date object representing the previous weekday
+     * @return   object     Date object representing the previous week-day
      * @access   public
      */
     function getPrevWeekday()
     {
-        $day = Date_Calc::prevWeekday($this->day, $this->month, $this->year, "%Y-%m-%d");
-        $date = sprintf("%s %02d:%02d:%02d", $day, $this->hour, $this->minute, $this->second);
-        $newDate = new Date();
-        $newDate->setDate($date);
-        return $newDate;
+        $ret = new Date($this);
+        list($hs_year, $hs_month, $hs_day) =
+            explode(" ", Date_Calc::prevWeekday($this->day,
+                                                $this->month,
+                                                $this->year,
+                                                "%Y %m %d"));
+        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        return $ret;
     }
 
 
@@ -3905,18 +4140,7 @@ class Date
     function getHour()
     {
         if ($this->ob_invalidtime)
-            return PEAR::raiseError("Invalid time '" .
-                                    sprintf("%02d.%02d.%02d",
-                                            $this->hour,
-                                            $this->minute,
-                                            $this->second) .
-                                    "' specified for date '" .
-                                    Date_Calc::dateFormat($this->day,
-                                                          $this->month,
-                                                          $this->year,
-                                                          "%Y-%m-%d") .
-                                    "' and in this timezone",
-                                    DATE_ERROR_INVALIDTIME);
+            return getErrorInvalidTime();
 
         return $this->hour;
     }
@@ -3972,7 +4196,10 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        return Date_Calc::secondsPastMidnight($this->hour, $this->minute, $this->second) + $this->partsecond;
+        return Date_Calc::secondsPastMidnight($this->hour,
+                                              $this->minute,
+                                              $this->second) +
+               $this->partsecond;
     }
 
 
@@ -4108,7 +4335,10 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        return Date_Calc::secondsPastMidnight($this->on_standardhour, $this->on_standardminute, $this->on_standardsecond) + $this->on_standardpartsecond;
+        return Date_Calc::secondsPastMidnight($this->on_standardhour,
+                                              $this->on_standardminute,
+                                              $this->on_standardsecond) +
+               $this->on_standardpartsecond;
     }
 
 
@@ -4144,7 +4374,10 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        return array($this->hour, $this->minute, $this->second, $this->partsecond);
+        return array($this->hour,
+                     $this->minute,
+                     $this->second,
+                     $this->partsecond);
     }
 
 
@@ -4162,19 +4395,27 @@ class Date
      * @param int  $pn_minute                    the minute
      * @param int  $pn_second                    the second
      * @param int  $pn_partsecond                the part-second
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time if
-     *                                            a repeated hour is specified
-     *                                            (defaults to false)
-     * @param bool $pb_correctinvalidtime        whether to correct, by adding the
-     *                                            local Summer time offset, the
-     *                                            specified time if it falls in
-     *                                            the skipped hour (defaults to
-     *                                            false)
+     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
+     *                                            if a repeated hour is
+     *                                            specified (defaults to false)
+     * @param bool $pb_correctinvalidtime        whether to correct, by adding
+     *                                            the local Summer time offset,
+     *                                            the specified time if it falls
+     *                                            in the skipped hour (defaults
+     *                                            to false)
      *
      * @return   void
      * @access   private
      */
-    function setLocalTime($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond, $pb_repeatedhourdefault = false, $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
+    function setLocalTime($pn_day,
+                          $pn_month,
+                          $pn_year,
+                          $pn_hour,
+                          $pn_minute,
+                          $pn_second,
+                          $pn_partsecond,
+                          $pb_repeatedhourdefault = false,
+                          $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
     {
         settype($pn_day, "int");
         settype($pn_month, "int");
@@ -4184,7 +4425,11 @@ class Date
         settype($pn_second, "int");
         settype($pn_partsecond, "float");
 
-        $hb_insummertime = $this->tz->inDaylightTime(array($pn_day, $pn_month, $pn_year, Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $pn_partsecond), $pb_repeatedhourdefault);
+        $hb_insummertime =
+            $this->tz->inDaylightTime(array($pn_day,
+                $pn_month, $pn_year, Date_Calc::secondsPastMidnight($pn_hour,
+                $pn_minute, $pn_second) + $pn_partsecond),
+                $pb_repeatedhourdefault);
         if (PEAR::isError($hb_insummertime)) {
             if ($hb_insummertime->getCode() != DATE_ERROR_INVALIDTIME) {
                 return $hb_insummertime;
@@ -4201,15 +4446,23 @@ class Date
 
                 // Add Summer time offset to passed time:
                 //
-                list($this->year, $this->month, $this->day, $this->hour, $this->minute, $hn_second) =
-                    Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
-                                          $pn_day,
-                                          $pn_month,
-                                          $pn_year,
-                                          $pn_hour,
-                                          $pn_minute,
-                                          $pn_partsecond == 0.0 ? $pn_second : $pn_second + $pn_partsecond,
-                                          false);  // N.B. do not count leap seconds
+                list($this->year,
+                     $this->month,
+                     $this->day,
+                     $this->hour,
+                     $this->minute,
+                     $hn_second) =
+                     Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
+                                           $pn_day,
+                                           $pn_month,
+                                           $pn_year,
+                                           $pn_hour,
+                                           $pn_minute,
+                                           $pn_partsecond == 0.0 ?
+                                               $pn_second :
+                                               $pn_second + $pn_partsecond,
+                                           false);  // N.B. do not count
+                                                    // leap seconds
 
                 // Split second back into integer and part-second:
                 //
@@ -4224,9 +4477,9 @@ class Date
                 $this->ob_invalidtime = false;
             } else {
                 // Hedge bets - if the user adds/subtracts a day, then the time
-                // will be uncorrupted, and if the user does addition/subtraction
-                // with the time, or requests the time, then return an error at
-                // that point:
+                // will be uncorrupted, and if the user does
+                // addition/subtraction with the time, or requests the time,
+                // then return an error at that point:
                 //
                 $this->day = $pn_day;
                 $this->month = $pn_month;
@@ -4257,15 +4510,23 @@ class Date
         if ($hb_insummertime) {
             // Calculate local standard time:
             //
-            list($this->on_standardyear, $this->on_standardmonth, $this->on_standardday, $this->on_standardhour, $this->on_standardminute, $hn_second) =
-                Date_Calc::addSeconds($this->tz->getDSTSavings() / -1000,
-                                      $pn_day,
-                                      $pn_month,
-                                      $pn_year,
-                                      $pn_hour,
-                                      $pn_minute,
-                                      $pn_partsecond == 0.0 ? $pn_second : $pn_second + $pn_partsecond,
-                                      false);  // N.B. do not count leap seconds
+            list($this->on_standardyear,
+                 $this->on_standardmonth,
+                 $this->on_standardday,
+                 $this->on_standardhour,
+                 $this->on_standardminute,
+                 $hn_second) =
+                 Date_Calc::addSeconds($this->tz->getDSTSavings() / -1000,
+                                       $pn_day,
+                                       $pn_month,
+                                       $pn_year,
+                                       $pn_hour,
+                                       $pn_minute,
+                                       $pn_partsecond == 0.0 ?
+                                           $pn_second :
+                                           $pn_second + $pn_partsecond,
+                                       false);  // N.B. do not count leap
+                                                // seconds
 
             // Split second back into integer and part-second:
             //
@@ -4308,7 +4569,13 @@ class Date
      * @return   void
      * @access   private
      */
-    function setStandardTime($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond)
+    function setStandardTime($pn_day,
+                             $pn_month,
+                             $pn_year,
+                             $pn_hour,
+                             $pn_minute,
+                             $pn_second,
+                             $pn_partsecond)
     {
         settype($pn_day, "int");
         settype($pn_month, "int");
@@ -4328,18 +4595,28 @@ class Date
 
         $this->ob_invalidtime = false;
 
-        if ($this->tz->inDaylightTimeStandard(array($pn_day, $pn_month, $pn_year, Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $pn_partsecond))) {
+        if ($this->tz->inDaylightTimeStandard(array($pn_day, $pn_month,
+            $pn_year, Date_Calc::secondsPastMidnight($pn_hour, $pn_minute,
+            $pn_second) + $pn_partsecond))) {
             // Calculate local time:
             //
-            list($this->year, $this->month, $this->day, $this->hour, $this->minute, $hn_second) =
-                Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
-                                      $pn_day,
-                                      $pn_month,
-                                      $pn_year,
-                                      $pn_hour,
-                                      $pn_minute,
-                                      $pn_partsecond == 0.0 ? $pn_second : $pn_second + $pn_partsecond,
-                                      false);  // N.B. do not count leap seconds
+            list($this->year,
+                 $this->month,
+                 $this->day,
+                 $this->hour,
+                 $this->minute,
+                 $hn_second) =
+                 Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
+                                       $pn_day,
+                                       $pn_month,
+                                       $pn_year,
+                                       $pn_hour,
+                                       $pn_minute,
+                                       $pn_partsecond == 0.0 ?
+                                           $pn_second :
+                                           $pn_second + $pn_partsecond,
+                                       false);  // N.B. do not count leap
+                                                // seconds
 
             // Split second back into integer and part-second:
             //
@@ -4375,7 +4652,8 @@ class Date
      * parameter.
      *
      * @param int  $y                            the year
-     * @param bool $pb_validate                  whether to check that the new date is valid
+     * @param bool $pb_validate                  whether to check that the new
+     *                                            date is valid
      *
      * @return   void
      * @access   public
@@ -4401,7 +4679,8 @@ class Date
      * parameter.
      *
      * @param int  $m                            the month
-     * @param bool $pb_validate                  whether to check that the new date is valid
+     * @param bool $pb_validate                  whether to check that the new
+     *                                            date is valid
      *
      * @return   void
      * @access   public
@@ -4427,7 +4706,8 @@ class Date
      * parameter.
      *
      * @param int  $d                            the day
-     * @param bool $pb_validate                  whether to check that the new date is valid
+     * @param bool $pb_validate                  whether to check that the new
+     *                                            date is valid
      *
      * @return   void
      * @access   public
@@ -4457,7 +4737,8 @@ class Date
      * @param int  $d                            the day
      * @param int  $m                            the month
      * @param int  $y                            the year
-     * @param bool $pb_validate                  whether to check that the new date is valid
+     * @param bool $pb_validate                  whether to check that the new
+     *                                            date is valid
      *
      * @return   void
      * @access   public
@@ -4482,9 +4763,9 @@ class Date
      * Invalid hours (not 0-23) are set to 0.
      *
      * @param int  $h                            the hour
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time if
-     *                                            a repeated hour is specified
-     *                                            (defaults to false)
+     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
+     *                                            if a repeated hour is
+     *                                            specified (defaults to false)
      *
      * @return   void
      * @access   public
@@ -4511,12 +4792,12 @@ class Date
     /**
      * Sets the minute field of the date object
      *
-     * Sets the minute field of the date object, invalid minutes (not 0-59) are set to 0.
+     * Invalid minutes (not 0-59) are set to 0.
      *
      * @param int  $m                            the minute
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time if
-     *                                            a repeated hour is specified
-     *                                            (defaults to false)
+     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
+     *                                            if a repeated hour is
+     *                                            specified (defaults to false)
      *
      * @return   void
      * @access   public
@@ -4546,9 +4827,9 @@ class Date
      * Invalid seconds (not 0-59) are set to 0.
      *
      * @param mixed $s                            the second as integer or float
-     * @param bool  $pb_repeatedhourdefault       whether to assume Summer time if
-     *                                             a repeated hour is specified
-     *                                             (defaults to false)
+     * @param bool  $pb_repeatedhourdefault       whether to assume Summer time
+     *                                             if a repeated hour is
+     *                                             specified (defaults to false)
      *
      *
      * @return   void
@@ -4578,9 +4859,9 @@ class Date
      * Invalid part-seconds (not < 1) are set to 0.
      *
      * @param int  $pn_ps                        the part-second
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time if
-     *                                            a repeated hour is specified
-     *                                            (defaults to false)
+     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
+     *                                            if a repeated hour is
+     *                                            specified (defaults to false)
      *
      * @return   void
      * @access   public
@@ -4617,9 +4898,9 @@ class Date
      * @param int   $h                            the hour
      * @param int   $m                            the minute
      * @param mixed $s                            the second as integer or float
-     * @param bool  $pb_repeatedhourdefault       whether to assume Summer time if
-     *                                             a repeated hour is specified
-     *                                             (defaults to false)
+     * @param bool  $pb_repeatedhourdefault       whether to assume Summer time 
+     *                                             if a repeated hour is
+     *                                             specified (defaults to false)
      *
      * @return   void
      * @access   public
@@ -4636,7 +4917,14 @@ class Date
             $hn_partsecond = 0.0;
         }
 
-        $this->setLocalTime($this->day, $this->month, $this->year, $h, $m, $hn_second, $hn_partsecond, $pb_repeatedhourdefault);
+        $this->setLocalTime($this->day,
+                            $this->month,
+                            $this->year,
+                            $h,
+                            $m,
+                            $hn_second,
+                            $hn_partsecond,
+                            $pb_repeatedhourdefault);
     }
 
 
