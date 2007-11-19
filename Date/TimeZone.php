@@ -63,13 +63,15 @@
  * This class includes time zone data (from zoneinfo) in the form of a
  * global array, $_DATE_TIMEZONE_DATA.
  *
- * @author     Baba Buehler <baba@babaz.com>
- * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, C.A. Woodcock
- * @license    http://www.opensource.org/licenses/bsd-license.php
- *             BSD License
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Date
+ * @category  Date and Time
+ * @package   Date
+ * @author    Baba Buehler <baba@babaz.com>
+ * @author    C.A. Woodcock <c01234@netcomuk.co.uk>
+ * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, C.A. Woodcock
+ * @license   http://www.opensource.org/licenses/bsd-license.php
+ *            BSD License
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Date
  */
 class Date_TimeZone
 {
@@ -225,7 +227,7 @@ class Date_TimeZone
      * specified in $id.  If the supplied ID is invalid, the created
      * time zone is "UTC".
      *
-     * @param    string     $ps_id                        the time zone ID
+     * @param string $ps_id the time zone ID
      *
      * @return   void
      * @access   public
@@ -314,8 +316,10 @@ class Date_TimeZone
     /**
      * Sets the system default time zone to the time zone in $id
      *
-     * @access public
      * @param string $id the time zone id to use
+     *
+     * @return   void
+     * @access   public
      */
     function setDefault($id)
     {
@@ -372,7 +376,7 @@ class Date_TimeZone
      * data-base', but beware of POSIX-style offsets which are the opposite
      * way round to what people normally expect.
      *
-     * @param    string     $ps_id                        the time zone ID to test
+     * @param string $ps_id                        the time zone ID to test
      *
      * @return   boolean    true if the supplied ID is valid
      * @access   public
@@ -397,13 +401,14 @@ class Date_TimeZone
      * Tests to see if this time zone is equal (ids match)
      * to a given Date_TimeZone object.
      *
-     * @access public
      * @param object Date_TimeZone $tz the timezone to test
+     *
      * @return boolean true if this time zone is equal to the supplied time zone
+     * @access public
      */
     function isEqual($tz)
     {
-        if(strcasecmp($this->id, $tz->id) == 0) {
+        if (strcasecmp($this->id, $tz->id) == 0) {
             return true;
         } else {
             return false;
@@ -424,9 +429,10 @@ class Date_TimeZone
      * for the observance of DST, but this implementation does not
      * know DST rules.
      *
-     * @access public
-     * @param    object     Date_TimeZone $tz the timezone object to test
+     * @param object $tz the timezone object to test
+     *
      * @return boolean true if this time zone is equivalent to the supplied time zone
+     * @access public
      */
     function isEquivalent($tz)
     {
@@ -470,9 +476,9 @@ class Date_TimeZone
      *  Sun>=8            first Sunday on or after the 8th
      *  Sun<=25           last Sunday on or before the 25th
      *
-     * @param    string     $ps_summertimelimitcode       code which specifies Summer time limit day
-     * @param    int        $pn_month                     start or end month
-     * @param    int        $pn_year                      year for which to calculate Summer time limit day
+     * @param string $ps_summertimelimitcode       code which specifies Summer time limit day
+     * @param int    $pn_month                     start or end month
+     * @param int    $pn_year                      year for which to calculate Summer time limit day
      *
      * @return   int
      * @access   private
@@ -494,9 +500,7 @@ class Date_TimeZone
                                                      $hn_nextmonth, 
                                                      $hn_nmyear,
                                                      "%Y %m %d",
-                                                     false       // not including this day
-                                                     )
-                            );
+                                                     false));   // not including this day
 
                 if ($hn_month != $pn_month) {
                     // This code happen legitimately if the calendar jumped some days
@@ -513,9 +517,7 @@ class Date_TimeZone
                                                          $pn_month,
                                                          $pn_year,
                                                          "%Y %m %d",
-                                                         true       // including this day
-                                                         )
-                                );
+                                                         true));    // including this day
 
                     if ($hn_month != $pn_month) {
                         $hn_day = Date_Calc::getFirstDayOfMonth($pn_month, $pn_year);
@@ -528,9 +530,7 @@ class Date_TimeZone
                                                          $pn_month,
                                                          $pn_year,
                                                          "%Y %m %d",
-                                                         true       // including this day
-                                                         )
-                                );
+                                                         true));    // including this day
 
                     if ($hn_month != $pn_month) {
                         $hn_day = Date_Calc::daysInMonth($pn_month, $pn_year);
@@ -564,11 +564,11 @@ class Date_TimeZone
      * exact hour is specified then the clocks have actually changed,
      * and this function reflects this.
      *
-     * @param    object     $pm_date                      Date object to test or array of
-     *                                                     day, month, year, seconds past
-     *                                                     midnight
-     * @param    bool       $pb_repeatedhourdefault       value to return if repeated hour
-     *                                                     is specified (defaults to false)
+     * @param object $pm_date                      Date object to test or array of
+     *                                              day, month, year, seconds past
+     *                                              midnight
+     * @param bool   $pb_repeatedhourdefault       value to return if repeated hour
+     *                                              is specified (defaults to false)
      *
      * @return   bool       true if this date is in Summer time for this time zone
      * @access   public
@@ -656,9 +656,9 @@ class Date_TimeZone
      * an invalid time (the skipped hour) and will be wrong half the
      * time if passed an ambiguous time (the repeated hour).
      *
-     * @param    object     $pm_date                      Date object to test or array of
-     *                                                     day, month, year, seconds past
-     *                                                     midnight
+     * @param object $pm_date                      Date object to test or array of
+     *                                              day, month, year, seconds past
+     *                                              midnight
      *
      * @return   bool       true if this date is in Summer time for this time zone
      * @access   public
@@ -791,7 +791,7 @@ class Date_TimeZone
      * this sort of information is beyond the scope of this package
      * altogether.)
      *
-     * @param    object     $po_date                      Date object to test
+     * @param object $po_date                      Date object to test
      *
      * @return   int        the corrected offset to UTC in milliseconds
      * @access   public
@@ -850,7 +850,7 @@ class Date_TimeZone
      * N.B. this is not a unique identifier - for this purpose use the
      * time zone ID.
      *
-     * @param    object     $po_date                      Date object to test
+     * @param object $po_date                      Date object to test
      *
      * @return   string     the long name
      * @access   public
@@ -877,7 +877,7 @@ class Date_TimeZone
      * N.B. this is not a unique identifier - for this purpose use the
      * time zone ID.
      *
-     * @param    object     $po_date                      Date object to test
+     * @param object $po_date                      Date object to test
      *
      * @return   string     the short name
      * @access   public
@@ -6738,9 +6738,8 @@ $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
  * First try _DATE_TIMEZONE_DEFAULT global, then PHP_TZ environment var,
  * then TZ environment var
  */
-if(isset($GLOBALS['_DATE_TIMEZONE_DEFAULT'])
-   && Date_TimeZone::isValidID($GLOBALS['_DATE_TIMEZONE_DEFAULT']))
-{
+if (isset($GLOBALS['_DATE_TIMEZONE_DEFAULT'])
+   && Date_TimeZone::isValidID($GLOBALS['_DATE_TIMEZONE_DEFAULT'])) {
     Date_TimeZone::setDefault($GLOBALS['_DATE_TIMEZONE_DEFAULT']);
 } else if (function_exists('version_compare') &&
            version_compare(phpversion(), "5.1.0", ">=") &&

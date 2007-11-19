@@ -13,7 +13,8 @@
  *
  * LICENSE:
  *
- * Copyright (c) 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
+ * Copyright (c) 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor,
+ * C.A. Woodcock
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +39,8 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
+ * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor,
+ *             C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
@@ -94,15 +96,18 @@ define('DATE_PRECISION_SECOND', 5);
  * It does not rely on 32-bit system time stamps, so it works dates
  * before 1970 and after 2038.
  *
- * @author     Monte Ohrt <monte@ispi.net>
- * @author     Daniel Convissor <danielc@php.net>
- * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
- * @license    http://www.opensource.org/licenses/bsd-license.php
- *             BSD License
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Date
- * @since      Class available since Release 1.2
+ * @category  Date and Time
+ * @package   Date
+ * @author    Monte Ohrt <monte@ispi.net>
+ * @author    Daniel Convissor <danielc@php.net>
+ * @author    C.A. Woodcock <c01234@netcomuk.co.uk>
+ * @copyright 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor,
+ *            C.A. Woodcock
+ * @license   http://www.opensource.org/licenses/bsd-license.php
+ *            BSD License
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Date
+ * @since     Class available since Release 1.2
  */
 class Date_Calc
 {
@@ -139,15 +144,14 @@ class Date_Calc
      * %%   literal '%'
      * </pre>
      *
-     * @param int    $day     the day of the month
-     * @param int    $month   the month
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     * @param string $format  the format string
+     * @param int    $day    the day of the month
+     * @param int    $month  the month
+     * @param int    $year   the year.  Use the complete year instead of the
+     *                        abbreviated version.  E.g. use 2005, not 05.
+     * @param string $format the format string
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function dateFormat($day, $month, $year, $format)
@@ -165,62 +169,62 @@ class Date_Calc
             if ($char == '%') {
                 $nextchar = substr($format, $strpos + 1, 1);
                 switch($nextchar) {
-                    case 'a':
-                        $output .= Date_Calc::getWeekdayAbbrname($day, $month, $year);
-                        break;
-                    case 'A':
-                        $output .= Date_Calc::getWeekdayFullname($day, $month, $year);
-                        break;
-                    case 'b':
-                        $output .= Date_Calc::getMonthAbbrname($month);
-                        break;
-                    case 'B':
-                        $output .= Date_Calc::getMonthFullname($month);
-                        break;
-                    case 'd':
-                        $output .= sprintf('%02d', $day);
-                        break;
-                    case 'e':
-                        $output .= $day;
-                        break;
-                    case 'E':
-                        $output .= Date_Calc::dateToDays($day, $month, $year);
-                        break;
-                    case 'j':
-                        $output .= Date_Calc::dayOfYear($day, $month, $year);
-                        break;
-                    case 'm':
-                        $output .= sprintf('%02d', $month);
-                        break;
-                    case 'n':
-                        $output .= "\n";
-                        break;
-                    case 't':
-                        $output .= "\t";
-                        break;
-                    case 'w':
-                        $output .= Date_Calc::dayOfWeek($day, $month, $year);
-                        break;
-                    case 'U':
-                        $output .= Date_Calc::weekOfYear($day, $month, $year);
-                        break;
-                    case 'y':
-                        // Beware the minus sign for negative years:
-                        //
-                        $hn_y = $year % 100;
-                        if ($hn_y < 0)
-                            $output .= "-" . sprintf('%02d', $hn_y * -1);
-                        else
-                            $output .= sprintf('%02d', $hn_y);
-                        break;
-                    case 'Y':
-                        $output .= $year;
-                        break;
-                    case '%':
-                        $output .= '%';
-                        break;
-                    default:
-                        $output .= $char.$nextchar;
+                case 'a':
+                    $output .= Date_Calc::getWeekdayAbbrname($day, $month, $year);
+                    break;
+                case 'A':
+                    $output .= Date_Calc::getWeekdayFullname($day, $month, $year);
+                    break;
+                case 'b':
+                    $output .= Date_Calc::getMonthAbbrname($month);
+                    break;
+                case 'B':
+                    $output .= Date_Calc::getMonthFullname($month);
+                    break;
+                case 'd':
+                    $output .= sprintf('%02d', $day);
+                    break;
+                case 'e':
+                    $output .= $day;
+                    break;
+                case 'E':
+                    $output .= Date_Calc::dateToDays($day, $month, $year);
+                    break;
+                case 'j':
+                    $output .= Date_Calc::dayOfYear($day, $month, $year);
+                    break;
+                case 'm':
+                    $output .= sprintf('%02d', $month);
+                    break;
+                case 'n':
+                    $output .= "\n";
+                    break;
+                case 't':
+                    $output .= "\t";
+                    break;
+                case 'w':
+                    $output .= Date_Calc::dayOfWeek($day, $month, $year);
+                    break;
+                case 'U':
+                    $output .= Date_Calc::weekOfYear($day, $month, $year);
+                    break;
+                case 'y':
+                    // Beware the minus sign for negative years:
+                    //
+                    $hn_y = $year % 100;
+                    if ($hn_y < 0)
+                        $output .= "-" . sprintf('%02d', $hn_y * -1);
+                    else
+                        $output .= sprintf('%02d', $hn_y);
+                    break;
+                case 'Y':
+                    $output .= $year;
+                    break;
+                case '%':
+                    $output .= '%';
+                    break;
+                default:
+                    $output .= $char.$nextchar;
                 }
                 $strpos++;
             } else {
@@ -240,11 +244,10 @@ class Date_Calc
      * NOTE: This function retrieves the local date using strftime(),
      * which may or may not be 32-bit safe on your system.
      *
-     * @param string $format  the string indicating how to format the output
+     * @param string $format the string indicating how to format the output
      *
-     * @return string  the current date in the specified format
-     *
-     * @access public
+     * @return   string     the current date in the specified format
+     * @access   public
      * @static
      */
     function dateNow($format = DATE_CALC_FORMAT)
@@ -259,9 +262,8 @@ class Date_Calc
     /**
      * Returns the current local year in format CCYY
      *
-     * @return string  the current year in four digit format
-     *
-     * @access public
+     * @return   string     the current year in four digit format
+     * @access   public
      * @static
      */
     function getYear()
@@ -276,9 +278,8 @@ class Date_Calc
     /**
      * Returns the current local month in format MM
      *
-     * @return string  the current month in two digit format
-     *
-     * @access public
+     * @return   string     the current month in two digit format
+     * @access   public
      * @static
      */
     function getMonth()
@@ -293,9 +294,8 @@ class Date_Calc
     /**
      * Returns the current local day in format DD
      *
-     * @return string  the current day of the month in two digit format
-     *
-     * @access public
+     * @return   string     the current day of the month in two digit format
+     * @access   public
      * @static
      */
     function getDay()
@@ -323,7 +323,7 @@ class Date_Calc
      *  57 - returns 1957 (1957 and 2007 are equidistant, so previous century chosen)
      *  58 - returns 1958
      *
-     * @param    int        $year                         the 2 digit year
+     * @param int $year the 2 digit year
      *
      * @return   int        the 4 digit year
      * @access   public
@@ -354,9 +354,12 @@ class Date_Calc
      *
      * This allows for future implementation of leap seconds.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
      *
      * @return   int
      * @access   public
@@ -376,10 +379,13 @@ class Date_Calc
      *
      * This allows for future implementation of leap seconds.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    int        $pn_hour                      the hour
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
+     * @param int $pn_hour                      the hour
      *
      * @return   int
      * @access   public
@@ -402,11 +408,14 @@ class Date_Calc
      *
      * This allows for future implementation of leap seconds.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    int        $pn_hour                      the hour
-     * @param    int        $pn_minute                    the minute
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
+     * @param int $pn_hour                      the hour
+     * @param int $pn_minute                    the minute
      *
      * @return   int
      * @access   public
@@ -427,9 +436,9 @@ class Date_Calc
     /**
      * Returns the no of seconds since midnight (0-86399)
      *
-     * @param    int        $pn_hour                      the hour of the day
-     * @param    int        $pn_minute                    the minute
-     * @param    mixed      $pn_second                    the second as integer or float
+     * @param int   $pn_hour                      the hour of the day
+     * @param int   $pn_minute                    the minute
+     * @param mixed $pn_second                    the second as integer or float
      *
      * @return   mixed      integer or float from 0-86399
      * @access   public
@@ -447,8 +456,8 @@ class Date_Calc
     /**
      * Returns the no of seconds since the last hour o'clock (0-3599)
      *
-     * @param    int        $pn_minute                    the minute
-     * @param    mixed      $pn_second                    the second as integer or float
+     * @param int   $pn_minute                    the minute
+     * @param mixed $pn_second                    the second as integer or float
      *
      * @return   mixed      integer or float from 0-3599
      * @access   public
@@ -466,14 +475,13 @@ class Date_Calc
     /**
      * Returns the date the specified no of hours from the given date
      *
-     * To subtract hours use a negative value for the '$pn_hours'
-     * parameter
+     * To subtract hours use a negative value for the '$pn_hours' parameter
      *
-     * @param    mixed      $pn_hours                     hours to add as integer or float
-     * @param    int        $pn_day                       the day of the month
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year
-     * @param    int        $pn_hour                      the hour
+     * @param int $pn_hours                     hours to add
+     * @param int $pn_day                       the day of the month
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year
+     * @param int $pn_hour                      the hour
      *
      * @return   array      array of year, month, day, hour
      * @access   public
@@ -496,9 +504,9 @@ class Date_Calc
         }
 
         if ($hn_days == 0) {
-            $hn_year = $pn_year;
+            $hn_year  = $pn_year;
             $hn_month = $pn_month;
-            $hn_day = $pn_day;
+            $hn_day   = $pn_day;
         } else {
             list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $pn_day, $pn_month, $pn_year, "%Y %m %d"));
         }
@@ -516,12 +524,12 @@ class Date_Calc
      * To subtract minutes use a negative value for the '$pn_minutes'
      * parameter
      *
-     * @param    mixed      $pn_minutes                   minutes to add as integer or float
-     * @param    int        $pn_day                       the day of the month
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year
-     * @param    int        $pn_hour                      the hour
-     * @param    int        $pn_minute                    the minute
+     * @param int $pn_minutes                   minutes to add
+     * @param int $pn_day                       the day of the month
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year
+     * @param int $pn_hour                      the hour
+     * @param int $pn_minute                    the minute
      *
      * @return   array      array of year, month, day, hour, minute
      * @access   public
@@ -532,7 +540,7 @@ class Date_Calc
         if ($pn_minutes == 0)
             return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute);
 
-        $hn_hours = intval($pn_minutes / 60);
+        $hn_hours  = intval($pn_minutes / 60);
         $hn_minute = $pn_minute + $pn_minutes % 60;
 
         if ($hn_minute >= 60) {
@@ -544,10 +552,10 @@ class Date_Calc
         }
 
         if ($hn_hours == 0) {
-            $hn_year = $pn_year;
+            $hn_year  = $pn_year;
             $hn_month = $pn_month;
-            $hn_day = $pn_day;
-            $hn_hour = $pn_hour;
+            $hn_day   = $pn_day;
+            $hn_hour  = $pn_hour;
         } else {
             list($hn_year, $hn_month, $hn_day, $hn_hour) = Date_Calc::addHours($hn_hours, $pn_day, $pn_month, $pn_year, $pn_hour);
         }
@@ -569,14 +577,16 @@ class Date_Calc
      * either '$pn_seconds' or '$pn_second' is a float; otherwise, it
      * is integer.
      *
-     * @param    mixed      $pn_seconds                   seconds to add as integer or float
-     * @param    int        $pn_day                       the day of the month
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year
-     * @param    int        $pn_hour                      the hour
-     * @param    int        $pn_minute                    the minute
-     * @param    mixed      $pn_second                    the second as integer or float
-     * @param    bool       $pb_countleap                 whether to count leap seconds (defaults to true)
+     * @param mixed $pn_seconds                   seconds to add as integer or
+     *                                             float
+     * @param int   $pn_day                       the day of the month
+     * @param int   $pn_month                     the month
+     * @param int   $pn_year                      the year
+     * @param int   $pn_hour                      the hour
+     * @param int   $pn_minute                    the minute
+     * @param mixed $pn_second                    the second as integer or float
+     * @param bool  $pb_countleap                 whether to count leap seconds
+     *                                             (defaults to true)
      *
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public
@@ -588,10 +598,10 @@ class Date_Calc
             return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute, $pn_second);
 
         if ($pb_countleap) {
-            $hn_year = $pn_year;
-            $hn_month = $pn_month;
-            $hn_day = $pn_day;
-            $hn_hour = $pn_hour;
+            $hn_year   = $pn_year;
+            $hn_month  = $pn_month;
+            $hn_day    = $pn_day;
+            $hn_hour   = $pn_hour;
             $hn_minute = $pn_minute;
             $hn_second = $pn_second + $pn_seconds;
 
@@ -628,10 +638,10 @@ class Date_Calc
             }
 
             if ($hn_minutes == 0) {
-                $hn_year = $pn_year;
-                $hn_month = $pn_month;
-                $hn_day = $pn_day;
-                $hn_hour = $pn_hour;
+                $hn_year   = $pn_year;
+                $hn_month  = $pn_month;
+                $hn_day    = $pn_day;
+                $hn_hour   = $pn_hour;
                 $hn_minute = $pn_minute;
             } else {
                 list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes($hn_minutes, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute);
@@ -661,9 +671,10 @@ class Date_Calc
      * The algorithm is valid for all years (positive and negative), and
      * also for years preceding 4714 B.C.
      *
-     * @param    int        $day                          the day of the month
-     * @param    int        $month                        the month
-     * @param    int        $year                         the year (using 'Astronomical' year numbering)
+     * @param int $day                          the day of the month
+     * @param int $month                        the month
+     * @param int $year                         the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   int        the number of days since 24th November, 4714 B.C.
      * @access   public
@@ -680,8 +691,8 @@ class Date_Calc
         }
 
         $hb_negativeyear = $year < 0;
-        $century = intval($year / 100);
-        $year = $year % 100;
+        $century         = intval($year / 100);
+        $year            = $year % 100;
 
         if ($hb_negativeyear) {
             // Subtract 1 because year 0 is a leap year;
@@ -720,8 +731,10 @@ class Date_Calc
      *
      * N.B. Monday, 24th November, 4714 B.C. is Julian Day '0'.
      *
-     * @param    int        $days                         the number of days since 24th November, 4714 B.C.
-     * @param    string     $format                       the string indicating how to format the output
+     * @param int    $days                         the number of days since 24th
+     *                                              November, 4714 B.C.
+     * @param string $format                       the string indicating how to
+     *                                              format the output
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -734,13 +747,13 @@ class Date_Calc
         $days    = floor(4 * $days - 1 - 146097 * $century);
         $day     = floor($days / 4);
 
-        $year    = floor((4 * $day +  3) / 1461);
-        $day     = floor(4 * $day +  3 - 1461 * $year);
-        $day     = floor(($day +  4) / 4);
+        $year = floor((4 * $day +  3) / 1461);
+        $day  = floor(4 * $day +  3 - 1461 * $year);
+        $day  = floor(($day +  4) / 4);
 
-        $month   = floor((5 * $day - 3) / 153);
-        $day     = floor(5 * $day - 3 - 153 * $month);
-        $day     = floor(($day +  5) /  5);
+        $month = floor((5 * $day - 3) / 153);
+        $day   = floor(5 * $day - 3 - 153 * $month);
+        $day   = floor(($day +  5) /  5);
 
         $year = $century * 100 + $year;
         if ($month < 10) {
@@ -760,7 +773,8 @@ class Date_Calc
     /**
      * Returns array of the month numbers, in order, for the given year
      *
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   array      array of integer month numbers, in order
      * @access   public
@@ -786,7 +800,8 @@ class Date_Calc
      * TODO: cache values to some global array to avoid performance
      * hits when called more than once.
      *
-     * @param   int         $pb_abbreviated               whether to return the abbreviated form of the months
+     * @param int $pb_abbreviated               whether to return the
+     *                                           abbreviated form of the months
      *
      * @return  array       associative array of integer month numbers, in order, to month names
      * @access  public
@@ -808,17 +823,17 @@ class Date_Calc
     /**
      * Returns month and year of previous month
      *
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   array      array of year, month as integers
-     *
      * @access   public
      * @static
      */
     function prevMonth($pn_month, $pn_year)
     {
-        $ha_months = Date_Calc::getMonths($pn_year);
+        $ha_months   = Date_Calc::getMonths($pn_year);
         $hn_monthkey = array_search($pn_month, $ha_months);
         if (array_key_exists($hn_monthkey - 1, $ha_months)) {
             return array((int) $pn_year, $ha_months[$hn_monthkey - 1]);
@@ -835,17 +850,17 @@ class Date_Calc
     /**
      * Returns month and year of next month
      *
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   array      array of year, month as integers
-     *
      * @access   public
      * @static
      */
     function nextMonth($pn_month, $pn_year)
     {
-        $ha_months = Date_Calc::getMonths($pn_year);
+        $ha_months   = Date_Calc::getMonths($pn_year);
         $hn_monthkey = array_search($pn_month, $ha_months);
         if (array_key_exists($hn_monthkey + 1, $ha_months)) {
             return array((int) $pn_year, $ha_months[$hn_monthkey + 1]);
@@ -866,8 +881,10 @@ class Date_Calc
      * To subtract months use a negative value for the '$pn_months'
      * parameter
      *
-     * @param    int        $pn_months                    months to add
-     * @param    int        $pn_days                      'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
+     * @param int $pn_months                    months to add
+     * @param int $pn_days                      'Julian Day', i.e. the no of
+     *                                           days since 1st January, 4713
+     *                                           B.C.
      *
      * @return   int        'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
      * @access   public
@@ -885,7 +902,7 @@ class Date_Calc
         $hn_dayoffset = $pn_days - Date_Calc::firstDayOfMonth($hn_month, $hn_year);
 
         $hn_retmonth = $hn_month + $pn_months % 12;
-        $hn_retyear = $hn_year + intval($pn_months / 12);
+        $hn_retyear  = $hn_year + intval($pn_months / 12);
         if ($hn_retmonth < 1) {
             $hn_retmonth += 12;
             --$hn_retyear;
@@ -895,7 +912,7 @@ class Date_Calc
         }
 
         $hn_retmonthfirstday = Date_Calc::firstDayOfMonth($hn_retmonth, $hn_retyear);
-        $hn_retmonthlastday = Date_Calc::lastDayOfMonth($hn_retmonth, $hn_retyear);
+        $hn_retmonthlastday  = Date_Calc::lastDayOfMonth($hn_retmonth, $hn_retyear);
 
         if ($hn_dayoffset > $hn_retmonthlastday - $hn_retmonthfirstday) {
             return $hn_retmonthlastday;
@@ -914,11 +931,16 @@ class Date_Calc
      * To subtract months use a negative value for the '$pn_months'
      * parameter
      *
-     * @param    int        $pn_months                    months to add
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    string     $ps_format                    string specifying how to format the output
+     * @param int    $pn_months                    months to add
+     * @param int    $pn_day                       the day of the month, default
+     *                                              is current local day
+     * @param int    $pn_month                     the month, default is current
+     *                                             local month
+     * @param int    $pn_year                      the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $ps_format                    string specifying how to
+     *                                              format the output
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -954,8 +976,10 @@ class Date_Calc
      * To subtract years use a negative value for the '$pn_years'
      * parameter
      *
-     * @param    int        $pn_years                     years to add
-     * @param    int        $pn_days                      'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
+     * @param int $pn_years                     years to add
+     * @param int $pn_days                      'Julian Day', i.e. the no of
+     *                                           days since 1st January, 4713
+     *                                           B.C.
      *
      * @return   int        'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
      * @access   public
@@ -976,11 +1000,16 @@ class Date_Calc
      * To subtract years use a negative value for the '$pn_years'
      * parameter
      *
-     * @param    int        $pn_years                     years to add
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    string     $ps_format                    string specifying how to format the output
+     * @param int    $pn_years                     years to add
+     * @param int    $pn_day                       the day of the month, default
+     *                                              is current local day
+     * @param int    $pn_month                     the month, default is current
+     *                                              local month
+     * @param int    $pn_year                      the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $ps_format                    string specifying how to
+     *                                              format the output
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -1014,11 +1043,16 @@ class Date_Calc
      *
      * To subtract days use a negative value for the '$pn_days' parameter
      *
-     * @param    int        $pn_days                      days to add
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    string     $ps_format                    string specifying how to format the output
+     * @param int    $pn_days                      days to add
+     * @param int    $pn_day                       the day of the month, default
+     *                                              is current local day
+     * @param int    $pn_month                     the month, default is current
+     *                                              local month
+     * @param int    $pn_year                      the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $ps_format                    string specifying how to
+     *                                              format the output
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -1049,8 +1083,9 @@ class Date_Calc
     /**
      * Returns first day of the specified month of specified year as integer
      *
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   int        number of first day of month
      * @access   public
@@ -1068,8 +1103,9 @@ class Date_Calc
     /**
      * Returns last day of the specified month of specified year as integer
      *
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   int        number of last day of month
      * @access   public
@@ -1088,12 +1124,12 @@ class Date_Calc
      * Returns the Julian Day of the first day of the month of the specified
      * year (i.e. the no of days since 24th November, 4714 B.C.)
      *
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   integer    the number of days since 24th November, 4714 B.C.
-     *
-     * @access public
+     * @access   public
      * @static
      */
     function firstDayOfMonth($pn_month, $pn_year)
@@ -1109,12 +1145,12 @@ class Date_Calc
      * Returns the Julian Day of the last day of the month of the specified
      * year (i.e. the no of days since 24th November, 4714 B.C.)
      *
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   integer    the number of days since 24th November, 4714 B.C.
-     *
-     * @access public
+     * @access   public
      * @static
      */
     function lastDayOfMonth($pn_month, $pn_year)
@@ -1131,11 +1167,11 @@ class Date_Calc
      * Returns the Julian Day of the first day of the year (i.e. the no of
      * days since 24th November, 4714 B.C.)
      *
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   integer    the number of days since 24th November, 4714 B.C.
-     *
-     * @access public
+     * @access   public
      * @static
      */
     function firstDayOfYear($pn_year)
@@ -1152,11 +1188,11 @@ class Date_Calc
      * Returns the Julian Day of the last day of the year (i.e. the no of
      * days since 24th November, 4714 B.C.)
      *
-     * @param    int        $pn_year                      the year (using 'Astronomical' year numbering)
+     * @param int $pn_year                      the year (using 'Astronomical'
+     *                                           year numbering)
      *
      * @return   integer    the number of days since 24th November, 4714 B.C.
-     *
-     * @access public
+     * @access   public
      * @static
      */
     function lastDayOfYear($pn_year)
@@ -1184,13 +1220,13 @@ class Date_Calc
      * The algorithm is valid for all years (positive and negative), and
      * also for years preceding 4713 B.C.
      *
-     * @param int    $day     the day of the month
-     * @param int    $month   the month
-     * @param int    $year    the year (using 'Astronomical' year numbering)
+     * @param int $day                          the day of the month
+     * @param int $month                        the month
+     * @param int $year                         the year (using 'Astronomical'
+     *                                           year numbering)
      *
-     * @return integer  the number of days since 1st January, 4713 B.C.
-     *
-     * @access public
+     * @return   int        the number of days since 1st January, 4713 B.C.
+     * @access   public
      * @static
      */
     function dateToDaysJulian($day, $month, $year)
@@ -1233,27 +1269,28 @@ class Date_Calc
      * Returned date belongs to the proleptic Julian calendar, using
      * 'Astronomical' year numbering.
      *
-     * @param int    $days    the number of days since 1st January, 4713 B.C.
-     * @param string $format  the string indicating how to format the output
+     * @param int    $days                         the number of days since 1st
+     *                                              January, 4713 B.C.
+     * @param string $format                       the string indicating how to
+     *                                              format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function daysToDateJulian($days, $format = DATE_CALC_FORMAT)
     {
-        $days   -= 1721117;
-        $days    = floor(4 * $days - 1);
-        $day     = floor($days / 4);
+        $days -= 1721117;
+        $days  = floor(4 * $days - 1);
+        $day   = floor($days / 4);
 
-        $year    = floor((4 * $day +  3) / 1461);
-        $day     = floor(4 * $day +  3 - 1461 * $year);
-        $day     = floor(($day +  4) / 4);
+        $year = floor((4 * $day +  3) / 1461);
+        $day  = floor(4 * $day +  3 - 1461 * $year);
+        $day  = floor(($day +  4) / 4);
 
-        $month   = floor((5 * $day - 3) / 153);
-        $day     = floor(5 * $day - 3 - 153 * $month);
-        $day     = floor(($day +  5) /  5);
+        $month = floor((5 * $day - 3) / 153);
+        $day   = floor(5 * $day - 3 - 153 * $month);
+        $day   = floor(($day +  5) /  5);
 
         if ($month < 10) {
             $month +=3;
@@ -1279,12 +1316,11 @@ class Date_Calc
      * N.B. the ISO week day no for Sunday is defined as 7, whereas this
      * class and its related functions defines Sunday as 0.
      *
-     * @param    int        $pn_day                       the day of the month
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year
+     * @param int $pn_day                       the day of the month
+     * @param int $pn_month                     the month
+     * @param int $pn_year                      the year
      *
      * @return   array      array of ISO Year, ISO Week No, ISO Day No as integers
-     *
      * @access   public
      * @static
      */
@@ -1311,7 +1347,7 @@ class Date_Calc
         if ($hn_wd <= $hn_jd - Date_Calc::lastDayOfYear($pn_year) + 3) {
             // ISO week is the first week of the next ISO year:
             //
-            $hn_year = $pn_year + 1;
+            $hn_year    = $pn_year + 1;
             $hn_isoweek = 1;
         } else {
             switch ($hn_wd1 = Date_Calc::daysToDayOfWeek($hn_jd1)) {
@@ -1321,7 +1357,7 @@ class Date_Calc
             case 4:
                 // Monday - Thursday:
                 //
-                $hn_year = $pn_year;
+                $hn_year    = $pn_year;
                 $hn_isoweek = floor(($hn_day + $hn_wd1 - 2) / 7) + 1;
                 break;
             case 0:
@@ -1334,9 +1370,9 @@ class Date_Calc
                     // ISO week is the last week of the previous ISO year:
                     //
                     list($hn_year, $hn_lastmonth, $hn_lastday) = explode(" ", Date_Calc::daysToDate($hn_jd1 - 1, "%Y %m %d"));
-                    list($hn_year, $hn_isoweek, $hn_pisoday) = Date_Calc::isoWeekDate($hn_lastday, $hn_lastmonth, $hn_year);
+                    list($hn_year, $hn_isoweek, $hn_pisoday)   = Date_Calc::isoWeekDate($hn_lastday, $hn_lastmonth, $hn_year);
                 } else {
-                    $hn_year = $pn_year;
+                    $hn_year    = $pn_year;
                     $hn_isoweek = floor(($hn_day + $hn_wd1 - 9) / 7) + 1;
                 }
 
@@ -1356,14 +1392,13 @@ class Date_Calc
      *
      * Uses ISO 8601 definitions.
      *
-     * @param int    $day     the day of the month
-     * @param int    $month   the month
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
+     * @param int $day     the day of the month
+     * @param int $month   the month
+     * @param int $year    the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
      *
-     * @return string  the date in ISO Year-WeekNumber-WeekDay format
-     *
-     * @access public
+     * @return   string     the date in ISO Year-WeekNumber-WeekDay format
+     * @access   public
      * @static
      */
     function gregorianToISO($day, $month, $year)
@@ -1400,13 +1435,16 @@ class Date_Calc
      *
      * Returned week is an integer from 1 to 53.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
+     * @param int $pn_firstdayofweek            optional integer specifying the
+     *                                           first day of the week
      *
      * @return   array      array of year, week no as integers
-     *
      * @access   public
      * @static
      */
@@ -1422,8 +1460,8 @@ class Date_Calc
             $pn_day = Date_Calc::dateNow('%d');
         }
 
-        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
-        $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
+        $hn_wd1  = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
+        $hn_day  = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
         $hn_week = floor(($hn_day + (10 + $hn_wd1 - $pn_firstdayofweek) % 7 + 3) / 7);
 
         if ($hn_week > 0) {
@@ -1458,13 +1496,16 @@ class Date_Calc
      *
      * Returned week is an integer from 1 to 53.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
+     * @param int $pn_firstdayofweek            optional integer specifying the
+     *                                           first day of the week
      *
      * @return   array      array of year, week no as integers
-     *
      * @access   public
      * @static
      */
@@ -1480,8 +1521,8 @@ class Date_Calc
             $pn_day = Date_Calc::dateNow('%d');
         }
 
-        $hn_wd1 = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
-        $hn_day = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
+        $hn_wd1  = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
+        $hn_day  = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
         $hn_week = floor(($hn_day + (6 + $hn_wd1 - $pn_firstdayofweek) % 7) / 7);
 
         if ($hn_week > 0) {
@@ -1511,11 +1552,10 @@ class Date_Calc
      * @param string $year    the year in four digit format.  Must be between
      *                         -1000 B.C. and 3000 A.D.
      *
-     * @return float  the julian date the season starts on
-     *
-     * @author James Mark Hamilton <mhamilton@qwest.net>
-     * @author Robert Butler <rob@maxwellcreek.org>
-     * @access public
+     * @author   James Mark Hamilton <mhamilton@qwest.net>
+     * @author   Robert Butler <rob@maxwellcreek.org>
+     * @return   float      the julian date the season starts on
+     * @access   public
      * @static
      */
     function dateSeason($season, $year = 0)
@@ -1526,34 +1566,34 @@ class Date_Calc
         if (($year >= -1000) && ($year <= 1000)) {
             $y = $year / 1000.0;
             switch ($season) {
-                case 'VERNALEQUINOX':
-                    $juliandate = (((((((-0.00071 * $y) - 0.00111) * $y) + 0.06134) * $y) + 365242.1374) * $y) + 1721139.29189;
-                    break;
-                case 'SUMMERSOLSTICE':
-                    $juliandate = (((((((0.00025 * $y) + 0.00907) * $y) - 0.05323) * $y) + 365241.72562) * $y) + 1721233.25401;
-                    break;
-                case 'AUTUMNALEQUINOX':
-                    $juliandate = (((((((0.00074 * $y) - 0.00297) * $y) - 0.11677) * $y) + 365242.49558) * $y) + 1721325.70455;
-                    break;
-                case 'WINTERSOLSTICE':
-                default:
-                    $juliandate = (((((((-0.00006 * $y) - 0.00933) * $y) - 0.00769) * $y) + 365242.88257) * $y) + 1721414.39987;
+            case 'VERNALEQUINOX':
+                $juliandate = (((((((-0.00071 * $y) - 0.00111) * $y) + 0.06134) * $y) + 365242.1374) * $y) + 1721139.29189;
+                break;
+            case 'SUMMERSOLSTICE':
+                $juliandate = (((((((0.00025 * $y) + 0.00907) * $y) - 0.05323) * $y) + 365241.72562) * $y) + 1721233.25401;
+                break;
+            case 'AUTUMNALEQUINOX':
+                $juliandate = (((((((0.00074 * $y) - 0.00297) * $y) - 0.11677) * $y) + 365242.49558) * $y) + 1721325.70455;
+                break;
+            case 'WINTERSOLSTICE':
+            default:
+                $juliandate = (((((((-0.00006 * $y) - 0.00933) * $y) - 0.00769) * $y) + 365242.88257) * $y) + 1721414.39987;
             }
         } elseif (($year > 1000) && ($year <= 3000)) {
             $y = ($year - 2000) / 1000;
             switch ($season) {
-                case 'VERNALEQUINOX':
-                    $juliandate = (((((((-0.00057 * $y) - 0.00411) * $y) + 0.05169) * $y) + 365242.37404) * $y) + 2451623.80984;
-                    break;
-                case 'SUMMERSOLSTICE':
-                    $juliandate = (((((((-0.0003 * $y) + 0.00888) * $y) + 0.00325) * $y) + 365241.62603) * $y) + 2451716.56767;
-                    break;
-                case 'AUTUMNALEQUINOX':
-                    $juliandate = (((((((0.00078 * $y) + 0.00337) * $y) - 0.11575) * $y) + 365242.01767) * $y) + 2451810.21715;
-                    break;
-                case 'WINTERSOLSTICE':
-                default:
-                    $juliandate = (((((((0.00032 * $y) - 0.00823) * $y) - 0.06223) * $y) + 365242.74049) * $y) + 2451900.05952;
+            case 'VERNALEQUINOX':
+                $juliandate = (((((((-0.00057 * $y) - 0.00411) * $y) + 0.05169) * $y) + 365242.37404) * $y) + 2451623.80984;
+                break;
+            case 'SUMMERSOLSTICE':
+                $juliandate = (((((((-0.0003 * $y) + 0.00888) * $y) + 0.00325) * $y) + 365241.62603) * $y) + 2451716.56767;
+                break;
+            case 'AUTUMNALEQUINOX':
+                $juliandate = (((((((0.00078 * $y) + 0.00337) * $y) - 0.11575) * $y) + 365242.01767) * $y) + 2451810.21715;
+                break;
+            case 'WINTERSOLSTICE':
+            default:
+                $juliandate = (((((((0.00032 * $y) - 0.00823) * $y) - 0.06223) * $y) + 365242.74049) * $y) + 2451900.05952;
             }
         }
         return $juliandate;
@@ -1566,12 +1606,15 @@ class Date_Calc
     /**
      * Returns number of days since 31 December of year before given date
      *
-     * @param   int         $pn_day                       the day of the month, default is current local day
-     * @param   int         $pn_month                     the month, default is current local month
-     * @param   int         $pn_year                      the year in four digit format, default is current local year
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
      *
-     * @return  int
-     * @access  public
+     * @return   int
+     * @access   public
      * @static
      */
     function dayOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
@@ -1586,7 +1629,7 @@ class Date_Calc
             $pn_day = Date_Calc::dateNow('%d');
         }
 
-        $hn_jd = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
+        $hn_jd  = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
         $hn_jd1 = Date_Calc::firstDayOfYear($pn_year);
         return $hn_jd - $hn_jd1 + 1;
     }
@@ -1598,12 +1641,15 @@ class Date_Calc
     /**
      * Returns number of days since 31 December of year before given date
      *
-     * @param   int         $day                          the day of the month, default is current local day
-     * @param   int         $month                        the month, default is current local month
-     * @param   int         $year                         the year in four digit format, default is current local year
+     * @param int $day                          the day of the month, default is
+     *                                           current local day
+     * @param int $month                        the month, default is current
+     *                                           local month
+     * @param int $year                         the year in four digit format,
+     *                                           default is current local year
      *
-     * @return  int
-     * @access  public
+     * @return   int
+     * @access   public
      * @static
      */
     function julianDate($day = 0, $month = 0, $year = null)
@@ -1618,12 +1664,13 @@ class Date_Calc
     /**
      * Returns the full weekday name for the given date
      *
-     * @param int    $day     the day of the month, default is current local day
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int $day     the day of the month, default is current local day
+     * @param int $month   the month, default is current local month
+     * @param int $year    the year in four digit format, default is current
+     *                                           local year
      *
-     * @return string  the full name of the day of the week
-     * @access public
+     * @return   string     the full name of the day of the week
+     * @access   public
      * @static
      */
     function getWeekdayFullname($day = 0, $month = 0, $year = null)
@@ -1639,7 +1686,7 @@ class Date_Calc
         }
 
         $weekday_names = Date_Calc::getWeekDays();
-        $weekday = Date_Calc::dayOfWeek($day, $month, $year);
+        $weekday       = Date_Calc::dayOfWeek($day, $month, $year);
         return $weekday_names[$weekday];
     }
 
@@ -1650,16 +1697,16 @@ class Date_Calc
     /**
      * Returns the abbreviated weekday name for the given date
      *
-     * @param int    $day     the day of the month, default is current local day
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
-     * @param int    $length  the length of abbreviation
+     * @param int $day     the day of the month, default is current local day
+     * @param int $month   the month, default is current local month
+     * @param int $year    the year in four digit format, default is current
+     *                      local year
+     * @param int $length  the length of abbreviation
      *
-     * @return string  the abbreviated name of the day of the week
-     *
-     * @access public
+     * @return   string     the abbreviated name of the day of the week
+     * @access   public
      * @static
-     * @see Date_Calc::getWeekdayFullname()
+     * @see      Date_Calc::getWeekdayFullname()
      */
     function getWeekdayAbbrname($day = 0, $month = 0, $year = null, $length = 3)
     {
@@ -1674,7 +1721,7 @@ class Date_Calc
         }
 
         $weekday_names = Date_Calc::getWeekDays(true);
-        $weekday = Date_Calc::dayOfWeek($day, $month, $year);
+        $weekday       = Date_Calc::dayOfWeek($day, $month, $year);
         return $weekday_names[$weekday];
     }
 
@@ -1685,11 +1732,10 @@ class Date_Calc
     /**
      * Returns the full month name for the given month
      *
-     * @param int    $month   the month
+     * @param int $month   the month
      *
-     * @return string  the full name of the month
-     *
-     * @access public
+     * @return   string     the full name of the month
+     * @access   public
      * @static
      */
     function getMonthFullname($month)
@@ -1713,11 +1759,10 @@ class Date_Calc
      * @param int    $month   the month
      * @param int    $length  the length of abbreviation
      *
-     * @return string  the abbreviated name of the month
-     *
-     * @access public
+     * @return   string     the abbreviated name of the month
+     * @access   public
      * @static
-     * @see Date_Calc::getMonthFullname
+     * @see      Date_Calc::getMonthFullname
      */
     function getMonthAbbrname($month, $length = 3)
     {
@@ -1742,16 +1787,15 @@ class Date_Calc
      * @param string $month  the name of the month to examine.
      *                        Case insensitive.
      *
-     * @return integer  the month's number
-     *
-     * @access public
+     * @return   int        the month's number
+     * @access   public
      * @static
      */
     function getMonthFromFullName($month)
     {
-        $month = strtolower($month);
+        $month  = strtolower($month);
         $months = Date_Calc::getMonthNames();
-        while(list($id, $name) = each($months)) {
+        while (list($id, $name) = each($months)) {
             if (ereg($month, strtolower($name))) {
                 return $id;
             }
@@ -1772,10 +1816,11 @@ class Date_Calc
      * TODO: cache values to some global array to avoid preformace
      * hits when called more than once.
      *
-     * @param   int         $pb_abbreviated               whether to return the abbreviated form of the days
+     * @param int $pb_abbreviated               whether to return the
+     *                                           abbreviated form of the days
      *
-     * @return  array       an array of week day names
-     * @access  public
+     * @return   array      an array of week-day names
+     * @access   public
      * @static
      */
     function getWeekDays($pb_abbreviated = false)
@@ -1800,7 +1845,8 @@ class Date_Calc
      *
      * N.B. Monday, 24th November, 4714 B.C. is Julian Day '0'.
      *
-     * @param    int        $pn_days                      the number of days since 24th November, 4714 B.C.
+     * @param int $pn_days                      the number of days since 24th
+     *                                           November, 4714 B.C.
      *
      * @return   int        integer from 0 to 7 where 0 represents Sunday
      * @access   public
@@ -1823,12 +1869,13 @@ class Date_Calc
      *
      * The algorithm is valid for all years (positive and negative).
      *
-     * @param int    $day     the day of the month, default is current local day
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int $day     the day of the month, default is current local day
+     * @param int $month   the month, default is current local month
+     * @param int $year    the year in four digit format, default is current
+     *                      local year
      *
-     * @return int  the number of the day in the week
-     * @access public
+     * @return   int        the number of the day in the week
+     * @access   public
      * @static
      */
     function dayOfWeek($day = null, $month = null, $year = null)
@@ -1843,20 +1890,20 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
-//        if ($month <= 2) {
-//            $month += 12;
-//            --$year;
-//        }
+        // if ($month <= 2) {
+        //     $month += 12;
+        //     --$year;
+        // }
 
-//        $wd = ($day +
-//               intval((13 * $month + 3) / 5) +
-//               $year +
-//               floor($year / 4) -
-//               floor($year / 100) +
-//               floor($year / 400) +
-//               1) % 7;
+        // $wd = ($day +
+        //        intval((13 * $month + 3) / 5) +
+        //        $year +
+        //        floor($year / 4) -
+        //        floor($year / 100) +
+        //        floor($year / 400) +
+        //        1) % 7;
 
-//        return (int) ($wd < 0 ? $wd + 7 : $wd);
+        // return (int) ($wd < 0 ? $wd + 7 : $wd);
 
         return Date_Calc::daysToDayOfWeek(Date_Calc::dateToDays($day, $month, $year));
     }
@@ -1873,9 +1920,12 @@ class Date_Calc
      * 31st December and have only one day, except in a leap year, in
      * which it will start a day earlier and contain two days.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
      *
      * @return   int        integer from 1 to 53
      * @access   public
@@ -1919,10 +1969,14 @@ class Date_Calc
      * of the week, and 31st December is the first day of the week.  In this case,
      * both weeks 1 and 54 will contain one day only.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
-     * @param    int        $pn_firstdayofweek            optional integer specifying the first day of the week
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
+     * @param int $pn_firstdayofweek            optional integer specifying the
+     *                                           first day of the week
      *
      * @return   int        integer from 1 to 54
      * @access   public
@@ -1957,17 +2011,20 @@ class Date_Calc
      * 31st December and have only one day, except in a leap year, in
      * which it will start a day earlier and contain two days.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
-     * @param    int        $pn_month                     the month, default is current local month
-     * @param    int        $pn_year                      the year in four digit format, default is current local year
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
+     * @param int $pn_month                     the month, default is current
+     *                                           local month
+     * @param int $pn_year                      the year in four digit format,
+     *                                           default is current local year
      *
      * @return   int        integer from 1 to 53
      * @access   public
      * @static
      */
-    function weekOfYear($day = 0, $month = 0, $year = null)
+    function weekOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
-        return Date_Calc::weekOfYearAbsolute($day, $month, $year);
+        return Date_Calc::weekOfYearAbsolute($pn_day, $pn_month, $pn_year);
     }
 
 
@@ -1982,7 +2039,8 @@ class Date_Calc
      * the 29th of the month and have between 1 and 3 days, except
      * in February in a non-leap year, when there will be 4 weeks only.
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
      *
      * @return   int        integer from 1 to 5
      * @access   public
@@ -2003,7 +2061,8 @@ class Date_Calc
     /**
      * Alias for 'weekOfMonthAbsolute()'
      *
-     * @param    int        $pn_day                       the day of the month, default is current local day
+     * @param int $pn_day                       the day of the month, default is
+     *                                           current local day
      *
      * @return   int        integer from 1 to 5
      * @access   public
@@ -2021,12 +2080,13 @@ class Date_Calc
     /**
      * Returns quarter of the year for given date
      *
-     * @param int    $day     the day of the month, default is current local day
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int $day     the day of the month, default is current local day
+     * @param int $month   the month, default is current local month
+     * @param int $year    the year in four digit format, default is current
+     *                      local year
      *
-     * @return int  the number of the quarter in the year
-     * @access public
+     * @return   int        the number of the quarter in the year
+     * @access   public
      * @static
      */
     function quarterOfYear($day = 0, $month = 0, $year = null)
@@ -2044,8 +2104,10 @@ class Date_Calc
     /**
      * Returns the number of days in the given month
      *
-     * @param    int        $month                        the month, default is current local month
-     * @param    int        $year                         the year in four digit format, default is current local year
+     * @param int $month                        the month, default is current
+     *                                           local month
+     * @param int $year                         the year in four digit format,
+     *                                           default is current local year
      *
      * @return   int        the number of days the month has
      * @access   public
@@ -2070,7 +2132,8 @@ class Date_Calc
     /**
      * Returns the number of days in the given year
      *
-     * @param    int        $year                         the year in four digit format, default is current local year
+     * @param int $year                         the year in four digit format,
+     *                                           default is current local year
      *
      * @return   int        the number of days the year has
      * @access   public
@@ -2082,7 +2145,8 @@ class Date_Calc
             $year = Date_Calc::dateNow('%Y');
         }
 
-        return Date_Calc::firstDayOfYear($year + 1) - Date_Calc::firstDayOfYear($month, $year);
+        return Date_Calc::firstDayOfYear($year + 1) - 
+               Date_Calc::firstDayOfYear($month, $year);
     }
 
 
@@ -2095,12 +2159,12 @@ class Date_Calc
      * Useful for determining the number of rows when displaying a typical
      * month calendar.
      *
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int $month   the month, default is current local month
+     * @param int $year    the year in four digit format, default is current
+     *                      local year
      *
-     * @return int  the number of weeks the month has
-     *
-     * @access public
+     * @return   int        the number of weeks the month has
+     * @access   public
      * @static
      */
     function weeksInMonth($month = 0, $year = null)
@@ -2114,13 +2178,13 @@ class Date_Calc
         $FDOM = Date_Calc::firstOfMonthWeekday($month, $year);
         if (DATE_CALC_BEGIN_WEEKDAY==1 && $FDOM==0) {
             $first_week_days = 7 - $FDOM + DATE_CALC_BEGIN_WEEKDAY;
-            $weeks = 1;
+            $weeks           = 1;
         } elseif (DATE_CALC_BEGIN_WEEKDAY==0 && $FDOM == 6) {
             $first_week_days = 7 - $FDOM + DATE_CALC_BEGIN_WEEKDAY;
-            $weeks = 1;
+            $weeks           = 1;
         } else {
             $first_week_days = DATE_CALC_BEGIN_WEEKDAY - $FDOM;
-            $weeks = 0;
+            $weeks           = 0;
         }
         $first_week_days %= 7;
         return ceil((Date_Calc::daysInMonth($month, $year)
@@ -2136,12 +2200,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return array $week[$weekday]
-     *
-     * @access public
+     * @return   array      $week[$weekday]
+     * @access   public
      * @static
      */
     function getCalendarWeek($day = 0, $month = 0, $year = null,
@@ -2178,12 +2242,12 @@ class Date_Calc
      * Return a set of arrays to construct a calendar month for the given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return array $month[$row][$col]
-     *
-     * @access public
+     * @return   array      $month[$row][$col]
+     * @access   public
      * @static
      */
     function getCalendarMonth($month = 0, $year = null,
@@ -2218,7 +2282,7 @@ class Date_Calc
         for ($row_counter = 0; $row_counter < $weeksInMonth; $row_counter++) {
             for ($column_counter = 0; $column_counter <= 6; $column_counter++) {
                 $month_array[$row_counter][$column_counter] =
-                        Date_Calc::daysToDate($curr_day , $format);
+                        Date_Calc::daysToDate($curr_day, $format);
                 $curr_day++;
             }
         }
@@ -2233,12 +2297,12 @@ class Date_Calc
     /**
      * Return a set of arrays to construct a calendar year for the given date
      *
-     * @param int    $year    the year in four digit format, default current local year
+     * @param int    $year    the year in four digit format, default current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return array $year[$month][$row][$col]
-     *
-     * @access public
+     * @return   array      $year[$month][$row][$col]
+     * @access   public
      * @static
      */
     function getCalendarYear($year = null, $format = DATE_CALC_FORMAT)
@@ -2267,11 +2331,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function prevDay($day = 0, $month = 0, $year = null,
@@ -2299,11 +2364,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function nextDay($day = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2330,11 +2396,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function prevWeekday($day = 0, $month = 0, $year = null,
@@ -2372,11 +2439,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function nextWeekday($day = 0, $month = 0, $year = null,
@@ -2412,11 +2480,16 @@ class Date_Calc
      * Returns 'Julian Day' of the previous specific day of the week
      * from the given date.
      *
-     * @param    int        $dow                          the day of the week (0 = Sunday)
-     * @param    int        $days                         'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
-     * @param    bool       $onorbefore                   if true and days are same, returns current day
+     * @param int  $dow                          the day of the week
+     *                                            (0 = Sunday)
+     * @param int  $days                         'Julian Day', i.e. the no of
+     *                                            days since 1st January, 4713
+     *                                            B.C.
+     * @param bool $onorbefore                   if true and days are same,
+     *                                            returns current day
      *
-     * @return   int        'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
+     * @return   int        'Julian Day', i.e. the no of days since 1st January,
+     *                       4713 B.C.
      * @access   public
      * @static
      */
@@ -2444,12 +2517,19 @@ class Date_Calc
      * Returns date of the previous specific day of the week
      * from the given date
      *
-     * @param    int        $dow                          the day of the week (0 = Sunday)
-     * @param    int        $day                          the day of the month, default is current local day
-     * @param    int        $month                        the month, default is current local month
-     * @param    int        $year                         the year in four digit format, default is current local year
-     * @param    string     $format                       the string indicating how to format the output
-     * @param    bool       $onorbefore                   if true and days are same, returns current day
+     * @param int    $dow                          the day of the week
+     *                                              (0 = Sunday)
+     * @param int    $day                          the day of the month, default
+     *                                              is current local day
+     * @param int    $month                        the month, default is current
+     *                                              local month
+     * @param int    $year                         the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $format                       the string indicating how to
+     *                                              format the output
+     * @param bool   $onorbefore                   if true and days are same,
+     *                                              returns current day
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -2480,11 +2560,16 @@ class Date_Calc
      * Returns 'Julian Day' of the next specific day of the week
      * from the given date.
      *
-     * @param    int        $dow                          the day of the week (0 = Sunday)
-     * @param    int        $days                         'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
-     * @param    bool       $onorafter                    if true and days are same, returns current day
+     * @param int  $dow                          the day of the week
+     *                                            (0 = Sunday)
+     * @param int  $days                         'Julian Day', i.e. the no of
+     *                                            days since 1st January, 4713
+     *                                            B.C.
+     * @param bool $onorafter                    if true and days are same,
+     *                                            returns current day
      *
-     * @return   int        'Julian Day', i.e. the no of days since 1st January, 4713 B.C.
+     * @return   int        'Julian Day', i.e. the no of days since 1st January,
+     *                       4713 B.C.
      * @access   public
      * @static
      */
@@ -2512,12 +2597,19 @@ class Date_Calc
      * Returns date of the next specific day of the week
      * from the given date
      *
-     * @param    int        $dow                          the day of the week (0 = Sunday)
-     * @param    int        $day                          the day of the month, default is current local day
-     * @param    int        $month                        the month, default is current local month
-     * @param    int        $year                         the year in four digit format, default is current local year
-     * @param    string     $format                       the string indicating how to format the output
-     * @param    bool       $onorafter                    if true and days are same, returns current day
+     * @param int    $dow                          the day of the week
+     *                                              (0 = Sunday)
+     * @param int    $day                          the day of the month, default
+     *                                              is current local day
+     * @param int    $month                        the month, default is current
+     *                                              local month
+     * @param int    $year                         the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $format                       the string indicating how to
+     *                                              format the output
+     * @param bool   $onorafter                    if true and days are same,
+     *                                              returns current day
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -2549,11 +2641,17 @@ class Date_Calc
      * Returns date of the previous specific day of the week
      * on or before the given date
      *
-     * @param    int        $dow                          the day of the week (0 = Sunday)
-     * @param    int        $day                          the day of the month, default is current local day
-     * @param    int        $month                        the month, default is current local month
-     * @param    int        $year                         the year in four digit format, default is current local year
-     * @param    string     $format                       the string indicating how to format the output
+     * @param int    $dow                          the day of the week
+     *                                              (0 = Sunday)
+     * @param int    $day                          the day of the month, default
+     *                                              is current local day
+     * @param int    $month                        the month, default is current
+     *                                              local month
+     * @param int    $year                         the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $format                       the string indicating how to
+     *                                              format the output
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -2572,11 +2670,17 @@ class Date_Calc
      * Returns date of the next specific day of the week
      * on or after the given date
      *
-     * @param    int        $dow                          the day of the week (0 = Sunday)
-     * @param    int        $day                          the day of the month, default is current local day
-     * @param    int        $month                        the month, default is current local month
-     * @param    int        $year                         the year in four digit format, default is current local year
-     * @param    string     $format                       the string indicating how to format the output
+     * @param int    $dow                          the day of the week
+     *                                              (0 = Sunday)
+     * @param int    $day                          the day of the month, default
+     *                                              is current local day
+     * @param int    $month                        the month, default is current
+     *                                              local month
+     * @param int    $year                         the year in four digit
+     *                                              format, default is current
+     *                                              local year
+     * @param string $format                       the string indicating how to
+     *                                              format the output
      *
      * @return   string     the date in the desired format
      * @access   public
@@ -2599,11 +2703,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function beginOfWeek($day = 0, $month = 0, $year = null,
@@ -2619,9 +2724,9 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
-        $hn_days = Date_Calc::dateToDays($day, $month, $year);
+        $hn_days      = Date_Calc::dateToDays($day, $month, $year);
         $this_weekday = Date_Calc::daysToDayOfWeek($hn_days);
-        $interval = (7 - DATE_CALC_BEGIN_WEEKDAY + $this_weekday) % 7;
+        $interval     = (7 - DATE_CALC_BEGIN_WEEKDAY + $this_weekday) % 7;
         return Date_Calc::daysToDate($hn_days - $interval, $format);
     }
 
@@ -2637,11 +2742,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function endOfWeek($day = 0, $month = 0, $year = null,
@@ -2657,9 +2763,9 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
-        $hn_days = Date_Calc::dateToDays($day, $month, $year);
+        $hn_days      = Date_Calc::dateToDays($day, $month, $year);
         $this_weekday = Date_Calc::daysToDayOfWeek($hn_days);
-        $interval = (6 + DATE_CALC_BEGIN_WEEKDAY - $this_weekday) % 7;
+        $interval     = (6 + DATE_CALC_BEGIN_WEEKDAY - $this_weekday) % 7;
         return Date_Calc::daysToDate($hn_days + $interval, $format);
     }
 
@@ -2675,11 +2781,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function beginOfPrevWeek($day = 0, $month = 0, $year = null,
@@ -2695,8 +2802,15 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
-        list($hn_pwyear, $hn_pwmonth, $hn_pwday) = explode(" ", Date_Calc::daysToDate(Date_Calc::dateToDays($day, $month, $year) - 7, '%Y %m %d'));
-        return Date_Calc::beginOfWeek($hn_pwday, $hn_pwmonth, $hn_pwyear, $format);
+        list($hn_pwyear, $hn_pwmonth, $hn_pwday) =
+            explode(" ", Date_Calc::daysToDate(Date_Calc::dateToDays($day,
+                                                                     $month,
+                                                                     $year) - 7,
+                                               '%Y %m %d'));
+        return Date_Calc::beginOfWeek($hn_pwday,
+                                      $hn_pwmonth,
+                                      $hn_pwyear,
+                                      $format);
     }
 
 
@@ -2711,11 +2825,12 @@ class Date_Calc
      *
      * @param int    $day     the day of the month, default is current local day
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
     function beginOfNextWeek($day = 0, $month = 0, $year = null,
@@ -2743,14 +2858,14 @@ class Date_Calc
      * Return date of first day of month of given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return     string     the date in the desired format
+     * @access     public
      * @static
-     * @see Date_Calc::beginOfMonthBySpan()
+     * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
     function beginOfMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2773,14 +2888,14 @@ class Date_Calc
      * Return date of last day of month of given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return     string  the date in the desired format
+     * @access     public
      * @static
-     * @see Date_Calc::beginOfMonthBySpan()
+     * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
     function endOfMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2803,14 +2918,14 @@ class Date_Calc
      * Returns date of the first day of previous month of given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return     string     the date in the desired format
+     * @access     public
      * @static
-     * @see Date_Calc::beginOfMonthBySpan()
+     * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
     function beginOfPrevMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2834,14 +2949,14 @@ class Date_Calc
      * Returns date of the last day of previous month for given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return     string     the date in the desired format
+     * @access     public
      * @static
-     * @see Date_Calc::endOfMonthBySpan()
+     * @see        Date_Calc::endOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
     function endOfPrevMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2864,14 +2979,14 @@ class Date_Calc
      * Returns date of begin of next month of given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
-     * @see Date_Calc::beginOfMonthBySpan()
+     * @see      Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
     function beginOfNextMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2895,14 +3010,14 @@ class Date_Calc
      * Returns date of the last day of next month of given date
      *
      * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int    $year    the year in four digit format, default is current
+     *                         local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
-     * @see Date_Calc::endOfMonthBySpan()
+     * @see      Date_Calc::endOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
     function endOfNextMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
@@ -2938,11 +3053,10 @@ class Date_Calc
      *                         current local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
-     * @since  Method available since Release 1.4.4
+     * @since    Method available since Release 1.4.4
      */
     function beginOfMonthBySpan($months = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
@@ -2973,11 +3087,10 @@ class Date_Calc
      *                         current local year
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     *
-     * @access public
+     * @return   string  the date in the desired format
+     * @access   public
      * @static
-     * @since  Method available since Release 1.4.4
+     * @since    Method available since Release 1.4.4
      */
     function endOfMonthBySpan($months = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
@@ -2999,12 +3112,12 @@ class Date_Calc
     /**
      * Find the day of the week for the first of the month of given date
      *
-     * @param int    $month   the month, default is current local month
-     * @param int    $year    the year in four digit format, default is current local year
+     * @param int $month   the month, default is current local month
+     * @param int $year    the year in four digit format, default is current
+     *                      local year
      *
-     * @return int number of weekday for the first day, 0=Sunday
-     *
-     * @access public
+     * @return   int        number of weekday for the first day, 0=Sunday
+     * @access   public
      * @static
      */
     function firstOfMonthWeekday($month = 0, $year = null)
@@ -3020,7 +3133,7 @@ class Date_Calc
 
 
     // }}}
-    // {{{ NWeekdayOfMonth()
+    // {{{ nWeekdayOfMonth()
 
     /**
      * Calculates the date of the Nth weekday of the month,
@@ -3035,11 +3148,11 @@ class Date_Calc
      *                         Do not add leading 0's for years prior to 1000.
      * @param string $format  the string indicating how to format the output
      *
-     * @return string  the date in the desired format
-     * @access public
+     * @return   string     the date in the desired format
+     * @access   public
      * @static
      */
-    function NWeekdayOfMonth($week, $dow, $month, $year,
+    function nWeekdayOfMonth($week, $dow, $month, $year,
                              $format = DATE_CALC_FORMAT)
     {
         if (is_numeric($week)) {
@@ -3077,13 +3190,13 @@ class Date_Calc
      * Uses the proleptic Gregorian calendar, with the year 0 (1 B.C.)
      * assumed to be valid and also assumed to be a leap year.
      *
-     * @param int    $day     the day of the month
-     * @param int    $month   the month
-     * @param int    $year    the year.  Use the complete year instead of the
+     * @param int $day     the day of the month
+     * @param int $month   the month
+     * @param int $year    the year.  Use the complete year instead of the
      *                         abbreviated version.  E.g. use 2005, not 05.
      *
-     * @return boolean
-     * @access public
+     * @return   bool
+     * @access   public
      * @static
      */
     function isValidDate($day, $month, $year)
@@ -3114,11 +3227,11 @@ class Date_Calc
      * assumed in this algorithm to be a leap year.  The function is
      * valid for all years, positive and negative.
      *
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
+     * @param int $year    the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
      *
-     * @return boolean
-     * @access public
+     * @return   bool
+     * @access   public
      * @static
      */
     function isLeapYearGregorian($year = null)
@@ -3140,11 +3253,11 @@ class Date_Calc
      * assumed in this algorithm to be a leap year.  The function is
      * valid for all years, positive and negative.
      *
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
+     * @param int $year    the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
      *
-     * @return boolean
-     * @access public
+     * @return   boolean
+     * @access   public
      * @static
      */
     function isLeapYearJulian($year = null)
@@ -3162,12 +3275,11 @@ class Date_Calc
     /**
      * Returns true for a leap year, else false
      *
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
+     * @param int $year    the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
      *
-     * @return boolean
-     * @access public
+     * @return   boolean
+     * @access   public
      * @static
      */
     function isLeapYear($year = null)
@@ -3191,14 +3303,13 @@ class Date_Calc
     /**
      * Determines if given date is a future date from now
      *
-     * @param int    $day     the day of the month
-     * @param int    $month   the month
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
+     * @param int $day     the day of the month
+     * @param int $month   the month
+     * @param int $year    the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
      *
-     * @return boolean
-     * @access public
+     * @return   bool
+     * @access   public
      * @static
      */
     function isFutureDate($day, $month, $year)
@@ -3228,14 +3339,13 @@ class Date_Calc
     /**
      * Determines if given date is a past date from now
      *
-     * @param int    $day     the day of the month
-     * @param int    $month   the month
-     * @param int    $year    the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
-     *
-     * @return boolean
-     * @access public
+     * @param int $day     the day of the month
+     * @param int $month   the month
+     * @param int $year    the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
+     *            
+     * @return   boolean
+     * @access   public
      * @static
      */
     function isPastDate($day, $month, $year)
@@ -3265,20 +3375,19 @@ class Date_Calc
     /**
      * Returns number of days between two given dates
      *
-     * @param int    $day1    the day of the month
-     * @param int    $month1  the month
-     * @param int    $year1   the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
-     * @param int    $day2    the day of the month
-     * @param int    $month2  the month
-     * @param int    $year2   the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
-     *
-     * @return int  the absolute number of days between the two dates.
-     *               If an error occurs, -1 is returned.
-     * @access public
+     * @param int $day1    the day of the month
+     * @param int $month1  the month
+     * @param int $year1   the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
+     *                      Do not add leading 0's for years prior to 1000.
+     * @param int $day2    the day of the month
+     * @param int $month2  the month
+     * @param int $year2   the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
+     *            
+     * @return   int        the absolute number of days between the two dates.
+     *                       If an error occurs, -1 is returned.
+     * @access   public
      * @static
      */
     function dateDiff($day1, $month1, $year1, $day2, $month2, $year2)
@@ -3300,20 +3409,18 @@ class Date_Calc
     /**
      * Compares two dates
      *
-     * @param int    $day1    the day of the month
-     * @param int    $month1  the month
-     * @param int    $year1   the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
-     * @param int    $day2    the day of the month
-     * @param int    $month2  the month
-     * @param int    $year2   the year.  Use the complete year instead of the
-     *                         abbreviated version.  E.g. use 2005, not 05.
-     *                         Do not add leading 0's for years prior to 1000.
-     *
-     * @return int  0 if the dates are equal. 1 if date 1 is later, -1 if
-     *               date 1 is earlier.
-     * @access public
+     * @param int $day1    the day of the month
+     * @param int $month1  the month
+     * @param int $year1   the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
+     * @param int $day2    the day of the month
+     * @param int $month2  the month
+     * @param int $year2   the year.  Use the complete year instead of the
+     *                      abbreviated version.  E.g. use 2005, not 05.
+     *            
+     * @return   int        0 if the dates are equal. 1 if date 1 is later, -1
+     *                       if date 1 is earlier.
+     * @access   public
      * @static
      */
     function compareDates($day1, $month1, $year1, $day2, $month2, $year2)
@@ -3361,27 +3468,28 @@ class Date_Calc
      *                                        seconds (thus it is equivalent to
      *                                        DATE_PRECISION_10SECONDS)
      *
-     * @param    int        $pn_precision                 a 'DATE_PRECISION_*' constant
-     * @param    int        $pn_day                       the day of the month
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year
-     * @param    int        $pn_hour                      the hour
-     * @param    int        $pn_minute                    the minute
-     * @param    int        $pn_second                    the second
-     * @param    float      $pn_partsecond                the part-second (less than 1)
+     * @param int   $pn_precision                 a 'DATE_PRECISION_*' constant
+     * @param int   $pn_day                       the day of the month
+     * @param int   $pn_month                     the month
+     * @param int   $pn_year                      the year
+     * @param int   $pn_hour                      the hour
+     * @param int   $pn_minute                    the minute
+     * @param int   $pn_second                    the second
+     * @param float $pn_partsecond                the part-second (less than 1)
      *
-     * @return   array of year, month, day, hour, minute, second, part-second (types as corresponding arguments)
+     * @return   array      array of year, month, day, hour, minute, second,
+     *                       part-second (types as corresponding arguments)
      * @access   public
      * @static
      */
     function round($pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour = 0, $pn_minute = 0, $pn_second = 0, $pn_partsecond = 0.0)
     {
         if ($pn_precision <= DATE_PRECISION_YEAR) {
-            $hn_month = 0;
-            $hn_day = 0;
-            $hn_hour = 0;
-            $hn_minute = 0;
-            $hn_second = 0;
+            $hn_month      = 0;
+            $hn_day        = 0;
+            $hn_hour       = 0;
+            $hn_minute     = 0;
+            $hn_second     = 0;
             $hn_partsecond = 0.0;
 
             if ($pn_precision < DATE_PRECISION_YEAR) {
@@ -3410,11 +3518,11 @@ class Date_Calc
                 }
             }
         } else if ($pn_precision == DATE_PRECISION_MONTH) {
-            $hn_year = $pn_year;
-            $hn_day = 0;
-            $hn_hour = 0;
-            $hn_minute = 0;
-            $hn_second = 0;
+            $hn_year       = $pn_year;
+            $hn_day        = 0;
+            $hn_hour       = 0;
+            $hn_minute     = 0;
+            $hn_second     = 0;
             $hn_partsecond = 0.0;
 
             $hn_firstofmonth = Date_Calc::firstDayOfMonth($pn_month, $pn_year);
@@ -3438,11 +3546,11 @@ class Date_Calc
                 }
             }
         } else if ($pn_precision == DATE_PRECISION_DAY) {
-            $hn_year = $pn_year;
-            $hn_month = $pn_month;
-            $hn_hour = 0;
-            $hn_minute = 0;
-            $hn_second = 0;
+            $hn_year       = $pn_year;
+            $hn_month      = $pn_month;
+            $hn_hour       = 0;
+            $hn_minute     = 0;
+            $hn_second     = 0;
             $hn_partsecond = 0.0;
 
             $hn_midday = Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) / 2;
@@ -3454,11 +3562,11 @@ class Date_Calc
                 $hn_day = $pn_day;
             }
         } else if ($pn_precision == DATE_PRECISION_HOUR) {
-            $hn_year = $pn_year;
-            $hn_month = $pn_month;
-            $hn_day = $pn_day;
-            $hn_minute = 0;
-            $hn_second = 0;
+            $hn_year       = $pn_year;
+            $hn_month      = $pn_month;
+            $hn_day        = $pn_day;
+            $hn_minute     = 0;
+            $hn_second     = 0;
             $hn_partsecond = 0.0;
 
             $hn_midhour = Date_Calc::getSecondsInHour($pn_day, $pn_month, $pn_year, $pn_hour) / 2;
@@ -3470,11 +3578,11 @@ class Date_Calc
                 $hn_hour = $pn_hour;
             }
         } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
-            $hn_year = $pn_year;
-            $hn_month = $pn_month;
-            $hn_day = $pn_day;
-            $hn_hour = $pn_hour;
-            $hn_second = 0;
+            $hn_year       = $pn_year;
+            $hn_month      = $pn_month;
+            $hn_day        = $pn_day;
+            $hn_hour       = $pn_hour;
+            $hn_second     = 0;
             $hn_partsecond = 0.0;
 
             if ($pn_precision < DATE_PRECISION_MINUTE) {
@@ -3494,14 +3602,14 @@ class Date_Calc
         } else {
             // Precision is at least (DATE_PRECISION_SECOND - 1):
             //
-            $hn_year = $pn_year;
-            $hn_month = $pn_month;
-            $hn_day = $pn_day;
-            $hn_hour = $pn_hour;
+            $hn_year   = $pn_year;
+            $hn_month  = $pn_month;
+            $hn_day    = $pn_day;
+            $hn_hour   = $pn_hour;
             $hn_minute = $pn_minute;
 
             if ($pn_precision < DATE_PRECISION_SECOND) {
-                $hn_second = round($pn_second, $pn_precision - DATE_PRECISION_SECOND);
+                $hn_second     = round($pn_second, $pn_precision - DATE_PRECISION_SECOND);
                 $hn_partsecond = 0.0;
             } else {
                 $hn_partsecond = round($pn_partsecond, $pn_precision - DATE_PRECISION_SECOND);
@@ -3527,16 +3635,18 @@ class Date_Calc
     /**
      * Rounds seconds up or down to the nearest specified unit
      *
-     * @param    int        $pn_precision                 number of digits after the decimal point
-     * @param    int        $pn_day                       the day of the month
-     * @param    int        $pn_month                     the month
-     * @param    int        $pn_year                      the year
-     * @param    int        $pn_hour                      the hour
-     * @param    int        $pn_minute                    the minute
-     * @param    int        $pn_second                    the second
-     * @param    float      $pn_partsecond                the part-second (less than 1)
+     * @param int   $pn_precision                 number of digits after the
+     *                                             decimal point
+     * @param int   $pn_day                       the day of the month
+     * @param int   $pn_month                     the month
+     * @param int   $pn_year                      the year
+     * @param int   $pn_hour                      the hour
+     * @param int   $pn_minute                    the minute
+     * @param int   $pn_second                    the second
+     * @param float $pn_partsecond                the part-second (less than 1)
      *
-     * @return   array of year, month, day, hour, minute, second, part-second (types as corresponding arguments)
+     * @return   array      array of year, month, day, hour, minute, second,
+     *                       part-second (types as corresponding arguments)
      * @access   public
      * @static
      */

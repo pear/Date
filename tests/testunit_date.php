@@ -321,7 +321,7 @@ class Date_Test extends PHPUnit_TestCase {
             't' => "\t",
             'T' => '14:03:24',
             'w' => '6',
-            'U' => '40',
+            'U' => '39',
             'y' => '03',
             'Y' => '2003',
             '%' => '%'
