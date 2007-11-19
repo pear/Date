@@ -798,17 +798,17 @@ class Date
      * For example:
      *
      *  <code>DATE_PRECISION_YEAR</code> truncates the month, day and time
-     *                                      part of the year
+     *                                  part of the year
      *  <code>DATE_PRECISION_YEAR - 1</code> truncates the unit part of the
      *                                      year, e.g. 1987 becomes 1980
      *  <code>DATE_PRECISION_YEAR - 3</code> truncates the hundreds part of the
      *                                      year, e.g. 1987 becomes 1000
      *  <code>DATE_PRECISION_SECOND + 1</code> truncates the part of the second
-     *                                       less than 0.1 of a second, e.g.
-     *                                       3.26301 becomes 3.2 seconds
+     *                                        less than 0.1 of a second, e.g.
+     *                                        3.26301 becomes 3.2 seconds
      *  <code>DATE_PRECISION_SECOND + 3</code> truncates the part of the second
-     *                                       less than 0.001 of a second, e.g.
-     *                                       3.26301 becomes 3.263 seconds
+     *                                        less than 0.001 of a second, e.g.
+     *                                        3.26301 becomes 3.263 seconds
      *  <code>DATE_PRECISION_SECOND - 1</code> truncates the unit part of the
      *                                        seconds (thus it is equivalent to
      *                                        DATE_PRECISION_10SECONDS)
@@ -2591,7 +2591,7 @@ class Date
      * function also responds to the DATE_* constants, such as DATE_COOKIE,
      * which are specified at:
      *
-     * http://www.php.net/manual/en/ref.datetime.php#datetime.constants
+     *  http://www.php.net/manual/en/ref.datetime.php#datetime.constants
      *
      *
      * Formatting options:
@@ -3060,7 +3060,10 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        return $this->tz->getRawOffset() + ($this->inDaylightTime() ? $this->tz->getDSTSavings() : 0);
+        return $this->tz->getRawOffset() +
+                   ($this->inDaylightTime() ?
+                    $this->tz->getDSTSavings() :
+                    0);
     }
 
 
@@ -3090,9 +3093,12 @@ class Date
                $this->minute != $this->on_standardminute ||
                $this->second != $this->on_standardsecond ||
                $this->partsecond != $this->on_standardpartsecond ||
-               $this->day != $this->on_standardday ||                // these last 3 conditions are theoretical
-               $this->month != $this->on_standardmonth ||            // possibilities but normally will never occur:
+               $this->day != $this->on_standardday ||
+               $this->month != $this->on_standardmonth ||
                $this->year != $this->on_standardyear;
+        //
+        // (these last 3 conditions are theoretical
+        // possibilities but normally will never occur)
     }
 
 
@@ -3166,7 +3172,8 @@ class Date
     function convertTZbyID($ps_id)
     {
         if (!Date_TimeZone::isValidID($ps_id)) {
-            return PEAR::raiseError("Invalid time zone ID '$ps_id'", DATE_ERROR_INVALIDTIMEZONE);
+            return PEAR::raiseError("Invalid time zone ID '$ps_id'",
+                                    DATE_ERROR_INVALIDTIMEZONE);
         }
 
         $res = $this->convertTZ(new Date_TimeZone($ps_id));
