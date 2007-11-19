@@ -46,7 +46,7 @@ echo_code($date->format2('NPDay, NPDDth Month YYYY, HH.MI.SS'));
 <h4>Time without padding (i.e. leading noughts), and with short year:</h4>
 <?php
 
-echo_code($date->format('%d/%m/%y %h.%M.%S'));
+echo_code($date->format('%e/%m/%y %h.%M.%S'));
 echo_code($date->format2('NPDD/NPMM/YY NPHH.MI.SS'));
 
 

@@ -924,7 +924,13 @@ class Date
      *  <code>%D  </code>  equivalent to "%m/%d/%y" <br>
      *  <code>%e  </code>  day of month without leading noughts (range 0 to 31) <br>
      *  <code>%E  </code>  Julian day - no of days since Monday, 24th November,
-     *                     4714 B.C. (in the proleptic Gregorian calendar)<br>
+     *                     4714 B.C. (in the proleptic Gregorian calendar) <br>
+     *  <code>%g  </code>  like %G, but without the century <br>
+     *  <code>%G  </code>  the 4-digit year corresponding to the ISO week
+     *                     number (see %V). This has the same format and value
+     *                     as %Y, except that if the ISO week number belongs
+     *                     to the previous or next year, that year is used
+     *                     instead. <br>
      *  <code>%h  </code>  hour as decimal number without leading noughts (0
      *                     to 23) <br>
      *  <code>%H  </code>  hour as decimal number (00 to 23) <br>
@@ -947,9 +953,25 @@ class Date
      *  <code>%S  </code>  seconds as a decimal number (00 to 59) <br>
      *  <code>%t  </code>  tab character ("\t") <br>
      *  <code>%T  </code>  current time; equivalent to "%H:%M:%S" <br>
-     *  <code>%w  </code>  weekday as decimal (0 to 7; where 0 = Sunday) <br>
-     *  <code>%U  </code>  'Absolute' week of year (1-53), counting week 1 as
-     *                     1st-7th of the year, regardless of the day <br>
+     *  <code>%u  </code>  day of week as decimal (1 to 7; where 1 = Monday) <br>
+     *  <code>%U  </code>  week number of the current year as a decimal
+     *                     number, starting with the first Sunday as the first
+     *                     day of the first week (i.e. the first full week of
+     *                     the year, and the week that contains 7th January)
+     *                     (00 to 53) <br>
+     *  <code>%V  </code>  the ISO 8601:1988 week number of the current year
+     *                     as a decimal number, range 01 to 53, where week 1
+     *                     is the first week that has at least 4 days in the
+     *                     current year, and with Monday as the first day of
+     *                     the week.  (Use %G or %g for the year component
+     *                     that corresponds to the week number for the
+     *                     specified timestamp.)
+     *  <code>%w  </code>  day of week as decimal (0 to 6; where 0 = Sunday) <br>
+     *  <code>%W  </code>  week number of the current year as a decimal
+     *                     number, starting with the first Monday as the first
+     *                     day of the first week (i.e. the first full week of
+     *                     the year, and the week that contains 7th January)
+     *                     (00 to 53) <br>
      *  <code>%y  </code>  year as decimal (range 00 to 99) <br>
      *  <code>%Y  </code>  year as decimal including century (range 0000 to
      *                     9999) <br>
@@ -959,23 +981,28 @@ class Date
      *  <code>%%  </code>  literal '%' <br>
      * <br>
      *
-     * The following codes render exactly the same output as the function
-     * 'date()' (and thus the other codes all differ in output):
+     * The following codes render a different output to that of 'strftime()':
      *
-     *  <code>%d</code>
-     *  <code>%H</code>
-     *  <code>%m</code>
-     *  <code>%w</code>
-     *  <code>%y</code>
-     *  <code>%Y</code>
+     *  <code>%e</code> in 'strftime()' a single digit is preceded by a space
+     *  <code>%h</code> in 'strftime()' is equivalent to '%b'
+     *  <code>%U</code> '%U' and '%W' are different in 'strftime()' in that
+     *                  if week 1 does not start on 1st January, '00' is
+     *                  returned, whereas this function returns '53', that is,
+     *                  the week is counted as the last of the previous year.
+     *  <code>%W</code>
      *
-     * @access public
-     * @param string format the format string for returned date/time
-     * @return string date/time in given format
+     * @param    string     $format                       the format string for returned date/time
+     *
+     * @return   string     date/time in given format
+     * @access   public
      */
     function format($format)
     {
         $output = "";
+
+        $hn_isoyear = null;
+        $hn_isoweek = null;
+        $hn_isoday = null;
 
         for($strpos = 0; $strpos < strlen($format); $strpos++) {
             $char = substr($format,$strpos,1);
@@ -1008,6 +1035,18 @@ class Date
                     break;
                 case "E":
                     $output .= Date_Calc::dateToDays($this->day,$this->month,$this->year);
+                    break;
+                case "g":
+                    if (is_null($hn_isoyear))
+                        list($hn_isoyear, $hn_isoweek, $hn_isoday) = Date_Calc::isoWeekDate($this->day, $this->month, $this->year);
+
+                    $output .= sprintf("%02d", $hn_isoyear % 100);
+                    break;
+                case "G":
+                    if (is_null($hn_isoyear))
+                        list($hn_isoyear, $hn_isoweek, $hn_isoday) = Date_Calc::isoWeekDate($this->day, $this->month, $this->year);
+
+                    $output .= sprintf("%04d", $hn_isoyear);
                     break;
                 case 'h':
                     if ($this->ob_invalidtime)
@@ -1096,11 +1135,26 @@ class Date
                         return PEAR::raiseError("Invalid time '" . sprintf("%02d.%02d.%02d", $this->hour, $this->minute, $this->second) . "' specified for date '" . Date_Calc::dateFormat($this->day, $this->month, $this->year, "%Y-%m-%d") . "' and in this timezone", DATE_ERROR_INVALIDTIME);
                     $output .= sprintf("%02d:%02d:%02d", $this->hour, $this->minute, $this->second);
                     break;
-                case "w":
-                    $output .= Date_Calc::dayOfWeek($this->day,$this->month,$this->year);
+                case "u":
+                    $hn_dayofweek = $this->getDayOfWeek();
+                    $output .= $hn_dayofweek == 0 ? 7 : $hn_dayofweek;
                     break;
                 case "U":
-                    $output .= Date_Calc::weekOfYear($this->day,$this->month,$this->year);
+                    $ha_week = Date_Calc::weekOfYear7th($this->day, $this->month, $this->year, 0);
+                    $output .= sprintf("%02d", $ha_week[1]);
+                    break;
+                case "V":
+                    if (is_null($hn_isoyear))
+                        list($hn_isoyear, $hn_isoweek, $hn_isoday) = Date_Calc::isoWeekDate($this->day, $this->month, $this->year);
+
+                    $output .= $hn_isoweek;
+                    break;
+                case "w":
+                    $output .= $this->getDayOfWeek();
+                    break;
+                case "W":
+                    $ha_week = Date_Calc::weekOfYear7th($this->day, $this->month, $this->year, 1);
+                    $output .= sprintf("%02d", $ha_week[1]);
                     break;
                 case "y":
                     $output .= sprintf("%02d", $this->year % 100);
@@ -2350,6 +2404,233 @@ class Date
 
 
     // }}}
+    // {{{ format3()
+
+    /**
+     * Formats the date in the same way as 'format()', but using the
+     * formatting codes used by the PHP function 'date()'
+     *
+     * All 'date()' formatting options are supported except 'B'.  This
+     * function also responds to the DATE_* constants, such as DATE_COOKIE,
+     * which are specified at:
+     *
+     * http://www.php.net/manual/en/ref.datetime.php#datetime.constants
+     *
+     * Formatting options:<br><br>
+     *
+     * (Day)
+     *
+     *  <code>d</code> Day of the month, 2 digits with leading zeros (01 to 31)
+     *  <code>D</code> A textual representation of a day, three letters ('Mon'
+     *                to 'Sun')
+     *  <code>j</code> Day of the month without leading zeros (1 to 31)
+     *  <code>l</code> [lowercase 'L'] A full textual representation of the day
+     *                of the week ('Sunday' to 'Saturday')
+     *  <code>N</code> ISO-8601 numeric representation of the day of the week
+     *                (1 (for Monday) to 7 (for Sunday))
+     *  <code>S</code> English ordinal suffix for the day of the month, 2
+     *                characters ('st', 'nd', 'rd' or 'th')
+     *  <code>w</code> Numeric representation of the day of the week (0 (for
+     *                Sunday) to 6 (for Saturday))
+     *  <code>z</code> The day of the year (starting from 0) (0 to 365)
+     *
+     * (Week)
+     *
+     *  <code>W</code> ISO-8601 week number of year, weeks starting on Monday
+     *                (00 to 53)
+     *
+     * (Month)
+     *
+     *  <code>F</code> A full textual representation of a month ('January' to
+     *                'December')
+     *  <code>m</code> Numeric representation of a month, with leading zeros
+     *                (01 to 12)
+     *  <code>M</code> A short textual representation of a month, three letters
+     *                ('Jan' to 'Dec')
+     *  <code>n</code> Numeric representation of a month, without leading zeros
+     *                (1 to 12)
+     *  <code>t</code> Number of days in the given month (28 to 31)
+     *
+     * (Year)
+     *
+     *  <code>L</code> Whether it is a leap year (1 if it is a leap year, 0
+     *                otherwise)
+     *  <code>o</code> ISO-8601 year number. This has the same value as Y,
+     *                except that if the ISO week number (W) belongs to the
+     *                previous or next year, that year is used instead.
+     *  <code>Y</code> A full numeric representation of a year, 4 digits (0000
+     *                to 9999)
+     *  <code>y</code> A two digit representation of a year (00 to 99)
+     *
+     * (Time)
+     *
+     *  <code>a</code> Lowercase Ante meridiem and Post meridiem ('am' or
+     *                'pm')
+     *  <code>A</code> Uppercase Ante meridiem and Post meridiem ('AM' or
+     *                'PM')
+     *  <code>g</code> 12-hour format of an hour without leading zeros (1 to 12)
+     *  <code>G</code> 24-hour format of an hour without leading zeros (0 to 23)
+     *  <code>h</code> 12-hour format of an hour with leading zeros (01 to 12)
+     *  <code>H</code> 24-hour format of an hour with leading zeros (00 to 23)
+     *  <code>i</code> Minutes with leading zeros (00 to 59)
+     *  <code>s</code> Seconds, with leading zeros (00 to 59)
+     *  <code>u</code> Milliseconds, e.g. '54321'
+     *
+     * (Time Zone)
+     *
+     *  <code>e</code> Timezone identifier, e.g. Europe/London
+     *  <code>I</code> Whether or not the date is in Summer time (1 if Summer
+     *                time, 0 otherwise)
+     *  <code>O</code> Difference to Greenwich time (GMT) in hours, e.g. '+0200'
+     *  <code>P</code> Difference to Greenwich time (GMT) with colon between
+     *                hours and minutes, e.g. '+02:00'
+     *  <code>T</code> Timezone abbreviation, e.g. 'GMT', 'EST'
+     *  <code>Z</code> Timezone offset in seconds. The offset for timezones west
+     *                of UTC is always negative, and for those east of UTC is
+     *                always positive. (-43200 to 50400)
+     *
+     * (Full Date/Time)
+     *
+     *  <code>c</code> ISO 8601 date, e.g. '2004-02-12T15:19:21+00:00'
+     *  <code>r</code> RFC 2822 formatted date, e.g.
+     *                'Thu, 21 Dec 2000 16:01:07 +0200'
+     *  <code>U</code> Seconds since the Unix Epoch
+     *                (January 1 1970 00:00:00 GMT)
+     * <br>
+     *
+     * @param    string     $ps_format                    the format string for returned date/time
+     *
+     * @return   string     date/time in given format
+     * @access   public
+     */
+    function format3($ps_format)
+    {
+        $hs_format2str = "";
+
+        for ($i = 0; $i < strlen($ps_format); ++$i) {
+            switch ($hs_char = substr($ps_format, $i, 1)) {
+            case 'd':
+                $hs_format2str .= 'DD';
+                break;
+            case 'D':
+                $hs_format2str .= 'NPDy';
+                break;
+            case 'j':
+                $hs_format2str .= 'NPDD';
+                break;
+            case 'l':
+                $hs_format2str .= 'NPDay';
+                break;
+            case 'N':
+                $hs_format2str .= 'ID';
+                break;
+            case 'S':
+                $hs_format2str .= 'th';
+                break;
+            case 'w':
+                $hs_format2str .= 'D';
+                break;
+            case 'z':
+                $hs_format2str .= '"' . ($this->getDayOfYear() - 1) . '"';
+                break;
+            case 'W':
+                $hs_format2str .= 'IW';
+                break;
+            case 'F':
+                $hs_format2str .= 'NPMonth';
+                break;
+            case 'm':
+                $hs_format2str .= 'MM';
+                break;
+            case 'M':
+                $hs_format2str .= 'NPMon';
+                break;
+            case 'n':
+                $hs_format2str .= 'NPMM';
+                break;
+            case 't':
+                $hs_format2str .= '"' . $this->getDaysInMonth() . '"';
+                break;
+            case 'L':
+                $hs_format2str .= '"' . ($this->isLeapYear() ? 1 : 0) . '"';
+                break;
+            case 'o':
+                $hs_format2str .= 'IYYY';
+                break;
+            case 'Y':
+                $hs_format2str .= 'YYYY';
+                break;
+            case 'y':
+                $hs_format2str .= 'YY';
+                break;
+            case 'a':
+                $hs_format2str .= 'am';
+                break;
+            case 'A':
+                $hs_format2str .= 'AM';
+                break;
+            case 'g':
+                $hs_format2str .= 'NPHH12';
+                break;
+            case 'G':
+                $hs_format2str .= 'NPHH24';
+                break;
+            case 'h':
+                $hs_format2str .= 'HH12';
+                break;
+            case 'H':
+                $hs_format2str .= 'HH24';
+                break;
+            case 'i':
+                $hs_format2str .= 'MI';
+                break;
+            case 's':
+                $hs_format2str .= 'SS';
+                break;
+            case 'u':
+                $hs_format2str .= 'SSFFF';
+                break;
+            case 'e':
+                $hs_format2str .= 'TZR';
+                break;
+            case 'I':
+                $hs_format2str .= 'TZI';
+                break;
+            case 'O':
+                $hs_format2str .= 'STZHTZM';
+                break;
+            case 'P':
+                $hs_format2str .= 'STZH:TZM';
+                break;
+            case 'T':
+                $hs_format2str .= 'TZC';
+                break;
+            case 'Z':
+                $hs_format2str .= 'TZS';
+                break;
+            case 'c':
+                $hs_format2str .= 'YYYY-MM-DD"T"HH24:MI:SSSTZH:TZM';
+                break;
+            case 'r':
+                $hs_format2str .= 'Dy, DD Mon YYYY HH24:MI:SS STZHTZM';
+                break;
+            case 'U':
+                $hs_format2str .= 'U';
+                break;
+            case '\\':
+                $hs_char = substr($ps_format, ++$i, 1);
+                $hs_format2str .= '"' . $hs_char . '"';
+                break;
+            default:
+                $hs_format2str .= '"' . $hs_char . '"';
+            }
+        }
+
+        return $this->format2($hs_format2str);
+    }
+
+
+    // }}}
     // {{{ getTime()
 
     /**
@@ -3334,10 +3615,10 @@ class Date
     // {{{ getDayOfWeek()
 
     /**
-     * Gets the day of the week for this date (0=Sunday)
+     * Gets the day of the week for this date (0 = Sunday)
      *
-     * @return int the day of the week (0=Sunday)
-     * @access public
+     * @return   int        the day of the week (0 = Sunday)
+     * @access   public
      */
     function getDayOfWeek()
     {

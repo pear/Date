@@ -786,15 +786,17 @@ class Date_Calc
      * TODO: cache values to some global array to avoid performance
      * hits when called more than once.
      *
-     * @return   array      associative array of integer month numbers, in order, to month names
-     * @access   public
+     * @param   int         $pb_abbreviated               whether to return the abbreviated form of the months
+     *
+     * @return  array       associative array of integer month numbers, in order, to month names
+     * @access  public
      * @static
      */
-    function getMonthNames()
+    function getMonthNames($pb_abbreviated = false)
     {
         $ret = array();
         foreach (Date_Calc::getMonths(2001) as $i) {
-            $ret[$i] = strftime('%B', mktime(0, 0, 0, $i, 1, 2001));
+            $ret[$i] = strftime($pb_abbreviated ? '%b' : '%B', mktime(0, 0, 0, $i, 1, 2001));
         }
         return $ret;
     }
@@ -1671,8 +1673,9 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
-        return substr(Date_Calc::getWeekdayFullname($day, $month, $year),
-                      0, $length);
+        $weekday_names = Date_Calc::getWeekDays(true);
+        $weekday = Date_Calc::dayOfWeek($day, $month, $year);
+        return $weekday_names[$weekday];
     }
 
 
@@ -1695,6 +1698,7 @@ class Date_Calc
         if (empty($month)) {
             $month = (int)Date_Calc::dateNow('%m');
         }
+
         $month_names = Date_Calc::getMonthNames();
         return $month_names[$month];
     }
@@ -1721,7 +1725,9 @@ class Date_Calc
         if (empty($month)) {
             $month = Date_Calc::dateNow('%m');
         }
-        return substr(Date_Calc::getMonthFullname($month), 0, $length);
+
+        $month_names = Date_Calc::getMonthNames(true);
+        return $month_names[$month];
     }
 
 
@@ -1766,16 +1772,16 @@ class Date_Calc
      * TODO: cache values to some global array to avoid preformace
      * hits when called more than once.
      *
-     * @returns array  an array of week day names
+     * @param   int         $pb_abbreviated               whether to return the abbreviated form of the days
      *
-     * @access public
+     * @return  array       an array of week day names
+     * @access  public
      * @static
      */
-    function getWeekDays()
+    function getWeekDays($pb_abbreviated = false)
     {
-        $weekdays = array();
         for ($i = 0; $i < 7; $i++) {
-            $weekdays[$i] = strftime('%A', mktime(0, 0, 0, 1, $i, 2001));
+            $weekdays[$i] = strftime($pb_abbreviated ? '%a' : '%A', mktime(0, 0, 0, 1, $i, 2001));
         }
         return $weekdays;
     }
