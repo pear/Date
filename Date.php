@@ -3672,14 +3672,16 @@ class Date
                 return $res;
         }
 
-        $days1 = Date_Calc::dateToDays($d1->getStandardDay(),
-                                       $d1->getStandardMonth(),
-                                       $d1->getStandardYear());
-        $days2 = Date_Calc::dateToDays($d2->getStandardDay(),
-                                       $d2->getStandardMonth(),
-                                       $d2->getStandardYear());
-        if ($days1 < $days2) return -1;
-        if ($days1 > $days2) return 1;
+        $days1 = Date_Calc::dateToDays($d1->getDay(),
+                                       $d1->getMonth(),
+                                       $d1->getYear());
+        $days2 = Date_Calc::dateToDays($d2->getDay(),
+                                       $d2->getMonth(),
+                                       $d2->getYear());
+        if ($days1 < $days2)
+            return -1;
+        if ($days1 > $days2)
+            return 1;
 
         $hn_hour1 = $d1->getStandardHour();
         if (PEAR::isError($hn_hour1))
@@ -4239,6 +4241,9 @@ class Date
      */
     function getStandardYear()
     {
+        if ($this->ob_invalidtime)
+            return getErrorInvalidTime();
+
         return $this->on_standardyear;
     }
 
@@ -4254,6 +4259,9 @@ class Date
      */
     function getStandardMonth()
     {
+        if ($this->ob_invalidtime)
+            return getErrorInvalidTime();
+
         return $this->on_standardmonth;
     }
 
@@ -4269,6 +4277,9 @@ class Date
      */
     function getStandardDay()
     {
+        if ($this->ob_invalidtime)
+            return getErrorInvalidTime();
+
         return $this->on_standardday;
     }
 
