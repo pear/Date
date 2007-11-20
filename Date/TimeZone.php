@@ -136,7 +136,7 @@ class Date_TimeZone
     /**
      * true if this time zone observes daylight savings time
      *
-     * @var      boolean
+     * @var      bool
      * @since    1.0
      * @access   private
      */
@@ -239,22 +239,28 @@ class Date_TimeZone
         if (isset($GLOBALS['_DATE_TIMEZONE_DATA'][$ps_id])) {
             $this->id = $ps_id;
 
-            $this->shortname = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
-            $this->longname = $_DATE_TIMEZONE_DATA[$ps_id]['longname'];
-            $this->offset = $_DATE_TIMEZONE_DATA[$ps_id]['offset'];
-            $this->dstshortname = array_key_exists("dstshortname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
-                                  $_DATE_TIMEZONE_DATA[$ps_id]['dstshortname'] : null;
+            $this->shortname    = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
+            $this->longname     = $_DATE_TIMEZONE_DATA[$ps_id]['longname'];
+            $this->offset       = $_DATE_TIMEZONE_DATA[$ps_id]['offset'];
+            $this->dstshortname = 
+                array_key_exists("dstshortname",
+                                 $_DATE_TIMEZONE_DATA[$ps_id]) ?
+                $_DATE_TIMEZONE_DATA[$ps_id]['dstshortname'] :
+                null;
             if ($this->hasdst = !is_null($this->dstshortname)) {
-                $this->dstlongname = array_key_exists("dstlongname", $_DATE_TIMEZONE_DATA[$ps_id]) ?
-                                     $_DATE_TIMEZONE_DATA[$ps_id]['dstlongname'] : null;
+                $this->dstlongname =
+                    array_key_exists("dstlongname",
+                                     $_DATE_TIMEZONE_DATA[$ps_id]) ?
+                    $_DATE_TIMEZONE_DATA[$ps_id]['dstlongname'] :
+                    null;
                 if (isset($_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"])) {
-                    $this->on_summertimeoffset = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"];
+                    $this->on_summertimeoffset     = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeoffset"];
                     $this->on_summertimestartmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartmonth"];
-                    $this->os_summertimestartday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartday"];
-                    $this->on_summertimestarttime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestarttime"];
-                    $this->on_summertimeendmonth = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendmonth"];
-                    $this->os_summertimeendday = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendday"];
-                    $this->on_summertimeendtime = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendtime"];
+                    $this->os_summertimestartday   = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestartday"];
+                    $this->on_summertimestarttime  = $_DATE_TIMEZONE_DATA[$ps_id]["summertimestarttime"];
+                    $this->on_summertimeendmonth   = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendmonth"];
+                    $this->os_summertimeendday     = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendday"];
+                    $this->on_summertimeendtime    = $_DATE_TIMEZONE_DATA[$ps_id]["summertimeendtime"];
                 } else {
                     $this->on_summertimeoffset = null;
                 }
@@ -263,21 +269,39 @@ class Date_TimeZone
             $this->hasdst = false;
 
             if (preg_match('/^UTC([+\-])([0-9]{2,2}):?([0-5][0-9])$/', $ps_id, $ha_matches)) {
-                $this->id = $ps_id;
-                $this->offset = ($ha_matches[1] . ($ha_matches[2] * 3600 + $ha_matches[3] * 60)) * 1000;
+                $this->id     = $ps_id;
+                $this->offset = ($ha_matches[1] .
+                                 ($ha_matches[2] * 3600 +
+                                  $ha_matches[3] * 60)) * 1000;
 
                 if (!($hb_isutc = $this->offset == 0)) {
-                    $this->id = $ps_id;
-                    $this->shortname = "UTC" . $ha_matches[1] . ($ha_matches[3] == "00" ? ltrim($ha_matches[2], "0") : $ha_matches[2] . $ha_matches[3]);
-                    $this->longname = "UTC" . $ha_matches[1] . $ha_matches[2] . ":" . $ha_matches[3];
+                    $this->id        = $ps_id;
+                    $this->shortname = "UTC" .
+                                       $ha_matches[1] .
+                                       ($ha_matches[3] == "00" ?
+                                        ltrim($ha_matches[2], "0") :
+                                        $ha_matches[2] . $ha_matches[3]);
+                    $this->longname  = "UTC" .
+                                       $ha_matches[1] .
+                                       $ha_matches[2] .
+                                       ":" .
+                                       $ha_matches[3];
                 }
-            } else if (preg_match('/^UTC([+\-])([0-9]{1,2})$/', $ps_id, $ha_matches)) {
-                $this->id = $ps_id;
-                $this->offset = ($ha_matches[1] . ($ha_matches[2] * 3600)) * 1000;
+            } else if (preg_match('/^UTC([+\-])([0-9]{1,2})$/',
+                                  $ps_id,
+                                  $ha_matches)) {
+                $this->id     = $ps_id;
+                $this->offset = ($ha_matches[1] .
+                                 ($ha_matches[2] * 3600)) * 1000;
 
                 if (!($hb_isutc = $this->offset == 0)) {
-                    $this->shortname = "UTC" . $ha_matches[1] . ltrim($ha_matches[2], "0");
-                    $this->longname = "UTC" . $ha_matches[1] . sprintf("%02d", $ha_matches[2]) . ":00";
+                    $this->shortname = "UTC" .
+                                       $ha_matches[1] .
+                                       ltrim($ha_matches[2], "0");
+                    $this->longname  = "UTC" .
+                                       $ha_matches[1] .
+                                       sprintf("%02d", $ha_matches[2]) .
+                                       ":00";
                 }
             } else {
                 $this->id = "UTC";
@@ -286,8 +310,8 @@ class Date_TimeZone
 
             if ($hb_isutc) {
                 $this->shortname = $_DATE_TIMEZONE_DATA["UTC"]['shortname'];
-                $this->longname = $_DATE_TIMEZONE_DATA["UTC"]['longname'];
-                $this->offset = $_DATE_TIMEZONE_DATA["UTC"]['offset'];
+                $this->longname  = $_DATE_TIMEZONE_DATA["UTC"]['longname'];
+                $this->offset    = $_DATE_TIMEZONE_DATA["UTC"]['offset'];
             }
         }
     }
@@ -297,18 +321,19 @@ class Date_TimeZone
     // {{{ getDefault()
 
     /**
-     * Return a TimeZone object representing the system default time zone
+     * Returns a TimeZone object representing the system default time zone
      *
-     * Return a TimeZone object representing the system default time zone,
-     * which is initialized during the loading of TimeZone.php.
+     * The system default time zone is initialized during the loading of
+     * this file.
      *
-     * @access public
-     * @return object Date_TimeZone the default time zone
+     * @return   object     Date_TimeZone object of the default time zone
+     * @access   public
      */
     function getDefault()
     {
         return new Date_TimeZone($GLOBALS['_DATE_TIMEZONE_DEFAULT']);
     }
+
 
     // }}}
     // {{{ setDefault()
@@ -329,6 +354,7 @@ class Date_TimeZone
             return PEAR::raiseError("Invalid time zone ID '$id'");
         }
     }
+
 
     // }}}
     // {{{ isValidID()
@@ -376,9 +402,9 @@ class Date_TimeZone
      * data-base', but beware of POSIX-style offsets which are the opposite
      * way round to what people normally expect.
      *
-     * @param string $ps_id                        the time zone ID to test
+     * @param string $ps_id the time zone ID to test
      *
-     * @return   boolean    true if the supplied ID is valid
+     * @return   bool       true if the supplied ID is valid
      * @access   public
      */
     function isValidID($ps_id)
@@ -392,6 +418,7 @@ class Date_TimeZone
         }
     }
 
+
     // }}}
     // {{{ isEqual()
 
@@ -401,10 +428,11 @@ class Date_TimeZone
      * Tests to see if this time zone is equal (ids match)
      * to a given Date_TimeZone object.
      *
-     * @param object Date_TimeZone $tz the timezone to test
+     * @param object $tz the Date_TimeZone object to test
      *
-     * @return boolean true if this time zone is equal to the supplied time zone
-     * @access public
+     * @return   bool       true if this time zone is equal to the supplied
+     *                       time zone
+     * @access   public
      */
     function isEqual($tz)
     {
@@ -414,6 +442,7 @@ class Date_TimeZone
             return false;
         }
     }
+
 
     // }}}
     // {{{ isEquivalent()
@@ -429,10 +458,11 @@ class Date_TimeZone
      * for the observance of DST, but this implementation does not
      * know DST rules.
      *
-     * @param object $tz the timezone object to test
+     * @param object $tz the Date_TimeZone object to test
      *
-     * @return boolean true if this time zone is equivalent to the supplied time zone
-     * @access public
+     * @return   bool       true if this time zone is equivalent to the supplied
+     *                       time zone
+     * @access   public
      */
     function isEquivalent($tz)
     {
@@ -452,10 +482,8 @@ class Date_TimeZone
     /**
      * Returns true if this zone observes daylight savings time
      *
-     * Returns true if this zone observes daylight savings time
-     *
-     * @access public
-     * @return boolean true if this time zone has DST
+     * @return   bool       true if this time zone has DST
+     * @access   public
      */
     function hasDaylightTime()
     {
@@ -476,9 +504,11 @@ class Date_TimeZone
      *  Sun>=8            first Sunday on or after the 8th
      *  Sun<=25           last Sunday on or before the 25th
      *
-     * @param string $ps_summertimelimitcode       code which specifies Summer time limit day
-     * @param int    $pn_month                     start or end month
-     * @param int    $pn_year                      year for which to calculate Summer time limit day
+     * @param string $ps_summertimelimitcode code which specifies Summer time
+     *                                        limit day
+     * @param int    $pn_month               start or end month
+     * @param int    $pn_year                year for which to calculate Summer
+     *                                        time limit day
      *
      * @return   int
      * @access   private
@@ -564,13 +594,14 @@ class Date_TimeZone
      * exact hour is specified then the clocks have actually changed,
      * and this function reflects this.
      *
-     * @param object $pm_date                      Date object to test or array of
-     *                                              day, month, year, seconds past
-     *                                              midnight
-     * @param bool   $pb_repeatedhourdefault       value to return if repeated hour
-     *                                              is specified (defaults to false)
+     * @param object $pm_date                Date object to test or array of
+     *                                        day, month, year, seconds past
+     *                                        midnight
+     * @param bool   $pb_repeatedhourdefault value to return if repeated hour is
+     *                                        specified (defaults to false)
      *
-     * @return   bool       true if this date is in Summer time for this time zone
+     * @return   bool       true if this date is in Summer time for this time
+     *                       zone
      * @access   public
      */
     function inDaylightTime($pm_date, $pb_repeatedhourdefault = false)
@@ -656,11 +687,11 @@ class Date_TimeZone
      * an invalid time (the skipped hour) and will be wrong half the
      * time if passed an ambiguous time (the repeated hour).
      *
-     * @param object $pm_date                      Date object to test or array of
-     *                                              day, month, year, seconds past
-     *                                              midnight
+     * @param object $pm_date Date object to test or array of day, month, year,
+     *                         seconds past midnight
      *
-     * @return   bool       true if this date is in Summer time for this time zone
+     * @return   bool       true if this date is in Summer time for this time
+     *                       zone
      * @access   public
      */
     function inDaylightTimeStandard($pm_date)
@@ -770,6 +801,7 @@ class Date_TimeZone
         return $this->offset;
     }
 
+
     // }}}
     // {{{ getOffset()
 
@@ -791,18 +823,30 @@ class Date_TimeZone
      * this sort of information is beyond the scope of this package
      * altogether.)
      *
-     * @param object $po_date                      Date object to test
+     * @param mixed $pm_insummertime a boolean specifying whether or not the
+     *                                date is in Summer time, or,
+     *                               a Date object to test for this condition
      *
      * @return   int        the corrected offset to UTC in milliseconds
      * @access   public
      */
-    function getOffset($po_date)
+    function getOffset($pm_insummertime)
     {
-        if ($this->inDaylightTime($po_date)) {
-            return $this->offset + $this->getDSTSavings();
-        } else {
-            return $this->offset;
+        if ($this->hasdst) {
+            if (is_a($pm_insummertime, "Date")) {
+                $hb_insummertime = $pm_insummertime->inDaylightTime();
+                if (PEAR::isError($hb_insummertime))
+                    return $hb_insummertime;
+            } else {
+                $hb_insummertime = $pm_insummertime;
+            }
+
+            if ($hb_insummertime) {
+                return $this->offset + $this->getDSTSavings();
+            }
         }
+
+        return $this->offset;
     }
 
 
@@ -850,17 +894,30 @@ class Date_TimeZone
      * N.B. this is not a unique identifier - for this purpose use the
      * time zone ID.
      *
-     * @param object $po_date                      Date object to test
+     * @param mixed $pm_insummertime a boolean specifying whether or not the
+     *                                date is in Summer time, or,
+     *                               a Date object to test for this condition
      *
      * @return   string     the long name
      * @access   public
      */
-    function getLongName($po_date = null)
+    function getLongName($pm_insummertime = false)
     {
-        if (!is_null($po_date) && $this->inDaylightTime($po_date))
-            return $this->dstlongname;
-        else
-            return $this->longname;
+        if ($this->hasdst) {
+            if (is_a($pm_insummertime, "Date")) {
+                $hb_insummertime = $pm_insummertime->inDaylightTime();
+                if (PEAR::isError($hb_insummertime))
+                    return $hb_insummertime;
+            } else {
+                $hb_insummertime = $pm_insummertime;
+            }
+
+            if ($hb_insummertime) {
+                return $this->dstlongname;
+            }
+        }
+
+        return $this->longname;
     }
 
 
@@ -877,17 +934,30 @@ class Date_TimeZone
      * N.B. this is not a unique identifier - for this purpose use the
      * time zone ID.
      *
-     * @param object $po_date                      Date object to test
+     * @param mixed $pm_insummertime a boolean specifying whether or not the
+     *                                date is in Summer time, or,
+     *                               a Date object to test for this condition
      *
      * @return   string     the short name
      * @access   public
      */
-    function getShortName($po_date = null)
+    function getShortName($pm_insummertime = false)
     {
-        if (!is_null($po_date) && $this->inDaylightTime($po_date))
-            return $this->dstshortname;
-        else
-            return $this->shortname;
+        if ($this->hasdst) {
+            if (is_a($pm_insummertime, "Date")) {
+                $hb_insummertime = $pm_insummertime->inDaylightTime();
+                if (PEAR::isError($hb_insummertime))
+                    return $hb_insummertime;
+            } else {
+                $hb_insummertime = $pm_insummertime;
+            }
+
+            if ($hb_insummertime) {
+                return $this->dstshortname;
+            }
+        }
+
+        return $this->shortname;
     }
 
 
@@ -895,7 +965,8 @@ class Date_TimeZone
     // {{{ getDSTLongName()
 
     /**
-     * Returns the DST long name for this time zone, e.g. 'Central Daylight Time'
+     * Returns the DST long name for this time zone, e.g.
+     * 'Central Daylight Time'
      *
      * @return   string     the daylight savings time long name
      * @access   public

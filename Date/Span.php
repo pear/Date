@@ -58,7 +58,7 @@ require_once 'Date/Calc.php';
 // {{{ Constants
 
 /**
- * Non Numeric Separated Values (NNSV) Input Format.
+ * Non Numeric Separated Values (NNSV) Input Format
  *
  * Input format guessed from something like this:
  * days<sep>hours<sep>minutes<sep>seconds
@@ -83,14 +83,14 @@ define('DATE_SPAN_INPUT_FORMAT_NNSV', 1);
 // {{{ Global Variables
 
 /**
- * Default time format when converting to a string.
+ * Default time format when converting to a string
  *
  * @global string
  */
 $GLOBALS['_DATE_SPAN_FORMAT']  = '%C';
 
 /**
- * Default time format when converting from a string.
+ * Default time format when converting from a string
  *
  * @global mixed
  */
@@ -143,13 +143,13 @@ class Date_Span
     // {{{ Constructor
 
     /**
-     * Constructor.
+     * Constructor
      *
      * Creates the time span object calling the set() method.
      *
-     * @param mixed $time   Time span expression.
-     * @param mixed $format Format string to set it from a string or the
-     *                       second date set it from a date diff.
+     * @param mixed $time   time span expression
+     * @param mixed $format format string to set it from a string or the
+     *                       second date set it from a date diff
      *
      * @access   public
      * @see      set()
@@ -164,22 +164,19 @@ class Date_Span
     // {{{ set()
 
     /**
-     * Set the time span to a new value in a 'smart' way.
+     * Set the time span to a new value in a 'smart' way
      *
      * Sets the time span depending on the argument types, calling
      * to the appropriate setFromXxx() method.
      *
-     * @param mixed $time   Time span expression.
-     * @param mixed $format Format string to set it from a string or the
-     *                       second date set it from a date diff.
+     * @param mixed $time   time span expression
+     * @param mixed $format format string to set it from a string or the
+     *                       second date set it from a date diff
      *
-     * @return   bool  true on success.
+     * @return   bool       true on success
      * @access   public
-     * @see      setFromObject()
-     * @see      setFromArray()
-     * @see      setFromString()
-     * @see      setFromSeconds()
-     * @see      setFromDateDiff()
+     * @see      setFromObject(), setFromArray(), setFromString(),
+     *            setFromSeconds(), setFromDateDiff()
      */
     function set($time = 0, $format = null)
     {
@@ -203,19 +200,21 @@ class Date_Span
     // {{{ setFromArray()
 
     /**
-     * Set the time span from an array.
+     * Set the time span from an array
      *
-     * Set the time span from an array. Any value can be a float (but it
-     * has no sense in seconds), for example array(23.5, 20, 0) is
-     * interpreted as 23 hours, .5*60 + 20 = 50 minutes and 0 seconds.
+     * Any value can be a float (but it has no sense in seconds), for example:
      *
-     * @param array $time Items are counted from right to left. First
+     *  <code>array(23.5, 20, 0)</code>
+     *
+     * is interpreted as 23 hours, .5*60 + 20 = 50 minutes and 0 seconds.
+     *
+     * @param array $time items are counted from right to left. First
      *                     item is for seconds, second for minutes, third
      *                     for hours and fourth for days. If there are
      *                     less items than 4, zero (0) is assumed for the
      *                     absent values.
      *
-     * @return   bool  True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromArray($time)
@@ -248,11 +247,10 @@ class Date_Span
     // {{{ setFromString()
 
     /**
-     * Set the time span from a string based on an input format.
+     * Set the time span from a string based on an input format
      *
-     * Set the time span from a string based on an input format. This is
-     * some like a mix of format() method and sscanf() PHP function. The
-     * error checking and validation of this function is very primitive,
+     * This is some like a mix of format() method and sscanf() PHP function.
+     * The error checking and validation of this function is very primitive,
      * so you should be carefull when using it with unknown $time strings.
      * With this method you are assigning day, hour, minute and second
      * values, and the last values are used. This means that if you use
@@ -262,38 +260,38 @@ class Date_Span
      * and you make $time->setFromString('20 hours', '%H hours'), $time
      * span would be 20 hours long (and not 20 hours and 30 minutes).
      * Input format options:<br>
-     *  <code>%C</code> Days with time, same as "%D, %H:%M:%S".<br>
+     *  <code>%C</code> Days with time, same as "%D, %H:%M:%S"<br>
      *  <code>%d</code> Total days as a float number
-     *                  (2 days, 12 hours = 2.5 days).<br>
-     *  <code>%D</code> Days as a decimal number.<br>
+     *                  (2 days, 12 hours = 2.5 days)<br>
+     *  <code>%D</code> Days as a decimal number<br>
      *  <code>%e</code> Total hours as a float number
-     *                  (1 day, 2 hours, 30 minutes = 26.5 hours).<br>
+     *                  (1 day, 2 hours, 30 minutes = 26.5 hours)<br>
      *  <code>%f</code> Total minutes as a float number
-     *                  (2 minutes, 30 seconds = 2.5 minutes).<br>
+     *                  (2 minutes, 30 seconds = 2.5 minutes)<br>
      *  <code>%g</code> Total seconds as a decimal number
-     *                  (2 minutes, 30 seconds = 90 seconds).<br>
-     *  <code>%h</code> Hours as decimal number.<br>
-     *  <code>%H</code> Hours as decimal number limited to 2 digits.<br>
-     *  <code>%m</code> Minutes as a decimal number.<br>
-     *  <code>%M</code> Minutes as a decimal number limited to 2 digits.<br>
-     *  <code>%n</code> Newline character (\n).<br>
+     *                  (2 minutes, 30 seconds = 90 seconds)<br>
+     *  <code>%h</code> Hours as decimal number<br>
+     *  <code>%H</code> Hours as decimal number limited to 2 digits<br>
+     *  <code>%m</code> Minutes as a decimal number<br>
+     *  <code>%M</code> Minutes as a decimal number limited to 2 digits<br>
+     *  <code>%n</code> Newline character (\n)<br>
      *  <code>%p</code> Either 'am' or 'pm' depending on the time. If 'pm'
      *                  is detected it adds 12 hours to the resulting time
      *                  span (without any checks). This is case
      *                  insensitive.<br>
-     *  <code>%r</code> Time in am/pm notation, same as "%H:%M:%S %p".<br>
-     *  <code>%R</code> Time in 24-hour notation, same as "%H:%M".<br>
-     *  <code>%s</code> Seconds as a decimal number.<br>
-     *  <code>%S</code> Seconds as a decimal number limited to 2 digits.<br>
-     *  <code>%t</code> Tab character (\t).<br>
-     *  <code>%T</code> Current time equivalent, same as "%H:%M:%S".<br>
-     *  <code>%%</code> Literal '%'.<br>
+     *  <code>%r</code> Time in am/pm notation, same as "%H:%M:%S %p"<br>
+     *  <code>%R</code> Time in 24-hour notation, same as "%H:%M"<br>
+     *  <code>%s</code> Seconds as a decimal number<br>
+     *  <code>%S</code> Seconds as a decimal number limited to 2 digits<br>
+     *  <code>%t</code> Tab character (\t)<br>
+     *  <code>%T</code> Current time equivalent, same as "%H:%M:%S"<br>
+     *  <code>%%</code> Literal '%'<br>
      *
-     * @param string $time   String from where to get the time span
-     *                        information.
-     * @param string $format Format string.
+     * @param string $time   string from where to get the time span
+     *                        information
+     * @param string $format format string
      *
-     * @return   bool   True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromString($time, $format = null)
@@ -303,10 +301,10 @@ class Date_Span
         }
         // If format is a string, it parses the string format.
         if (is_string($format)) {
-            $str = '';
+            $str  = '';
             $vars = array();
-            $pm = 'am';
-            $day = $hour = $minute = $second = 0;
+            $pm   = 'am';
+            $day  = $hour = $minute = $second = 0;
             for ($i = 0; $i < strlen($format); $i++) {
                 $char = $format{$i};
                 if ($char == '%') {
@@ -421,9 +419,9 @@ class Date_Span
                 return false;
             }
             $this->setFromArray(array($day, $hour, $minute, $second));
-        // If format is a integer, it uses a predefined format
-        // detection method.
         } elseif (is_integer($format)) {
+            // If format is a integer, it uses a predefined format
+            // detection method.
             switch ($format) {
             case DATE_SPAN_INPUT_FORMAT_NNSV:
                 $time = preg_split('/\D+/', $time);
@@ -462,11 +460,11 @@ class Date_Span
     // {{{ setFromSeconds()
 
     /**
-     * Set the time span from a total number of seconds.
+     * Set the time span from a total number of seconds
      *
-     * @param int  $seconds Total number of seconds.
+     * @param int $seconds total number of seconds
      *
-     * @return   bool True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromSeconds($seconds)
@@ -478,6 +476,7 @@ class Date_Span
         $min  = floor($sec / 60);
         $hour = floor($min / 60);
         $day  = intval(floor($hour / 24));
+
         $this->second = $sec % 60;
         $this->minute = $min % 60;
         $this->hour   = $hour % 24;
@@ -490,11 +489,11 @@ class Date_Span
     // {{{ setFromMinutes()
 
     /**
-     * Set the time span from a total number of minutes.
+     * Set the time span from a total number of minutes
      *
-     * @param float $minutes Total number of minutes.
+     * @param float $minutes total number of minutes
      *
-     * @return   bool  True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromMinutes($minutes)
@@ -507,11 +506,11 @@ class Date_Span
     // {{{ setFromHours()
 
     /**
-     * Set the time span from a total number of hours.
+     * Set the time span from a total number of hours
      *
-     * @param float $hours Total number of hours.
+     * @param float $hours total number of hours
      *
-     * @return   bool  True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromHours($hours)
@@ -524,11 +523,11 @@ class Date_Span
     // {{{ setFromDays()
 
     /**
-     * Set the time span from a total number of days.
+     * Set the time span from a total number of days
      *
-     * @param float $days Total number of days.
+     * @param float $days total number of days
      *
-     * @return   bool  True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromDays($days)
@@ -541,15 +540,14 @@ class Date_Span
     // {{{ setFromDateDiff()
 
     /**
-     * Set the span from the elapsed time between two dates.
+     * Set the span from the elapsed time between two dates
      *
-     * Set the span from the elapsed time between two dates. The time span
-     * is always positive, so the date's order is not important.
+     * The time span is unsigned, so the date's order is not important.
      *
-     * @param object $date1 First Date.
-     * @param object $date2 Second Date.
+     * @param object $date1 first Date
+     * @param object $date2 second Date
      *
-     * @return   bool  True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function setFromDateDiff($date1, $date2)
@@ -582,11 +580,11 @@ class Date_Span
     // {{{ copy()
 
     /**
-     * Set the time span from another time object.
+     * Set the time span from another time object
      *
-     * @param object $time Source time span object.
+     * @param object $time source time span object
      *
-     * @return   bool   True on success.
+     * @return   bool       true on success
      * @access   public
      */
     function copy($time)
@@ -607,48 +605,48 @@ class Date_Span
     // {{{ format()
 
     /**
-     * Time span pretty printing (similar to Date::format()).
+     * Time span pretty printing (similar to Date::format())
      *
      * Formats the time span in the given format, similar to
      * strftime() and Date::format().<br>
      * <br>
      * Formatting options:<br>
-     *  <code>%C</code> Days with time, same as "%D, %H:%M:%S".<br>
+     *  <code>%C</code> Days with time, same as "%D, %H:%M:%S"<br>
      *  <code>%d</code> Total days as a float number
-     *                  (2 days, 12 hours = 2.5 days).<br>
-     *  <code>%D</code> Days as a decimal number.<br>
+     *                  (2 days, 12 hours = 2.5 days)<br>
+     *  <code>%D</code> Days as a decimal number<br>
      *  <code>%e</code> Total hours as a float number
-     *                  (1 day, 2 hours, 30 minutes = 26.5 hours).<br>
+     *                  (1 day, 2 hours, 30 minutes = 26.5 hours)<br>
      *  <code>%E</code> Total hours as a decimal number
-     *                  (1 day, 2 hours, 40 minutes = 26 hours).<br>
+     *                  (1 day, 2 hours, 40 minutes = 26 hours)<br>
      *  <code>%f</code> Total minutes as a float number
-     *                  (2 minutes, 30 seconds = 2.5 minutes).<br>
+     *                  (2 minutes, 30 seconds = 2.5 minutes)<br>
      *  <code>%F</code> Total minutes as a decimal number
-     *                  (1 hour, 2 minutes, 40 seconds = 62 minutes).<br>
+     *                  (1 hour, 2 minutes, 40 seconds = 62 minutes)<br>
      *  <code>%g</code> Total seconds as a decimal number
-     *                  (2 minutes, 30 seconds = 90 seconds).<br>
-     *  <code>%h</code> Hours as decimal number (0 to 23).<br>
-     *  <code>%H</code> Hours as decimal number (00 to 23).<br>
+     *                  (2 minutes, 30 seconds = 90 seconds)<br>
+     *  <code>%h</code> Hours as decimal number (0 to 23)<br>
+     *  <code>%H</code> Hours as decimal number (00 to 23)<br>
      *  <code>%i</code> Hours as decimal number on 12-hour clock
-     *                  (1 to 12).<br>
+     *                  (1 to 12)<br>
      *  <code>%I</code> Hours as decimal number on 12-hour clock
-     *                  (01 to 12).<br>
-     *  <code>%m</code> Minutes as a decimal number (0 to 59).<br>
-     *  <code>%M</code> Minutes as a decimal number (00 to 59).<br>
-     *  <code>%n</code> Newline character (\n).<br>
-     *  <code>%p</code> Either 'am' or 'pm' depending on the time.<br>
-     *  <code>%P</code> Either 'AM' or 'PM' depending on the time.<br>
-     *  <code>%r</code> Time in am/pm notation, same as "%I:%M:%S %p".<br>
-     *  <code>%R</code> Time in 24-hour notation, same as "%H:%M".<br>
-     *  <code>%s</code> Seconds as a decimal number (0 to 59).<br>
-     *  <code>%S</code> Seconds as a decimal number (00 to 59).<br>
-     *  <code>%t</code> Tab character (\t).<br>
-     *  <code>%T</code> Current time equivalent, same as "%H:%M:%S".<br>
-     *  <code>%%</code> Literal '%'.<br>
+     *                  (01 to 12)<br>
+     *  <code>%m</code> Minutes as a decimal number (0 to 59)<br>
+     *  <code>%M</code> Minutes as a decimal number (00 to 59)<br>
+     *  <code>%n</code> Newline character (\n)<br>
+     *  <code>%p</code> Either 'am' or 'pm' depending on the time<br>
+     *  <code>%P</code> Either 'AM' or 'PM' depending on the time<br>
+     *  <code>%r</code> Time in am/pm notation, same as "%I:%M:%S %p"<br>
+     *  <code>%R</code> Time in 24-hour notation, same as "%H:%M"<br>
+     *  <code>%s</code> Seconds as a decimal number (0 to 59)<br>
+     *  <code>%S</code> Seconds as a decimal number (00 to 59)<br>
+     *  <code>%t</code> Tab character (\t)<br>
+     *  <code>%T</code> Current time equivalent, same as "%H:%M:%S"<br>
+     *  <code>%%</code> Literal '%'<br>
      *
-     * @param string $format The format string for returned time span.
+     * @param string $format the format string for returned time span
      *
-     * @return   string The time span in specified format.
+     * @return   string     the time span in specified format
      * @access   public
      */
     function format($format = null)
@@ -697,18 +695,15 @@ class Date_Span
                     $output .= sprintf('%02d', $this->hour);
                     break;
                 case 'i':
-                    $hour =
-                        ($this->hour + 1) > 12 ?
-                        $this->hour - 12 :
-                        $this->hour;
-                    $output .= ($hour == 0) ? 12 : $hour;
-                    break;
                 case 'I':
-                    $hour =
-                        ($this->hour + 1) > 12 ?
-                        $this->hour - 12 :
-                        $this->hour;
-                    $output .= sprintf('%02d', $hour == 0 ? 12 : $hour);
+                    $hour    = $this->hour + 1 > 12 ?
+                               $this->hour - 12 :
+                               $this->hour;
+                    $output .= $hour == 0 ?
+                               12 :
+                               ($nextchar == "i" ?
+                                $hour :
+                                sprintf('%02d', $hour));
                     break;
                 case 'm':
                     $output .= $this->minute;
@@ -726,10 +721,9 @@ class Date_Span
                     $output .= $this->hour >= 12 ? 'PM' : 'AM';
                     break;
                 case 'r':
-                    $hour =
-                        ($this->hour + 1) > 12 ?
-                        $this->hour - 12 :
-                        $this->hour;
+                    $hour    = $this->hour + 1 > 12 ?
+                               $this->hour - 12 :
+                               $this->hour;
                     $output .= sprintf('%02d:%02d:%02d %s',
                                        $hour == 0 ?  12 : $hour,
                                        $this->minute,
@@ -774,9 +768,9 @@ class Date_Span
     // {{{ toSeconds()
 
     /**
-     * Convert time span to seconds.
+     * Convert time span to seconds
      *
-     * @return   int Time span as an integer number of seconds.
+     * @return   int        time span as an integer number of seconds
      * @access   public
      */
     function toSeconds()
@@ -790,9 +784,9 @@ class Date_Span
     // {{{ toMinutes()
 
     /**
-     * Convert time span to minutes.
+     * Convert time span to minutes
      *
-     * @return   float Time span as a decimal number of minutes.
+     * @return   float      time span as a decimal number of minutes
      * @access   public
      */
     function toMinutes()
@@ -806,9 +800,9 @@ class Date_Span
     // {{{ toHours()
 
     /**
-     * Convert time span to hours.
+     * Convert time span to hours
      *
-     * @return   float Time span as a decimal number of hours.
+     * @return   float      time span as a decimal number of hours
      * @access   public
      */
     function toHours()
@@ -822,9 +816,9 @@ class Date_Span
     // {{{ toDays()
 
     /**
-     * Convert time span to days.
+     * Convert time span to days
      *
-     * @return   float Time span as a decimal number of days.
+     * @return   float      time span as a decimal number of days
      * @access   public
      */
     function toDays()
@@ -838,9 +832,9 @@ class Date_Span
     // {{{ add()
 
     /**
-     * Adds a time span.
+     * Adds a time span
      *
-     * @param object $time Time span to add.
+     * @param object $time time span to add
      *
      * @return   void
      * @access   public
@@ -856,13 +850,12 @@ class Date_Span
     // {{{ subtract()
 
     /**
-     * Subtracts a time span.
+     * Subtracts a time span
      *
-     * Subtracts a time span. If the time span to subtract is larger
-     * than the original, the result is zero (there's no sense in
-     * negative time spans).
+     * If the time span to subtract is larger than the original, the result
+     * is zero (there's no sense in negative time spans).
      *
-     * @param object $time Time span to subtract.
+     * @param object $time time span to subtract
      *
      * @return   void
      * @access   public
@@ -882,11 +875,11 @@ class Date_Span
     // {{{ equal()
 
     /**
-     * Tells if time span is equal to $time.
+     * Tells if time span is equal to $time
      *
-     * @param object $time Time span to compare to.
+     * @param object $time time span to compare to
      *
-     * @return   bool   True if the time spans are equal.
+     * @return   bool       true if the time spans are equal
      * @access   public
      */
     function equal($time)
@@ -899,11 +892,11 @@ class Date_Span
     // {{{ greaterEqual()
 
     /**
-     * Tells if this time span is greater or equal than $time.
+     * Tells if this time span is greater or equal than $time
      *
-     * @param object $time Time span to compare to.
+     * @param object $time time span to compare to
      *
-     * @return   bool   True if this time span is greater or equal than $time.
+     * @return   bool       true if this time span is greater or equal than $time
      * @access   public
      */
     function greaterEqual($time)
@@ -916,11 +909,11 @@ class Date_Span
     // {{{ lowerEqual()
 
     /**
-     * Tells if this time span is lower or equal than $time.
+     * Tells if this time span is lower or equal than $time
      *
-     * @param object $time Time span to compare to.
+     * @param object $time time span to compare to
      *
-     * @return   bool   True if this time span is lower or equal than $time.
+     * @return   bool       true if this time span is lower or equal than $time
      * @access   public
      */
     function lowerEqual($time)
@@ -933,11 +926,11 @@ class Date_Span
     // {{{ greater()
 
     /**
-     * Tells if this time span is greater than $time.
+     * Tells if this time span is greater than $time
      *
-     * @param object $time Time span to compare to.
+     * @param object $time time span to compare to
      *
-     * @return   bool   True if this time span is greater than $time.
+     * @return   bool       true if this time span is greater than $time
      * @access   public
      */
     function greater($time)
@@ -950,11 +943,11 @@ class Date_Span
     // {{{ lower()
 
     /**
-     * Tells if this time span is lower than $time.
+     * Tells if this time span is lower than $time
      *
-     * @param object $time Time span to compare to.
+     * @param object $time time span to compare to
      *
-     * @return   bool   True if this time span is lower than $time.
+     * @return   bool       true if this time span is lower than $time
      * @access   public
      */
     function lower($time)
@@ -967,15 +960,15 @@ class Date_Span
     // {{{ compare()
 
     /**
-     * Compares two time spans.
+     * Compares two time spans
      *
      * Suitable for use in sorting functions.
      *
-     * @param object $time1 The first time span.
-     * @param object $time2 The second time span.
+     * @param object $time1 the first time span
+     * @param object $time2 the second time span
      *
-     * @return   int    0 if the time spans are equal, -1 if time1 is lower
-     *                than time2, 1 if time1 is greater than time2.
+     * @return   int        0 if the time spans are equal, -1 if time1 is lower
+     *                       than time2, 1 if time1 is greater than time2
      * @access   public
      * @static
      */
@@ -995,9 +988,9 @@ class Date_Span
     // {{{ isEmpty()
 
     /**
-     * Tells if the time span is empty (zero length).
+     * Tells if the time span is empty (zero length)
      *
-     * @return   bool True is it's empty.
+     * @return   bool       true if empty
      * @access   public
      */
     function isEmpty()
@@ -1010,11 +1003,11 @@ class Date_Span
     // {{{ setDefaultInputFormat()
 
     /**
-     * Set the default input format.
+     * Set the default input format
      *
-     * @param mixed $format New default input format.
+     * @param mixed $format new default input format
      *
-     * @return   mixed Previous default input format.
+     * @return   mixed      previous default input format
      * @access   public
      * @static
      */
@@ -1030,9 +1023,9 @@ class Date_Span
     // {{{ getDefaultInputFormat()
 
     /**
-     * Get the default input format.
+     * Get the default input format
      *
-     * @return   mixed Default input format.
+     * @return   mixed      default input format
      * @access   public
      * @static
      */
@@ -1046,11 +1039,11 @@ class Date_Span
     // {{{ setDefaultFormat()
 
     /**
-     * Set the default format.
+     * Set the default format
      *
-     * @param mixed $format New default format.
+     * @param mixed $format new default format
      *
-     * @return   mixed Previous default format.
+     * @return   mixed      previous default format
      * @access   public
      * @static
      */
@@ -1066,9 +1059,9 @@ class Date_Span
     // {{{ getDefaultFormat()
 
     /**
-     * Get the default format.
+     * Get the default format
      *
-     * @return   mixed Default format.
+     * @return   mixed      default format
      * @access   public
      * @static
      */
@@ -1079,6 +1072,7 @@ class Date_Span
 
 
     // }}}
+
 }
 
 // }}}

@@ -55,6 +55,8 @@
 define('DATE_ERROR_INVALIDDATE', 1);
 define('DATE_ERROR_INVALIDTIME', 2);
 define('DATE_ERROR_INVALIDTIMEZONE', 3);
+define('DATE_ERROR_INVALIDDATEFORMAT', 4);
+define('DATE_ERROR_INVALIDFORMATSTRING', 5);
 
 
 // }}}
@@ -379,8 +381,8 @@ class Date
      * is advisable to pass no parameter and to make a separate call to
      * 'setDate()'.
      *
-     * @param mixed $date                         optional - date/time to
-     *                                             initialize
+     * @param mixed $date date/time to initialize; N.B. this parameter is
+     *                     optional and also deprecated
      *
      * @return   void
      * @access   public
@@ -412,7 +414,7 @@ class Date
      * Makes this Date a copy of another Date object.  This is a
      * PHP4-compatible implementation of '__clone()' in PHP5.
      *
-     * @param object $date                         Date object to copy
+     * @param object $date Date object to copy
      *
      * @return   void
      * @access   public
@@ -486,17 +488,16 @@ class Date
      *                                 the Unix Epoch
      *                                 (1st January 1970 00.00.00 GMT)
      *
-     * @param string $date                         input date
-     * @param int    $format                       optional format constant
-     *                                              (DATE_FORMAT_*) of the input
-     *                                              date.  This parameter is not
-     *                                              needed, except to force the
-     *                                              setting of the date from a
-     *                                              Unix time-stamp
-     *                                              (DATE_FORMAT_UNIXTIME).
-     * @param bool   $pb_repeatedhourdefault       value to return if repeated
-     *                                              hour is specified (defaults
-     *                                              to false)
+     * @param string $date                   input date
+     * @param int    $format                 optional format constant
+     *                                        (DATE_FORMAT_*) of the input date.
+     *                                        This parameter is not needed,
+     *                                        except to force the setting of the
+     *                                        date from a Unix time-stamp
+     *                                        (DATE_FORMAT_UNIXTIME).
+     * @param bool   $pb_repeatedhourdefault value to return if repeated
+     *                                        hour is specified (defaults
+     *                                        to false)
      *
      * @return   void
      * @access   public
@@ -567,7 +568,8 @@ class Date
             //
             $this->convertTZbyID($hs_id);
         } else {
-            return PEAR::raiseError("Date not in ISO 8601 format");
+            return PEAR::raiseError("Date not in ISO 8601 format",
+                                    DATE_ERROR_INVALIDDATEFORMAT);
         }
     }
 
@@ -577,10 +579,9 @@ class Date
     /**
      * Sets to local current time and time zone
      *
-     * @param bool $pb_setmicrotime              whether to set micro-time
-     *                                            (defaults to the value of the
-     *                                            constant
-     *                                            DATE_CAPTURE_MICROTIME_BY_DEFAULT)
+     * @param bool $pb_setmicrotime whether to set micro-time (defaults to the
+     *                               value of the constant
+     *                               DATE_CAPTURE_MICROTIME_BY_DEFAULT)
      *
      * @return   void
      * @access   public
@@ -639,12 +640,11 @@ class Date
      *                                        seconds (thus it is equivalent to
      *                                        DATE_PRECISION_10SECONDS)
      *
-     * @param int  $pn_precision                 a 'DATE_PRECISION_*' constant
-     * @param bool $pb_correctinvalidtime        whether to correct, by adding
-     *                                            the local Summer time offset,
-     *                                            the rounded time if it falls
-     *                                            in the skipped hour (defaults
-     *                                            to false)
+     * @param int  $pn_precision          a 'DATE_PRECISION_*' constant
+     * @param bool $pb_correctinvalidtime whether to correct, by adding the
+     *                                     local Summer time offset, the rounded
+     *                                     time if it falls in the skipped hour
+     *                                     (defaults to false)
      *
      * @return   void
      * @access   public
@@ -676,9 +676,9 @@ class Date
                                 $hn_minute,
                                 $hn_second,
                                 $hn_partsecond,
-                                true,    // This is unlikely anyway, but the
-                                         // day starts with the repeated hour
-                                         // the first time around
+                                true, // This is unlikely anyway, but the
+                                      // day starts with the repeated hour
+                                      // the first time around
                                 $pb_correctinvalidtime);
             return;
         }
@@ -743,7 +743,7 @@ class Date
                             $hn_minute,
                             $hn_second,
                             $hn_partsecond,
-                            false,     // This will be right half the time
+                            false, // This will be right half the time
                             $pb_correctinvalidtime);   // This will be right
                                                        // some of the time
                                                        // (depends on Summer
@@ -760,8 +760,7 @@ class Date
      * N.B. this function is equivalent to calling:
      *  <code>'round(DATE_PRECISION_SECOND + $pn_precision)'</code>
      *
-     * @param int $pn_precision                 number of digits after the
-     *                                           decimal point
+     * @param int $pn_precision number of digits after the decimal point
      *
      * @return   void
      * @access   public
@@ -813,12 +812,11 @@ class Date
      *                                        seconds (thus it is equivalent to
      *                                        DATE_PRECISION_10SECONDS)
      *
-     * @param int  $pn_precision                 a 'DATE_PRECISION_*' constant
-     * @param bool $pb_correctinvalidtime        whether to correct, by adding
-     *                                            the local Summer time offset,
-     *                                            the truncated time if it falls
-     *                                            in  the skipped hour (defaults
-     *                                            to false)
+     * @param int  $pn_precision          a 'DATE_PRECISION_*' constant
+     * @param bool $pb_correctinvalidtime whether to correct, by adding the
+     *                                     local Summer time offset, the
+     *                                     truncated time if it falls in the
+     *                                     skipped hour (defaults to false)
      *
      * @return   void
      * @access   public
@@ -869,9 +867,9 @@ class Date
                                 $hn_minute,
                                 $hn_second,
                                 $hn_partsecond,
-                                true,    // This is unlikely anyway, but the
-                                         // day starts with the repeated
-                                         // hour the first time around
+                                true, // This is unlikely anyway, but the
+                                      // day starts with the repeated
+                                      // hour the first time around
                                 $pb_correctinvalidtime);
             return;
         }
@@ -898,7 +896,7 @@ class Date
         } else {
             // Assume Summer time offset cannot be composed of part-seconds:
             //
-            $hn_precision = $pn_precision - DATE_PRECISION_SECOND;
+            $hn_precision  = $pn_precision - DATE_PRECISION_SECOND;
             $hn_partsecond = intval($this->on_standardpartsecond *
                                     pow(10, $hn_precision)) /
                                     pow(10, $hn_precision);
@@ -922,8 +920,7 @@ class Date
      * N.B. this function is equivalent to calling:
      *  <code>'Date::trunc(DATE_PRECISION_SECOND + $pn_precision)'</code>
      *
-     * @param int $pn_precision                 number of digits after the
-     *                                           decimal point
+     * @param int $pn_precision number of digits after the decimal point
      *
      * @return   void
      * @access   public
@@ -942,8 +939,7 @@ class Date
      *
      * Returns a date in the format specified by the DATE_FORMAT_* constants.
      *
-     * @param int $format                       format constant (DATE_FORMAT_*)
-     *                                           of the output date
+     * @param int $format format constant (DATE_FORMAT_*) of the output date
      *
      * @return   string     the date in the requested format
      * @access   public
@@ -1086,8 +1082,7 @@ class Date
      *                  the week is counted as the last of the previous year.
      *  <code>%W</code>
      *
-     * @param string $format                       the format string for
-     *                                              returned date/time
+     * @param string $format the format string for returned date/time
      *
      * @return   string     date/time in given format
      * @access   public
@@ -1098,7 +1093,7 @@ class Date
 
         $hn_isoyear = null;
         $hn_isoweek = null;
-        $hn_isoday = null;
+        $hn_isoday  = null;
 
         for ($strpos = 0; $strpos < strlen($format); $strpos++) {
             $char = substr($format, $strpos, 1);
@@ -1166,20 +1161,17 @@ class Date
                     $output .= sprintf("%02d", $this->hour);
                     break;
                 case "i":
-                    if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
-                    $hour = ($this->hour + 1) > 12 ?
-                             $this->hour - 12 :
-                             $this->hour;
-                    $output .= sprintf("%d", $hour == 0 ? 12 : $hour);
-                    break;
                 case "I":
                     if ($this->ob_invalidtime)
                         return getErrorInvalidTime();
-                    $hour = ($this->hour + 1) > 12 ?
-                             $this->hour - 12 :
-                             $this->hour;
-                    $output .= sprintf("%02d", $hour == 0 ? 12 : $hour);
+                    $hour    = $this->hour + 1 > 12 ?
+                               $this->hour - 12 :
+                               $this->hour;
+                    $output .= $hour == 0 ?
+                               12 :
+                               ($nextchar == "i" ?
+                                $hour :
+                                sprintf('%02d', $hour));
                     break;
                 case "j":
                     $output .= sprintf("%03d",
@@ -1229,7 +1221,7 @@ class Date
                 case "r":
                     if ($this->ob_invalidtime)
                         return getErrorInvalidTime();
-                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                    $hour    = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%02d:%02d:%02d %s", $hour == 0 ?  12 : $hour, $this->minute, $this->second, $this->hour >= 12 ? "PM" : "AM");
                     break;
                 case "R":
@@ -1253,7 +1245,7 @@ class Date
                     break;
                 case "u":
                     $hn_dayofweek = $this->getDayOfWeek();
-                    $output .= $hn_dayofweek == 0 ? 7 : $hn_dayofweek;
+                    $output      .= $hn_dayofweek == 0 ? 7 : $hn_dayofweek;
                     break;
                 case "U":
                     $ha_week = Date_Calc::weekOfYear7th($this->day, $this->month, $this->year, 0);
@@ -1279,6 +1271,8 @@ class Date
                     $output .= sprintf("%04d", $this->year);
                     break;
                 case "Z":
+                    if ($this->ob_invalidtime)
+                        return getErrorInvalidTime();
                     $output .= $this->getTZShortName();
                     break;
                 case "%":
@@ -1303,10 +1297,9 @@ class Date
     /**
      * Returns appropriate ordinal suffix (i.e. 'th', 'st', 'nd' or 'rd')
      *
-     * @param int  $pn_num                       number with which to determine
-     *                                            suffix
-     * @param bool $pb_uppercase                 boolean specifying if the
-     *                                            suffix should be capitalized
+     * @param int  $pn_num       number with which to determine suffix
+     * @param bool $pb_uppercase boolean specifying if the suffix should be
+     *                            capitalized
      *
      * @return   string
      * @access   private
@@ -1353,15 +1346,13 @@ class Date
      *         capitalized, e.g. 'Four Hundred'
      *  'sp' - returns lower-case spelling, e.g. 'four hundred'
      *
-     * @param int    $pn_num                       number to be converted to
-     *                                              words
-     * @param bool   $pb_ordinal                   boolean specifying if the
-     *                                              number should be ordinal
-     * @param string $ps_capitalization            string for specifying
-     *                                              capitalization options
-     * @param string $ps_locale                    language name abbreviation
-     *                                              used for formatting numbers
-     *                                              as spelled-out words
+     * @param int    $pn_num            number to be converted to words
+     * @param bool   $pb_ordinal        boolean specifying if the number should
+     *                                   be ordinal
+     * @param string $ps_capitalization string for specifying capitalization
+     *                                   options
+     * @param string $ps_locale         language name abbreviation used for
+     *                                   formatting numbers as spelled-out words
      *
      * @return   string
      * @access   private
@@ -1466,33 +1457,24 @@ class Date
      * If both codes are found then a string is returned with code 'SP'
      * preceding code 'TH' (i.e. 'SPTH', 'Spth' or 'spth').
      *
-     * @param int    $pn_num                       integer to be converted to
-     *                                              words
-     * @param string &$ps_format                   string of formatting codes
-     *                                              (max. length 4)
-     * @param int    $pn_numofdigits               no of digits to display if
-     *                                              displayed as numeral (i.e.
-     *                                              not spelled out), not
-     *                                              including the sign (if
-     *                                              negative); to allow all
-     *                                              digits specify 0
-     * @param bool   $pb_nopad                     boolean specifying whether to
-     *                                              suppress padding with
-     *                                              leading noughts (if
-     *                                              displayed as numeral)
-     * @param bool   $pb_nosign                    boolean specifying whether to
-     *                                              suppress the display of the
-     *                                              sign (if negative)
-     * @param string $ps_locale                    language name abbreviation
-     *                                              used for formatting
-     * @param string $ps_thousandsep               optional thousand-separator
-     *                                              (e.g. a comma) numbers as
-     *                                              spelled-out words
-     * @param int    $pn_padtype                   optional integer to specify
-     *                                              padding (if displayed as
-     *                                              numeral) - can be
-     *                                              STR_PAD_LEFT or
-     *                                              STR_PAD_RIGHT
+     * @param int    $pn_num         integer to be converted to words
+     * @param string &$ps_format     string of formatting codes (max. length 4)
+     * @param int    $pn_numofdigits no of digits to display if displayed as
+     *                                numeral (i.e. not spelled out), not
+     *                                including the sign (if negative); to
+     *                                allow all digits specify 0
+     * @param bool   $pb_nopad       boolean specifying whether to suppress
+     *                                padding with leading noughts (if displayed
+     *                                as numeral)
+     * @param bool   $pb_nosign      boolean specifying whether to suppress the
+     *                                display of the sign (if negative)
+     * @param string $ps_locale      language name abbreviation used for
+     *                                formatting
+     * @param string $ps_thousandsep optional thousand-separator (e.g. a comma)
+     *                                numbers as spelled-out words
+     * @param int    $pn_padtype     optional integer to specify padding (if
+     *                                displayed as numeral) - can be
+     *                                STR_PAD_LEFT or STR_PAD_RIGHT
      *
      * @return   string
      * @access   private
@@ -1797,11 +1779,9 @@ class Date
      *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH
      *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th
      *
-     * @param string $ps_format                    format string for returned
-     *                                              date/time
-     * @param string $ps_locale                    language name abbreviation
-     *                                              used for formatting numbers
-     *                                              as spelled-out words
+     * @param string $ps_format format string for returned date/time
+     * @param string $ps_locale language name abbreviation used for formatting
+     *                           numbers as spelled-out words
      *
      * @return   string     date/time in given format
      * @access   public
@@ -1815,7 +1795,8 @@ class Date
                         'C\.E\.|DAY|DY|F(F*|[1-9][0-9]*)|MON(TH)?|NP|PM|' .
                         'P\.M\.|RM|TZ[CINOR]|S?YEAR|[^A-Z0-9"])*$/i',
                         $ps_format)) {
-            return PEAR::raiseError("Invalid date format '$ps_format'");
+            return PEAR::raiseError("Invalid date format '$ps_format'",
+                                    DATE_ERROR_INVALIDFORMATSTRING);
         }
 
         $ret = "";
@@ -1844,7 +1825,7 @@ class Date
             } else {
                 $hb_nosign = true;
             }
-            $hb_nopadflag = false;
+            $hb_nopadflag    = false;
             $hb_showsignflag = false;
 
             switch ($hs_char = substr($ps_format, $i, 1)) {
@@ -2333,84 +2314,85 @@ class Date
                 // Code TZ[...]:
                 //
 
-                if (strtoupper(substr($ps_format, $i, 3)) == "TZC") {
-                    $ret .= $this->getTZShortName();
-                    $i += 3;
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZH") {
-                    if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
-                    if (is_null($hn_tzoffset))
-                        $hn_tzoffset = $this->getTZOffset();
-                    $hs_numberformat = substr($ps_format, $i + 3, 4);
-                    $hn_tzh = intval($hn_tzoffset / 3600000);
-
-                    // Suppress sign here (it is added later):
+                if (strtoupper(substr($ps_format, $i, 3)) == "TZR") {
+                    // This time-zone-related code can be called when the time is
+                    // invalid, but the others should return an error:
                     //
-                    $hs_tzh = $this->formatNumber($hn_tzh, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
-                    if (Pear::isError($hs_tzh))
-                        return $hs_tzh;
-
-                    // Display sign, even if positive:
-                    //
-                    $ret .= ($hb_nosign ? "" : ($hn_tzh >= 0 ? '+' : '-')) . $hs_tzh;
-                    $i += 3 + strlen($hs_numberformat);
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZI") {
-                    if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
-                    $ret .= ($this->inDaylightTime() ? '1' : '0');
-                    $i += 3;
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZM") {
-                    if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
-                    if (is_null($hn_tzoffset))
-                        $hn_tzoffset = $this->getTZOffset();
-                    $hs_numberformat = substr($ps_format, $i + 3, 4);
-                    $hn_tzm = intval(($hn_tzoffset % 3600000) / 60000);
-
-                    // Suppress sign:
-                    //
-                    $hs_tzm = $this->formatNumber($hn_tzm, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
-                    if (Pear::isError($hs_tzm))
-                        return $hs_tzm;
-
-                    $ret .= $hs_tzm;
-                    $i += 3 + strlen($hs_numberformat);
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZN") {
-                    $ret .= $this->getTZLongName();
-                    $i += 3;
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZO") {
-                    if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
-                    if (is_null($hn_tzoffset))
-                        $hn_tzoffset = $this->getTZOffset();
-
-                    $hn_tzh = intval(abs($hn_tzoffset) / 3600000);
-                    $hn_tzm = intval((abs($hn_tzoffset) % 3600000) / 60000);
-
-                    if ($hn_tzoffset == 0) {
-                        $ret .= $hb_nopad ? "Z" : "Z     ";
-                    } else {
-                        // Display sign, even if positive:
-                        //
-                        $ret .= ($hn_tzoffset >= 0 ? '+' : '-') . sprintf("%02d", $hn_tzh) . ":" . sprintf("%02d", $hn_tzm);
-                    }
-                    $i += 3;
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZS") {
-                    if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
-                    if (is_null($hn_tzoffset))
-                        $hn_tzoffset = $this->getTZOffset();
-                    $hs_numberformat = substr($ps_format, $i + 3, 4);
-                    $hn_tzs = intval($hn_tzoffset / 1000);
-                    $hs_tzs = $this->formatNumber($hn_tzs, $hs_numberformat, 5, $hb_nopad, $hb_nosign, $ps_locale);
-                    if (Pear::isError($hs_tzs))
-                        return $hs_tzs;
-
-                    $ret .= $hs_tzs;
-                    $i += 3 + strlen($hs_numberformat);
-                } else if (strtoupper(substr($ps_format, $i, 3)) == "TZR") {
                     $ret .= $this->getTZID();
                     $i += 3;
+                } else {
+                    if ($this->ob_invalidtime)
+                        return getErrorInvalidTime();
+
+                    if (strtoupper(substr($ps_format, $i, 3)) == "TZC") {
+                        $ret .= $this->getTZShortName();
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZH") {
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
+
+                        $hs_numberformat = substr($ps_format, $i + 3, 4);
+                        $hn_tzh = intval($hn_tzoffset / 3600000);
+
+                        // Suppress sign here (it is added later):
+                        //
+                        $hs_tzh = $this->formatNumber($hn_tzh, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
+                        if (Pear::isError($hs_tzh))
+                            return $hs_tzh;
+
+                        // Display sign, even if positive:
+                        //
+                        $ret .= ($hb_nosign ? "" : ($hn_tzh >= 0 ? '+' : '-')) . $hs_tzh;
+                        $i += 3 + strlen($hs_numberformat);
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZI") {
+                        $ret .= ($this->inDaylightTime() ? '1' : '0');
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZM") {
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
+
+                        $hs_numberformat = substr($ps_format, $i + 3, 4);
+                        $hn_tzm = intval(($hn_tzoffset % 3600000) / 60000);
+
+                        // Suppress sign:
+                        //
+                        $hs_tzm = $this->formatNumber($hn_tzm, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
+                        if (Pear::isError($hs_tzm))
+                            return $hs_tzm;
+
+                        $ret .= $hs_tzm;
+                        $i += 3 + strlen($hs_numberformat);
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZN") {
+                        $ret .= $this->getTZLongName();
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZO") {
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
+
+                        $hn_tzh = intval(abs($hn_tzoffset) / 3600000);
+                        $hn_tzm = intval((abs($hn_tzoffset) % 3600000) / 60000);
+
+                        if ($hn_tzoffset == 0) {
+                            $ret .= $hb_nopad ? "Z" : "Z     ";
+                        } else {
+                            // Display sign, even if positive:
+                            //
+                            $ret .= ($hn_tzoffset >= 0 ? '+' : '-') . sprintf("%02d", $hn_tzh) . ":" . sprintf("%02d", $hn_tzm);
+                        }
+                        $i += 3;
+                    } else if (strtoupper(substr($ps_format, $i, 3)) == "TZS") {
+                        if (is_null($hn_tzoffset))
+                            $hn_tzoffset = $this->getTZOffset();
+
+                        $hs_numberformat = substr($ps_format, $i + 3, 4);
+                        $hn_tzs = intval($hn_tzoffset / 1000);
+                        $hs_tzs = $this->formatNumber($hn_tzs, $hs_numberformat, 5, $hb_nopad, $hb_nosign, $ps_locale);
+                        if (Pear::isError($hs_tzs))
+                            return $hs_tzs;
+
+                        $ret .= $hs_tzs;
+                        $i += 3 + strlen($hs_numberformat);
+                    }
                 }
 
                 break;
@@ -2675,8 +2657,7 @@ class Date
      *  <code>U</code> Seconds since the Unix Epoch
      *                (January 1 1970 00:00:00 GMT)
      *
-     * @param string $ps_format                    the format string for
-     *                                              returned date/time
+     * @param string $ps_format the format string for returned date/time
      *
      * @return   string     date/time in given format
      * @access   public
@@ -2807,7 +2788,14 @@ class Date
             }
         }
 
-        return $this->format2($hs_format2str);
+        $ret = $this->format2($hs_format2str);
+        if (PEAR::isError($ret) &&
+            $ret->getCode() == DATE_ERROR_INVALIDFORMATSTRING) {
+            return PEAR::raiseError("Invalid date format '$ps_format'",
+                                    DATE_ERROR_INVALIDFORMATSTRING);
+        }
+
+        return $ret;
     }
 
 
@@ -2889,9 +2877,9 @@ class Date
      * only assigns a new time zone.  For conversion, use
      * convertTZ().
      *
-     * @param object $tz the Date_TimeZone object to use, if called
-     * with a paramater that is not a Date_TimeZone object, will fall through to
-     * setTZbyID().
+     * @param object $tz the Date_TimeZone object to use.  If called with a
+     *                    parameter that is not a Date_TimeZone object, will
+     *                    fall through to setTZbyID().
      *
      * @return   void
      * @access   public
@@ -2951,8 +2939,7 @@ class Date
      * offsets which are the opposite way round to what people normally
      * expect.
      *
-     * @param string $ps_id                        a valid time zone id, e.g.
-     *                                              'Europe/London'
+     * @param string $ps_id a valid time zone id, e.g. 'Europe/London'
      *
      * @return   void
      * @access   public
@@ -3005,7 +2992,10 @@ class Date
      */
     function getTZLongName()
     {
-        return $this->tz->getLongName($this);
+        if ($this->ob_invalidtime)
+            return getErrorInvalidTime();
+
+        return $this->tz->getLongName($this->inDaylightTime());
     }
 
 
@@ -3027,7 +3017,10 @@ class Date
      */
     function getTZShortName()
     {
-        return $this->tz->getShortName($this);
+        if ($this->ob_invalidtime)
+            return getErrorInvalidTime();
+
+        return $this->tz->getShortName($this->inDaylightTime());
     }
 
 
@@ -3060,10 +3053,7 @@ class Date
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
-        return $this->tz->getRawOffset() +
-                   ($this->inDaylightTime() ?
-                    $this->tz->getDSTSavings() :
-                    0);
+        return $this->tz->getOffset($this->inDaylightTime());
     }
 
 
@@ -3076,14 +3066,16 @@ class Date
      * Returns true if daylight savings time is in effect for
      * this date in this date's time zone.
      *
-     * @param bool $pb_repeatedhourdefault       value to return if repeated hour
-     *                                            is specified (defaults to false)
+     * @param bool $pb_repeatedhourdefault value to return if repeated hour is
+     *                                      specified (defaults to false)
      *
      * @return   boolean    true if DST is in effect for this date
      * @access   public
      */
     function inDaylightTime($pb_repeatedhourdefault = false)
     {
+        if (!$this->tz->hasDaylightTime())
+            return false;
         if ($this->ob_invalidtime)
             return getErrorInvalidTime();
 
@@ -3134,8 +3126,7 @@ class Date
      * not allow putenv() or if localtime() did not work in your
      * environment, but this implementation is no longer used.
      *
-     * @param object $tz                           Date_TimeZone object to
-     *                                              convert to
+     * @param object $tz Date_TimeZone object to convert to
      *
      * @return   void
      * @access   public
@@ -3163,8 +3154,7 @@ class Date
      * not allow putenv() or if localtime() does not work in your
      * environment, but this implementation is no longer used.
      *
-     * @param string $ps_id                        a valid time zone id, e.g.
-     *                                              'Europe/London'
+     * @param string $ps_id a valid time zone id, e.g. 'Europe/London'
      *
      * @return   void
      * @access   public
@@ -3194,10 +3184,8 @@ class Date
      * (e.g. UTC+1), i.e. not a geographical time zone.  However
      * it is retained for backwards compaibility.
      *
-     * @param string $ps_offset                    offset of the form
-     *                                              '[+/-][hh]:[mm]',
-     *                                              '[+/-][hh][mm]', or
-     *                                              'Z'
+     * @param string $ps_offset offset of the form '[+/-][hh]:[mm]',
+     *                           '[+/-][hh][mm]', or 'Z'
      *
      * @return   bool
      * @access   private
@@ -3234,7 +3222,7 @@ class Date
      * To subtract years use a negative value for the '$pn_years'
      * parameter
      *
-     * @param int $pn_years                     years to add
+     * @param int $pn_years years to add
      *
      * @return   void
      * @access   public
@@ -3260,7 +3248,7 @@ class Date
      * To subtract months use a negative value for the '$pn_months'
      * parameter
      *
-     * @param int $pn_months                    months to add
+     * @param int $pn_months months to add
      *
      * @return   void
      * @access   public
@@ -3285,7 +3273,7 @@ class Date
      *
      * To subtract days use a negative value for the '$pn_days' parameter
      *
-     * @param int $pn_days                      days to add
+     * @param int $pn_days days to add
      *
      * @return   void
      * @access   public
@@ -3310,7 +3298,7 @@ class Date
      *
      * To subtract hours use a negative value for the '$pn_hours' parameter
      *
-     * @param int $pn_hours                     hours to add
+     * @param int $pn_hours hours to add
      *
      * @return   void
      * @access   public
@@ -3348,7 +3336,7 @@ class Date
      *
      * To subtract minutes use a negative value for the '$pn_minutes' parameter
      *
-     * @param int $pn_minutes                   minutes to add
+     * @param int $pn_minutes minutes to add
      *
      * @return   void
      * @access   public
@@ -3389,10 +3377,9 @@ class Date
      *
      * Effectively a wrapper function for 'Date_Calc::addSeconds()'.
      *
-     * @param mixed $sec                          the no of seconds to add as
-     *                                             integer or float
-     * @param bool  $pb_countleap                 whether to count leap seconds
-     *                                             (defaults to true)
+     * @param mixed $sec          the no of seconds to add as integer or float
+     * @param bool  $pb_countleap whether to count leap seconds (defaults to
+     *                             true)
      *
      * @return   array      array of year, month, day, hour, minute, second,
      *                       part-second
@@ -3417,10 +3404,10 @@ class Date
                                   $pb_countleap);
 
         if (is_float($hn_secondraw)) {
-            $hn_standardsecond = intval($hn_secondraw);
+            $hn_standardsecond     = intval($hn_secondraw);
             $hn_standardpartsecond = $hn_secondraw - $hn_standardsecond;
         } else {
-            $hn_standardsecond = $hn_secondraw;
+            $hn_standardsecond     = $hn_secondraw;
             $hn_standardpartsecond = 0.0;
         }
 
@@ -3440,10 +3427,9 @@ class Date
     /**
      * Adds a given number of seconds to the date
      *
-     * @param mixed $sec                          the no of seconds to add as
-     *                                             integer or float
-     * @param bool  $pb_countleap                 whether to count leap seconds
-     *                                             (defaults to true)
+     * @param mixed $sec          the no of seconds to add as integer or float
+     * @param bool  $pb_countleap whether to count leap seconds (defaults to
+     *                             true)
      *
      * @return   void
      * @access   public
@@ -3472,8 +3458,9 @@ class Date
     /**
      * Subtracts a given number of seconds from the date
      *
-     * @param mixed $sec                          the no of seconds to add as integer or float
-     * @param bool  $pb_countleap                 whether to count leap seconds (defaults to true)
+     * @param mixed $sec          the no of seconds to add as integer or float
+     * @param bool  $pb_countleap whether to count leap seconds (defaults to
+     *                             true)
      *
      * @return   void
      * @access   public
@@ -3551,8 +3538,8 @@ class Date
             return getErrorInvalidTime();
         }
 
-        $hn_days = $span->day;
-        $hn_standardhour = $this->on_standardhour + $span->hour;
+        $hn_days           = $span->day;
+        $hn_standardhour   = $this->on_standardhour + $span->hour;
         $hn_standardminute = $this->on_standardminute + $span->minute;
         $hn_standardsecond = $this->on_standardsecond + $span->second;
 
@@ -3608,8 +3595,8 @@ class Date
             return getErrorInvalidTime();
         }
 
-        $hn_days = -$span->day;
-        $hn_standardhour = $this->on_standardhour - $span->hour;
+        $hn_days           = -$span->day;
+        $hn_standardhour   = $this->on_standardhour - $span->hour;
         $hn_standardminute = $this->on_standardminute - $span->minute;
         $hn_standardsecond = $this->on_standardsecond - $span->second;
 
@@ -3648,10 +3635,8 @@ class Date
      *
      * Suitable for use in sorting functions.
      *
-     * @param object $od1                          the first Date object to
-     *                                              compare
-     * @param object $od2                          the second Date object to
-     *                                              compare
+     * @param object $od1 the first Date object to compare
+     * @param object $od2 the second Date object to compare
      *
      * @return   int        0 if the dates are equal, -1 if '$od1' is
      *                       before '$od2', 1 if '$od1' is after '$od2'
@@ -3708,8 +3693,7 @@ class Date
     /**
      * Test if this date/time is before a certain date/time
      *
-     * @param object $when                         the Date object to test
-     *                                              against
+     * @param object $when the Date object to test against
      *
      * @return   boolean    true if this date is before $when
      * @access   public
@@ -3734,8 +3718,7 @@ class Date
     /**
      * Test if this date/time is after a certain date/time
      *
-     * @param object $when                         the Date object to test
-     *                                              against
+     * @param object $when the Date object to test against
      *
      * @return   boolean    true if this date is after $when
      * @access   public
@@ -3760,8 +3743,7 @@ class Date
     /**
      * Test if this date/time is exactly equal to a certain date/time
      *
-     * @param object $when                         the Date object to test
-     *                                              against
+     * @param object $when the Date object to test against
      *
      * @return   boolean    true if this date is exactly equal to $when
      * @access   public
@@ -3981,7 +3963,7 @@ class Date
     /**
      * Gets the full name or abbreviated name of this month
      *
-     * @param boolean $abbr abbrivate the name
+     * @param boolean $abbr abbreviate the name
      *
      * @return   string     name of this month
      * @access   public
@@ -4406,21 +4388,20 @@ class Date
      * Sets local time (Summer-time-adjusted) and then calculates local
      * standard time
      *
-     * @param int  $pn_day                       the day
-     * @param int  $pn_month                     the month
-     * @param int  $pn_year                      the year
-     * @param int  $pn_hour                      the hour
-     * @param int  $pn_minute                    the minute
-     * @param int  $pn_second                    the second
-     * @param int  $pn_partsecond                the part-second
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
-     *                                            if a repeated hour is
-     *                                            specified (defaults to false)
-     * @param bool $pb_correctinvalidtime        whether to correct, by adding
-     *                                            the local Summer time offset,
-     *                                            the specified time if it falls
-     *                                            in the skipped hour (defaults
-     *                                            to false)
+     * @param int  $pn_day                 the day
+     * @param int  $pn_month               the month
+     * @param int  $pn_year                the year
+     * @param int  $pn_hour                the hour
+     * @param int  $pn_minute              the minute
+     * @param int  $pn_second              the second
+     * @param int  $pn_partsecond          the part-second
+     * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                      repeated hour is specified (defaults
+     *                                      to false)
+     * @param bool $pb_correctinvalidtime  whether to correct, by adding the
+     *                                      local Summer time offset, the
+     *                                      specified time if it falls in the
+     *                                      skipped hour (defaults to false)
      *
      * @return   void
      * @access   private
@@ -4454,13 +4435,13 @@ class Date
             } else if ($pb_correctinvalidtime) {
                 // Store passed time as local standard time:
                 //
-                $this->on_standardday = $pn_day;
-                $this->on_standardmonth = $pn_month;
-                $this->on_standardyear = $pn_year;
-                $this->on_standardhour = $pn_hour;
-                $this->on_standardminute = $pn_minute;
-                $this->on_standardminute = $pn_second;
-                $this->on_standardminute = $pn_partsecond;
+                $this->on_standardday        = $pn_day;
+                $this->on_standardmonth      = $pn_month;
+                $this->on_standardyear       = $pn_year;
+                $this->on_standardhour       = $pn_hour;
+                $this->on_standardminute     = $pn_minute;
+                $this->on_standardsecond     = $pn_second;
+                $this->on_standardpartsecond = $pn_partsecond;
 
                 // Add Summer time offset to passed time:
                 //
@@ -4485,10 +4466,10 @@ class Date
                 // Split second back into integer and part-second:
                 //
                 if (is_float($hn_second)) {
-                    $this->second = intval($hn_second);
+                    $this->second     = intval($hn_second);
                     $this->partsecond = $hn_second - $this->second;
                 } else {
-                    $this->second = $hn_second;
+                    $this->second     = $hn_second;
                     $this->partsecond = 0.0;
                 }
 
@@ -4499,12 +4480,12 @@ class Date
                 // addition/subtraction with the time, or requests the time,
                 // then return an error at that point:
                 //
-                $this->day = $pn_day;
-                $this->month = $pn_month;
-                $this->year = $pn_year;
-                $this->hour = $pn_hour;
-                $this->minute = $pn_minute;
-                $this->second = $pn_second;
+                $this->day        = $pn_day;
+                $this->month      = $pn_month;
+                $this->year       = $pn_year;
+                $this->hour       = $pn_hour;
+                $this->minute     = $pn_minute;
+                $this->second     = $pn_second;
                 $this->partsecond = $pn_partsecond;
 
                 $this->ob_invalidtime = true;
@@ -4514,12 +4495,12 @@ class Date
         } else {
             // Passed time is valid as local time:
             //
-            $this->day = $pn_day;
-            $this->month = $pn_month;
-            $this->year = $pn_year;
-            $this->hour = $pn_hour;
-            $this->minute = $pn_minute;
-            $this->second = $pn_second;
+            $this->day        = $pn_day;
+            $this->month      = $pn_month;
+            $this->year       = $pn_year;
+            $this->hour       = $pn_hour;
+            $this->minute     = $pn_minute;
+            $this->second     = $pn_second;
             $this->partsecond = $pn_partsecond;
         }
 
@@ -4549,21 +4530,21 @@ class Date
             // Split second back into integer and part-second:
             //
             if (is_float($hn_second)) {
-                $this->on_standardsecond = intval($hn_second);
+                $this->on_standardsecond     = intval($hn_second);
                 $this->on_standardpartsecond = $hn_second - $this->second;
             } else {
-                $this->on_standardsecond = $hn_second;
+                $this->on_standardsecond     = $hn_second;
                 $this->on_standardpartsecond = 0.0;
             }
         } else {
             // Time is already local standard time:
             //
-            $this->on_standardday = $pn_day;
-            $this->on_standardmonth = $pn_month;
-            $this->on_standardyear = $pn_year;
-            $this->on_standardhour = $pn_hour;
-            $this->on_standardminute = $pn_minute;
-            $this->on_standardsecond = $pn_second;
+            $this->on_standardday        = $pn_day;
+            $this->on_standardmonth      = $pn_month;
+            $this->on_standardyear       = $pn_year;
+            $this->on_standardhour       = $pn_hour;
+            $this->on_standardminute     = $pn_minute;
+            $this->on_standardsecond     = $pn_second;
             $this->on_standardpartsecond = $pn_partsecond;
         }
     }
@@ -4576,13 +4557,13 @@ class Date
      * Sets local standard time and then calculates local time (i.e.
      * Summer-time-adjusted)
      *
-     * @param int $pn_day                       the day
-     * @param int $pn_month                     the month
-     * @param int $pn_year                      the year
-     * @param int $pn_hour                      the hour
-     * @param int $pn_minute                    the minute
-     * @param int $pn_second                    the second
-     * @param int $pn_partsecond                the part-second
+     * @param int $pn_day        the day
+     * @param int $pn_month      the month
+     * @param int $pn_year       the year
+     * @param int $pn_hour       the hour
+     * @param int $pn_minute     the minute
+     * @param int $pn_second     the second
+     * @param int $pn_partsecond the part-second
      *
      * @return   void
      * @access   private
@@ -4603,12 +4584,12 @@ class Date
         settype($pn_second, "int");
         settype($pn_partsecond, "float");
 
-        $this->on_standardday = $pn_day;
-        $this->on_standardmonth = $pn_month;
-        $this->on_standardyear = $pn_year;
-        $this->on_standardhour = $pn_hour;
-        $this->on_standardminute = $pn_minute;
-        $this->on_standardsecond = $pn_second;
+        $this->on_standardday        = $pn_day;
+        $this->on_standardmonth      = $pn_month;
+        $this->on_standardyear       = $pn_year;
+        $this->on_standardhour       = $pn_hour;
+        $this->on_standardminute     = $pn_minute;
+        $this->on_standardsecond     = $pn_second;
         $this->on_standardpartsecond = $pn_partsecond;
 
         $this->ob_invalidtime = false;
@@ -4639,21 +4620,21 @@ class Date
             // Split second back into integer and part-second:
             //
             if (is_float($hn_second)) {
-                $this->second = intval($hn_second);
+                $this->second     = intval($hn_second);
                 $this->partsecond = $hn_second - $this->second;
             } else {
-                $this->second = $hn_second;
+                $this->second     = $hn_second;
                 $this->partsecond = 0.0;
             }
         } else {
             // Time is already local time:
             //
-            $this->day = $pn_day;
-            $this->month = $pn_month;
-            $this->year = $pn_year;
-            $this->hour = $pn_hour;
-            $this->minute = $pn_minute;
-            $this->second = $pn_second;
+            $this->day        = $pn_day;
+            $this->month      = $pn_month;
+            $this->year       = $pn_year;
+            $this->hour       = $pn_hour;
+            $this->minute     = $pn_minute;
+            $this->second     = $pn_second;
             $this->partsecond = $pn_partsecond;
         }
     }
@@ -4669,9 +4650,8 @@ class Date
      * returned, unless the validation is over-ridden using the second
      * parameter.
      *
-     * @param int  $y                            the year
-     * @param bool $pb_validate                  whether to check that the new
-     *                                            date is valid
+     * @param int  $y           the year
+     * @param bool $pb_validate whether to check that the new date is valid
      *
      * @return   void
      * @access   public
@@ -4696,9 +4676,8 @@ class Date
      * returned, unless the validation is over-ridden using the second
      * parameter.
      *
-     * @param int  $m                            the month
-     * @param bool $pb_validate                  whether to check that the new
-     *                                            date is valid
+     * @param int  $m           the month
+     * @param bool $pb_validate whether to check that the new date is valid
      *
      * @return   void
      * @access   public
@@ -4723,9 +4702,8 @@ class Date
      * returned, unless the validation is over-ridden using the second
      * parameter.
      *
-     * @param int  $d                            the day
-     * @param bool $pb_validate                  whether to check that the new
-     *                                            date is valid
+     * @param int  $d           the day
+     * @param bool $pb_validate whether to check that the new date is valid
      *
      * @return   void
      * @access   public
@@ -4752,11 +4730,10 @@ class Date
      * may unintentionally return a PEAR error if a transitory date is
      * invalid between setting these fields.
      *
-     * @param int  $d                            the day
-     * @param int  $m                            the month
-     * @param int  $y                            the year
-     * @param bool $pb_validate                  whether to check that the new
-     *                                            date is valid
+     * @param int  $d           the day
+     * @param int  $m           the month
+     * @param int  $y           the year
+     * @param bool $pb_validate whether to check that the new date is valid
      *
      * @return   void
      * @access   public
@@ -4780,10 +4757,10 @@ class Date
      * Sets the hour field of the date object in 24-hour format.
      * Invalid hours (not 0-23) are set to 0.
      *
-     * @param int  $h                            the hour
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
-     *                                            if a repeated hour is
-     *                                            specified (defaults to false)
+     * @param int  $h                      the hour
+     * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                      repeated hour is specified (defaults
+     *                                      to false)
      *
      * @return   void
      * @access   public
@@ -4812,10 +4789,10 @@ class Date
      *
      * Invalid minutes (not 0-59) are set to 0.
      *
-     * @param int  $m                            the minute
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
-     *                                            if a repeated hour is
-     *                                            specified (defaults to false)
+     * @param int  $m                      the minute
+     * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                      repeated hour is specified (defaults
+     *                                      to false)
      *
      * @return   void
      * @access   public
@@ -4844,16 +4821,16 @@ class Date
      *
      * Invalid seconds (not 0-59) are set to 0.
      *
-     * @param mixed $s                            the second as integer or float
-     * @param bool  $pb_repeatedhourdefault       whether to assume Summer time
-     *                                             if a repeated hour is
-     *                                             specified (defaults to false)
-     *
+     * @param mixed $s                      the second as integer or float
+     * @param bool  $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                       repeated hour is specified
+     *                                       (defaults to false)
      *
      * @return   void
      * @access   public
      */
-    function setSecond($s, $pb_repeatedhourdefault = false) {
+    function setSecond($s, $pb_repeatedhourdefault = false)
+    {
         if ($s > Date_Calc::getSecondsInMinute($this->day, $this->month, $this->year, $this->hour, $this->minute) || $s < 0) {
             return PEAR::raiseError("Invalid second value '$s'");
         } else {
@@ -4876,10 +4853,10 @@ class Date
      *
      * Invalid part-seconds (not < 1) are set to 0.
      *
-     * @param int  $pn_ps                        the part-second
-     * @param bool $pb_repeatedhourdefault       whether to assume Summer time
-     *                                            if a repeated hour is
-     *                                            specified (defaults to false)
+     * @param int  $pn_ps                  the part-second
+     * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                      repeated hour is specified (defaults
+     *                                      to false)
      *
      * @return   void
      * @access   public
@@ -4913,12 +4890,12 @@ class Date
      * so the user probably will expect a Summer time to be chosen (if he
      * chooses not to receive an error).
      *
-     * @param int   $h                            the hour
-     * @param int   $m                            the minute
-     * @param mixed $s                            the second as integer or float
-     * @param bool  $pb_repeatedhourdefault       whether to assume Summer time 
-     *                                             if a repeated hour is
-     *                                             specified (defaults to false)
+     * @param int   $h                      the hour
+     * @param int   $m                      the minute
+     * @param mixed $s                      the second as integer or float
+     * @param bool  $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                       repeated hour is specified
+     *                                       (defaults to false)
      *
      * @return   void
      * @access   public
@@ -4928,10 +4905,10 @@ class Date
         // Split second into integer and part-second:
         //
         if (is_float($s)) {
-            $hn_second = intval($s);
+            $hn_second     = intval($s);
             $hn_partsecond = $s - $hn_second;
         } else {
-            $hn_second = (int) $s;
+            $hn_second     = (int) $s;
             $hn_partsecond = 0.0;
         }
 
