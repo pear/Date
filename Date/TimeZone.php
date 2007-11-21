@@ -450,24 +450,47 @@ class Date_TimeZone
     /**
      * Is this time zone equivalent to another
      *
-     * Tests to see if this time zone is equivalent to
-     * a given time zone object.  Equivalence in this context
-     * is defined by the two time zones having an equal raw
-     * offset and an equal setting of "hasdst".  This is not true
-     * equivalence, as the two time zones may have different rules
-     * for the observance of DST, but this implementation does not
-     * know DST rules.
+     * Tests to see if this time zone is equivalent to a given time zone object.
+     * Equivalence in this context consists in the two time zones having:
      *
-     * @param object $tz the Date_TimeZone object to test
+     *  an equal offset from UTC in both standard and Summer time (if
+     *   the time zones observe Summer time)
+     *  the same Summer time start and end rules, that is, the two time zones
+     *   must switch from standard time to Summer time, and vice versa, on the
+     *   same day and at the same time
+     *
+     * @param object $pm_tz the Date_TimeZone object to test, or a valid time
+     *                       zone ID
      *
      * @return   bool       true if this time zone is equivalent to the supplied
      *                       time zone
      * @access   public
      */
-    function isEquivalent($tz)
+    function isEquivalent($pm_tz)
     {
-        if ($this->offset == $tz->offset &&
-            $this->hasdst == $tz->hasdst
+        if (is_a($pm_tz, "Date_TimeZone")) {
+            if ($pm_tz->getID() == $this->id) {
+                return true;
+            }
+        } else {
+            if (!Date_TimeZone::isValidID($pm_tz)) {
+                return PEAR::raiseError("Invalid time zone ID '$pm_tz'", DATE_ERROR_INVALIDTIMEZONE);
+            }
+            if ($pm_tz == $this->id)
+                return true;
+
+            $pm_tz = new Date_TimeZone($pm_tz);
+        }
+
+        if ($this->getRawOffset() == $pm_tz->getRawOffset() &&
+            $this->hasDaylightTime() == $pm_tz->hasDaylightTime() &&
+            $this->getDSTSavings() == $pm_tz->getDSTSavings() &&
+            $this->getSummerTimeStartMonth() == $pm_tz->getSummerTimeStartMonth() &&
+            $this->getSummerTimeStartDay() == $pm_tz->getSummerTimeStartDay() &&
+            $this->getSummerTimeStartTime() == $pm_tz->getSummerTimeStartTime() &&
+            $this->getSummerTimeEndMonth() == $pm_tz->getSummerTimeEndMonth() &&
+            $this->getSummerTimeEndDay() == $pm_tz->getSummerTimeEndDay() &&
+            $this->getSummerTimeEndTime() == $pm_tz->getSummerTimeEndTime()
             ) {
             return true;
         } else {
@@ -512,6 +535,7 @@ class Date_TimeZone
      *
      * @return   int
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function getSummerTimeLimitDay($ps_summertimelimitcode, $pn_month, $pn_year)
     {
@@ -693,6 +717,7 @@ class Date_TimeZone
      * @return   bool       true if this date is in Summer time for this time
      *                       zone
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function inDaylightTimeStandard($pm_date)
     {
@@ -993,6 +1018,122 @@ class Date_TimeZone
 
 
     // }}}
+    // {{{ getSummerTimeStartMonth()
+
+    /**
+     * Returns the month number in which Summer time starts
+     *
+     * @return   int        integer representing the month (1 to 12)
+     * @access   public
+     * @since    Method available since Release [next version]
+     */
+    function getSummerTimeStartMonth()
+    {
+        return $this->hasdst ? $this->on_summertimestartmonth : null;
+    }
+
+
+    // }}}
+    // {{{ getSummerTimeStartDay()
+
+    /**
+     * Returns the a code representing the day on which Summer time starts
+     *
+     * Returns a string in one of the following forms:
+     *
+     *  5        the fifth of the month
+     *  lastSun  the last Sunday in the month
+     *  lastMon  the last Monday in the month
+     *  Sun>=8   first Sunday on or after the 8th
+     *  Sun<=25  last Sunday on or before the 25th
+     *
+     * @return   string
+     * @access   public
+     * @since    Method available since Release [next version]
+     */
+    function getSummerTimeStartDay()
+    {
+        return $this->hasdst ? $this->os_summertimestartday : null;
+    }
+
+
+    // }}}
+    // {{{ getSummerTimeStartTime()
+
+    /**
+     * Returns the time of day at which which Summer time starts
+     *
+     * The returned time is an offset, in milliseconds, from midnight UTC.  Note
+     * that the offset can be negative, which represents the fact that the time
+     * zone is East of Greenwich, and that when the clocks change locally, the
+     * time in Greenwich is actually a time belonging to the previous day in
+     * UTC.  This, obviously, is unhelpful if you want to know the local time
+     * at which the clocks change, but it is of immense value for the purpose
+     * of calculation.
+     *
+     * @return   int        integer representing the month (1 to 12)
+     * @access   public
+     * @since    Method available since Release [next version]
+     */
+    function getSummerTimeStartTime()
+    {
+        return $this->hasdst ? $this->on_summertimestarttime : null;
+    }
+
+
+    // }}}
+    // {{{ getSummerTimeEndMonth()
+
+    /**
+     * Returns the month number in which Summer time ends
+     *
+     * @return   int        integer representing the month (1 to 12)
+     * @access   public
+     * @see      Date_TimeZone::getSummerTimeStartMonth()
+     * @since    Method available since Release [next version]
+     */
+    function getSummerTimeEndMonth()
+    {
+        return $this->hasdst ? $this->on_summertimeendmonth : null;
+    }
+
+
+    // }}}
+    // {{{ getSummerTimeEndDay()
+
+    /**
+     * Returns the a code representing the day on which Summer time ends
+     *
+     * @return   string
+     * @access   public
+     * @see      Date_TimeZone::getSummerTimeStartDay()
+     * @since    Method available since Release [next version]
+     */
+    function getSummerTimeEndDay()
+    {
+        return $this->hasdst ? $this->os_summertimeendday : null;
+    }
+
+
+    // }}}
+    // {{{ getSummerTimeEndTime()
+
+    /**
+     * Returns the time of day at which which Summer time ends
+     *
+     * @return   int        integer representing the month (1 to 12)
+     * @access   public
+     * @see      Date_TimeZone::getSummerTimeStartTime()
+     * @since    Method available since Release [next version]
+     */
+    function getSummerTimeEndTime()
+    {
+        return $this->hasdst ? $this->on_summertimeendtime : null;
+    }
+
+
+    // }}}
+
 }
 
 // }}}

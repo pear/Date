@@ -320,27 +320,10 @@ class Date
      * is one that lies in the 'skipped hour' at the point that
      * the clocks go forward)
      *
-     * Note that the object is able to store such a time because a
-     * user might unwittingly and correctly store a valid time,
-     * and then add one day so as to put the object in the skipped
-     * hour.  This could be corrected by a conversion to Summer
-     * time (by adding one hour); however, if the user then added
-     * another day, and had no need for or interest in the time
-     * anyway, the behaviour may be rather unexpected.  And anyway
-     * in this situation, the time originally specified would now,
-     * two days on, be valid again.
-     *
-     * So this class allows an invalid time like this so long as
-     * the user does not in any way make use of or request the
-     * time while it is in this semi-invalid state, in order to
-     * allow for for the fact that he might be only interested
-     * in the date, and not the time, and in order not to behave
-     * in an unexpected way, especially without throwing an
-     * exception to tell the user about it.
-     *
      * @var      bool
      * @since    [next version]
      * @access   private
+     * @see      Date::isTimeValid()
      */
     var $ob_invalidtime = null;
 
@@ -585,6 +568,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function setNow($pb_setmicrotime = DATE_CAPTURE_MICROTIME_BY_DEFAULT)
     {
@@ -648,6 +632,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function round($pn_precision = DATE_PRECISION_DAY,
                    $pb_correctinvalidtime = false)
@@ -764,6 +749,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function roundSeconds($pn_precision = 0)
     {
@@ -820,6 +806,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function trunc($pn_precision = DATE_PRECISION_DAY,
                    $pb_correctinvalidtime = false)
@@ -924,6 +911,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function truncSeconds($pn_precision = 0)
     {
@@ -980,7 +968,7 @@ class Date
             // is not necessarily using local time).
             //
             if ($this->ob_invalidtime)
-                return getErrorInvalidTime();
+                return $this->getErrorInvalidTime();
 
             return gmmktime($this->on_standardhour,
                             $this->on_standardminute,
@@ -1152,18 +1140,18 @@ class Date
                     break;
                 case 'h':
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= sprintf("%d", $this->hour);
                     break;
                 case "H":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= sprintf("%02d", $this->hour);
                     break;
                 case "i":
                 case "I":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $hour    = $this->hour + 1 > 12 ?
                                $this->hour - 12 :
                                $this->hour;
@@ -1190,7 +1178,7 @@ class Date
                     break;
                 case "O":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $offms     = $this->getTZOffset();
                     $direction = $offms >= 0 ? "+" : "-";
                     $offmins   = abs($offms) / 1000 / 60;
@@ -1210,23 +1198,23 @@ class Date
                     break;
                 case "p":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= $this->hour >= 12 ? "pm" : "am";
                     break;
                 case "P":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= $this->hour >= 12 ? "PM" : "AM";
                     break;
                 case "r":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $hour    = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%02d:%02d:%02d %s", $hour == 0 ?  12 : $hour, $this->minute, $this->second, $this->hour >= 12 ? "PM" : "AM");
                     break;
                 case "R":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= sprintf("%02d:%02d", $this->hour, $this->minute);
                     break;
                 case "s":
@@ -1240,7 +1228,7 @@ class Date
                     break;
                 case "T":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= sprintf("%02d:%02d:%02d", $this->hour, $this->minute, $this->second);
                     break;
                 case "u":
@@ -1272,7 +1260,7 @@ class Date
                     break;
                 case "Z":
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $output .= $this->getTZShortName();
                     break;
                 case "%":
@@ -1303,6 +1291,7 @@ class Date
      *
      * @return   string
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function getOrdinalSuffix($pn_num, $pb_uppercase = true)
     {
@@ -1356,6 +1345,7 @@ class Date
      *
      * @return   string
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function spellNumber($pn_num,
                          $pb_ordinal = false,
@@ -1478,6 +1468,7 @@ class Date
      *
      * @return   string
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function formatNumber($pn_num,
                           &$ps_format,
@@ -1785,6 +1776,7 @@ class Date
      *
      * @return   string     date/time in given format
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function format2($ps_format, $ps_locale = "en_GB")
     {
@@ -1865,7 +1857,7 @@ class Date
                     $i += 2;
                 } else {
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     if (strtoupper(substr($ps_format, $i, 4)) == "A.M.") {
                         $ret .= $this->hour < 12 ?
                                 ($hb_lower ? "a.m." : "A.M.") :
@@ -2018,7 +2010,7 @@ class Date
             case "f":
             case "F":
                 if ($this->ob_invalidtime)
-                    return getErrorInvalidTime();
+                    return $this->getErrorInvalidTime();
                 $hn_codelen = 1;
                 if (is_numeric(substr($ps_format, $i + $hn_codelen, 1))) {
                     ++$hn_codelen;
@@ -2063,7 +2055,7 @@ class Date
             case "h":
             case "H":
                 if ($this->ob_invalidtime)
-                    return getErrorInvalidTime();
+                    return $this->getErrorInvalidTime();
                 if (strtoupper(substr($ps_format, $i, 4)) == "HH12") {
                     $hn_hour = $this->hour % 12;
                     if ($hn_hour == 0)
@@ -2144,7 +2136,7 @@ class Date
             case "M":
                 if (strtoupper(substr($ps_format, $i, 2)) == "MI") {
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $hs_numberformat = substr($ps_format, $i + 2, 4);
                     $hs_minute = $this->formatNumber($this->minute, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
                     if (Pear::isError($hs_minute))
@@ -2195,7 +2187,7 @@ class Date
                 $hb_lower = true;
             case "P":
                 if ($this->ob_invalidtime)
-                    return getErrorInvalidTime();
+                    return $this->getErrorInvalidTime();
                 if (strtoupper(substr($ps_format, $i, 4)) == "P.M.") {
                     $ret .= $this->hour < 12 ? ($hb_lower ? "a.m." : "A.M.") : ($hb_lower ? "p.m." : "P.M.");
                     $i += 4;
@@ -2274,7 +2266,7 @@ class Date
                 //
                 if (strtoupper(substr($ps_format, $i, 5)) == "SSSSS") {
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $hs_numberformat = substr($ps_format, $i + 5, 4);
                     $hn_second = Date_Calc::secondsPastMidnight($this->hour, $this->minute, $this->second);
                     $hs_second = $this->formatNumber($hn_second, $hs_numberformat, 5, $hb_nopad, true, $ps_locale);
@@ -2285,7 +2277,7 @@ class Date
                     $i += 5 + strlen($hs_numberformat);
                 } else if (strtoupper(substr($ps_format, $i, 2)) == "SS") {
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
                     $hs_numberformat = substr($ps_format, $i + 2, 4);
                     $hs_second = $this->formatNumber($this->second, $hs_numberformat, 2, $hb_nopad, true, $ps_locale);
                     if (Pear::isError($hs_second))
@@ -2322,7 +2314,7 @@ class Date
                     $i += 3;
                 } else {
                     if ($this->ob_invalidtime)
-                        return getErrorInvalidTime();
+                        return $this->getErrorInvalidTime();
 
                     if (strtoupper(substr($ps_format, $i, 3)) == "TZC") {
                         $ret .= $this->getTZShortName();
@@ -2399,7 +2391,7 @@ class Date
             case "u":
             case "U":
                 if ($this->ob_invalidtime)
-                    return getErrorInvalidTime();
+                    return $this->getErrorInvalidTime();
                 $hn_unixtime = $this->getTime();
                 $hs_numberformat = substr($ps_format, $i + 1, 4);
 
@@ -2661,6 +2653,7 @@ class Date
      *
      * @return   string     date/time in given format
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function format3($ps_format)
     {
@@ -2825,6 +2818,7 @@ class Date
      *
      * @return   string     the time zone ID
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getTZID()
     {
@@ -2850,6 +2844,7 @@ class Date
      *
      * @return   void
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function setTZToDefault()
     {
@@ -2989,11 +2984,12 @@ class Date
      *
      * @return   string     the long name of the time zone
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getTZLongName()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->tz->getLongName($this->inDaylightTime());
     }
@@ -3014,11 +3010,12 @@ class Date
      *
      * @return   string     the short name of the time zone
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getTZShortName()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->tz->getShortName($this->inDaylightTime());
     }
@@ -3047,11 +3044,12 @@ class Date
      *
      * @return   int        the corrected offset to UTC in milliseconds
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getTZOffset()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->tz->getOffset($this->inDaylightTime());
     }
@@ -3077,7 +3075,7 @@ class Date
         if (!$this->tz->hasDaylightTime())
             return false;
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         // The return value is 'cached' whenever the date/time is set:
         //
@@ -3108,7 +3106,7 @@ class Date
         if ($this->getTZID() == "UTC")
             return;
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         $hn_rawoffset = $this->tz->getRawOffset();
         $this->tz = new Date_TimeZone("UTC");
@@ -3136,7 +3134,7 @@ class Date
         if ($this->getTZID() == $tz->getID())
             return;
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         $hn_rawoffset = $tz->getRawOffset() - $this->tz->getRawOffset();
         $this->tz = new Date_TimeZone($tz->getID());
@@ -3226,6 +3224,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function addYears($pn_years)
     {
@@ -3252,6 +3251,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function addMonths($pn_months)
     {
@@ -3277,6 +3277,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function addDays($pn_days)
     {
@@ -3302,11 +3303,12 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function addHours($pn_hours)
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         list($hn_standardyear,
              $hn_standardmonth,
@@ -3340,11 +3342,12 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function addMinutes($pn_minutes)
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         list($hn_standardyear,
              $hn_standardmonth,
@@ -3369,24 +3372,23 @@ class Date
 
 
     // }}}
-    // {{{ addSecondsRaw()
+    // {{{ addSeconds()
 
     /**
-     * Adds a given number of seconds to the date, without setting
-     * the local time from the new, calculated standard time
-     *
-     * Effectively a wrapper function for 'Date_Calc::addSeconds()'.
+     * Adds a given number of seconds to the date
      *
      * @param mixed $sec          the no of seconds to add as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
      *                             true)
      *
-     * @return   array      array of year, month, day, hour, minute, second,
-     *                       part-second
-     * @access   private
+     * @return   void
+     * @access   public
      */
-    function addSecondsRaw($sec, $pb_countleap = true)
+    function addSeconds($sec, $pb_countleap = true)
     {
+        if ($this->ob_invalidtime)
+            return $this->getErrorInvalidTime();
+
         if (!is_int($sec) && !is_float($sec))
             settype($sec, 'int');
 
@@ -3410,37 +3412,6 @@ class Date
             $hn_standardsecond     = $hn_secondraw;
             $hn_standardpartsecond = 0.0;
         }
-
-        return array($hn_standardyear,
-                     $hn_standardmonth,
-                     $hn_standardday,
-                     $hn_standardhour,
-                     $hn_standardminute,
-                     $hn_standardsecond,
-                     $hn_standardpartsecond);
-    }
-
-
-    // }}}
-    // {{{ addSeconds()
-
-    /**
-     * Adds a given number of seconds to the date
-     *
-     * @param mixed $sec          the no of seconds to add as integer or float
-     * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             true)
-     *
-     * @return   void
-     * @access   public
-     */
-    function addSeconds($sec, $pb_countleap = true)
-    {
-        if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
-
-        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute, $hn_standardsecond, $hn_standardpartsecond) =
-            $this->addSecondsRaw($sec, $pb_countleap);
 
         $this->setStandardTime($hn_standardday,
                                $hn_standardmonth,
@@ -3535,7 +3506,7 @@ class Date
         if (!is_a($span, 'Date_Span')) {
             return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
         } else if ($this->ob_invalidtime) {
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
         }
 
         $hn_days           = $span->day;
@@ -3592,7 +3563,7 @@ class Date
         if (!is_a($span, 'Date_Span')) {
             return PEAR::raiseError("Invalid argument - not 'Date_Span' object");
         } else if ($this->ob_invalidtime) {
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
         }
 
         $hn_days           = -$span->day;
@@ -3628,6 +3599,39 @@ class Date
 
 
     // }}}
+    // {{{ inEquivalentTimeZones()
+
+    /**
+     * Tests whether two dates are in equivalent time zones
+     *
+     * Equivalence in this context consists in the time zones of the two dates
+     * having:
+     *
+     *  an equal offset from UTC in both standard and Summer time (if
+     *   the time zones observe Summer time)
+     *  the same Summer time start and end rules, that is, the two time zones
+     *   must switch from standard time to Summer time, and vice versa, on the
+     *   same day and at the same time
+     *
+     * An example of two equivalent time zones is 'Europe/London' and
+     * 'Europe/Lisbon', which in London is known as GMT/BST, and in Lisbon as
+     * WET/WEST.
+     *
+     * @param object $po_date1 the first Date object to compare
+     * @param object $po_date2 the second Date object to compare
+     *
+     * @return   bool       true if the time zones are equivalent
+     * @access   public
+     * @static
+     * @since    Method available since Release [next version]
+     */
+    function inEquivalentTimeZones($po_date1, $po_date2)
+    {
+        return $po_date1->tz->isEquivalent($po_date2->getTZID());
+    }
+
+
+    // }}}
     // {{{ compare()
 
     /**
@@ -3648,13 +3652,21 @@ class Date
         $d1 = new Date($od1);
         $d2 = new Date($od2);
 
-        if ($d1->getTZID() != $d2->getTZID()) {
-            $res = $d1->toUTC();
-            if (PEAR::isError($res))
-                return $res;
-            $res = $d2->toUTC();
-            if (PEAR::isError($res))
-                return $res;
+        // If the time zones are equivalent, do nothing:
+        //
+        if (!Date::inEquivalentTimeZones($d1, $d2)) {
+            // Only a time zone with a valid time can be converted:
+            //
+            if ($d2->isTimeValid()) {
+                $d2->convertTZbyID($d1->getTZID());
+            } else if ($d1->isTimeValid()) {
+                $d1->convertTZbyID($d2->getTZID());
+            } else {
+                // No comparison can be made without guessing the time:
+                //
+                return PEAR::raiseError("Both dates have invalid time",
+                                        DATE_ERROR_INVALIDTIME);
+            }
         }
 
         $days1 = Date_Calc::dateToDays($d1->getDay(),
@@ -3848,6 +3860,7 @@ class Date
      *
      * @return   int        an integer between 1 and 366
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getDayOfYear()
     {
@@ -4120,6 +4133,42 @@ class Date
 
 
     // }}}
+    // {{{ isTimeValid()
+
+    /**
+     * Whether the stored time is valid as a local time
+     *
+     * An invalid time is one that lies in the 'skipped hour' at the point
+     * that the clocks go forward.  Note that the stored date (i.e.
+     * the day/month/year, is always valid).
+     *
+     * The object is able to store an invalid time because a user might
+     * unwittingly and correctly store a valid time, and then add one day so
+     * as to put the object in the 'skipped' hour (when the clocks go forward).
+     * This could be corrected by a conversion to Summer time (by adding one
+     * hour); however, if the user then added another day, and had no need for
+     * or interest in the time anyway, the behaviour may be rather unexpected.
+     * And anyway in this situation, the time originally specified would now,
+     * two days on, be valid again.
+     *
+     * So this class allows an invalid time like this so long as the user does
+     * not in any way make use of or request the time while it is in this
+     * semi-invalid state, in order to allow for for the fact that he might be
+     * only interested in the date, and not the time, and in order not to behave
+     * in an unexpected way, especially without throwing an exception to tell
+     * the user about it.
+     *
+     * @return   bool
+     * @access   public
+     * @since    Method available since Release [next version]
+     */
+    function isTimeValid()
+    {
+        return !$this->ob_invalidtime;
+    }
+
+
+    // }}}
     // {{{ getHour()
 
     /**
@@ -4131,7 +4180,7 @@ class Date
     function getHour()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->hour;
     }
@@ -4149,7 +4198,7 @@ class Date
     function getMinute()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->minute;
     }
@@ -4167,7 +4216,7 @@ class Date
     function getSecond()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->second;
     }
@@ -4181,11 +4230,12 @@ class Date
      *
      * @return   float      float which is at least 0 and less than 86400
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getSecondsPastMidnight()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return Date_Calc::secondsPastMidnight($this->hour,
                                               $this->minute,
@@ -4202,11 +4252,12 @@ class Date
      *
      * @return   int        the part-second
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getPartSecond()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->partsecond;
     }
@@ -4220,11 +4271,12 @@ class Date
      *
      * @return   int        the year
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardYear()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardyear;
     }
@@ -4238,11 +4290,12 @@ class Date
      *
      * @return   int        the minute
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardMonth()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardmonth;
     }
@@ -4256,11 +4309,12 @@ class Date
      *
      * @return   int        the day
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardDay()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardday;
     }
@@ -4274,11 +4328,12 @@ class Date
      *
      * @return   int        the hour
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardHour()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardhour;
     }
@@ -4292,11 +4347,12 @@ class Date
      *
      * @return   int        the minute
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardMinute()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardminute;
     }
@@ -4310,11 +4366,12 @@ class Date
      *
      * @return   int        the second
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardSecond()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardsecond;
     }
@@ -4329,11 +4386,12 @@ class Date
      *
      * @return   float      float which is at least 0 and less than 86400
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardSecondsPastMidnight()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return Date_Calc::secondsPastMidnight($this->on_standardhour,
                                               $this->on_standardminute,
@@ -4350,11 +4408,12 @@ class Date
      *
      * @return   int        the part-second
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function getStandardPartSecond()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return $this->on_standardpartsecond;
     }
@@ -4372,7 +4431,7 @@ class Date
     function getTimeArray()
     {
         if ($this->ob_invalidtime)
-            return getErrorInvalidTime();
+            return $this->getErrorInvalidTime();
 
         return array($this->hour,
                      $this->minute,
@@ -4405,6 +4464,7 @@ class Date
      *
      * @return   void
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function setLocalTime($pn_day,
                           $pn_month,
@@ -4567,6 +4627,7 @@ class Date
      *
      * @return   void
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function setStandardTime($pn_day,
                              $pn_month,
@@ -4737,6 +4798,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function setDayMonthYear($d, $m, $y, $pb_validate = true)
     {
@@ -4860,6 +4922,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function setPartSecond($pn_ps, $pb_repeatedhourdefault = false)
     {
@@ -4899,6 +4962,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @since    Method available since Release [next version]
      */
     function setHourMinuteSecond($h, $m, $s, $pb_repeatedhourdefault = false)
     {
@@ -4931,6 +4995,7 @@ class Date
      *
      * @return   object
      * @access   private
+     * @since    Method available since Release [next version]
      */
     function getErrorInvalidTime()
     {
