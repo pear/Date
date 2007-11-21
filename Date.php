@@ -3599,6 +3599,71 @@ class Date
 
 
     // }}}
+    // {{{ dateDiff()
+
+    /**
+     * Subtract supplied date and return answer in days
+     *
+     * If the second parameter '$pb_ignoretime' is specified as false, the time
+     * parts of the two dates will be ignored, and the integral no of days
+     * between the day-month-year parts of the two dates will be returned.  If
+     * either of the two dates have an invalid time, the integral no of days
+     * will also be returned, else the returned value will be the no of days as
+     * a float, with each hour being treated as 1/24th of a day and so on.
+     *
+     * For example,
+     *  21/11/2007 13.00 minus 21/11/2007 01.00
+     * returns 0.5
+     *
+     * @param object $po_date       date to subtract
+     * @param bool   $pb_ignoretime whether to ignore the time values of the two
+     *                               dates in subtraction (defaults to false)
+     *
+     * @return   mixed      days between two dates as int or float
+     * @access   public
+     * @since    Method available since Release [next version]
+     */
+    public function dateDiff($po_date, $pb_ignoretime = false)
+    {
+        if ($pb_ignoretime || $this->ob_invalidtime) {
+            return Date_Calc::dateToDays($this->day,
+                                         $this->month,
+                                         $this->year) -
+                   Date_Calc::dateToDays($po_date->getDay(),
+                                         $po_date->getMonth(),
+                                         $po_date->getYear());
+        }
+
+        $hn_secondscompare = $po_date->getStandardSecondsPastMidnight();
+        if (PEAR::isError($hn_secondscompare)) {
+            if ($hn_secondscompare->getCode() != DATE_ERROR_INVALIDTIME) {
+                return $hn_secondscompare;
+            }
+
+            return Date_Calc::dateToDays($this->day,
+                                         $this->month,
+                                         $this->year) -
+                   Date_Calc::dateToDays($po_date->getDay(),
+                                         $po_date->getMonth(),
+                                         $po_date->getYear());
+        }
+
+        $hn_seconds = $this->getStandardSecondsPastMidnight();
+
+        // If time parts are equal, return int, else return float:
+        //
+        return Date_Calc::dateToDays($this->on_standardday,
+                                     $this->on_standardmonth,
+                                     $this->on_standardyear) -
+               Date_Calc::dateToDays($po_date->getStandardDay(),
+                                     $po_date->getStandardMonth(),
+                                     $po_date->getStandardYear()) +
+               ($hn_seconds == $hn_secondscompare ? 0 :
+                ($hn_seconds - $hn_secondscompare) / 86400);
+    }
+
+
+    // }}}
     // {{{ inEquivalentTimeZones()
 
     /**
