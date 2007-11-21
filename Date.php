@@ -3615,6 +3615,9 @@ class Date
      *  21/11/2007 13.00 minus 21/11/2007 01.00
      * returns 0.5
      *
+     * Note that if the passed date is in the past, a positive value will be
+     * returned, and if it is in the future, a negative value will be returned.
+     *
      * @param object $po_date       date to subtract
      * @param bool   $pb_ignoretime whether to ignore the time values of the two
      *                               dates in subtraction (defaults to false)
