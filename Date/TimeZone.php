@@ -546,7 +546,7 @@ class Date_TimeZone
                 static $ha_daysofweek = array("Sun" => 0, "Mon" => 1, "Tue" => 2, "Wed" => 3, "Thu" => 4, "Fri" => 5, "Sat" => 6);
 
             if (preg_match('/^last(Sun|Mon|Tue|Wed|Thu|Fri|Sat)$/', $ps_summertimelimitcode, $ha_matches)) {
-                list($hn_nmyear, $hn_nextmonth, $hn_nmday) = explode(" ", Date_Calc::beginOfNextMonth($pn_month, $pn_year, "%Y %m %d"));
+                list($hn_nmyear, $hn_nextmonth, $hn_nmday) = explode(" ", Date_Calc::beginOfMonthBySpan(1, $pn_month, $pn_year, "%Y %m %d"));
                 list($hn_year, $hn_month, $hn_day) =
                     explode(" ",
                             Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],

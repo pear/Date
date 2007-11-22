@@ -209,16 +209,16 @@ class Date_Calc
                     $output .= Date_Calc::weekOfYear($day, $month, $year);
                     break;
                 case 'y':
-                    // Beware the minus sign for negative years:
-                    //
-                    $hn_y = $year % 100;
-                    if ($hn_y < 0)
-                        $output .= "-" . sprintf('%02d', $hn_y * -1);
-                    else
-                        $output .= sprintf('%02d', $hn_y);
+                    $output .= sprintf('%0' .
+                                       ($year < 0 ? '3' : '2') .
+                                       'd',
+                                       $year % 100);
                     break;
-                case 'Y':
-                    $output .= $year;
+                case "Y":
+                    $output .= sprintf('%0' .
+                                       ($year < 0 ? '5' : '4') .
+                                       'd',
+                                       $year);
                     break;
                 case '%':
                     $output .= '%';
@@ -2010,7 +2010,13 @@ class Date_Calc
     // {{{ weekOfYear()
 
     /**
-     * Alias for 'weekOfYearAbsolute()'
+     * Returns week of the year; where first Sunday is first day of first week
+     *
+     * N.B. this function is equivalent to calling:
+     *
+     *  <code>Date_Calc::weekOfYear7th($day, $month, $year, 0)</code>
+     *
+     * Returned week is an integer from 1 to 53.
      *
      * @param int $pn_day   the day of the month, default is current local day
      * @param int $pn_month the month, default is current local month
@@ -2020,11 +2026,12 @@ class Date_Calc
      * @return     int        integer from 1 to 53
      * @access     public
      * @static
+     * @see        Date_Calc::weekOfYear7th
      * @deprecated Method deprecated in Release [next version]
      */
     function weekOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
-        return Date_Calc::weekOfYearAbsolute($pn_day, $pn_month, $pn_year);
+        return Date_Calc::weekOfYear7th($pn_day, $pn_month, $pn_year, 0);
     }
 
 
@@ -2852,7 +2859,11 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        return Date_Calc::dateFormat(Date_Calc::getFirstDayOfMonth($month, $year), $month, $year, $format);
+        return Date_Calc::dateFormat(Date_Calc::getFirstDayOfMonth($month,
+                                                                   $year),
+                                     $month,
+                                     $year,
+                                     $format);
     }
 
 
@@ -2883,7 +2894,8 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        return Date_Calc::daysToDate(Date_Calc::lastDayOfMonth($month, $year), $format);
+        return Date_Calc::daysToDate(Date_Calc::lastDayOfMonth($month, $year),
+                                     $format);
     }
 
 
@@ -2893,6 +2905,7 @@ class Date_Calc
     /**
      * Returns date of the first day of previous month of given date
      *
+     * @param mixed  $dummy  irrelevant parameter
      * @param int    $month  the month, default is current local month
      * @param int    $year   the year in four digit format, default is current
      *                        local year
@@ -2904,7 +2917,7 @@ class Date_Calc
      * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function beginOfPrevMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function beginOfPrevMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -2914,7 +2927,11 @@ class Date_Calc
         }
 
         list($hn_pmyear, $hn_prevmonth) = Date_Calc::prevMonth($month, $year);
-        return Date_Calc::dateFormat(Date_Calc::getFirstDayOfMonth($hn_prevmonth, $hn_pmyear), $hn_prevmonth, $hn_pmyear, $format);
+        return Date_Calc::dateFormat(Date_Calc::getFirstDayOfMonth($hn_prevmonth,
+                                                                   $hn_pmyear),
+                                     $hn_prevmonth,
+                                     $hn_pmyear,
+                                     $format);
     }
 
 
@@ -2924,6 +2941,7 @@ class Date_Calc
     /**
      * Returns date of the last day of previous month for given date
      *
+     * @param mixed  $dummy  irrelevant parameter
      * @param int    $month  the month, default is current local month
      * @param int    $year   the year in four digit format, default is current
      *                        local year
@@ -2935,7 +2953,7 @@ class Date_Calc
      * @see        Date_Calc::endOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function endOfPrevMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function endOfPrevMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -2944,7 +2962,9 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        return Date_Calc::daysToDate(Date_Calc::firstDayOfMonth($month, $year) - 1, $format);
+        return Date_Calc::daysToDate(Date_Calc::firstDayOfMonth($month,
+                                                                $year) - 1,
+                                     $format);
     }
 
 
@@ -2954,18 +2974,19 @@ class Date_Calc
     /**
      * Returns date of begin of next month of given date
      *
+     * @param mixed  $dummy  irrelevant parameter
      * @param int    $month  the month, default is current local month
      * @param int    $year   the year in four digit format, default is current
      *                        local year
      * @param string $format the string indicating how to format the output
      *
-     * @return   string     the date in the desired format
-     * @access   public
+     * @return     string     the date in the desired format
+     * @access     public
      * @static
-     * @see      Date_Calc::beginOfMonthBySpan()
+     * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function beginOfNextMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function beginOfNextMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -2975,7 +2996,11 @@ class Date_Calc
         }
 
         list($hn_nmyear, $hn_nextmonth) = Date_Calc::nextMonth($month, $year);
-        return Date_Calc::dateFormat(Date_Calc::getFirstDayOfMonth($hn_nextmonth, $hn_nmyear), $hn_nextmonth, $hn_nmyear, $format);
+        return Date_Calc::dateFormat(Date_Calc::getFirstDayOfMonth($hn_nextmonth,
+                                                                   $hn_nmyear),
+                                     $hn_nextmonth,
+                                     $hn_nmyear,
+                                     $format);
     }
 
 
@@ -2985,18 +3010,19 @@ class Date_Calc
     /**
      * Returns date of the last day of next month of given date
      *
+     * @param mixed  $dummy  irrelevant parameter
      * @param int    $month  the month, default is current local month
      * @param int    $year   the year in four digit format, default is current
      *                        local year
      * @param string $format the string indicating how to format the output
      *
-     * @return   string     the date in the desired format
-     * @access   public
+     * @return     string     the date in the desired format
+     * @access     public
      * @static
-     * @see      Date_Calc::endOfMonthBySpan()
+     * @see        Date_Calc::endOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function endOfNextMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function endOfNextMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3004,12 +3030,11 @@ class Date_Calc
         if (empty($month)) {
             $month = Date_Calc::dateNow('%m');
         }
-        if (empty($day)) {
-            $day = Date_Calc::dateNow('%d');
-        }
 
         list($hn_nmyear, $hn_nextmonth) = Date_Calc::nextMonth($month, $year);
-        return Date_Calc::daysToDate(Date_Calc::lastDayOfMonth($hn_nextmonth, $hn_nmyear), $format);
+        return Date_Calc::daysToDate(Date_Calc::lastDayOfMonth($hn_nextmonth,
+                                                               $hn_nmyear),
+                                     $format);
     }
 
 
@@ -3034,7 +3059,10 @@ class Date_Calc
      * @static
      * @since    Method available since Release 1.4.4
      */
-    function beginOfMonthBySpan($months = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function beginOfMonthBySpan($months = 0,
+                                $month = 0,
+                                $year = null,
+                                $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3043,7 +3071,11 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        return Date_Calc::addMonths($months, Date_Calc::getFirstDayOfMonth($month, $year), $month, $year, $format);
+        return Date_Calc::addMonths($months, 
+                                    Date_Calc::getFirstDayOfMonth($month, $year),
+                                    $month,
+                                    $year,
+                                    $format);
     }
 
 
@@ -3068,7 +3100,10 @@ class Date_Calc
      * @static
      * @since    Method available since Release 1.4.4
      */
-    function endOfMonthBySpan($months = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function endOfMonthBySpan($months = 0,
+                              $month = 0,
+                              $year = null,
+                              $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3077,7 +3112,8 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        $hn_days = Date_Calc::addMonthsToDays($months + 1, Date_Calc::firstDayOfMonth($month, $year)) - 1;
+        $hn_days = Date_Calc::addMonthsToDays($months + 1,
+            Date_Calc::firstDayOfMonth($month, $year)) - 1;
         return Date_Calc::daysToDate($hn_days, $format);
     }
 

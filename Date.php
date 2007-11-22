@@ -91,7 +91,7 @@ require_once 'Date/Span.php';
 define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
 
 /**
- * whether to correct, by adding the local Summer time offset, the
+ * Whether to correct, by adding the local Summer time offset, the
  * specified time if it falls in the 'skipped hour' (encountered
  * when the clocks go forward).
  *
@@ -121,6 +121,28 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
  * this situation will never arise.
  */
 define('DATE_CORRECTINVALIDTIME_DEFAULT', false);
+
+/**
+ * Whether to validate dates (i.e. day-month-year, ignoring the time) by
+ * disallowing invalid dates (e.g. 31st February) being set by the following
+ * functions:
+ *
+ *  Date::setYear()
+ *  Date::setMonth()
+ *  Date::setDay()
+ *
+ * If the constant is set to 'true', then the date will be checked (by
+ * default), and if invalid, an error will be returned with the Date object
+ * left unmodified.
+ *
+ * This constant is set to 'false' by default for backwards-compatibility
+ * reasons, however, you are recommended to set it to 'true'.
+ *
+ * Note that setHour(), setMinute(), setSecond() and setPartSecond()
+ * allow an invalid date/time to be set regardless of the value of this
+ * constant.
+ */
+define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
 
 
 // }}}
@@ -1252,11 +1274,17 @@ class Date
                     $ha_week = Date_Calc::weekOfYear7th($this->day, $this->month, $this->year, 1);
                     $output .= sprintf("%02d", $ha_week[1]);
                     break;
-                case "y":
-                    $output .= sprintf("%02d", $this->year % 100);
+                case 'y':
+                    $output .= sprintf('%0' .
+                                       ($this->year < 0 ? '3' : '2') .
+                                       'd',
+                                       $this->year % 100);
                     break;
                 case "Y":
-                    $output .= sprintf("%04d", $this->year);
+                    $output .= sprintf('%0' .
+                                       ($this->year < 0 ? '5' : '4') .
+                                       'd',
+                                       $this->year);
                     break;
                 case "Z":
                     if ($this->ob_invalidtime)
@@ -4785,7 +4813,7 @@ class Date
      * @return   void
      * @access   public
      */
-    function setYear($y, $pb_validate = true)
+    function setYear($y, $pb_validate = DATE_VALIDATE_DATE_BY_DEFAULT)
     {
         if ($pb_validate && !Date_Calc::isValidDate($this->day, $this->month, $y)) {
             return PEAR::raiseError("'" . Date_Calc::dateFormat($this->day, $this->month, $y, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
@@ -4811,7 +4839,7 @@ class Date
      * @return   void
      * @access   public
      */
-    function setMonth($m, $pb_validate = true)
+    function setMonth($m, $pb_validate = DATE_VALIDATE_DATE_BY_DEFAULT)
     {
         if ($pb_validate && !Date_Calc::isValidDate($this->day, $m, $this->year)) {
             return PEAR::raiseError("'" . Date_Calc::dateFormat($this->day, $m, $this->year, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
@@ -4837,7 +4865,7 @@ class Date
      * @return   void
      * @access   public
      */
-    function setDay($d, $pb_validate = true)
+    function setDay($d, $pb_validate = DATE_VALIDATE_DATE_BY_DEFAULT)
     {
         if ($pb_validate && !Date_Calc::isValidDate($d, $this->month, $this->year)) {
             return PEAR::raiseError("'" . Date_Calc::dateFormat($d, $this->month, $this->year, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
@@ -4863,6 +4891,8 @@ class Date
      * @param int  $m           the month
      * @param int  $y           the year
      * @param bool $pb_validate whether to check that the new date is valid
+     *                           (should only be set to 'false' if the date is
+     *                           known to be valid)
      *
      * @return   void
      * @access   public
@@ -4884,7 +4914,7 @@ class Date
     /**
      * Sets the hour field of the date object
      *
-     * Sets the hour field of the date object in 24-hour format.
+     * Expects an hour in 24-hour format.
      * Invalid hours (not 0-23) are set to 0.
      *
      * @param int  $h                      the hour
