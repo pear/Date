@@ -268,7 +268,9 @@ class Date_TimeZone
         } else {
             $this->hasdst = false;
 
-            if (preg_match('/^UTC([+\-])([0-9]{2,2}):?([0-5][0-9])$/', $ps_id, $ha_matches)) {
+            if (preg_match('/^UTC([+\-])([0-9]{2,2}):?([0-5][0-9])$/',
+                           $ps_id,
+                           $ha_matches)) {
                 $this->id     = $ps_id;
                 $this->offset = ($ha_matches[1] .
                                  ($ha_matches[2] * 3600 +
@@ -411,7 +413,8 @@ class Date_TimeZone
     {
         if (isset($GLOBALS['_DATE_TIMEZONE_DATA'][$ps_id])) {
             return true;
-        } else if (preg_match('/^UTC[+\-]([0-9]{2,2}:?[0-5][0-9]|[0-9]{1,2})$/', $ps_id)) {
+        } else if (preg_match('/^UTC[+\-]([0-9]{2,2}:?[0-5][0-9]|[0-9]{1,2})$/',
+                   $ps_id)) {
             return true;
         } else {
             return false;
@@ -474,7 +477,8 @@ class Date_TimeZone
             }
         } else {
             if (!Date_TimeZone::isValidID($pm_tz)) {
-                return PEAR::raiseError("Invalid time zone ID '$pm_tz'", DATE_ERROR_INVALIDTIMEZONE);
+                return PEAR::raiseError("Invalid time zone ID '$pm_tz'",
+                                        DATE_ERROR_INVALIDTIMEZONE);
             }
             if ($pm_tz == $this->id)
                 return true;
@@ -543,10 +547,22 @@ class Date_TimeZone
             $hn_day = $ps_summertimelimitcode;
         } else {
             if (!isset($ha_daysofweek))
-                static $ha_daysofweek = array("Sun" => 0, "Mon" => 1, "Tue" => 2, "Wed" => 3, "Thu" => 4, "Fri" => 5, "Sat" => 6);
+                static $ha_daysofweek = array("Sun" => 0,
+                                              "Mon" => 1,
+                                              "Tue" => 2,
+                                              "Wed" => 3,
+                                              "Thu" => 4,
+                                              "Fri" => 5,
+                                              "Sat" => 6);
 
-            if (preg_match('/^last(Sun|Mon|Tue|Wed|Thu|Fri|Sat)$/', $ps_summertimelimitcode, $ha_matches)) {
-                list($hn_nmyear, $hn_nextmonth, $hn_nmday) = explode(" ", Date_Calc::beginOfMonthBySpan(1, $pn_month, $pn_year, "%Y %m %d"));
+            if (preg_match('/^last(Sun|Mon|Tue|Wed|Thu|Fri|Sat)$/',
+                           $ps_summertimelimitcode,
+                           $ha_matches)) {
+                list($hn_nmyear, $hn_nextmonth, $hn_nmday) =
+                    explode(" ", Date_Calc::beginOfMonthBySpan(1,
+                                                               $pn_month,
+                                                               $pn_year,
+                                                               "%Y %m %d"));
                 list($hn_year, $hn_month, $hn_day) =
                     explode(" ",
                             Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],
@@ -554,7 +570,8 @@ class Date_TimeZone
                                                      $hn_nextmonth, 
                                                      $hn_nmyear,
                                                      "%Y %m %d",
-                                                     false));   // not including this day
+                                                     false)); // not including
+                                                              // this day
 
                 if ($hn_month != $pn_month) {
                     // This code happen legitimately if the calendar jumped some days
@@ -562,7 +579,9 @@ class Date_TimeZone
                     //
                     $hn_day = Date_Calc::getFirstDayOfMonth($pn_month, $pn_year);
                 }
-            } else if (preg_match('/^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)([><]=)([0-9]+)$/', $ps_summertimelimitcode, $ha_matches)) {
+            } else if (preg_match('/^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)([><]=)([0-9]+)$/',
+                                  $ps_summertimelimitcode,
+                                  $ha_matches)) {
                 if ($ha_matches[2] == "<=") {
                     list($hn_year, $hn_month, $hn_day) =
                         explode(" ",
@@ -571,7 +590,8 @@ class Date_TimeZone
                                                          $pn_month,
                                                          $pn_year,
                                                          "%Y %m %d",
-                                                         true));    // including this day
+                                                         true)); // including
+                                                                 // this day
 
                     if ($hn_month != $pn_month) {
                         $hn_day = Date_Calc::getFirstDayOfMonth($pn_month, $pn_year);
@@ -584,7 +604,8 @@ class Date_TimeZone
                                                          $pn_month,
                                                          $pn_year,
                                                          "%Y %m %d",
-                                                         true));    // including this day
+                                                         true)); // including
+                                                                 // this day
 
                     if ($hn_month != $pn_month) {
                         $hn_day = Date_Calc::daysInMonth($pn_month, $pn_year);
@@ -635,14 +656,14 @@ class Date_TimeZone
         }
 
         if (is_a($pm_date, "Date")) {
-            $hn_day = $pm_date->getDay();
-            $hn_month = $pm_date->getMonth();
-            $hn_year = $pm_date->getYear();
+            $hn_day     = $pm_date->getDay();
+            $hn_month   = $pm_date->getMonth();
+            $hn_year    = $pm_date->getYear();
             $hn_seconds = $pm_date->getSecondsPastMidnight();
         } else {
-            $hn_day = $pm_date[0];
-            $hn_month = $pm_date[1];
-            $hn_year = $pm_date[2];
+            $hn_day     = $pm_date[0];
+            $hn_month   = $pm_date[1];
+            $hn_year    = $pm_date[2];
             $hn_seconds = $pm_date[3];  // seconds past midnight
         }
 
@@ -655,31 +676,49 @@ class Date_TimeZone
             ) {
 
             if ($hn_month == $this->on_summertimestartmonth) {
-                $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $hn_year);
+                $hn_startday =
+                    $this->getSummerTimeLimitDay($this->os_summertimestartday,
+                                                 $this->on_summertimestartmonth,
+                                                 $hn_year);
 
                 if ($hn_day < $hn_startday) {
                     return false;
                 } else if ($hn_day > $hn_startday) {
                     return true;
-                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) - $this->on_summertimeoffset >= $this->on_summertimestarttime) {
+                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) -
+                           $this->on_summertimeoffset >=
+                           $this->on_summertimestarttime) {
                     return true;
-                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) >= $this->on_summertimestarttime) {
-                    return PEAR::raiseError("Invalid time specified for date '" . Date_Calc::dateFormat($hn_day, $hn_month, $hn_year, "%Y-%m-%d") . "'", DATE_ERROR_INVALIDTIME);
+                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) >=
+                           $this->on_summertimestarttime) {
+                    return PEAR::raiseError("Invalid time specified for date '" .
+                                            Date_Calc::dateFormat($hn_day,
+                                                                  $hn_month,
+                                                                  $hn_year,
+                                                                  "%Y-%m-%d") .
+                                            "'",
+                                            DATE_ERROR_INVALIDTIME);
                 } else {
                     return false;
                 }
             } else if ($hn_month == $this->on_summertimeendmonth) {
-                $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $hn_year);
+                $hn_endday =
+                    $this->getSummerTimeLimitDay($this->os_summertimeendday,
+                                                 $this->on_summertimeendmonth,
+                                                 $hn_year);
 
                 if ($hn_day < $hn_endday) {
                     return true;
                 } else if ($hn_day > $hn_endday) {
                     return false;
-                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) - $this->on_summertimeoffset >= $this->on_summertimeendtime) {
+                } else if (($hn_gmt = $hn_seconds * 1000 - $this->offset) -
+                           $this->on_summertimeoffset >=
+                           $this->on_summertimeendtime) {
                     return false;
                 } else if ($hn_gmt >= $this->on_summertimeendtime) {
-                    // There is a 50:50 chance that it's Summer time, but there is
-                    // no way of knowing (the hour is repeated), so return default:
+                    // There is a 50:50 chance that it's Summer time, but there
+                    // is no way of knowing (the hour is repeated), so return
+                    // default:
                     //
                     return $pb_repeatedhourdefault;
                 } else {
@@ -726,14 +765,14 @@ class Date_TimeZone
         }
 
         if (is_a($pm_date, "Date")) {
-            $hn_day = $pm_date->getDay();
-            $hn_month = $pm_date->getMonth();
-            $hn_year = $pm_date->getYear();
+            $hn_day     = $pm_date->getDay();
+            $hn_month   = $pm_date->getMonth();
+            $hn_year    = $pm_date->getYear();
             $hn_seconds = $pm_date->getSecondsPastMidnight();
         } else {
-            $hn_day = $pm_date[0];
-            $hn_month = $pm_date[1];
-            $hn_year = $pm_date[2];
+            $hn_day     = $pm_date[0];
+            $hn_month   = $pm_date[1];
+            $hn_year    = $pm_date[2];
             $hn_seconds = $pm_date[3];
         }
 
@@ -746,25 +785,33 @@ class Date_TimeZone
             ) {
 
             if ($hn_month == $this->on_summertimestartmonth) {
-                $hn_startday = $this->getSummerTimeLimitDay($this->os_summertimestartday, $this->on_summertimestartmonth, $hn_year);
+                $hn_startday =
+                    $this->getSummerTimeLimitDay($this->os_summertimestartday,
+                                                 $this->on_summertimestartmonth,
+                                                 $hn_year);
 
                 if ($hn_day < $hn_startday) {
                     return false;
                 } else if ($hn_day > $hn_startday) {
                     return true;
-                } else if ($hn_seconds * 1000 - $this->offset >= $this->on_summertimestarttime) {
+                } else if ($hn_seconds * 1000 - $this->offset >=
+                           $this->on_summertimestarttime) {
                     return true;
                 } else {
                     return false;
                 }
             } else if ($hn_month == $this->on_summertimeendmonth) {
-                $hn_endday = $this->getSummerTimeLimitDay($this->os_summertimeendday, $this->on_summertimeendmonth, $hn_year);
+                $hn_endday =
+                    $this->getSummerTimeLimitDay($this->os_summertimeendday,
+                                                 $this->on_summertimeendmonth,
+                                                 $hn_year);
 
                 if ($hn_day < $hn_endday) {
                     return true;
                 } else if ($hn_day > $hn_endday) {
                     return false;
-                } else if ($hn_seconds * 1000 - $this->offset >= $this->on_summertimeendtime) {
+                } else if ($hn_seconds * 1000 - $this->offset >=
+                           $this->on_summertimeendtime) {
                     return false;
                 } else {
                     return true;
@@ -788,7 +835,8 @@ class Date_TimeZone
      * if the zone observes DST, zero otherwise.  Currently the
      * DST offset is hard-coded to one hour.
      *
-     * @return   int        the DST offset, in milliseconds or nought if the zone does not observe DST
+     * @return   int        the DST offset, in milliseconds or nought if the
+     *                       zone does not observe DST
      * @access   public
      */
     function getDSTSavings()
@@ -805,7 +853,9 @@ class Date_TimeZone
             // to use the standard time-zone IDs, then he can always update
             // the array himself.
             //
-            return isset($this->on_summertimeoffset) ? $this->on_summertimeoffset : 3600000;
+            return isset($this->on_summertimeoffset) ?
+                         $this->on_summertimeoffset :
+                         3600000;
         } else {
             return 0;
         }
@@ -816,7 +866,8 @@ class Date_TimeZone
     // {{{ getRawOffset()
 
     /**
-     * Returns the raw (non-DST-corrected) offset from UTC/GMT for this time zone
+     * Returns the raw (non-DST-corrected) offset from UTC/GMT for this time
+     * zone
      *
      * @return   int        the offset, in milliseconds
      * @access   public

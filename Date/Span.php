@@ -87,7 +87,7 @@ define('DATE_SPAN_INPUT_FORMAT_NNSV', 1);
  *
  * @global string
  */
-$GLOBALS['_DATE_SPAN_FORMAT']  = '%C';
+$GLOBALS['_DATE_SPAN_FORMAT'] = '%C';
 
 /**
  * Default time format when converting from a string
@@ -255,7 +255,7 @@ class Date_Span
      * With this method you are assigning day, hour, minute and second
      * values, and the last values are used. This means that if you use
      * something like setFromString('10, 20', '%H, %h') your time span
-     * would be 20 hours long. Allways remember that this method set
+     * would be 20 hours long. Allways remember that this method sets
      * <b>all</b> the values, so if you had a $time span 30 minutes long
      * and you make $time->setFromString('20 hours', '%H hours'), $time
      * span would be 20 hours long (and not 20 hours and 30 minutes).

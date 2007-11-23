@@ -87,6 +87,8 @@ require_once 'Date/Span.php';
  * Whether to capture the micro-time (in microseconds) by default
  * in calls to 'Date::setNow()'.  Note that this makes a call to
  * 'gettimeofday()', which may not work on all systems.
+ *
+ * @since    Constant available since Release [next version]
  */
 define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
 
@@ -119,6 +121,8 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
  * Of course, this constant will be unused if the user chooses to
  * work in UTC or a time zone without Summer time, in which case
  * this situation will never arise.
+ *
+ * @since    Constant available since Release [next version]
  */
 define('DATE_CORRECTINVALIDTIME_DEFAULT', false);
 
@@ -141,8 +145,27 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', false);
  * Note that setHour(), setMinute(), setSecond() and setPartSecond()
  * allow an invalid date/time to be set regardless of the value of this
  * constant.
+ *
+ * @since    Constant available since Release [next version]
  */
 define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
+
+/**
+ * Whether to count leap seconds in the following functions:
+ *
+ *  Date::addSeconds()
+ *  Date::subtractSeconds()
+ *  Date_Calc::addSeconds()
+ *
+ * This constant is set to 'false' by default for backwards-compatibility
+ * reasons, however, you are recommended to set it to 'true'.
+ *
+ * Note that this constant does not affect Date::addSpan() and
+ * Date::subtractSpan() which will not count leap seconds in any Fcase.
+ *
+ * @since    Constant available since Release [next version]
+ */
+define('DATE_ADDSECONDS_COUNTLEAP', false);
 
 
 // }}}
@@ -889,6 +912,9 @@ class Date
             $this->addSeconds($this->partsecond == 0.0 ?
                               -$this->second :
                               -$this->second - $this->partsecond);
+            //
+            // (leap seconds irrelevant)
+
             $this->addMinutes(-$this->minute);
         } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
             if ($pn_precision == DATE_PRECISION_10MINUTES) {
@@ -898,10 +924,16 @@ class Date
             $this->addSeconds($this->partsecond == 0.0 ?
                               -$this->second :
                               -$this->second - $this->partsecond);
+            //
+            // (leap seconds irrelevant)
+
         } else if ($pn_precision == DATE_PRECISION_10SECONDS) {
             $this->addSeconds($this->partsecond == 0.0 ?
                               -$this->second % 10 :
                               (-$this->second % 10) - $this->partsecond);
+            //
+            // (leap seconds irrelevant)
+
         } else {
             // Assume Summer time offset cannot be composed of part-seconds:
             //
@@ -3262,7 +3294,13 @@ class Date
                                              $this->month,
                                              $this->year,
                                              "%Y %m %d"));
-        $this->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $this->setLocalTime($hs_day,
+                            $hs_month,
+                            $hs_year,
+                            $this->hour,
+                            $this->minute,
+                            $this->second,
+                            $this->partsecond);
     }
 
 
@@ -3289,7 +3327,13 @@ class Date
                                               $this->month,
                                               $this->year,
                                               "%Y %m %d"));
-        $this->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $this->setLocalTime($hs_day,
+                            $hs_month,
+                            $hs_year,
+                            $this->hour,
+                            $this->minute,
+                            $this->second,
+                            $this->partsecond);
     }
 
 
@@ -3315,7 +3359,13 @@ class Date
                                             $this->month,
                                             $this->year,
                                             "%Y %m %d"));
-        $this->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $this->setLocalTime($hs_day,
+                            $hs_month,
+                            $hs_year,
+                            $this->hour,
+                            $this->minute,
+                            $this->second,
+                            $this->partsecond);
     }
 
 
@@ -3407,12 +3457,12 @@ class Date
      *
      * @param mixed $sec          the no of seconds to add as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             true)
+     *                             DATE_ADDSECONDS_COUNTLEAP)
      *
      * @return   void
      * @access   public
      */
-    function addSeconds($sec, $pb_countleap = true)
+    function addSeconds($sec, $pb_countleap = DATE_ADDSECONDS_COUNTLEAP)
     {
         if ($this->ob_invalidtime)
             return $this->getErrorInvalidTime();
@@ -3459,12 +3509,12 @@ class Date
      *
      * @param mixed $sec          the no of seconds to add as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             true)
+     *                             DATE_ADDSECONDS_COUNTLEAP)
      *
      * @return   void
      * @access   public
      */
-    function subtractSeconds($sec, $pb_countleap = true)
+    function subtractSeconds($sec, $pb_countleap = DATE_ADDSECONDS_COUNTLEAP)
     {
         $res = $this->addSeconds(-$sec, $pb_countleap);
 
@@ -3517,6 +3567,7 @@ class Date
      *
      * If you want alternative functionality, you must use a mixture of
      * the following functions instead:
+     *
      *  addYears()
      *  addMonths()
      *  addDays()
@@ -4101,12 +4152,7 @@ class Date
     function getNextDay()
     {
         $ret = new Date($this);
-        list($hs_year, $hs_month, $hs_day) =
-            explode(" ", Date_Calc::nextDay($this->day,
-                                            $this->month,
-                                            $this->year,
-                                            "%Y %m %d"));
-        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $ret->addDays(1);
         return $ret;
     }
 
@@ -4125,12 +4171,7 @@ class Date
     function getPrevDay()
     {
         $ret = new Date($this);
-        list($hs_year, $hs_month, $hs_day) =
-            explode(" ", Date_Calc::prevDay($this->day,
-                                            $this->month,
-                                            $this->year,
-                                            "%Y %m %d"));
-        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $ret->addDays(-1);
         return $ret;
     }
 
@@ -4154,7 +4195,7 @@ class Date
                                                 $this->month,
                                                 $this->year,
                                                 "%Y %m %d"));
-        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year);
         return $ret;
     }
 
@@ -4178,7 +4219,7 @@ class Date
                                                 $this->month,
                                                 $this->year,
                                                 "%Y %m %d"));
-        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year, false);
+        $ret->setDayMonthYear($hs_day, $hs_month, $hs_year);
         return $ret;
     }
 
@@ -4347,7 +4388,7 @@ class Date
      * Returns the part-second field of the date object
      *
      * @return   int        the part-second
-     * @access   public
+     * @access   protected
      * @since    Method available since Release [next version]
      */
     function getPartSecond()
@@ -4503,7 +4544,7 @@ class Date
      * Returns the part-second field of the local standard time
      *
      * @return   int        the part-second
-     * @access   public
+     * @access   protected
      * @since    Method available since Release [next version]
      */
     function getStandardPartSecond()
@@ -4559,7 +4600,7 @@ class Date
      *                                      skipped hour (defaults to false)
      *
      * @return   void
-     * @access   private
+     * @access   protected
      * @since    Method available since Release [next version]
      */
     function setLocalTime($pn_day,
@@ -4722,7 +4763,7 @@ class Date
      * @param int $pn_partsecond the part-second
      *
      * @return   void
-     * @access   private
+     * @access   protected
      * @since    Method available since Release [next version]
      */
     function setStandardTime($pn_day,
@@ -4882,28 +4923,36 @@ class Date
      * Sets the day, month and year fields of the date object
      *
      * If specified year forms an invalid date, then PEAR error will be
-     * returned, unless the validation is over-ridden using the second
-     * parameter.  Note that setting each of these fields separately
+     * returned.  Note that setting each of these fields separately
      * may unintentionally return a PEAR error if a transitory date is
      * invalid between setting these fields.
      *
      * @param int  $d           the day
      * @param int  $m           the month
      * @param int  $y           the year
-     * @param bool $pb_validate whether to check that the new date is valid
-     *                           (should only be set to 'false' if the date is
-     *                           known to be valid)
      *
      * @return   void
      * @access   public
      * @since    Method available since Release [next version]
      */
-    function setDayMonthYear($d, $m, $y, $pb_validate = true)
+    function setDayMonthYear($d, $m, $y)
     {
-        if ($pb_validate && !Date_Calc::isValidDate($d, $m, $y)) {
-            return PEAR::raiseError("'" . Date_Calc::dateFormat($d, $m, $y, "%Y-%m-%d") . "' is invalid calendar date", DATE_ERROR_INVALIDDATE);
+        if (!Date_Calc::isValidDate($d, $m, $y)) {
+            return PEAR::raiseError("'" .
+                                    Date_Calc::dateFormat($d,
+                                                          $m,
+                                                          $y,
+                                                          "%Y-%m-%d") .
+                                    "' is invalid calendar date",
+                                    DATE_ERROR_INVALIDDATE);
         } else {
-            $this->setLocalTime($d, $m, $y, $this->hour, $this->minute, $this->second, $this->partsecond);
+            $this->setLocalTime($d,
+                                $m,
+                                $y,
+                                $this->hour,
+                                $this->minute,
+                                $this->second,
+                                $this->partsecond);
         }
     }
 
@@ -4915,7 +4964,6 @@ class Date
      * Sets the hour field of the date object
      *
      * Expects an hour in 24-hour format.
-     * Invalid hours (not 0-23) are set to 0.
      *
      * @param int  $h                      the hour
      * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
@@ -4947,8 +4995,6 @@ class Date
     /**
      * Sets the minute field of the date object
      *
-     * Invalid minutes (not 0-59) are set to 0.
-     *
      * @param int  $m                      the minute
      * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
      *                                      repeated hour is specified (defaults
@@ -4978,8 +5024,6 @@ class Date
 
     /**
      * Sets the second field of the date object
-     *
-     * Invalid seconds (not 0-59) are set to 0.
      *
      * @param mixed $s                      the second as integer or float
      * @param bool  $pb_repeatedhourdefault whether to assume Summer time if a
@@ -5011,15 +5055,13 @@ class Date
     /**
      * Sets the part-second field of the date object
      *
-     * Invalid part-seconds (not < 1) are set to 0.
-     *
      * @param int  $pn_ps                  the part-second
      * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
      *                                      repeated hour is specified (defaults
      *                                      to false)
      *
      * @return   void
-     * @access   public
+     * @access   protected
      * @since    Method available since Release [next version]
      */
     function setPartSecond($pn_ps, $pb_repeatedhourdefault = false)
@@ -5044,12 +5086,8 @@ class Date
     /**
      * Sets the hour, minute, second and part-second fields of the date object
      *
-     * N.B. if the repeated hour, due to the clocks going back, is specified
-     * the default is to assume local standard time because this normally
-     * happens very early in the morning.  The same reasoning applies to the
-     * skipped hour when the clocks go forward - it is early in the morning
-     * so the user probably will expect a Summer time to be chosen (if he
-     * chooses not to receive an error).
+     * N.B. if the repeated hour, due to the clocks going back, is specified,
+     * the default is to assume local standard time.
      *
      * @param int   $h                      the hour
      * @param int   $m                      the minute
@@ -5082,6 +5120,74 @@ class Date
                             $hn_second,
                             $hn_partsecond,
                             $pb_repeatedhourdefault);
+    }
+
+
+    // }}}
+    // {{{ setDateTime()
+
+    /**
+     * Sets all the fields of the date object (day, month, year, hour, minute
+     * and second)
+     *
+     * If specified year forms an invalid date, then PEAR error will be
+     * returned.  Note that setting each of these fields separately
+     * may unintentionally return a PEAR error if a transitory date is
+     * invalid between setting these fields.
+     *
+     * N.B. if the repeated hour, due to the clocks going back, is specified,
+     * the default is to assume local standard time.
+     *
+     * @param int   $pn_day                 the day
+     * @param int   $pn_month               the month
+     * @param int   $pn_year                the year
+     * @param int   $pn_hour                the hour
+     * @param int   $pn_minute              the minute
+     * @param mixed $pm_second              the second as integer or float
+     * @param bool  $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                       repeated hour is specified
+     *                                       (defaults to false)
+     *
+     * @return   void
+     * @access   public
+     * @since    Method available since Release [next version]
+     */
+    function setDateTime($pn_day,
+                         $pn_month,
+                         $pn_year,
+                         $pn_hour,
+                         $pn_minute,
+                         $pm_second,
+                         $pb_repeatedhourdefault = false)
+    {
+        if (!Date_Calc::isValidDate($d, $m, $y)) {
+            return PEAR::raiseError("'" .
+                                    Date_Calc::dateFormat($d,
+                                                          $m,
+                                                          $y,
+                                                          "%Y-%m-%d") .
+                                    "' is invalid calendar date",
+                                    DATE_ERROR_INVALIDDATE);
+        } else {
+            // Split second into integer and part-second:
+            //
+            if (is_float($pm_second)) {
+                $hn_second     = intval($pm_second);
+                $hn_partsecond = $pm_second - $hn_second;
+            } else {
+                $hn_second     = (int) $pm_second;
+                $hn_partsecond = 0.0;
+            }
+
+            $this->setLocalTime($d,
+                                $m,
+                                $y,
+                                $h,
+                                $m,
+                                $hn_second,
+                                $hn_partsecond,
+                                $pb_repeatedhourdefault);
+        }
     }
 
 
