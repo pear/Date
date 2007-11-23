@@ -151,7 +151,7 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', false);
 define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
 
 /**
- * Whether to count leap seconds in the following functions:
+ * Whether to count leap seconds by default in the following functions:
  *
  *  Date::addSeconds()
  *  Date::subtractSeconds()
@@ -161,11 +161,11 @@ define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
  * reasons, however, you are recommended to set it to 'true'.
  *
  * Note that this constant does not affect Date::addSpan() and
- * Date::subtractSpan() which will not count leap seconds in any Fcase.
+ * Date::subtractSpan() which will not count leap seconds in any case.
  *
  * @since    Constant available since Release [next version]
  */
-define('DATE_ADDSECONDS_COUNTLEAP', false);
+define('DATE_COUNT_LEAP_SECONDS', false);
 
 
 // }}}
@@ -674,13 +674,16 @@ class Date
      *                                     local Summer time offset, the rounded
      *                                     time if it falls in the skipped hour
      *                                     (defaults to false)
+     * @param bool  $pb_countleap         whether to count leap seconds
+     *                                     (defaults to DATE_COUNT_LEAP_SECONDS)
      *
      * @return   void
      * @access   public
      * @since    Method available since Release [next version]
      */
     function round($pn_precision = DATE_PRECISION_DAY,
-                   $pb_correctinvalidtime = false)
+                   $pb_correctinvalidtime = false,
+                   $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
         if ($pn_precision <= DATE_PRECISION_DAY) {
             list($hn_year,
@@ -688,16 +691,23 @@ class Date
                  $hn_day,
                  $hn_hour,
                  $hn_minute,
-                 $hn_second,
-                 $hn_partsecond) =
+                 $hn_secondraw) =
                  Date_Calc::round($pn_precision,
                                   $this->day,
                                   $this->month,
                                   $this->year,
                                   $this->hour,
                                   $this->minute,
-                                  $this->second,
-                                  $this->partsecond);
+                                  $this->partsecond == 0.0 ?
+                                      $this->second :
+                                      $this->second + $this->partsecond);
+            if (is_float($hn_secondraw)) {
+                $hn_second     = intval($hn_secondraw);
+                $hn_partsecond = $hn_secondraw - $hn_second;
+            } else {
+                $hn_second     = $hn_secondraw;
+                $hn_partsecond = 0.0;
+            }
 
             $this->setLocalTime($hn_day,
                                 $hn_month,
@@ -724,16 +734,24 @@ class Date
                  $hn_day,
                  $hn_hour,
                  $hn_minute,
-                 $hn_second,
-                 $hn_partsecond) =
+                 $hn_secondraw) =
                  Date_Calc::round($pn_precision,
                                   $this->on_standardday,
                                   $this->on_standardmonth,
                                   $this->on_standardyear,
                                   $this->on_standardhour,
                                   $this->on_standardminute,
-                                  $this->on_standardsecond,
-                                  $this->on_standardpartsecond);
+                                  $this->on_standardpartsecond == 0.0 ?
+                                      $this->on_standardsecond :
+                                      $this->on_standardsecond +
+                                          $this->on_standardpartsecond);
+            if (is_float($hn_secondraw)) {
+                $hn_second     = intval($hn_secondraw);
+                $hn_partsecond = $hn_secondraw - $hn_second;
+            } else {
+                $hn_second     = $hn_secondraw;
+                $hn_partsecond = 0.0;
+            }
 
             $this->setStandardTime($hn_day,
                                    $hn_month,
@@ -755,16 +773,23 @@ class Date
              $hn_day,
              $hn_hour,
              $hn_minute,
-             $hn_second,
-             $hn_partsecond) =
+             $hn_secondraw) =
              Date_Calc::round($pn_precision,
                               $this->day,
                               $this->month,
                               $this->year,
                               $this->hour,
                               $this->minute,
-                              $this->second,
-                              $this->partsecond);
+                              $this->partsecond == 0.0 ?
+                                  $this->second :
+                                  $this->second + $this->partsecond);
+        if (is_float($hn_secondraw)) {
+            $hn_second     = intval($hn_secondraw);
+            $hn_partsecond = $hn_secondraw - $hn_second;
+        } else {
+            $hn_second     = $hn_secondraw;
+            $hn_partsecond = 0.0;
+        }
 
         $this->setLocalTime($hn_day,
                             $hn_month,
@@ -790,13 +815,16 @@ class Date
      * N.B. this function is equivalent to calling:
      *  <code>'round(DATE_PRECISION_SECOND + $pn_precision)'</code>
      *
-     * @param int $pn_precision number of digits after the decimal point
+     * @param int  $pn_precision number of digits after the decimal point
+     * @param bool $pb_countleap whether to count leap seconds (defaults to
+     *                            DATE_COUNT_LEAP_SECONDS)
      *
      * @return   void
      * @access   public
      * @since    Method available since Release [next version]
      */
-    function roundSeconds($pn_precision = 0)
+    function roundSeconds($pn_precision = 0,
+                          $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
         $this->round(DATE_PRECISION_SECOND + $pn_precision);
     }
@@ -3457,12 +3485,12 @@ class Date
      *
      * @param mixed $sec          the no of seconds to add as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             DATE_ADDSECONDS_COUNTLEAP)
+     *                             DATE_COUNT_LEAP_SECONDS)
      *
      * @return   void
      * @access   public
      */
-    function addSeconds($sec, $pb_countleap = DATE_ADDSECONDS_COUNTLEAP)
+    function addSeconds($sec, $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
         if ($this->ob_invalidtime)
             return $this->getErrorInvalidTime();
@@ -3509,12 +3537,12 @@ class Date
      *
      * @param mixed $sec          the no of seconds to add as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             DATE_ADDSECONDS_COUNTLEAP)
+     *                             DATE_COUNT_LEAP_SECONDS)
      *
      * @return   void
      * @access   public
      */
-    function subtractSeconds($sec, $pb_countleap = DATE_ADDSECONDS_COUNTLEAP)
+    function subtractSeconds($sec, $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
         $res = $this->addSeconds(-$sec, $pb_countleap);
 

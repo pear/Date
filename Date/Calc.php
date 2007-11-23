@@ -531,7 +531,7 @@ class Date_Calc
     /**
      * Returns the total number of seconds in the hour of the given date
      *
-     * This allows for future implementation of leap seconds.
+     * This takes into account leap seconds.
      *
      * @param int $pn_day   the day of the month
      * @param int $pn_month the month
@@ -557,7 +557,7 @@ class Date_Calc
     /**
      * Returns the total number of seconds in the minute of the given hour
      *
-     * This allows for future implementation of leap seconds.
+     * This takes into account leap seconds.
      *
      * @param int $pn_day    the day of the month
      * @param int $pn_month  the month
@@ -762,7 +762,7 @@ class Date_Calc
      * @param int   $pn_minute    the minute
      * @param mixed $pn_second    the second as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             DATE_ADDSECONDS_COUNTLEAP)
+     *                             DATE_COUNT_LEAP_SECONDS)
      *
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public
@@ -776,7 +776,7 @@ class Date_Calc
                         $pn_hour,
                         $pn_minute,
                         $pn_second,
-                        $pb_countleap = DATE_ADDSECONDS_COUNTLEAP)
+                        $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
         if ($pn_seconds == 0)
             return array((int) $pn_year,
@@ -3826,32 +3826,42 @@ class Date_Calc
      * @param int   $pn_year       the year
      * @param int   $pn_hour       the hour
      * @param int   $pn_minute     the minute
-     * @param int   $pn_second     the second
-     * @param float $pn_partsecond the part-second (less than 1)
+     * @param mixed $pn_second     the second as integer or float
+     * @param bool  $pb_countleap  whether to count leap seconds (defaults to
+     *                              DATE_COUNT_LEAP_SECONDS)
      *
-     * @return   array      array of year, month, day, hour, minute, second,
-     *                       part-second (types as corresponding arguments)
+     * @return   array      array of year, month, day, hour, minute, second
      * @access   public
      * @static
      * @since    Method available since Release [next version]
      */
-    function round($pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour = 0, $pn_minute = 0, $pn_second = 0, $pn_partsecond = 0.0)
+    function round($pn_precision,
+                   $pn_day,
+                   $pn_month,
+                   $pn_year,
+                   $pn_hour = 0,
+                   $pn_minute = 0,
+                   $pn_second = 0,
+                   $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
         if ($pn_precision <= DATE_PRECISION_YEAR) {
-            $hn_month      = 0;
-            $hn_day        = 0;
-            $hn_hour       = 0;
-            $hn_minute     = 0;
-            $hn_second     = 0;
-            $hn_partsecond = 0.0;
+            $hn_month  = 0;
+            $hn_day    = 0;
+            $hn_hour   = 0;
+            $hn_minute = 0;
+            $hn_second = 0;
 
             if ($pn_precision < DATE_PRECISION_YEAR) {
                 $hn_year = round($pn_year, $pn_precision - DATE_PRECISION_YEAR);
             } else {
                 // Check part-year:
                 //
-                $hn_midyear = (Date_Calc::firstDayOfYear($pn_year + 1) - Date_Calc::firstDayOfYear($pn_year)) / 2;
-                if (($hn_days = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year)) <= $hn_midyear - 1) {
+                $hn_midyear = (Date_Calc::firstDayOfYear($pn_year + 1) -
+                               Date_Calc::firstDayOfYear($pn_year)) / 2;
+                if (($hn_days = Date_Calc::dayOfYear($pn_day,
+                                                     $pn_month,
+                                                     $pn_year)) <=
+                    $hn_midyear - 1) {
                     $hn_year = $pn_year;
                 } else if ($hn_days >= $hn_midyear) {
                     // Round up:
@@ -3860,7 +3870,14 @@ class Date_Calc
                 } else {
                     // Take time into account:
                     //
-                    $hn_partday = (Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $hn_partsecond) / Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year);
+                    $hn_partday = Date_Calc::secondsPastMidnight($pn_hour,
+                                                                 $pn_minute,
+                                                                 $pn_second) /
+                                  ($pb_countleap ?
+                                   Date_Calc::getSecondsInDay($pn_day,
+                                                              $pn_month,
+                                                              $pn_year) :
+                                   86400);
                     if ($hn_partday >= $hn_midyear - $hn_days) {
                         // Round up:
                         //
@@ -3871,83 +3888,127 @@ class Date_Calc
                 }
             }
         } else if ($pn_precision == DATE_PRECISION_MONTH) {
-            $hn_year       = $pn_year;
-            $hn_day        = 0;
-            $hn_hour       = 0;
-            $hn_minute     = 0;
-            $hn_second     = 0;
-            $hn_partsecond = 0.0;
+            $hn_year   = $pn_year;
+            $hn_day    = 0;
+            $hn_hour   = 0;
+            $hn_minute = 0;
+            $hn_second = 0;
 
             $hn_firstofmonth = Date_Calc::firstDayOfMonth($pn_month, $pn_year);
-            $hn_midmonth = (Date_Calc::lastDayOfMonth($pn_month, $pn_year) + 1 - $hn_firstofmonth) / 2;
-            if (($hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year) - $hn_firstofmonth) <= $hn_midmonth - 1) {
+            $hn_midmonth = (Date_Calc::lastDayOfMonth($pn_month, $pn_year) +
+                            1 -
+                            $hn_firstofmonth) / 2;
+            if (($hn_days = Date_Calc::dateToDays($pn_day,
+                                                  $pn_month,
+                                                  $pn_year) -
+                            $hn_firstofmonth) <= $hn_midmonth - 1) {
                 $hn_month = $pn_month;
             } else if ($hn_days >= $hn_midmonth) {
                 // Round up:
                 //
-                list($hn_year, $hn_month) = Date_Calc::nextMonth($pn_month, $pn_year);
+                list($hn_year, $hn_month) = Date_Calc::nextMonth($pn_month,
+                                                                 $pn_year);
             } else {
                 // Take time into account:
                 //
-                $hn_partday = (Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $hn_partsecond) / Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year);
+                $hn_partday = Date_Calc::secondsPastMidnight($pn_hour,
+                                                              $pn_minute,
+                                                              $pn_second) /
+                              ($pb_countleap ?
+                               Date_Calc::getSecondsInDay($pn_day,
+                                                          $pn_month,
+                                                          $pn_year) :
+                               86400);
                 if ($hn_partday >= $hn_midmonth - $hn_days) {
                     // Round up:
                     //
-                    list($hn_year, $hn_month) = Date_Calc::nextMonth($pn_month, $pn_year);
+                    list($hn_year, $hn_month) = Date_Calc::nextMonth($pn_month,
+                                                                     $pn_year);
                 } else {
                     $hn_month = $pn_month;
                 }
             }
         } else if ($pn_precision == DATE_PRECISION_DAY) {
-            $hn_year       = $pn_year;
-            $hn_month      = $pn_month;
-            $hn_hour       = 0;
-            $hn_minute     = 0;
-            $hn_second     = 0;
-            $hn_partsecond = 0.0;
+            $hn_year   = $pn_year;
+            $hn_month  = $pn_month;
+            $hn_hour   = 0;
+            $hn_minute = 0;
+            $hn_second = 0;
 
-            $hn_midday = Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) / 2;
-            if (($hn_seconds = Date_Calc::secondsPastMidnight($pn_hour, $pn_minute, $pn_second) + $hn_partsecond) >= $hn_midday) {
+            $hn_midday = ($pb_countleap ?
+                          Date_Calc::getSecondsInDay($pn_day,
+                                                     $pn_month,
+                                                     $pn_year) :
+                          86400) / 2;
+            if (Date_Calc::secondsPastMidnight($pn_hour,
+                                               $pn_minute,
+                                               $pn_second) >= $hn_midday) {
                 // Round up:
                 //
-                list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::nextDay($pn_day, $pn_month, $pn_year, "%Y %m %d"));
+                list($hn_year, $hn_month, $hn_day) =
+                    explode(" ", Date_Calc::nextDay($pn_day,
+                                                    $pn_month,
+                                                    $pn_year,
+                                                    "%Y %m %d"));
             } else {
                 $hn_day = $pn_day;
             }
         } else if ($pn_precision == DATE_PRECISION_HOUR) {
-            $hn_year       = $pn_year;
-            $hn_month      = $pn_month;
-            $hn_day        = $pn_day;
-            $hn_minute     = 0;
-            $hn_second     = 0;
-            $hn_partsecond = 0.0;
+            $hn_year   = $pn_year;
+            $hn_month  = $pn_month;
+            $hn_day    = $pn_day;
+            $hn_minute = 0;
+            $hn_second = 0;
 
-            $hn_midhour = Date_Calc::getSecondsInHour($pn_day, $pn_month, $pn_year, $pn_hour) / 2;
-            if (($hn_seconds = Date_Calc::secondsPastTheHour($pn_minute, $pn_second) + $hn_partsecond) >= $hn_midhour) {
+            $hn_midhour = ($pb_countleap ?
+                           Date_Calc::getSecondsInHour($pn_day,
+                                                       $pn_month,
+                                                       $pn_year,
+                                                       $pn_hour) :
+                           3600) / 2;
+            if (Date_Calc::secondsPastTheHour($pn_minute, $pn_second) >=
+                $hn_midhour) {
                 // Round up:
                 //
-                list($hn_year, $hn_month, $hn_day, $hn_hour) = Date_Calc::addHours(1, $pn_day, $pn_month, $pn_year, $pn_hour);
+                list($hn_year, $hn_month, $hn_day, $hn_hour) =
+                    Date_Calc::addHours(1,
+                                        $pn_day,
+                                        $pn_month,
+                                        $pn_year,
+                                        $pn_hour);
             } else {
                 $hn_hour = $pn_hour;
             }
         } else if ($pn_precision <= DATE_PRECISION_MINUTE) {
-            $hn_year       = $pn_year;
-            $hn_month      = $pn_month;
-            $hn_day        = $pn_day;
-            $hn_hour       = $pn_hour;
-            $hn_second     = 0;
-            $hn_partsecond = 0.0;
+            $hn_year   = $pn_year;
+            $hn_month  = $pn_month;
+            $hn_day    = $pn_day;
+            $hn_hour   = $pn_hour;
+            $hn_second = 0;
 
             if ($pn_precision < DATE_PRECISION_MINUTE) {
-                $hn_minute = round($pn_minute, $pn_precision - DATE_PRECISION_MINUTE);
+                $hn_minute = round($pn_minute,
+                                   $pn_precision - DATE_PRECISION_MINUTE);
             } else {
                 // Check seconds:
                 //
-                $hn_midminute = Date_Calc::getSecondsInMinute($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute) / 2;
-                if (($hn_seconds = $pn_second + $hn_partsecond) >= $hn_midminute) {
+                $hn_midminute = ($pb_countleap ?
+                                 Date_Calc::getSecondsInMinute($pn_day,
+                                                               $pn_month,
+                                                               $pn_year,
+                                                               $pn_hour,
+                                                               $pn_minute) :
+                                 60) / 2;
+                if ($pn_second >= $hn_midminute) {
                     // Round up:
                     //
-                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes(1, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute);
+                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) =
+                        Date_Calc::addMinutes(1,
+                                              $pn_day,
+                                              $pn_month,
+                                              $pn_year,
+                                              $pn_hour,
+                                              $pn_minute);
                 } else {
                     $hn_minute = $pn_minute;
                 }
@@ -3961,24 +4022,36 @@ class Date_Calc
             $hn_hour   = $pn_hour;
             $hn_minute = $pn_minute;
 
-            if ($pn_precision < DATE_PRECISION_SECOND) {
-                $hn_second     = round($pn_second, $pn_precision - DATE_PRECISION_SECOND);
-                $hn_partsecond = 0.0;
-            } else {
-                $hn_partsecond = round($pn_partsecond, $pn_precision - DATE_PRECISION_SECOND);
+            $hn_second = round($pn_second,
+                               $pn_precision - DATE_PRECISION_SECOND);
 
-                if ($hn_partsecond == 1.0) {
-                    // Part-second was rounded up:
-                    //
-                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second) = Date_Calc::addSeconds(1, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second);
-                    $hn_partsecond = 0.0;
-                } else {
-                    $hn_second = $pn_second;
+            if (fmod($hn_second, 1) == 0.0) {
+                $hn_second = (int) $hn_second;
+
+                if ($hn_second != intval($pn_second)) {
+                    list($hn_year,
+                         $hn_month,
+                         $hn_day,
+                         $hn_hour,
+                         $hn_minute,
+                         $hn_second) =
+                        Date_Calc::addSeconds($hn_second - intval($pn_second),
+                                              $pn_day,
+                                              $pn_month,
+                                              $pn_year,
+                                              $pn_hour,
+                                              $pn_minute,
+                                              intval($pn_second));
                 }
             }
         }
 
-        return array((int) $hn_year, (int) $hn_month, (int) $hn_day, (int) $hn_hour, (int) $hn_minute, (int) $hn_second, (float) $hn_partsecond);
+        return array((int) $hn_year,
+                     (int) $hn_month,
+                     (int) $hn_day,
+                     (int) $hn_hour,
+                     (int) $hn_minute,
+                     $hn_second);
     }
 
 
@@ -3994,18 +4067,31 @@ class Date_Calc
      * @param int   $pn_year       the year
      * @param int   $pn_hour       the hour
      * @param int   $pn_minute     the minute
-     * @param int   $pn_second     the second
-     * @param float $pn_partsecond the part-second (less than 1)
+     * @param mixed $pn_second     the second as integer or float
+     * @param bool  $pb_countleap  whether to count leap seconds (defaults to
+     *                              DATE_COUNT_LEAP_SECONDS)
      *
-     * @return   array      array of year, month, day, hour, minute, second,
-     *                       part-second (types as corresponding arguments)
+     * @return   array      array of year, month, day, hour, minute, second
      * @access   public
      * @static
      * @since    Method available since Release [next version]
      */
-    function roundSeconds($pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond = 0.0)
+    function roundSeconds($pn_precision,
+                          $pn_day,
+                          $pn_month,
+                          $pn_year,
+                          $pn_hour,
+                          $pn_minute,
+                          $pn_second,
+                          $pb_countleap = DATE_COUNT_LEAP_SECONDS)
     {
-        return Date_Calc::round(DATE_PRECISION_SECOND + $pn_precision, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute, $pn_second, $pn_partsecond);
+        return Date_Calc::round(DATE_PRECISION_SECOND + $pn_precision,
+                                $pn_day,
+                                $pn_month,
+                                $pn_year,
+                                $pn_hour,
+                                $pn_minute,
+                                $pn_second);
     }
 
 
