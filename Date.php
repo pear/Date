@@ -700,7 +700,8 @@ class Date
                                   $this->minute,
                                   $this->partsecond == 0.0 ?
                                       $this->second :
-                                      $this->second + $this->partsecond);
+                                      $this->second + $this->partsecond,
+                                  $pb_countleap);
             if (is_float($hn_secondraw)) {
                 $hn_second     = intval($hn_secondraw);
                 $hn_partsecond = $hn_secondraw - $hn_second;
@@ -744,7 +745,8 @@ class Date
                                   $this->on_standardpartsecond == 0.0 ?
                                       $this->on_standardsecond :
                                       $this->on_standardsecond +
-                                          $this->on_standardpartsecond);
+                                          $this->on_standardpartsecond,
+                                  $pb_countleap);
             if (is_float($hn_secondraw)) {
                 $hn_second     = intval($hn_secondraw);
                 $hn_partsecond = $hn_secondraw - $hn_second;
@@ -782,7 +784,8 @@ class Date
                               $this->minute,
                               $this->partsecond == 0.0 ?
                                   $this->second :
-                                  $this->second + $this->partsecond);
+                                  $this->second + $this->partsecond,
+                              $pb_countleap);
         if (is_float($hn_secondraw)) {
             $hn_second     = intval($hn_secondraw);
             $hn_partsecond = $hn_secondraw - $hn_second;
@@ -3181,28 +3184,6 @@ class Date
 
 
     // }}}
-    // {{{ toUTC()
-
-    /**
-     * Converts this date to UTC and sets this date's timezone to UTC
-     *
-     * @return   void
-     * @access   public
-     */
-    function toUTC()
-    {
-        if ($this->getTZID() == "UTC")
-            return;
-        if ($this->ob_invalidtime)
-            return $this->getErrorInvalidTime();
-
-        $hn_rawoffset = $this->tz->getRawOffset();
-        $this->tz = new Date_TimeZone("UTC");
-        $this->addSeconds($hn_rawoffset / -1000, false);
-    }
-
-
-    // }}}
     // {{{ convertTZ()
 
     /**
@@ -3226,7 +3207,75 @@ class Date
 
         $hn_rawoffset = $tz->getRawOffset() - $this->tz->getRawOffset();
         $this->tz = new Date_TimeZone($tz->getID());
-        $this->addSeconds($hn_rawoffset / 1000, false);
+
+        list($hn_standardyear,
+             $hn_standardmonth,
+             $hn_standardday,
+             $hn_standardhour,
+             $hn_standardminute,
+             $hn_standardsecond,
+             $hn_standardpartsecond) =
+            $this->addOffset($hn_rawoffset,
+                             $this->on_standardday,
+                             $this->on_standardmonth,
+                             $this->on_standardyear,
+                             $this->on_standardhour,
+                             $this->on_standardminute,
+                             $this->on_standardsecond,
+                             $this->on_standardpartsecond);
+
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $hn_standardminute,
+                               $hn_standardsecond,
+                               $hn_standardpartsecond);
+    }
+
+
+    // }}}
+    // {{{ toUTC()
+
+    /**
+     * Converts this date to UTC and sets this date's timezone to UTC
+     *
+     * @return   void
+     * @access   public
+     */
+    function toUTC()
+    {
+        if ($this->getTZID() == "UTC")
+            return;
+        if ($this->ob_invalidtime)
+            return $this->getErrorInvalidTime();
+
+        $hn_rawoffset = $this->tz->getRawOffset() * -1;
+        $this->tz = new Date_TimeZone("UTC");
+
+        list($hn_standardyear,
+             $hn_standardmonth,
+             $hn_standardday,
+             $hn_standardhour,
+             $hn_standardminute,
+             $hn_standardsecond,
+             $hn_standardpartsecond) =
+            $this->addOffset($hn_rawoffset,
+                             $this->on_standardday,
+                             $this->on_standardmonth,
+                             $this->on_standardyear,
+                             $this->on_standardhour,
+                             $this->on_standardminute,
+                             $this->on_standardsecond,
+                             $this->on_standardpartsecond);
+
+        $this->setStandardTime($hn_standardday,
+                               $hn_standardmonth,
+                               $hn_standardyear,
+                               $hn_standardhour,
+                               $hn_standardminute,
+                               $hn_standardsecond,
+                               $hn_standardpartsecond);
     }
 
 
@@ -3498,7 +3547,12 @@ class Date
         if (!is_int($sec) && !is_float($sec))
             settype($sec, 'int');
 
-        list($hn_standardyear, $hn_standardmonth, $hn_standardday, $hn_standardhour, $hn_standardminute, $hn_secondraw) =
+        list($hn_standardyear,
+             $hn_standardmonth,
+             $hn_standardday,
+             $hn_standardhour,
+             $hn_standardminute,
+             $hn_secondraw) =
             Date_Calc::addSeconds($sec,
                                   $this->on_standardday,
                                   $this->on_standardmonth,
@@ -4415,7 +4469,7 @@ class Date
     /**
      * Returns the part-second field of the date object
      *
-     * @return   int        the part-second
+     * @return   float      the part-second
      * @access   protected
      * @since    Method available since Release [next version]
      */
@@ -4571,7 +4625,7 @@ class Date
     /**
      * Returns the part-second field of the local standard time
      *
-     * @return   int        the part-second
+     * @return   float      the part-second
      * @access   protected
      * @since    Method available since Release [next version]
      */
@@ -4606,26 +4660,122 @@ class Date
 
 
     // }}}
+    // {{{ addOffset()
+
+    /**
+     * Add a time zone offset to the date/time
+     *
+     * @param int   $pn_offset     the offset to add in milliseconds
+     * @param int   $pn_day        the day
+     * @param int   $pn_month      the month
+     * @param int   $pn_year       the year
+     * @param int   $pn_hour       the hour
+     * @param int   $pn_minute     the minute
+     * @param int   $pn_second     the second
+     * @param float $pn_partsecond the part-second
+     *
+     * @return   array      array of year, month, day, hour, minute, second,
+     *                       and part-second
+     * @access   private
+     * @static
+     * @since    Method available since Release [next version]
+     */
+    function addOffset($pn_offset,
+                       $pn_day,
+                       $pn_month,
+                       $pn_year,
+                       $pn_hour,
+                       $pn_minute,
+                       $pn_second,
+                       $pn_partsecond)
+    {
+        if ($pn_offset % 3600000 == 0) {
+            list($hn_year,
+                 $hn_month,
+                 $hn_day,
+                 $hn_hour) =
+                 Date_Calc::addHours($pn_offset / 3600000,
+                                     $pn_day,
+                                     $pn_month,
+                                     $pn_year,
+                                     $pn_hour);
+
+            $hn_minute     = $pn_minute;
+            $hn_second     = $pn_second;
+            $hn_partsecond = $pn_partsecond;
+        } else if ($pn_offset % 60000 == 0) {
+            list($hn_year,
+                 $hn_month,
+                 $hn_day,
+                 $hn_hour,
+                 $hn_minute) =
+                 Date_Calc::addMinutes($pn_offset / 60000,
+                                       $pn_day,
+                                       $pn_month,
+                                       $pn_year,
+                                       $pn_hour,
+                                       $pn_minute);
+
+            $hn_second     = $pn_second;
+            $hn_partsecond = $pn_partsecond;
+        } else {
+            list($hn_year,
+                 $hn_month,
+                 $hn_day,
+                 $hn_hour,
+                 $hn_minute,
+                 $hn_secondraw) =
+                 Date_Calc::addSeconds($pn_offset / 1000,
+                                       $pn_day,
+                                       $pn_month,
+                                       $pn_year,
+                                       $pn_hour,
+                                       $pn_partsecond == 0.0 ?
+                                           $pn_second :
+                                           $pn_second + $pn_partsecond,
+                                       false);  // N.B. do not count
+                                                // leap seconds
+
+            if (is_float($hn_secondraw)) {
+                $hn_second     = intval($hn_secondraw);
+                $hn_partsecond = $hn_secondraw - $hn_second;
+            } else {
+                $hn_second     = $hn_secondraw;
+                $hn_partsecond = 0.0;
+            }
+        }
+
+        return array($hn_year,
+                     $hn_month,
+                     $hn_day,
+                     $hn_hour,
+                     $hn_minute,
+                     $hn_second,
+                     $hn_partsecond);
+    }
+
+
+    // }}}
     // {{{ setLocalTime()
 
     /**
      * Sets local time (Summer-time-adjusted) and then calculates local
      * standard time
      *
-     * @param int  $pn_day                 the day
-     * @param int  $pn_month               the month
-     * @param int  $pn_year                the year
-     * @param int  $pn_hour                the hour
-     * @param int  $pn_minute              the minute
-     * @param int  $pn_second              the second
-     * @param int  $pn_partsecond          the part-second
-     * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
-     *                                      repeated hour is specified (defaults
-     *                                      to false)
-     * @param bool $pb_correctinvalidtime  whether to correct, by adding the
-     *                                      local Summer time offset, the
-     *                                      specified time if it falls in the
-     *                                      skipped hour (defaults to false)
+     * @param int   $pn_day                 the day
+     * @param int   $pn_month               the month
+     * @param int   $pn_year                the year
+     * @param int   $pn_hour                the hour
+     * @param int   $pn_minute              the minute
+     * @param int   $pn_second              the second
+     * @param float $pn_partsecond          the part-second
+     * @param bool  $pb_repeatedhourdefault whether to assume Summer time if a
+     *                                       repeated hour is specified (defaults
+     *                                       to false)
+     * @param bool  $pb_correctinvalidtime  whether to correct, by adding the
+     *                                       local Summer time offset, the
+     *                                       specified time if it falls in the
+     *                                       skipped hour (defaults to false)
      *
      * @return   void
      * @access   protected
@@ -4675,28 +4825,16 @@ class Date
                      $this->day,
                      $this->hour,
                      $this->minute,
-                     $hn_second) =
-                     Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
-                                           $pn_day,
-                                           $pn_month,
-                                           $pn_year,
-                                           $pn_hour,
-                                           $pn_minute,
-                                           $pn_partsecond == 0.0 ?
-                                               $pn_second :
-                                               $pn_second + $pn_partsecond,
-                                           false);  // N.B. do not count
-                                                    // leap seconds
-
-                // Split second back into integer and part-second:
-                //
-                if (is_float($hn_second)) {
-                    $this->second     = intval($hn_second);
-                    $this->partsecond = $hn_second - $this->second;
-                } else {
-                    $this->second     = $hn_second;
-                    $this->partsecond = 0.0;
-                }
+                     $this->second,
+                     $this->partsecond) =
+                     $this->addOffset($this->tz->getDSTSavings(),
+                                      $pn_day,
+                                      $pn_month,
+                                      $pn_year,
+                                      $pn_hour,
+                                      $pn_minute,
+                                      $pn_second,
+                                      $pn_partsecond);
 
                 $this->ob_invalidtime = false;
             } else {
@@ -4739,28 +4877,16 @@ class Date
                  $this->on_standardday,
                  $this->on_standardhour,
                  $this->on_standardminute,
-                 $hn_second) =
-                 Date_Calc::addSeconds($this->tz->getDSTSavings() / -1000,
-                                       $pn_day,
-                                       $pn_month,
-                                       $pn_year,
-                                       $pn_hour,
-                                       $pn_minute,
-                                       $pn_partsecond == 0.0 ?
-                                           $pn_second :
-                                           $pn_second + $pn_partsecond,
-                                       false);  // N.B. do not count leap
-                                                // seconds
-
-            // Split second back into integer and part-second:
-            //
-            if (is_float($hn_second)) {
-                $this->on_standardsecond     = intval($hn_second);
-                $this->on_standardpartsecond = $hn_second - $this->second;
-            } else {
-                $this->on_standardsecond     = $hn_second;
-                $this->on_standardpartsecond = 0.0;
-            }
+                 $this->on_standardsecond,
+                 $this->on_standardpartsecond) =
+                 $this->addOffset($this->tz->getDSTSavings() * -1,
+                                  $pn_day,
+                                  $pn_month,
+                                  $pn_year,
+                                  $pn_hour,
+                                  $pn_minute,
+                                  $pn_second,
+                                  $pn_partsecond);
         } else {
             // Time is already local standard time:
             //
@@ -4782,13 +4908,13 @@ class Date
      * Sets local standard time and then calculates local time (i.e.
      * Summer-time-adjusted)
      *
-     * @param int $pn_day        the day
-     * @param int $pn_month      the month
-     * @param int $pn_year       the year
-     * @param int $pn_hour       the hour
-     * @param int $pn_minute     the minute
-     * @param int $pn_second     the second
-     * @param int $pn_partsecond the part-second
+     * @param int   $pn_day        the day
+     * @param int   $pn_month      the month
+     * @param int   $pn_year       the year
+     * @param int   $pn_hour       the hour
+     * @param int   $pn_minute     the minute
+     * @param int   $pn_second     the second
+     * @param float $pn_partsecond the part-second
      *
      * @return   void
      * @access   protected
@@ -4830,28 +4956,16 @@ class Date
                  $this->day,
                  $this->hour,
                  $this->minute,
-                 $hn_second) =
-                 Date_Calc::addSeconds($this->tz->getDSTSavings() / 1000,
-                                       $pn_day,
-                                       $pn_month,
-                                       $pn_year,
-                                       $pn_hour,
-                                       $pn_minute,
-                                       $pn_partsecond == 0.0 ?
-                                           $pn_second :
-                                           $pn_second + $pn_partsecond,
-                                       false);  // N.B. do not count leap
-                                                // seconds
-
-            // Split second back into integer and part-second:
-            //
-            if (is_float($hn_second)) {
-                $this->second     = intval($hn_second);
-                $this->partsecond = $hn_second - $this->second;
-            } else {
-                $this->second     = $hn_second;
-                $this->partsecond = 0.0;
-            }
+                 $this->second,
+                 $this->partsecond) =
+                 $this->addOffset($this->tz->getDSTSavings(),
+                                  $pn_day,
+                                  $pn_month,
+                                  $pn_year,
+                                  $pn_hour,
+                                  $pn_minute,
+                                  $pn_second,
+                                  $pn_partsecond);
         } else {
             // Time is already local time:
             //
@@ -5083,8 +5197,8 @@ class Date
     /**
      * Sets the part-second field of the date object
      *
-     * @param int  $pn_ps                  the part-second
-     * @param bool $pb_repeatedhourdefault whether to assume Summer time if a
+     * @param float $pn_ps                  the part-second
+     * @param bool  $pb_repeatedhourdefault whether to assume Summer time if a
      *                                      repeated hour is specified (defaults
      *                                      to false)
      *

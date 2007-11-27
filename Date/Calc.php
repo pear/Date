@@ -320,7 +320,8 @@ class Date_Calc
      *  03 - returns 2003
      *  09 - returns 2009
      *  56 - returns 2056 (closer to 2007 than 1956)
-     *  57 - returns 1957 (1957 and 2007 are equidistant, so previous century chosen)
+     *  57 - returns 1957 (1957 and 2007 are equidistant, so previous century
+     *        chosen)
      *  58 - returns 1958
      *
      * @param int $year the 2 digit year
@@ -363,6 +364,8 @@ class Date_Calc
      */
     function getSecondsInYear($pn_year)
     {
+        $pn_year = intval($pn_year);
+
         static $ha_leapseconds;
         if (!isset($ha_leapseconds)) {
             $ha_leapseconds = array(1972 => 2,
@@ -417,6 +420,9 @@ class Date_Calc
      */
     function getSecondsInMonth($pn_month, $pn_year)
     {
+        $pn_month = intval($pn_month);
+        $pn_year = intval($pn_year);
+
         static $ha_leapseconds;
         if (!isset($ha_leapseconds)) {
             $ha_leapseconds = array(1972 => array(6  => 1,
@@ -490,6 +496,10 @@ class Date_Calc
         // second (I do not know what they are called), or a number of
         // consecutive leap seconds).
 
+        $pn_day = intval($pn_day);
+        $pn_month = intval($pn_month);
+        $pn_year = intval($pn_year);
+
         static $ha_leapseconds;
         if (!isset($ha_leapseconds)) {
             $ha_leapseconds = array(1972 => array(6  => array(30 => 1),
@@ -547,7 +557,8 @@ class Date_Calc
         if ($pn_hour < 23)
             return 3600;
         else
-            return Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) - 82800;
+            return Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) -
+                   82800;
     }
 
 
@@ -570,12 +581,17 @@ class Date_Calc
      * @static
      * @since    Method available since Release [next version]
      */
-    function getSecondsInMinute($pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute)
+    function getSecondsInMinute($pn_day,
+                                $pn_month,
+                                $pn_year,
+                                $pn_hour,
+                                $pn_minute)
     {
         if ($pn_hour < 23 || $pn_minute < 59)
             return 60;
         else
-            return Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) - 86340;
+            return Date_Calc::getSecondsInDay($pn_day, $pn_month, $pn_year) -
+                   86340;
     }
 
 
@@ -672,7 +688,10 @@ class Date_Calc
     function addHours($pn_hours, $pn_day, $pn_month, $pn_year, $pn_hour)
     {
         if ($pn_hours == 0)
-            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour);
+            return array((int) $pn_year,
+                         (int) $pn_month,
+                         (int) $pn_day,
+                         (int) $pn_hour);
 
         $hn_days = intval($pn_hours / 24);
         $hn_hour = $pn_hour + $pn_hours % 24;
@@ -690,7 +709,13 @@ class Date_Calc
             $hn_month = $pn_month;
             $hn_day   = $pn_day;
         } else {
-            list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::addDays($hn_days, $pn_day, $pn_month, $pn_year, "%Y %m %d"));
+            list($hn_year, $hn_month, $hn_day) =
+                explode(" ",
+                        Date_Calc::addDays($hn_days,
+                                           $pn_day,
+                                           $pn_month,
+                                           $pn_year,
+                                           "%Y %m %d"));
         }
 
         return array((int) $hn_year, (int) $hn_month, (int) $hn_day, $hn_hour);
@@ -717,10 +742,19 @@ class Date_Calc
      * @static
      * @since    Method available since Release [next version]
      */
-    function addMinutes($pn_minutes, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute)
+    function addMinutes($pn_minutes,
+                        $pn_day,
+                        $pn_month,
+                        $pn_year,
+                        $pn_hour,
+                        $pn_minute)
     {
         if ($pn_minutes == 0)
-            return array((int) $pn_year, (int) $pn_month, (int) $pn_day, (int) $pn_hour, (int) $pn_minute);
+            return array((int) $pn_year,
+                         (int) $pn_month,
+                         (int) $pn_day,
+                         (int) $pn_hour,
+                         (int) $pn_minute);
 
         $hn_hours  = intval($pn_minutes / 60);
         $hn_minute = $pn_minute + $pn_minutes % 60;
@@ -739,7 +773,12 @@ class Date_Calc
             $hn_day   = $pn_day;
             $hn_hour  = $pn_hour;
         } else {
-            list($hn_year, $hn_month, $hn_day, $hn_hour) = Date_Calc::addHours($hn_hours, $pn_day, $pn_month, $pn_year, $pn_hour);
+            list($hn_year, $hn_month, $hn_day, $hn_hour) =
+                Date_Calc::addHours($hn_hours,
+                                    $pn_day,
+                                    $pn_month,
+                                    $pn_year,
+                                    $pn_hour);
         }
 
         return array($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute);
@@ -822,7 +861,8 @@ class Date_Calc
                     $hn_secondsofmonth = 0;
                     list($hn_year, $hn_month) =
                         Date_Calc::nextMonth($hn_month, $hn_year);
-                    $hn_day  = Date_Calc::getFirstDayOfMonth($hn_month, $hn_year);
+                    $hn_day  = Date_Calc::getFirstDayOfMonth($hn_month,
+                                                             $hn_year);
                     $hn_hour = $hn_minute = $hn_second = 0;
                 }
 
@@ -940,6 +980,9 @@ class Date_Calc
                 $hn_seconds += Date_Calc::getSecondsInMonth($hn_month, $hn_year);
             }
 
+            $hn_seconds += Date_Calc::secondsPastMidnight($hn_hour,
+                                                          $hn_minute,
+                                                          $hn_second);
             if ($hn_seconds < 0) {
                 $hn_daysadd = intval($hn_seconds / 86400) - 1;
             } else if ($hn_seconds < 86400) {
@@ -974,12 +1017,11 @@ class Date_Calc
             }
 
             list($hn_hour, $hn_minute, $hn_second) =
-                Date_Calc::secondsPastMidnightToTime(Date_Calc::secondsPastMidnight($hn_hour, $hn_minute, $hn_second) +
-                                                     $hn_seconds);
+                Date_Calc::secondsPastMidnightToTime($hn_seconds);
 
-            return array($hn_year,
-                         $hn_month,
-                         $hn_day,
+            return array((int) $hn_year,
+                         (int) $hn_month,
+                         (int) $hn_day,
                          $hn_hour,
                          $hn_minute,
                          $hn_second);
@@ -1037,10 +1079,10 @@ class Date_Calc
      *
      * Returns the no of days since Monday, 24th November, 4714 B.C. in the
      * proleptic Gregorian calendar (which is 24th November, -4713 using
-     * 'Astronomical' year numbering, and 1st January, 4713 B.C. in the proleptic
-     * Julian calendar).  This is also the first day of the 'Julian Period'
-     * proposed by Joseph Scaliger in 1583, and the number of days since
-     * this date is known as the 'Julian Day'.  (It is not directly
+     * 'Astronomical' year numbering, and 1st January, 4713 B.C. in the
+     * proleptic Julian calendar).  This is also the first day of the 'Julian
+     * Period' proposed by Joseph Scaliger in 1583, and the number of days
+     * since this date is known as the 'Julian Day'.  (It is not directly
      * to do with the Julian calendar, although this is where the name
      * is derived from.)
      *
@@ -1058,7 +1100,8 @@ class Date_Calc
     function dateToDays($day, $month, $year)
     {
         if ($month > 2) {
-            // March = 0, April = 1, ..., December = 9, January = 10, February = 11
+            // March = 0, April = 1, ..., December = 9,
+            // January = 10, February = 11
             $month -= 3;
         } else {
             $month += 9;
@@ -1187,7 +1230,8 @@ class Date_Calc
     {
         $ret = array();
         foreach (Date_Calc::getMonths(2001) as $i) {
-            $ret[$i] = strftime($pb_abbreviated ? '%b' : '%B', mktime(0, 0, 0, $i, 1, 2001));
+            $ret[$i] = strftime($pb_abbreviated ? '%b' : '%B',
+                                mktime(0, 0, 0, $i, 1, 2001));
         }
         return $ret;
     }
@@ -1290,10 +1334,13 @@ class Date_Calc
 
         // Calculate days since first of month:
         //
-        $hn_dayoffset = $pn_days - Date_Calc::firstDayOfMonth($hn_month, $hn_year);
+        $hn_dayoffset = $pn_days -
+                        Date_Calc::firstDayOfMonth($hn_month, $hn_year);
 
-        $hn_retmonthfirstday = Date_Calc::firstDayOfMonth($hn_retmonth, $hn_retyear);
-        $hn_retmonthlastday  = Date_Calc::lastDayOfMonth($hn_retmonth, $hn_retyear);
+        $hn_retmonthfirstday = Date_Calc::firstDayOfMonth($hn_retmonth,
+                                                          $hn_retyear);
+        $hn_retmonthlastday  = Date_Calc::lastDayOfMonth($hn_retmonth,
+                                                         $hn_retyear);
 
         if ($hn_dayoffset > $hn_retmonthlastday - $hn_retmonthfirstday) {
             return $hn_retmonthlastday;
@@ -1342,10 +1389,14 @@ class Date_Calc
         }
 
         if ($pn_months == 0)
-            return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
+            return Date_Calc::dateFormat($pn_day,
+                                         $pn_month,
+                                         $pn_year,
+                                         $ps_format);
 
         $hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
-        return Date_Calc::daysToDate(Date_Calc::addMonthsToDays($pn_months, $hn_days),
+        return Date_Calc::daysToDate(Date_Calc::addMonthsToDays($pn_months,
+                                                                $hn_days),
                                      $ps_format);
     }
 
@@ -1402,18 +1453,9 @@ class Date_Calc
                 return $hn_retmonthfirstday + $hn_dayoffset;
             }
         } else {
-            list($hn_rmday, $hn_retmonth, $hn_rmyear) =
-                explode(" ",
-                        Date_Calc::daysToDate(Date_Calc::firstDayOfYear($hn_retyear) +
-                                              $pn_days -
-                                              Date_Calc::firstDayOfYear($hn_year),
-                                              "%Y %m %d"));
-
-
-
             // Calculate days since first of year:
             //
-            $hn_dayoffset = $pn_days - Date_Calc::firstDayOfYear($hn_retyear);
+            $hn_dayoffset = $pn_days - Date_Calc::firstDayOfYear($hn_year);
 
             $hn_retyearfirstday = Date_Calc::firstDayOfYear($hn_retyear);
             $hn_retyearlastday  = Date_Calc::lastDayOfYear($hn_retyear);
@@ -1466,10 +1508,15 @@ class Date_Calc
         }
 
         if ($pn_years == 0)
-            return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
+            return Date_Calc::dateFormat($pn_day,
+                                         $pn_month,
+                                         $pn_year,
+                                         $ps_format);
 
         $hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
-        return Date_Calc::daysToDate(Date_Calc::addYearsToDays($pn_years, $hn_days), $ps_format);
+        return Date_Calc::daysToDate(Date_Calc::addYearsToDays($pn_years,
+                                                               $hn_days),
+                                     $ps_format);
     }
 
 
@@ -1511,7 +1558,10 @@ class Date_Calc
         }
 
         if ($pn_days == 0)
-            return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
+            return Date_Calc::dateFormat($pn_day,
+                                         $pn_month,
+                                         $pn_year,
+                                         $ps_format);
 
         return Date_Calc::daysToDate(Date_Calc::dateToDays($pn_day,
                                                            $pn_month,
@@ -1578,7 +1628,10 @@ class Date_Calc
      */
     function firstDayOfMonth($pn_month, $pn_year)
     {
-        return Date_Calc::dateToDays(Date_Calc::getFirstDayOfMonth($pn_month, $pn_year), $pn_month, $pn_year);
+        return Date_Calc::dateToDays(Date_Calc::getFirstDayOfMonth($pn_month,
+                                                                   $pn_year),
+                                     $pn_month,
+                                     $pn_year);
     }
 
 
@@ -1599,7 +1652,8 @@ class Date_Calc
      */
     function lastDayOfMonth($pn_month, $pn_year)
     {
-        list($hn_nmyear, $hn_nextmonth) = Date_Calc::nextMonth($pn_month, $pn_year);
+        list($hn_nmyear, $hn_nextmonth) = Date_Calc::nextMonth($pn_month,
+                                                               $pn_year);
         return Date_Calc::firstDayOfMonth($hn_nextmonth, $hn_nmyear) - 1;
     }
 
@@ -1673,11 +1727,11 @@ class Date_Calc
      * since 1st January, 4713 B.C.
      *
      * Returns the no of days since Monday, 1st January, 4713 B.C. in the
-     * proleptic Julian calendar (which is 1st January, -4712 using 'Astronomical'
-     * year numbering, and 24th November, 4713 B.C. in the proleptic
-     * Gregorian calendar).  This is also the first day of the 'Julian Period'
-     * proposed by Joseph Scaliger in 1583, and the number of days since
-     * this date is known as the 'Julian Day'.  (It is not directly
+     * proleptic Julian calendar (which is 1st January, -4712 using
+     * 'Astronomical' year numbering, and 24th November, 4713 B.C. in the
+     * proleptic Gregorian calendar).  This is also the first day of the 'Julian
+     * Period' proposed by Joseph Scaliger in 1583, and the number of days
+     * since this date is known as the 'Julian Day'.  (It is not directly
      * to do with the Julian calendar, although this is where the name
      * is derived from.)
      *
@@ -1696,7 +1750,8 @@ class Date_Calc
     function dateToDaysJulian($day, $month, $year)
     {
         if ($month > 2) {
-            // March = 0, April = 1, ..., December = 9, January = 10, February = 11
+            // March = 0, April = 1, ..., December = 9,
+            // January = 10, February = 11
             $month -= 3;
         } else {
             $month += 9;
@@ -1836,8 +1891,13 @@ class Date_Calc
                 if ($hn_day <= 8 - $hn_wd1) {
                     // ISO week is the last week of the previous ISO year:
                     //
-                    list($hn_year, $hn_lastmonth, $hn_lastday) = explode(" ", Date_Calc::daysToDate($hn_jd1 - 1, "%Y %m %d"));
-                    list($hn_year, $hn_isoweek, $hn_pisoday)   = Date_Calc::isoWeekDate($hn_lastday, $hn_lastmonth, $hn_year);
+                    list($hn_year, $hn_lastmonth, $hn_lastday) =
+                        explode(" ",
+                                Date_Calc::daysToDate($hn_jd1 - 1, "%Y %m %d"));
+                    list($hn_year, $hn_isoweek, $hn_pisoday) =
+                        Date_Calc::isoWeekDate($hn_lastday,
+                                               $hn_lastmonth,
+                                               $hn_year);
                 } else {
                     $hn_year    = $pn_year;
                     $hn_isoweek = floor(($hn_day + $hn_wd1 - 9) / 7) + 1;
@@ -1870,8 +1930,13 @@ class Date_Calc
      */
     function gregorianToISO($day, $month, $year)
     {
-        list($yearnumber, $weeknumber, $weekday) = Date_Calc::isoWeekDate($day, $month, $year);
-        return sprintf("%04d", $yearnumber) . '-' . sprintf("%02d", $weeknumber) . '-' . $weekday;
+        list($yearnumber, $weeknumber, $weekday) =
+            Date_Calc::isoWeekDate($day, $month, $year);
+        return sprintf("%04d", $yearnumber) .
+                       '-' .
+                       sprintf("%02d", $weeknumber) .
+                       '-' .
+                       $weekday;
     }
 
 
@@ -1879,13 +1944,14 @@ class Date_Calc
     // {{{ weekOfYear4th()
 
     /**
-     * Returns week of the year counting week 1 as the week that contains 4th January
+     * Returns week of the year counting week 1 as the week that contains 4th
+     * January
      *
      * Week 1 is determined to be the week that includes the 4th January, and
-     * therefore can be defined as the first week of the year that has at least 4
-     * days.  The previous week is counted as week 52 or 53 of the previous year.
-     * Note that this definition depends on which day is the first day of the
-     * week, and that if this is not passed as the '$pn_firstdayofweek'
+     * therefore can be defined as the first week of the year that has at least
+     * 4 days.  The previous week is counted as week 52 or 53 of the previous
+     * year.  Note that this definition depends on which day is the first day of
+     * the week, and that if this is not passed as the '$pn_firstdayofweek'
      * parameter, the default is assumed.
      *
      * Note also that the last day week of the year is likely to extend into
@@ -1937,10 +2003,17 @@ class Date_Calc
         if ($hn_week > 0) {
             $hn_year = $pn_year;
         } else {
-            // Week number is the last week of the previous ISO year:
+            // Week number is the last week of the previous year:
             //
-            list($hn_year, $hn_lastmonth, $hn_lastday) = explode(" ", Date_Calc::daysToDate(Date_Calc::lastDayOfYear($pn_year - 1), "%Y %m %d"));
-            list($hn_year, $hn_week) = Date_Calc::weekOfYear4th($hn_lastday, $hn_lastmonth, $hn_year, $pn_firstdayofweek);
+            list($hn_year, $hn_lastmonth, $hn_lastday) =
+                explode(" ",
+                        Date_Calc::daysToDate(Date_Calc::lastDayOfYear($pn_year - 1),
+                                              "%Y %m %d"));
+            list($hn_year, $hn_week) =
+                Date_Calc::weekOfYear4th($hn_lastday,
+                                         $hn_lastmonth,
+                                         $hn_year,
+                                         $pn_firstdayofweek);
         }
 
         return array((int) $hn_year, (int) $hn_week);
@@ -1951,14 +2024,15 @@ class Date_Calc
     // {{{ weekOfYear7th()
 
     /**
-     * Returns week of the year counting week 1 as the week that contains 7th January
+     * Returns week of the year counting week 1 as the week that contains 7th
+     * January
      *
      * Week 1 is determined to be the week that includes the 7th January, and
-     * therefore can be defined as the first full week of the year.  The previous
-     * week is counted as week 52 or 53 of the previous year.  Note that this
-     * definition depends on which day is the first day of the week, and that if
-     * this is not passed as the '$pn_firstdayofweek' parameter, the default is
-     * assumed.
+     * therefore can be defined as the first full week of the year.  The
+     * previous week is counted as week 52 or 53 of the previous year.  Note
+     * that this definition depends on which day is the first day of the week,
+     * and that if this is not passed as the '$pn_firstdayofweek' parameter, the
+     * default is assumed.
      *
      * Note also that the last day week of the year is likely to extend into
      * the following year, except in the case that the last day of the week
@@ -2295,7 +2369,8 @@ class Date_Calc
     function getWeekDays($pb_abbreviated = false)
     {
         for ($i = 0; $i < 7; $i++) {
-            $weekdays[$i] = strftime($pb_abbreviated ? '%a' : '%A', mktime(0, 0, 0, 1, $i, 2001));
+            $weekdays[$i] = strftime($pb_abbreviated ? '%a' : '%A',
+                                     mktime(0, 0, 0, 1, $i, 2001));
         }
         return $weekdays;
     }
@@ -2374,7 +2449,9 @@ class Date_Calc
 
         // return (int) ($wd < 0 ? $wd + 7 : $wd);
 
-        return Date_Calc::daysToDayOfWeek(Date_Calc::dateToDays($day, $month, $year));
+        return Date_Calc::daysToDayOfWeek(Date_Calc::dateToDays($day,
+                                                                $month,
+                                                                $year));
     }
 
 
@@ -2420,13 +2497,15 @@ class Date_Calc
     // {{{ weekOfYear1st()
 
     /**
-     * Returns week of the year counting week 1 as the week that contains 1st January
+     * Returns week of the year counting week 1 as the week that contains 1st
+     * January
      *
-     * Week 1 is determined to be the week that includes the 1st January, even if
-     * this week extends into the previous year, in which case the week will only
-     * contain between 1 and 6 days of the current year.  Note that this definition
-     * depends on which day is the first day of the week, and that if this
-     * is not passed as the '$pn_firstdayofweek' parameter, the default is assumed.
+     * Week 1 is determined to be the week that includes the 1st January, even
+     * if this week extends into the previous year, in which case the week will
+     * only contain between 1 and 6 days of the current year.  Note that this
+     * definition depends on which day is the first day of the week, and that if
+     * this is not passed as the '$pn_firstdayofweek' parameter, the default is
+     * assumed.
      *
      * Note also that the last day week of the year is also likely to contain
      * less than seven days, except in the case that the last day of the week
@@ -2434,8 +2513,8 @@ class Date_Calc
      *
      * Returned value is an integer from 1 to 54.  The year will only contain
      * 54 weeks in the case of a leap year in which 1st January is the last day
-     * of the week, and 31st December is the first day of the week.  In this case,
-     * both weeks 1 and 54 will contain one day only.
+     * of the week, and 31st December is the first day of the week.  In this
+     * case, both weeks 1 and 54 will contain one day only.
      *
      * @param int $pn_day            the day of the month, default is current
      *                                local day
@@ -2593,7 +2672,9 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        return Date_Calc::lastDayOfMonth($month, $year) - Date_Calc::firstDayOfMonth($month, $year) + 1;
+        return Date_Calc::lastDayOfMonth($month, $year) -
+               Date_Calc::firstDayOfMonth($month, $year) +
+               1;
     }
 
 
@@ -2843,7 +2924,10 @@ class Date_Calc
      * @access   public
      * @static
      */
-    function nextDay($day = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function nextDay($day = 0,
+                     $month = 0,
+                     $year = null,
+                     $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -2999,7 +3083,12 @@ class Date_Calc
      * @access   public
      * @static
      */
-    function prevDayOfWeek($dow, $day = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT, $onorbefore = false)
+    function prevDayOfWeek($dow,
+                           $day = 0,
+                           $month = 0,
+                           $year = null,
+                           $format = DATE_CALC_FORMAT,
+                           $onorbefore = false)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3072,8 +3161,12 @@ class Date_Calc
      * @access   public
      * @static
      */
-    function nextDayOfWeek($dow, $day = 0, $month = 0, $year = null,
-                           $format = DATE_CALC_FORMAT, $onorafter = false)
+    function nextDayOfWeek($dow,
+                           $day = 0,
+                           $month = 0,
+                           $year = null,
+                           $format = DATE_CALC_FORMAT,
+                           $onorafter = false)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3109,9 +3202,18 @@ class Date_Calc
      * @access   public
      * @static
      */
-    function prevDayOfWeekOnOrBefore($dow, $day = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function prevDayOfWeekOnOrBefore($dow,
+                                     $day = 0,
+                                     $month = 0,
+                                     $year = null,
+                                     $format = DATE_CALC_FORMAT)
     {
-        return Date_Calc::prevDayOfWeek($dow, $day, $month, $year, $format, true);
+        return Date_Calc::prevDayOfWeek($dow,
+                                        $day,
+                                        $month,
+                                        $year,
+                                        $format,
+                                        true);
     }
 
 
@@ -3133,9 +3235,18 @@ class Date_Calc
      * @access   public
      * @static
      */
-    function nextDayOfWeekOnOrAfter($dow, $day = 0, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function nextDayOfWeekOnOrAfter($dow,
+                                    $day = 0,
+                                    $month = 0,
+                                    $year = null,
+                                    $format = DATE_CALC_FORMAT)
     {
-        return Date_Calc::nextDayOfWeek($dow, $day, $month, $year, $format, true);
+        return Date_Calc::nextDayOfWeek($dow,
+                                        $day,
+                                        $month,
+                                        $year,
+                                        $format,
+                                        true);
     }
 
 
@@ -3293,8 +3404,16 @@ class Date_Calc
             $day = Date_Calc::dateNow('%d');
         }
 
-        list($hn_pwyear, $hn_pwmonth, $hn_pwday) = explode(" ", Date_Calc::daysToDate(Date_Calc::dateToDays($day, $month, $year) + 7, '%Y %m %d'));
-        return Date_Calc::beginOfWeek($hn_pwday, $hn_pwmonth, $hn_pwyear, $format);
+        list($hn_pwyear, $hn_pwmonth, $hn_pwday) =
+            explode(" ",
+                    Date_Calc::daysToDate(Date_Calc::dateToDays($day,
+                                                                $month,
+                                                                $year) + 7,
+                                          '%Y %m %d'));
+        return Date_Calc::beginOfWeek($hn_pwday,
+                                      $hn_pwmonth,
+                                      $hn_pwyear,
+                                      $format);
     }
 
 
@@ -3382,7 +3501,10 @@ class Date_Calc
      * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function beginOfPrevMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function beginOfPrevMonth($dummy = null,
+                              $month = 0,
+                              $year = null,
+                              $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3418,7 +3540,10 @@ class Date_Calc
      * @see        Date_Calc::endOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function endOfPrevMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function endOfPrevMonth($dummy = null,
+                            $month = 0,
+                            $year = null,
+                            $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3451,7 +3576,10 @@ class Date_Calc
      * @see        Date_Calc::beginOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function beginOfNextMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function beginOfNextMonth($dummy = null,
+                              $month = 0,
+                              $year = null,
+                              $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3487,7 +3615,10 @@ class Date_Calc
      * @see        Date_Calc::endOfMonthBySpan()
      * @deprecated Method deprecated in Release 1.4.4
      */
-    function endOfNextMonth($dummy = null, $month = 0, $year = null, $format = DATE_CALC_FORMAT)
+    function endOfNextMonth($dummy = null,
+                            $month = 0,
+                            $year = null,
+                            $format = DATE_CALC_FORMAT)
     {
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
@@ -3605,7 +3736,8 @@ class Date_Calc
         if (empty($month)) {
             $month = Date_Calc::dateNow('%m');
         }
-        return Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfMonth($month, $year));
+        return Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfMonth($month,
+                                                                     $year));
     }
 
 
@@ -3716,7 +3848,9 @@ class Date_Calc
         if (is_null($year)) {
             $year = Date_Calc::dateNow('%Y');
         }
-        return (($year % 4 == 0) && ($year % 100 != 0)) || ($year % 400 == 0);
+        return (($year % 4 == 0) &&
+                ($year % 100 != 0)) ||
+               ($year % 400 == 0);
     }
 
 
@@ -4127,7 +4261,11 @@ class Date_Calc
                 if ($pn_second >= $hn_midminute) {
                     // Round up:
                     //
-                    list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) =
+                    list($hn_year,
+                         $hn_month,
+                         $hn_day,
+                         $hn_hour,
+                         $hn_minute) =
                         Date_Calc::addMinutes(1,
                                               $pn_day,
                                               $pn_month,
@@ -4166,7 +4304,13 @@ class Date_Calc
                                               $pn_year,
                                               $pn_hour,
                                               $pn_minute,
-                                              intval($pn_second),true);
+                                              intval($pn_second),
+                                              $pn_precision >=
+                                                  DATE_PRECISION_SECOND &&
+                                              $pb_countleap);
+                        //
+                        // (N.B. if rounded to nearest 10 seconds,
+                        // user does not expect seconds to be '60')
                 }
             }
         }
