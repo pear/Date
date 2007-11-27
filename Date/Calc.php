@@ -616,11 +616,15 @@ class Date_Calc
      */
     function secondsPastMidnightToTime($pn_seconds)
     {
+        if ($pn_seconds >= 86400) {
+            return array(23, 59, $pn_seconds - 86340);
+        }
+
         $hn_hour   = intval($pn_seconds / 3600);
         $hn_minute = intval(($pn_seconds - $hn_hour * 3600) / 60);
         $hn_second = is_float($pn_seconds) ?
-                     fmod($pn_second, 60) :
-                     $pn_second % 60;
+                     fmod($pn_seconds, 60) :
+                     $pn_seconds % 60;
 
         return array($hn_hour, $hn_minute, $hn_second);
     }
@@ -789,9 +793,12 @@ class Date_Calc
         if ($pb_countleap) {
             $hn_seconds = $pn_seconds;
 
-            $hn_day   = $pn_day;
-            $hn_month = $pn_month;
-            $hn_year  = $pn_year;
+            $hn_day    = (int) $pn_day;
+            $hn_month  = (int) $pn_month;
+            $hn_year   = (int) $pn_year;
+            $hn_hour   = (int) $pn_hour;
+            $hn_minute = (int) $pn_minute;
+            $hn_second = $pn_second;
 
             $hn_days = Date_Calc::dateToDays($pn_day,
                                              $pn_month,
@@ -839,12 +846,14 @@ class Date_Calc
                 if ($hn_secondsofmonth == 0) {
                     // Add years:
                     //
-                    while ($hn_seconds >= ($hn_secondsinyear =
-                               Date_Calc::getSecondsInYear($hn_year))) {
-                        $hn_seconds -= $hn_secondsinyear;
-                        $hn_month    = Date_Calc::getFirstMonthOfYear(++$hn_year);
-                        $hn_day      = Date_Calc::getFirstDayOfMonth($hn_month,
-                                                                     $hn_year);
+                    if ($hn_month == Date_Calc::getFirstMonthOfYear($hn_year)) {
+                        while ($hn_seconds >= ($hn_secondsinyear =
+                                   Date_Calc::getSecondsInYear($hn_year))) {
+                            $hn_seconds -= $hn_secondsinyear;
+                            $hn_month    = Date_Calc::getFirstMonthOfYear(++$hn_year);
+                            $hn_day      = Date_Calc::getFirstDayOfMonth($hn_month,
+                                                                         $hn_year);
+                        }
                     }
 
                     // Add months:
@@ -873,7 +882,7 @@ class Date_Calc
                     $hn_hour           = $hn_minute = $hn_second = 0;
                 }
 
-                // Advance to end of year:
+                // Go back to start of year:
                 //
                 if ($hn_secondsofmonth == 0) {
                     while ($hn_month !=
@@ -898,12 +907,14 @@ class Date_Calc
                 if ($hn_secondsofmonth == 0) {
                     // Subtract years:
                     //
-                    while ($hn_seconds >= ($hn_secondsinyear =
-                               Date_Calc::getSecondsInYear($hn_year - 1))) {
-                        $hn_seconds += $hn_secondsinyear;
-                        $hn_month    = Date_Calc::getFirstMonthOfYear(--$hn_year);
-                        $hn_day      = Date_Calc::getFirstDayOfMonth($hn_month,
-                                                                     $hn_year);
+                    if ($hn_month == Date_Calc::getFirstMonthOfYear($hn_year)) {
+                        while ($hn_seconds >= ($hn_secondsinyear =
+                                   Date_Calc::getSecondsInYear($hn_year - 1))) {
+                            $hn_seconds += $hn_secondsinyear;
+                            $hn_month    = Date_Calc::getFirstMonthOfYear(--$hn_year);
+                            $hn_day      = Date_Calc::getFirstDayOfMonth($hn_month,
+                                                                         $hn_year);
+                        }
                     }
 
                     // Subtract months:
@@ -922,17 +933,56 @@ class Date_Calc
                 }
             }
 
-            // Month and year are now correct, so there are no more
-            // leap seconds:
-            //
-            return Date_Calc::addSeconds($hn_seconds,
-                                         $hn_day,
-                                         $hn_month,
-                                         $hn_year,
-                                         $hn_hour,
-                                         $hn_minute,
-                                         $hn_second,
-                                         false);
+            if ($hn_seconds < 0 && $hn_secondsofmonth == 0) {
+                list($hn_year, $hn_month) =
+                    Date_Calc::prevMonth($hn_month, $hn_year);
+                $hn_day = Date_Calc::getFirstDayOfMonth($hn_month, $hn_year);
+                $hn_seconds += Date_Calc::getSecondsInMonth($hn_month, $hn_year);
+            }
+
+            if ($hn_seconds < 0) {
+                $hn_daysadd = intval($hn_seconds / 86400) - 1;
+            } else if ($hn_seconds < 86400) {
+                $hn_daysadd = 0;
+            } else {
+                $hn_daysadd = intval($hn_seconds / 86400) - 1;
+            }
+
+            if ($hn_daysadd != 0) {
+                list($hn_year, $hn_month, $hn_day) =
+                    explode(" ",
+                            Date_Calc::addDays($hn_daysadd,
+                                               $hn_day,
+                                               $hn_month,
+                                               $hn_year,
+                                               "%Y %m %d"));
+                $hn_seconds -= $hn_daysadd * 86400;
+            }
+
+            $hn_secondsinday = Date_Calc::getSecondsInDay($hn_day,
+                                                          $hn_month,
+                                                          $hn_year);
+            if ($hn_seconds >= $hn_secondsinday) {
+                list($hn_year, $hn_month, $hn_day) =
+                    explode(" ",
+                            Date_Calc::addDays(1,
+                                               $hn_day,
+                                               $hn_month,
+                                               $hn_year,
+                                               "%Y %m %d"));
+                $hn_seconds -= $hn_secondsinday;
+            }
+
+            list($hn_hour, $hn_minute, $hn_second) =
+                Date_Calc::secondsPastMidnightToTime(Date_Calc::secondsPastMidnight($hn_hour, $hn_minute, $hn_second) +
+                                                     $hn_seconds);
+
+            return array($hn_year,
+                         $hn_month,
+                         $hn_day,
+                         $hn_hour,
+                         $hn_minute,
+                         $hn_second);
         } else {
             // Assume every day has 86400 seconds exactly (ignore leap seconds):
             //
@@ -959,10 +1009,21 @@ class Date_Calc
                 $hn_hour   = $pn_hour;
                 $hn_minute = $pn_minute;
             } else {
-                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) = Date_Calc::addMinutes($hn_minutes, $pn_day, $pn_month, $pn_year, $pn_hour, $pn_minute);
+                list($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute) =
+                    Date_Calc::addMinutes($hn_minutes,
+                                          $pn_day,
+                                          $pn_month,
+                                          $pn_year,
+                                          $pn_hour,
+                                          $pn_minute);
             }
 
-            return array($hn_year, $hn_month, $hn_day, $hn_hour, $hn_minute, $hn_second);
+            return array($hn_year,
+                         $hn_month,
+                         $hn_day,
+                         $hn_hour,
+                         $hn_minute,
+                         $hn_second);
         }
     }
 
@@ -1054,6 +1115,8 @@ class Date_Calc
      */
     function daysToDate($days, $format = DATE_CALC_FORMAT)
     {
+        $days = intval($days);
+
         $days   -= 1721119;
         $century = floor((4 * $days - 1) / 146097);
         $days    = floor(4 * $days - 1 - 146097 * $century);
@@ -1209,11 +1272,8 @@ class Date_Calc
         if ($pn_months == 0)
             return (int) $pn_days;
 
-        list($hn_year, $hn_month, $hn_day) = explode(" ", Date_Calc::daysToDate($pn_days, "%Y %m %d"));
-
-        // Calculate days since first of month:
-        //
-        $hn_dayoffset = $pn_days - Date_Calc::firstDayOfMonth($hn_month, $hn_year);
+        list($hn_year, $hn_month, $hn_day) =
+            explode(" ", Date_Calc::daysToDate($pn_days, "%Y %m %d"));
 
         $hn_retmonth = $hn_month + $pn_months % 12;
         $hn_retyear  = $hn_year + intval($pn_months / 12);
@@ -1224,6 +1284,13 @@ class Date_Calc
             $hn_retmonth -= 12;
             ++$hn_retyear;
         }
+
+        if (Date_Calc::isValidDate($hn_day, $hn_retmonth, $hn_retyear))
+            return Date_Calc::dateToDays($hn_day, $hn_retmonth, $hn_retyear);
+
+        // Calculate days since first of month:
+        //
+        $hn_dayoffset = $pn_days - Date_Calc::firstDayOfMonth($hn_month, $hn_year);
 
         $hn_retmonthfirstday = Date_Calc::firstDayOfMonth($hn_retmonth, $hn_retyear);
         $hn_retmonthlastday  = Date_Calc::lastDayOfMonth($hn_retmonth, $hn_retyear);
@@ -1278,7 +1345,8 @@ class Date_Calc
             return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
 
         $hn_days = Date_Calc::dateToDays($pn_day, $pn_month, $pn_year);
-        return Date_Calc::daysToDate(Date_Calc::addMonthsToDays($pn_months, $hn_days), $ps_format);
+        return Date_Calc::daysToDate(Date_Calc::addMonthsToDays($pn_months, $hn_days),
+                                     $ps_format);
     }
 
 
@@ -1304,7 +1372,58 @@ class Date_Calc
      */
     function addYearsToDays($pn_years, $pn_days)
     {
-        return Date_Calc::addMonthsToDays($pn_years * 12, $pn_days);
+        if ($pn_years == 0)
+            return (int) $pn_days;
+
+        list($hn_year, $hn_month, $hn_day) =
+            explode(" ", Date_Calc::daysToDate($pn_days, "%Y %m %d"));
+
+        $hn_retyear = $hn_year + $pn_years;
+        if (Date_Calc::isValidDate($hn_day, $hn_month, $hn_retyear))
+            return Date_Calc::dateToDays($hn_day, $hn_month, $hn_retyear);
+
+        $ha_months = Date_Calc::getMonths($hn_retyear);
+        if (in_array($hn_month, $ha_months)) {
+            $hn_retmonth = $hn_month;
+
+            // Calculate days since first of month:
+            //
+            $hn_dayoffset = $pn_days - Date_Calc::firstDayOfMonth($hn_month,
+                                                                  $hn_year);
+
+            $hn_retmonthfirstday = Date_Calc::firstDayOfMonth($hn_retmonth,
+                                                              $hn_retyear);
+            $hn_retmonthlastday  = Date_Calc::lastDayOfMonth($hn_retmonth,
+                                                             $hn_retyear);
+
+            if ($hn_dayoffset > $hn_retmonthlastday - $hn_retmonthfirstday) {
+                return $hn_retmonthlastday;
+            } else {
+                return $hn_retmonthfirstday + $hn_dayoffset;
+            }
+        } else {
+            list($hn_rmday, $hn_retmonth, $hn_rmyear) =
+                explode(" ",
+                        Date_Calc::daysToDate(Date_Calc::firstDayOfYear($hn_retyear) +
+                                              $pn_days -
+                                              Date_Calc::firstDayOfYear($hn_year),
+                                              "%Y %m %d"));
+
+
+
+            // Calculate days since first of year:
+            //
+            $hn_dayoffset = $pn_days - Date_Calc::firstDayOfYear($hn_retyear);
+
+            $hn_retyearfirstday = Date_Calc::firstDayOfYear($hn_retyear);
+            $hn_retyearlastday  = Date_Calc::lastDayOfYear($hn_retyear);
+
+            if ($hn_dayoffset > $hn_retyearlastday - $hn_retyearfirstday) {
+                return $hn_retyearlastday;
+            } else {
+                return $hn_retyearfirstday + $hn_dayoffset;
+            }
+        }
     }
 
 
@@ -1394,7 +1513,11 @@ class Date_Calc
         if ($pn_days == 0)
             return Date_Calc::dateFormat($pn_day, $pn_month, $pn_year, $ps_format);
 
-        return Date_Calc::daysToDate(Date_Calc::dateToDays($pn_day, $pn_month, $pn_year) + $pn_days, $ps_format);
+        return Date_Calc::daysToDate(Date_Calc::dateToDays($pn_day,
+                                                           $pn_month,
+                                                           $pn_year) +
+                                     $pn_days,
+                                     $ps_format);
     }
 
 
@@ -1487,7 +1610,7 @@ class Date_Calc
     /**
      * Returns first month of specified year as integer
      *
-     * @param int $pn_year  the year (using 'Astronomical' year numbering)
+     * @param int $pn_year the year (using 'Astronomical' year numbering)
      *
      * @return   int        number of first month of year
      * @access   public
@@ -1620,6 +1743,8 @@ class Date_Calc
      */
     function daysToDateJulian($days, $format = DATE_CALC_FORMAT)
     {
+        $days = intval($days);
+
         $days -= 1721117;
         $days  = floor(4 * $days - 1);
         $day   = floor($days / 4);
@@ -3820,15 +3945,15 @@ class Date_Calc
      *                                        seconds (thus it is equivalent to
      *                                        DATE_PRECISION_10SECONDS)
      *
-     * @param int   $pn_precision  a 'DATE_PRECISION_*' constant
-     * @param int   $pn_day        the day of the month
-     * @param int   $pn_month      the month
-     * @param int   $pn_year       the year
-     * @param int   $pn_hour       the hour
-     * @param int   $pn_minute     the minute
-     * @param mixed $pn_second     the second as integer or float
-     * @param bool  $pb_countleap  whether to count leap seconds (defaults to
-     *                              DATE_COUNT_LEAP_SECONDS)
+     * @param int   $pn_precision a 'DATE_PRECISION_*' constant
+     * @param int   $pn_day       the day of the month
+     * @param int   $pn_month     the month
+     * @param int   $pn_year      the year
+     * @param int   $pn_hour      the hour
+     * @param int   $pn_minute    the minute
+     * @param mixed $pn_second    the second as integer or float
+     * @param bool  $pb_countleap whether to count leap seconds (defaults to
+     *                             DATE_COUNT_LEAP_SECONDS)
      *
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public
@@ -4041,7 +4166,7 @@ class Date_Calc
                                               $pn_year,
                                               $pn_hour,
                                               $pn_minute,
-                                              intval($pn_second));
+                                              intval($pn_second),true);
                 }
             }
         }
@@ -4061,15 +4186,15 @@ class Date_Calc
     /**
      * Rounds seconds up or down to the nearest specified unit
      *
-     * @param int   $pn_precision  number of digits after the decimal point
-     * @param int   $pn_day        the day of the month
-     * @param int   $pn_month      the month
-     * @param int   $pn_year       the year
-     * @param int   $pn_hour       the hour
-     * @param int   $pn_minute     the minute
-     * @param mixed $pn_second     the second as integer or float
-     * @param bool  $pb_countleap  whether to count leap seconds (defaults to
-     *                              DATE_COUNT_LEAP_SECONDS)
+     * @param int   $pn_precision number of digits after the decimal point
+     * @param int   $pn_day       the day of the month
+     * @param int   $pn_month     the month
+     * @param int   $pn_year      the year
+     * @param int   $pn_hour      the hour
+     * @param int   $pn_minute    the minute
+     * @param mixed $pn_second    the second as integer or float
+     * @param bool  $pb_countleap whether to count leap seconds (defaults to
+     *                             DATE_COUNT_LEAP_SECONDS)
      *
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public

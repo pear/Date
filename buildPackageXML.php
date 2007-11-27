@@ -64,7 +64,8 @@ $pkg->setReleaseStability('stable');
 $pkg->setAPIStability('stable');
 $pkg->setNotes($notes);
 $pkg->setPackageType('php');
-$pkg->setLicense('BSD License', 'http://www.opensource.org/licenses/bsd-license.php');
+$pkg->setLicense('BSD License',
+    'http://www.opensource.org/licenses/bsd-license.php');
 
 // Add maintainers.
 $pkg->addMaintainer('lead', 'baba', 'Baba Buehler', 'baba@babaz.com', 'no');
@@ -89,7 +90,8 @@ $e = $pkg->writePackageFile();
 
 // Some errors occurs.
 if (PEAR::isError($e)) {
-    throw new Exception('Unable to write package file. Got message: ' . $e->getMessage());
+    throw new Exception('Unable to write package file. Got message: ' .
+                        $e->getMessage());
 }
 
 /*

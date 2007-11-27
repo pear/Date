@@ -674,7 +674,7 @@ class Date
      *                                     local Summer time offset, the rounded
      *                                     time if it falls in the skipped hour
      *                                     (defaults to false)
-     * @param bool  $pb_countleap         whether to count leap seconds
+     * @param bool $pb_countleap          whether to count leap seconds
      *                                     (defaults to DATE_COUNT_LEAP_SECONDS)
      *
      * @return   void
@@ -4955,9 +4955,9 @@ class Date
      * may unintentionally return a PEAR error if a transitory date is
      * invalid between setting these fields.
      *
-     * @param int  $d           the day
-     * @param int  $m           the month
-     * @param int  $y           the year
+     * @param int  $d the day
+     * @param int  $m the month
+     * @param int  $y the year
      *
      * @return   void
      * @access   public
