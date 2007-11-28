@@ -5069,9 +5069,9 @@ class Date
      * may unintentionally return a PEAR error if a transitory date is
      * invalid between setting these fields.
      *
-     * @param int  $d the day
-     * @param int  $m the month
-     * @param int  $y the year
+     * @param int $d the day
+     * @param int $m the month
+     * @param int $y the year
      *
      * @return   void
      * @access   public

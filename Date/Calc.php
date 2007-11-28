@@ -4079,6 +4079,10 @@ class Date_Calc
      *                                        seconds (thus it is equivalent to
      *                                        DATE_PRECISION_10SECONDS)
      *
+     * N.B. This function requires a time in UTC if both the precision is at
+     * least DATE_PRECISION_SECOND and leap seconds are being counted, otherwise
+     * any local time is acceptable.
+     *
      * @param int   $pn_precision a 'DATE_PRECISION_*' constant
      * @param int   $pn_day       the day of the month
      * @param int   $pn_month     the month
@@ -4132,11 +4136,7 @@ class Date_Calc
                     $hn_partday = Date_Calc::secondsPastMidnight($pn_hour,
                                                                  $pn_minute,
                                                                  $pn_second) /
-                                  ($pb_countleap ?
-                                   Date_Calc::getSecondsInDay($pn_day,
-                                                              $pn_month,
-                                                              $pn_year) :
-                                   86400);
+                                  86400;
                     if ($hn_partday >= $hn_midyear - $hn_days) {
                         // Round up:
                         //
@@ -4173,11 +4173,7 @@ class Date_Calc
                 $hn_partday = Date_Calc::secondsPastMidnight($pn_hour,
                                                               $pn_minute,
                                                               $pn_second) /
-                              ($pb_countleap ?
-                               Date_Calc::getSecondsInDay($pn_day,
-                                                          $pn_month,
-                                                          $pn_year) :
-                               86400);
+                              86400;
                 if ($hn_partday >= $hn_midmonth - $hn_days) {
                     // Round up:
                     //
@@ -4194,14 +4190,9 @@ class Date_Calc
             $hn_minute = 0;
             $hn_second = 0;
 
-            $hn_midday = ($pb_countleap ?
-                          Date_Calc::getSecondsInDay($pn_day,
-                                                     $pn_month,
-                                                     $pn_year) :
-                          86400) / 2;
             if (Date_Calc::secondsPastMidnight($pn_hour,
                                                $pn_minute,
-                                               $pn_second) >= $hn_midday) {
+                                               $pn_second) >= 43200) {
                 // Round up:
                 //
                 list($hn_year, $hn_month, $hn_day) =
@@ -4219,14 +4210,7 @@ class Date_Calc
             $hn_minute = 0;
             $hn_second = 0;
 
-            $hn_midhour = ($pb_countleap ?
-                           Date_Calc::getSecondsInHour($pn_day,
-                                                       $pn_month,
-                                                       $pn_year,
-                                                       $pn_hour) :
-                           3600) / 2;
-            if (Date_Calc::secondsPastTheHour($pn_minute, $pn_second) >=
-                $hn_midhour) {
+            if (Date_Calc::secondsPastTheHour($pn_minute, $pn_second) >= 1800) {
                 // Round up:
                 //
                 list($hn_year, $hn_month, $hn_day, $hn_hour) =
@@ -4251,14 +4235,7 @@ class Date_Calc
             } else {
                 // Check seconds:
                 //
-                $hn_midminute = ($pb_countleap ?
-                                 Date_Calc::getSecondsInMinute($pn_day,
-                                                               $pn_month,
-                                                               $pn_year,
-                                                               $pn_hour,
-                                                               $pn_minute) :
-                                 60) / 2;
-                if ($pn_second >= $hn_midminute) {
+                if ($pn_second >= 30) {
                     // Round up:
                     //
                     list($hn_year,
