@@ -39,8 +39,7 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor,
- *             C.A. Woodcock
+ * @copyright  1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
@@ -101,8 +100,7 @@ define('DATE_PRECISION_SECOND', 5);
  * @author    Monte Ohrt <monte@ispi.net>
  * @author    Daniel Convissor <danielc@php.net>
  * @author    C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor,
- *            C.A. Woodcock
+ * @copyright 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
  * @version   Release: @package_version@
@@ -948,7 +946,7 @@ class Date_Calc
                     // Subtract years:
                     //
                     if ($hn_month == Date_Calc::getFirstMonthOfYear($hn_year)) {
-                        while ($hn_seconds >= ($hn_secondsinyear =
+                        while (-$hn_seconds >= ($hn_secondsinyear =
                                    Date_Calc::getSecondsInYear($hn_year - 1))) {
                             $hn_seconds += $hn_secondsinyear;
                             $hn_month    = Date_Calc::getFirstMonthOfYear(--$hn_year);
@@ -961,7 +959,7 @@ class Date_Calc
                     //
                     list($hn_pmyear, $hn_prevmonth) =
                         Date_Calc::prevMonth($hn_month, $hn_year);
-                    while ($hn_seconds >= ($hn_secondsinmonth =
+                    while (-$hn_seconds >= ($hn_secondsinmonth =
                                Date_Calc::getSecondsInMonth($hn_prevmonth,
                                                             $hn_pmyear))) {
                         $hn_seconds += $hn_secondsinmonth;
@@ -969,6 +967,8 @@ class Date_Calc
                         $hn_month    = $hn_prevmonth;
                         $hn_day      = Date_Calc::getFirstDayOfMonth($hn_month,
                                                                      $hn_year);
+                        list($hn_pmyear, $hn_prevmonth) =
+                            Date_Calc::prevMonth($hn_month, $hn_year);
                     }
                 }
             }

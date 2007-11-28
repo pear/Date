@@ -40,8 +40,7 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @author     Firman Wandayandi <firman@php.net>
  * @author     C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, Firman
- *             Wandayandi, C.A. Woodcock
+ * @copyright  1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
  * @license    http://www.opensource.org/licenses/bsd-license.php
  *             BSD License
  * @version    CVS: $Id$
@@ -223,8 +222,7 @@ define('DATE_FORMAT_UNIXTIME', 5);
  * @author    Pierre-Alain Joye <pajoye@php.net>
  * @author    Firman Wandayandi <firman@php.net>
  * @author    C.A. Woodcock <c01234@netcomuk.co.uk>
- * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi,
- *            C.A. Woodcock
+ * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
  * @version   Release: @package_version@
