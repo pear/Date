@@ -28,7 +28,7 @@ foreach ($states as $state) {
     $new_date = new Date($hn_time);
     print 'Original Time (Australia/Adelaide): ' . $new_date->getTime() . "\n";
     $timezone = new Date_TimeZone($state);
-    $new_date->setTZ($originalTimezone);
+//    $new_date->setTZ($originalTimezone);
     $new_date->convertTZ($timezone);
     print $state . ': ' . ($hn_localtime = $new_date->getTime()) . "\n";
     print 'Difference: ' . ($hn_localtime - $hn_time) . "\n";

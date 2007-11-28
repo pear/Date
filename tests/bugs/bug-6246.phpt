@@ -37,19 +37,16 @@ require_once 'Date.php';
 $dates_us = array(
     '2007-03-11T01:59:59',         // standard time
     '2007-03-11T01:59:59.999999',  // standard time
-    '2007-03-11T02:00:00',         // invalid time - the skipped hour
-    '2007-03-11T02:59:59',         // standard time
     '2007-03-11T03:00:00',         // Summer time
     '2007-11-04T00:59:59',         // Summer time
-    '2007-11-04T01:00:00',         // ambiguous - could be either
-    '2007-11-04T01:59:59',         // ambiguous - could be either
+    '2007-11-04T01:00:00',         // ambiguous - could be either (standard time assumed)
+    '2007-11-04T01:59:59',         // ambiguous - could be either (standard time assumed)
     '2007-11-04T02:00:00',         // standard time
 );
 
 $dates_eu = array(
     '2007-03-25T00:59:59',         // standard time
     '2007-03-25T00:59:59.999999',  // standard time
-    '2007-03-25T01:00:00',         // invalid time - the skipped hour
     '2007-03-25T02:00:00',         // Summer time
     '2007-10-28T00:59:59',         // Summer time
     '2007-10-28T01:00:00',         // ambiguous - could be either (standard time assumed)
@@ -72,10 +69,10 @@ $date->setTZ($hs_tz = 'America/Chicago');    // N.B. the old name was 'US/Centra
 foreach ($dates_us as $d) {
     $date->setDate($d);
     printf(
-        '%s is in %s daylight saving time? %s ' . "\n",
+        '%s is in %s daylight saving time? %s' . "\n",
         $date->getDate(),
         $hs_tz,
-        ($date->inDaylightTime($date) ? 'true' : 'false')
+        ($date->inDaylightTime() ? 'true' : 'false')
     );
 }
 $date = new Date;
@@ -83,28 +80,25 @@ $date->setTZ($hs_tz = 'Europe/London');    // N.B. the old name was 'US/Central'
 foreach ($dates_eu as $d) {
     $date->setDate($d);
     printf(
-        '%s is in %s Summer time? %s ' . "\n",
+        '%s is in %s Summer time? %s' . "\n",
         $date->getDate(),
         $hs_tz,
-        ($date->inDaylightTime($date) ? 'true' : 'false')
+        ($date->inDaylightTime() ? 'true' : 'false')
     );
 }
 ?>
 --EXPECT--
-2007-03-11 01:59:59 is in America/Chicago daylight saving time? false 
-2007-03-11 01:59:59 is in America/Chicago daylight saving time? false 
-2007-03-11 02:00:00 is in America/Chicago daylight saving time? false 
-2007-03-11 02:59:59 is in America/Chicago daylight saving time? false 
-2007-03-11 03:00:00 is in America/Chicago daylight saving time? true 
-2007-11-04 00:59:59 is in America/Chicago daylight saving time? true 
-2007-11-04 01:00:00 is in America/Chicago daylight saving time? false 
-2007-11-04 01:59:59 is in America/Chicago daylight saving time? false 
-2007-11-04 02:00:00 is in America/Chicago daylight saving time? false 
-2007-03-25 00:59:59 is in Europe/London Summer time? false 
-2007-03-25 00:59:59 is in Europe/London Summer time? false 
-2007-03-25 01:00:00 is in Europe/London Summer time? false 
-2007-03-25 02:00:00 is in Europe/London Summer time? true 
-2007-10-28 00:59:59 is in Europe/London Summer time? true 
-2007-10-28 01:00:00 is in Europe/London Summer time? false 
-2007-10-28 01:59:59 is in Europe/London Summer time? false 
-2007-11-28 02:00:00 is in Europe/London Summer time? false 
+2007-03-11 01:59:59 is in America/Chicago daylight saving time? false
+2007-03-11 01:59:59 is in America/Chicago daylight saving time? false
+2007-03-11 03:00:00 is in America/Chicago daylight saving time? true
+2007-11-04 00:59:59 is in America/Chicago daylight saving time? true
+2007-11-04 01:00:00 is in America/Chicago daylight saving time? false
+2007-11-04 01:59:59 is in America/Chicago daylight saving time? false
+2007-11-04 02:00:00 is in America/Chicago daylight saving time? false
+2007-03-25 00:59:59 is in Europe/London Summer time? false
+2007-03-25 00:59:59 is in Europe/London Summer time? false
+2007-03-25 02:00:00 is in Europe/London Summer time? true
+2007-10-28 00:59:59 is in Europe/London Summer time? true
+2007-10-28 01:00:00 is in Europe/London Summer time? false
+2007-10-28 01:59:59 is in Europe/London Summer time? false
+2007-11-28 02:00:00 is in Europe/London Summer time? false
