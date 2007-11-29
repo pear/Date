@@ -89,7 +89,7 @@ require_once 'Date/Span.php';
  *
  * @since    Constant available since Release [next version]
  */
-define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', true);
+define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
 
 /**
  * Whether to correct, by adding the local Summer time offset, the
@@ -155,6 +155,8 @@ define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
  *  Date::addSeconds()
  *  Date::subtractSeconds()
  *  Date_Calc::addSeconds()
+ *  Date::round()
+ *  Date::roundSeconds()
  *
  * This constant is set to 'false' by default for backwards-compatibility
  * reasons, however, you are recommended to set it to 'true'.
