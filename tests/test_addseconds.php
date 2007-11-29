@@ -90,6 +90,7 @@ if (php_sapi_name() != 'cli') {
 
 $date = new Date("1972-07-01 00:59:58.987654",
                  true); // count leap seconds
+$date->setTZbyID("Europe/London");
 
 $datetest = new Date($date);
 $datetest->addSeconds(1, true);
