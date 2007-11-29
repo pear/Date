@@ -119,22 +119,38 @@ class Date_Span
     // {{{ Properties
 
     /**
-     * @var int
+     * The no of days
+     *
+     * @var      int
+     * @access   private
+     * @since    Property available since Release 1.0
      */
     var $day;
 
     /**
-     * @var int
+     * The no of hours (0 to 23)
+     *
+     * @var      int
+     * @access   private
+     * @since    Property available since Release 1.0
      */
     var $hour;
 
     /**
-     * @var int
+     * The no of minutes (0 to 59)
+     *
+     * @var      int
+     * @access   private
+     * @since    Property available since Release 1.0
      */
     var $minute;
 
     /**
-     * @var int
+     * The no of seconds (0 to 59)
+     *
+     * @var      int
+     * @access   private
+     * @since    Property available since Release 1.0
      */
     var $second;
 

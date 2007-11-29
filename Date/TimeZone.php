@@ -44,7 +44,7 @@
 
 
 // }}}
-// {{{ Class: Date_TimeZone
+// {{{ Class Date_TimeZone
 
 /**
  * TimeZone representation class, along with time zone information data
@@ -75,81 +75,83 @@
  */
 class Date_TimeZone
 {
+
     // {{{ Properties
 
     /**
-     * Time Zone ID of this time zone
+     * Unique time Zone ID of this time zone
      *
      * @var      string
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $id;
 
     /**
-     * offset, in milliseconds, of this timezone
+     * Offset, in milliseconds, of this timezone
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $offset;
 
     /**
-     * Short Name of this time zone (e.g. "CST")
+     * Short name of this time zone (e.g. "CST")
      *
      * @var      string
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $shortname;
 
     /**
-     * DST Short Name of this timezone
+     * DST short name of this timezone (e.g. 'BST')
      *
      * @var      string
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $dstshortname;
 
     /**
-     * Long Name of this time zone (e.g. "Central Standard Time")
+     * Long name of this time zone (e.g. "Central Standard Time")
      *
      * N.B. this is not necessarily unique
      *
      * @since    1.0
      * @access   private
-     * @var      string
+     * @since    Property available since Release 1.0
      */
     var $longname;
 
     /**
-     * DST Long Name of this time zone
+     * DST long name of this time zone (e.g. 'British Summer Time')
      *
      * @var      string
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $dstlongname;
 
     /**
-     * true if this time zone observes daylight savings time
+     * Whether this time zone observes daylight savings time
      *
      * @var      bool
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $hasdst;
 
     /**
      * Additional offset of Summer time from the standard time of the
-     * time zone in milli-seconds (usually 3600000, i.e. one hour)
-     * and always positive
+     * time zone in milli-seconds
+     *
+     * The value is usually 3600000, i.e. one hour, and always positive
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_summertimeoffset;
 
@@ -157,14 +159,16 @@ class Date_TimeZone
      * Month no (1-12) in which Summer time starts (the clocks go forward)
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_summertimestartmonth;
 
     /**
-     * Definition of when Summer time starts in the specified month; can
-     * take the following forms:
+     * Definition of when Summer time starts in the specified month
+     *
+     * Can take one of the following forms:
+     *
      *  5        the fifth of the month
      *  lastSun  the last Sunday in the month
      *  lastMon  the last Monday in the month
@@ -172,18 +176,18 @@ class Date_TimeZone
      *  Sun<=25  last Sunday on or before the 25th
      *
      * @var      string
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $os_summertimestartday;
 
     /**
-     * Time in milli-seconds relative to midnight Universal time when
+     * Time in milli-seconds relative to midnight UTC when
      * Summer time starts (the clocks go forward)
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_summertimestarttime;
 
@@ -191,28 +195,28 @@ class Date_TimeZone
      * Month no (1-12) in which Summer time ends (the clocks go back)
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_summertimeendmonth;
 
     /**
-     * Definition of when Summer time ends in the specified month; can
-     * take the same forms as the start time (see above)
+     * Definition of when Summer time ends in the specified month
      *
      * @var      string
-     * @since    [next version]
      * @access   private
+     * @see      Date_TimeZone::$os_summertimestartday
+     * @since    Property available since Release [next version]
      */
     var $os_summertimeendday;
 
     /**
-     * Time in milli-seconds relative to midnight Universal time when
+     * Time in milli-seconds relative to midnight UTC when
      * Summer time ends (the clocks go back)
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_summertimeendtime;
 
@@ -6998,8 +7002,9 @@ $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
 /**
  * Initialize default timezone
  *
- * First try _DATE_TIMEZONE_DEFAULT global, then PHP_TZ environment var,
- * then TZ environment var
+ * First try php.ini directive, then the value returned by date("e"), then
+ * _DATE_TIMEZONE_DEFAULT global, then PHP_TZ environment variable, then TZ
+ * environment variable.
  */
 if (isset($GLOBALS['_DATE_TIMEZONE_DEFAULT'])
    && Date_TimeZone::isValidID($GLOBALS['_DATE_TIMEZONE_DEFAULT'])) {

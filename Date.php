@@ -121,9 +121,28 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  * work in UTC or a time zone without Summer time, in which case
  * this situation will never arise.
  *
+ * This constant is set to 'true' by default for backwards-compatibility
+ * reasons, however, you are recommended to set it to 'false'.  Note that the
+ * behaviour is not intended to match that of previous versions of the class
+ * in terms of ignoring the Summer time offset when making calculations which
+ * involve dates in both standard and Summer time - this was recognized as a
+ * bug - but in terms of returning a PEAR error object when the user sets the
+ * object to an invalid date (i.e. a time in the hour which is skipped when
+ * the clocks go forwards, which in Europe would be a time such as 01.30).
+ * Backwards compatibility here means that the behaviour is the same as it
+ * used to be, less the bug.
+ *
+ * Note that this problem is not an issue for the user if:
+ *
+ *  (a) the user uses a time zone that does not observe Summer time, e.g. UTC
+ *  (b) the user never accesses the time, that is, he never makes a call to
+ *       Date::getHour() or Date::format("%H"), for example, even if he sets
+ *       the time to something invalid
+ *  (c) the user sets DATE_CORRECTINVALIDTIME_DEFAULT to true
+ *
  * @since    Constant available since Release [next version]
  */
-define('DATE_CORRECTINVALIDTIME_DEFAULT', false);
+define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
 
 /**
  * Whether to validate dates (i.e. day-month-year, ignoring the time) by
@@ -234,131 +253,132 @@ define('DATE_FORMAT_UNIXTIME', 5);
  */
 class Date
 {
+
     // {{{ Properties
 
     /**
-     * the year
+     * The year
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $year;
 
     /**
-     * the month
+     * The month
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $month;
 
     /**
-     * the day
+     * The day
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $day;
 
     /**
-     * the hour
+     * The hour
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $hour;
 
     /**
-     * the minute
+     * The minute
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $minute;
 
     /**
-     * the second
+     * The second
      *
      * @var      int
-     * @since    1.0
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $second;
 
     /**
-     * the parts of a second
+     * The parts of a second
      *
      * @var      float
-     * @since    1.4.3
      * @access   private
+     * @since    Property available since Release 1.4.3
      */
     var $partsecond;
 
     /**
-     * the year in local standard time
+     * The year in local standard time
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardyear;
 
     /**
-     * the month in local standard time
+     * The month in local standard time
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardmonth;
 
     /**
-     * the day in local standard time
+     * The day in local standard time
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardday;
 
     /**
-     * the hour in local standard time
+     * The hour in local standard time
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardhour;
 
     /**
-     * the minute in local standard time
+     * The minute in local standard time
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardminute;
 
     /**
-     * the second in local standard time
+     * The second in local standard time
      *
      * @var      int
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardsecond;
 
     /**
-     * the part-second in local standard time
+     * The part-second in local standard time
      *
      * @var      float
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $on_standardpartsecond;
 
@@ -366,8 +386,8 @@ class Date
      * Whether the object should accept and count leap seconds
      *
      * @var      bool
-     * @since    [next version]
      * @access   private
+     * @since    Property available since Release [next version]
      */
     var $ob_countleapseconds;
 
@@ -377,28 +397,30 @@ class Date
      * the clocks go forward)
      *
      * @var      bool
-     * @since    [next version]
      * @access   private
      * @see      Date::isTimeValid()
+     * @since    Property available since Release [next version]
      */
     var $ob_invalidtime = null;
 
     /**
-     * timezone for this date
+     * Date_TimeZone object for this date
      *
-     * @var      object Date_TimeZone
-     * @since    1.0
+     * @var      object     Date_TimeZone object
      * @access   private
+     * @since    Property available since Release 1.0
      */
     var $tz;
 
     /**
-     * define the default weekday abbreviation length
-     * used by ::format()
+     * Defines the default weekday abbreviation length
+     *
+     * Formerly used by Date::format(), but now redundant - the abbreviation
+     * for the current locale of the machine is used.
      *
      * @var      int
-     * @since    1.4.4
      * @access   private
+     * @since    Property available since Release 1.4.4
      */
     var $getWeekdayAbbrnameLength = 3;
 
@@ -428,7 +450,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @see      setDate()
+     * @see      Date::setDate()
      */
     function Date($date = null,
                   $pb_countleapseconds = DATE_COUNT_LEAP_SECONDS)
@@ -502,6 +524,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::copy()
      */
     function __clone()
     {
@@ -516,6 +539,7 @@ class Date
 
     // }}}
     // {{{ setDate()
+
     /**
      * Sets the fields of a Date object based on the input date and format
      *
@@ -624,6 +648,7 @@ class Date
 
     // }}}
     // {{{ setNow()
+
     /**
      * Sets to local current time and time zone
      *
@@ -1695,6 +1720,7 @@ class Date
 
     // }}}
     // {{{ format2()
+
     /**
      * Extended version of 'format()' with variable-length formatting codes
      *
@@ -4460,7 +4486,7 @@ class Date
      *
      * @return     int        the Julian date
      * @access     public
-     * @see        getDayOfYear()
+     * @see        Date::getDayOfYear()
      * @deprecated Method deprecated in Release [next version]
      */
     function getJulianDate()
@@ -5227,6 +5253,7 @@ class Date
      *
      * @return   void
      * @access   protected
+     * @see      Date::setStandardTime()
      * @since    Method available since Release [next version]
      */
     function setLocalTime($pn_day,
@@ -5366,6 +5393,7 @@ class Date
      *
      * @return   void
      * @access   protected
+     * @see      Date::setLocalTime()
      * @since    Method available since Release [next version]
      */
     function setStandardTime($pn_day,
@@ -5444,6 +5472,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setDayMonthYear(), Date::setDateTime()
      */
     function setYear($y, $pb_validate = DATE_VALIDATE_DATE_BY_DEFAULT)
     {
@@ -5482,6 +5511,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setDayMonthYear(), Date::setDateTime()
      */
     function setMonth($m, $pb_validate = DATE_VALIDATE_DATE_BY_DEFAULT)
     {
@@ -5520,6 +5550,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setDayMonthYear(), Date::setDateTime()
      */
     function setDay($d, $pb_validate = DATE_VALIDATE_DATE_BY_DEFAULT)
     {
@@ -5560,6 +5591,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setDateTime()
      * @since    Method available since Release [next version]
      */
     function setDayMonthYear($d, $m, $y)
@@ -5599,6 +5631,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setHourMinuteSecond(), Date::setDateTime()
      */
     function setHour($h, $pb_repeatedhourdefault = false)
     {
@@ -5631,6 +5664,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setHourMinuteSecond(), Date::setDateTime()
      */
     function setMinute($m, $pb_repeatedhourdefault = false)
     {
@@ -5663,6 +5697,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setHourMinuteSecond(), Date::setDateTime()
      */
     function setSecond($s, $pb_repeatedhourdefault = false)
     {
@@ -5694,6 +5729,7 @@ class Date
      *
      * @return   void
      * @access   protected
+     * @see      Date::setHourMinuteSecond(), Date::setDateTime()
      * @since    Method available since Release [next version]
      */
     function setPartSecond($pn_ps, $pb_repeatedhourdefault = false)
@@ -5730,6 +5766,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setDateTime()
      * @since    Method available since Release [next version]
      */
     function setHourMinuteSecond($h, $m, $s, $pb_repeatedhourdefault = false)
@@ -5782,6 +5819,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setDayMonthYear(), Date::setHourMinuteSecond()
      * @since    Method available since Release [next version]
      */
     function setDateTime($pn_day,
