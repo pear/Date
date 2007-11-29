@@ -5666,11 +5666,7 @@ class Date
      */
     function setSecond($s, $pb_repeatedhourdefault = false)
     {
-        if ($s > Date_Calc::getSecondsInMinute($this->day,
-                                               $this->month,
-                                               $this->year,
-                                               $this->hour,
-                                               $this->minute) ||
+        if ($s > 60) || // Leap seconds possible
             $s < 0) {
             return PEAR::raiseError("Invalid second value '$s'");
         } else {
