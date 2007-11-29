@@ -5666,7 +5666,7 @@ class Date
      */
     function setSecond($s, $pb_repeatedhourdefault = false)
     {
-        if ($s > 60) || // Leap seconds possible
+        if ($s > 60 || // Leap seconds possible
             $s < 0) {
             return PEAR::raiseError("Invalid second value '$s'");
         } else {
