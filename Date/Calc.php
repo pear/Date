@@ -2555,7 +2555,7 @@ class Date_Calc
     // {{{ weekOfYear()
 
     /**
-     * Returns week of the year; where first Sunday is first day of first week
+     * Returns week of the year, where first Sunday is first day of first week
      *
      * N.B. this function is equivalent to calling:
      *
@@ -2576,7 +2576,8 @@ class Date_Calc
      */
     function weekOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
-        return Date_Calc::weekOfYear7th($pn_day, $pn_month, $pn_year, 0);
+        $ha_week = Date_Calc::weekOfYear7th($pn_day, $pn_month, $pn_year, 0);
+        return $ha_week[1];
     }
 
 
