@@ -789,6 +789,7 @@ class Date_Calc
     /**
      * Returns the date the specified no of seconds from the given date
      *
+     * If leap seconds are specified to be counted, the passed time must be UTC.
      * To subtract seconds use a negative value for the '$pn_seconds' parameter.
      *
      * N.B. the return type of the second part of the date is float if
