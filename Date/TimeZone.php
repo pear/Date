@@ -228,13 +228,95 @@ class Date_TimeZone
      * Constructor
      *
      * Creates a new Date::TimeZone object, representing the time zone
-     * specified in $id.  If the supplied ID is invalid, the created
-     * time zone is "UTC".
+     * specified in $id.
+     *
+     * If the supplied ID is invalid, the created time zone is "UTC".
+     *
+     * A note about time zones of the form 'Etc/*' (quoted from the public
+     * domain 'tz' data-base (see ftp://elsie.nci.nih.gov/pub/tzdata2007i.tar.gz
+     * [file 'etcetera']):
+     *
+     *  These entries are mostly present for historical reasons, so that
+     *  people in areas not otherwise covered by the tz files could use
+     *  a time zone that was right for their area.  These days, the
+     *  tz files cover almost all the inhabited world, and the only practical
+     *  need now for the entries that are not on UTC are for ships at sea
+     *  that cannot use POSIX TZ settings.
+     *
+     *   Etc/GMT  (GMT)
+     *   Etc/UTC  (UTC)
+     *   Etc/UCT  (UCT)
+     *
+     *  The following link uses older naming conventions, but it belongs here.
+     *  We want this to work even on installations that omit the other older
+     *  names.
+     *
+     *   Etc/GMT  (equivalent to GMT)
+     *
+     *   Etc/UTC  (equivalent to Etc/Universal)
+     *   Etc/UTC  (equivalent to Etc/Zulu)
+     *
+     *   Etc/GMT  (equivalent to Etc/Greenwich)
+     *   Etc/GMT  (equivalent to Etc/GMT-0)
+     *   Etc/GMT  (equivalent to Etc/GMT+0)
+     *   Etc/GMT  (equivalent to Etc/GMT0)
+     *
+     *  We use POSIX-style signs in the Zone names and the output abbreviations,
+     *  even though this is the opposite of what many people expect.
+     *  POSIX has positive signs west of Greenwich, but many people expect
+     *  positive signs east of Greenwich.  For example, TZ='Etc/GMT+4' uses
+     *  the abbreviation "GMT+4" and corresponds to 4 hours behind UTC
+     *  (i.e. west of Greenwich) even though many people would expect it to
+     *  mean 4 hours ahead of UTC (i.e. east of Greenwich).
+     *
+     *  In the draft 5 of POSIX 1003.1-200x, the angle bracket notation
+     *  (which is not yet supported by the tz code) allows for
+     *  TZ='<GMT-4>+4'; if you want time zone abbreviations conforming to
+     *  ISO 8601 you can use TZ='<-0400>+4'.  Thus the commonly-expected
+     *  offset is kept within the angle bracket (and is used for display)
+     *  while the POSIX sign is kept outside the angle bracket (and is used
+     *  for calculation).
+     *
+     *  Do not use a TZ setting like TZ='GMT+4', which is four hours behind
+     *  GMT but uses the completely misleading abbreviation "GMT".
+     *
+     *  Earlier incarnations of this package were not POSIX-compliant, and
+     *  we did not want things to change quietly if someone accustomed to the
+     *  old way uses the codes from previous versions so we moved the names
+     *  into the Etc subdirectory.
+     *
+     *   Etc/GMT-14  (14 hours ahead of Greenwich)
+     *   Etc/GMT-13  (13)
+     *   Etc/GMT-12  (12)
+     *   Etc/GMT-11  (11)
+     *   Etc/GMT-10  (10)
+     *   Etc/GMT-9   (9)
+     *   Etc/GMT-8   (8)
+     *   Etc/GMT-7   (7)
+     *   Etc/GMT-6   (6)
+     *   Etc/GMT-5   (5)
+     *   Etc/GMT-4   (4)
+     *   Etc/GMT-3   (3)
+     *   Etc/GMT-2   (2)
+     *   Etc/GMT-1   (1)
+     *   Etc/GMT+1   (1 hour behind Greenwich)
+     *   Etc/GMT+2   (2)
+     *   Etc/GMT+3   (3)
+     *   Etc/GMT+4   (4)
+     *   Etc/GMT+5   (5)
+     *   Etc/GMT+6   (6)
+     *   Etc/GMT+7   (7)
+     *   Etc/GMT+8   (8)
+     *   Etc/GMT+9   (9)
+     *   Etc/GMT+10  (10)
+     *   Etc/GMT+11  (11)
+     *   Etc/GMT+12  (12)
      *
      * @param string $ps_id the time zone ID
      *
      * @return   void
      * @access   public
+     * @see      Date::setTZByID(), Date_TimeZone::isValidID()
      */
     function Date_TimeZone($ps_id)
     {
@@ -412,6 +494,7 @@ class Date_TimeZone
      *
      * @return   bool       true if the supplied ID is valid
      * @access   public
+     * @see      Date::setTZByID(), Date_TimeZone::Date_TimeZone()
      */
     function isValidID($ps_id)
     {

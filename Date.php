@@ -638,7 +638,7 @@ class Date
 
             // Convert back to correct time zone:
             //
-            $this->convertTZbyID($hs_id);
+            $this->convertTZByID($hs_id);
         } else {
             return PEAR::raiseError("Date not in ISO 8601 format",
                                     DATE_ERROR_INVALIDDATEFORMAT);
@@ -3256,7 +3256,7 @@ class Date
      * left unset, defaults to "UTC".
      *
      * N.B. this is a private method; to set the time zone to the
-     * default publicly you should call 'setTZbyID()', that is, with no
+     * default publicly you should call 'setTZByID()', that is, with no
      * parameter (or a parameter of null).
      *
      * @return   void
@@ -3291,17 +3291,18 @@ class Date
      *
      * @param object $tz the Date_TimeZone object to use.  If called with a
      *                    parameter that is not a Date_TimeZone object, will
-     *                    fall through to setTZbyID().
+     *                    fall through to setTZByID().
      *
      * @return   void
      * @access   public
+     * @see      Date::setTZByID()
      */
     function setTZ($tz)
     {
         if (is_a($tz, 'Date_Timezone')) {
-            $this->setTZbyID($tz->getID());
+            $this->setTZByID($tz->getID());
         } else {
-            $res = $this->setTZbyID($tz);
+            $res = $this->setTZByID($tz);
             if (PEAR::isError($res))
                 return $res;
         }
@@ -3309,7 +3310,7 @@ class Date
 
 
     // }}}
-    // {{{ setTZbyID()
+    // {{{ setTZByID()
 
     /**
      * Sets the time zone of this date with the given time zone ID
@@ -3355,8 +3356,10 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::convertTZByID(), Date_TimeZone::isValidID(),
+     *            Date_TimeZone::Date_TimeZone()
      */
-    function setTZbyID($ps_id = null)
+    function setTZByID($ps_id = null)
     {
         // Whether the date is in Summer time forms the default for
         // the new time zone (if needed, which is very unlikely anyway).
@@ -3531,6 +3534,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::convertTZByID()
      */
     function convertTZ($tz)
     {
@@ -3584,37 +3588,14 @@ class Date
         if ($this->ob_invalidtime)
             return $this->_getErrorInvalidTime();
 
-        $hn_rawoffset = $this->tz->getRawOffset() * -1;
-        $this->tz = new Date_TimeZone("UTC");
-
-        list($hn_standardyear,
-             $hn_standardmonth,
-             $hn_standardday,
-             $hn_standardhour,
-             $hn_standardminute,
-             $hn_standardsecond,
-             $hn_standardpartsecond) =
-            $this->_addOffset($hn_rawoffset,
-                              $this->on_standardday,
-                              $this->on_standardmonth,
-                              $this->on_standardyear,
-                              $this->on_standardhour,
-                              $this->on_standardminute,
-                              $this->on_standardsecond,
-                              $this->on_standardpartsecond);
-
-        $this->setStandardTime($hn_standardday,
-                               $hn_standardmonth,
-                               $hn_standardyear,
-                               $hn_standardhour,
-                               $hn_standardminute,
-                               $hn_standardsecond,
-                               $hn_standardpartsecond);
+        $res = $this->convertTZ(new Date_TimeZone("UTC"));
+        if (PEAR::isError($res))
+            return $res;
     }
 
 
     // }}}
-    // {{{ convertTZbyID()
+    // {{{ convertTZByID()
 
     /**
      * Converts this date to a new time zone, given a valid time zone ID
@@ -3627,8 +3608,10 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::setTZByID(), Date_TimeZone::isValidID(),
+     *            Date_TimeZone::Date_TimeZone()
      */
-    function convertTZbyID($ps_id)
+    function convertTZByID($ps_id)
     {
         if (!Date_TimeZone::isValidID($ps_id)) {
             return PEAR::raiseError("Invalid time zone ID '$ps_id'",
@@ -3673,7 +3656,7 @@ class Date
 
         // If the time is invalid, it does not matter here:
         //
-        $this->setTZbyID($hs_tzid);
+        $this->setTZByID($hs_tzid);
 
         // Now the time will be valid because it is a time zone that
         // does not observe Summer time:
@@ -4301,9 +4284,9 @@ class Date
             // Only a time zone with a valid time can be converted:
             //
             if ($d2->isTimeValid()) {
-                $d2->convertTZbyID($d1->getTZID());
+                $d2->convertTZByID($d1->getTZID());
             } else if ($d1->isTimeValid()) {
-                $d1->convertTZbyID($d2->getTZID());
+                $d1->convertTZByID($d2->getTZID());
             } else {
                 // No comparison can be made without guessing the time:
                 //
