@@ -443,10 +443,10 @@ class Date
      * 'setDate()'.  A date/time should only be passed if known to be a
      * valid ISO 8601 string or a valid Unix timestamp.
      *
-     * @param mixed $date optional        ISO 8601 date/time to initialize;
-     *                                     or, a Unix time stamp
-     * @param bool  $pb_countleapseconds  whether to count leap seconds
-     *                                     (defaults to DATE_COUNT_LEAP_SECONDS)
+     * @param mixed $date                optional ISO 8601 date/time to initialize;
+     *                                    or, a Unix time stamp
+     * @param bool  $pb_countleapseconds whether to count leap seconds
+     *                                    (defaults to DATE_COUNT_LEAP_SECONDS)
      *
      * @return   void
      * @access   public
@@ -2175,12 +2175,12 @@ class Date
                     $hs_day = Date_Calc::getWeekdayAbbrname($this->day,
                                                             $this->month,
                                                             $this->year);
-                    $ret .= $hb_lower ?
-                            strtolower($hs_day) :
-                            (substr($ps_format, $i + 1, 1) == "Y" ?
-                             strtoupper($hs_day) :
-                             $hs_day);
-                    $i   += 2;
+                    $ret   .= $hb_lower ?
+                              strtolower($hs_day) :
+                              (substr($ps_format, $i + 1, 1) == "Y" ?
+                               strtoupper($hs_day) :
+                               $hs_day);
+                    $i     += 2;
                 } else if (strtoupper(substr($ps_format, $i, 3)) == "DDD" &&
                            strtoupper(substr($ps_format, $i + 2, 3)) != "DAY" &&
                            strtoupper(substr($ps_format, $i + 2, 2)) != "DY"
@@ -2306,8 +2306,10 @@ class Date
                 } else {
                     // Code 'HH' or 'HH24':
                     //
-                    $hn_hour = $this->hour;
-                    $hn_codelen = strtoupper(substr($ps_format, $i, 4)) == "HH24" ? 4 : 2;
+                    $hn_hour    = $this->hour;
+                    $hn_codelen = strtoupper(substr($ps_format,
+                                                    $i,
+                                                    4)) == "HH24" ? 4 : 2;
                 }
 
                 $hs_numberformat = substr($ps_format, $i + $hn_codelen, 4);
@@ -2634,7 +2636,7 @@ class Date
                     // invalid, but the others should return an error:
                     //
                     $ret .= $this->getTZID();
-                    $i += 3;
+                    $i   += 3;
                 } else {
                     if ($this->ob_invalidtime)
                         return $this->_getErrorInvalidTime();
@@ -3544,7 +3546,7 @@ class Date
             return $this->_getErrorInvalidTime();
 
         $hn_rawoffset = $tz->getRawOffset() - $this->tz->getRawOffset();
-        $this->tz = new Date_TimeZone($tz->getID());
+        $this->tz     = new Date_TimeZone($tz->getID());
 
         list($hn_standardyear,
              $hn_standardmonth,
@@ -3849,7 +3851,7 @@ class Date
     /**
      * Adds a given number of seconds to the date
      *
-     * @param mixed $sec the      no of seconds to add as integer or float
+     * @param mixed $sec          the no of seconds to add as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
      *                             value of count-leap-second object property)
      *
