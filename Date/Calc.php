@@ -419,7 +419,7 @@ class Date_Calc
     function getSecondsInMonth($pn_month, $pn_year)
     {
         $pn_month = intval($pn_month);
-        $pn_year = intval($pn_year);
+        $pn_year  = intval($pn_year);
 
         static $ha_leapseconds;
         if (!isset($ha_leapseconds)) {
@@ -494,9 +494,9 @@ class Date_Calc
         // second (I do not know what they are called), or a number of
         // consecutive leap seconds).
 
-        $pn_day = intval($pn_day);
+        $pn_day   = intval($pn_day);
         $pn_month = intval($pn_month);
-        $pn_year = intval($pn_year);
+        $pn_year  = intval($pn_year);
 
         static $ha_leapseconds;
         if (!isset($ha_leapseconds)) {
@@ -1999,7 +1999,9 @@ class Date_Calc
 
         $hn_wd1  = Date_Calc::daysToDayOfWeek(Date_Calc::firstDayOfYear($pn_year));
         $hn_day  = Date_Calc::dayOfYear($pn_day, $pn_month, $pn_year);
-        $hn_week = floor(($hn_day + (10 + $hn_wd1 - $pn_firstdayofweek) % 7 + 3) / 7);
+        $hn_week = floor(($hn_day +
+                          (10 + $hn_wd1 - $pn_firstdayofweek) % 7 +
+                          3) / 7);
 
         if ($hn_week > 0) {
             $hn_year = $pn_year;
@@ -4156,9 +4158,9 @@ class Date_Calc
             $hn_second = 0;
 
             $hn_firstofmonth = Date_Calc::firstDayOfMonth($pn_month, $pn_year);
-            $hn_midmonth = (Date_Calc::lastDayOfMonth($pn_month, $pn_year) +
-                            1 -
-                            $hn_firstofmonth) / 2;
+            $hn_midmonth     = (Date_Calc::lastDayOfMonth($pn_month, $pn_year) +
+                                1 -
+                                $hn_firstofmonth) / 2;
             if (($hn_days = Date_Calc::dateToDays($pn_day,
                                                   $pn_month,
                                                   $pn_year) -

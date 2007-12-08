@@ -2464,12 +2464,12 @@ class Date
                     $i   += 5;
                 } else if (strtoupper(substr($ps_format, $i, 3)) == "MON") {
                     $hs_month = Date_Calc::getMonthAbbrname($this->month);
-                    $ret .= $hb_lower ?
-                            strtolower($hs_month) :
-                            (substr($ps_format, $i + 1, 1) == "O" ?
-                             strtoupper($hs_month) :
-                             $hs_month);
-                    $i += 3;
+                    $ret     .= $hb_lower ?
+                                strtolower($hs_month) :
+                                (substr($ps_format, $i + 1, 1) == "O" ?
+                                 strtoupper($hs_month) :
+                                 $hs_month);
+                    $i       += 3;
                 }
 
                 break;
@@ -2736,7 +2736,7 @@ class Date
             case "U":
                 if ($this->ob_invalidtime)
                     return $this->_getErrorInvalidTime();
-                $hn_unixtime = $this->getTime();
+                $hn_unixtime     = $this->getTime();
                 $hs_numberformat = substr($ps_format, $i + 1, 4);
 
                 // Allow sign if negative; allow all digits (specify nought);
@@ -2924,7 +2924,7 @@ class Date
                                              1)) == "Y")
                         ++$hn_codelen;
 
-                    $hs_thousandsep = null;
+                    $hs_thousandsep  = null;
                     $hn_thousandseps = 0;
                     if ($hn_codelen <= 3) {
                         while (preg_match('/([,.·\' ])YYY/i',
@@ -2932,7 +2932,7 @@ class Date
                                                  $i + $hn_codelen,
                                                  4),
                                           $ha_matches)) {
-                            $hn_codelen += 4;
+                            $hn_codelen    += 4;
                             $hs_thousandsep = $ha_matches[1];
                             ++$hn_thousandseps;
                         }
