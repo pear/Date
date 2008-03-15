@@ -1,8 +1,9 @@
 <html>
 <head>
+ <title>Date Example</title>
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
  <style>
-  span.code { font-family:courier; }
+  span.code { font-family:Monospace; }
  </style>
 </head>
 <body>
