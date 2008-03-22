@@ -4186,7 +4186,7 @@ class Date
      * @access   public
      * @since    Method available since Release [next version]
      */
-    public function dateDiff($po_date, $pb_ignoretime = false)
+    function dateDiff($po_date, $pb_ignoretime = false)
     {
         if ($pb_ignoretime || $this->ob_invalidtime) {
             return Date_Calc::dateToDays($this->day,

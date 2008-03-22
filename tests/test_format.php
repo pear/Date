@@ -508,15 +508,15 @@ compare('"', $date->format3('"'), '" (format3)');
 compare(' ', $date->format3(' '), 'blank space (format3)');
 
 compare('2007-11-29T23:13:46+01:00', $date->format3(DATE_ATOM), 'DATE_ATOM [' . DATE_ATOM . '] (format3)');
-compare('Thu, 29 Nov 2007 23:13:46 CET', $date->format3(DATE_COOKIE), 'DATE_COOKIE [' . DATE_COOKIE . '] (format3)');
+compare('Thursday, 29-Nov-07 23:13:46 CET', $date->format3(DATE_COOKIE), 'DATE_COOKIE [' . DATE_COOKIE . '] (format3)');
 compare('2007-11-29T23:13:46+0100', $date->format3(DATE_ISO8601), 'DATE_ISO8601 [' . DATE_ISO8601 . '] (format3)');
-compare('Thu, 29 Nov 2007 23:13:46 CET', $date->format3(DATE_RFC822), 'DATE_RFC822 [' . DATE_RFC822 . '] (format3)');
+compare('Thu, 29 Nov 07 23:13:46 +0100', $date->format3(DATE_RFC822), 'DATE_RFC822 [' . DATE_RFC822 . '] (format3)');
 compare('Thursday, 29-Nov-07 23:13:46 CET', $date->format3(DATE_RFC850), 'DATE_RFC850 [' . DATE_RFC850 . '] (format3)');
-compare('Thursday, 29-Nov-07 23:13:46 CET', $date->format3(DATE_RFC1036), 'DATE_RFC1036 [' . DATE_RFC1036 . '] (format3)');
-compare('Thu, 29 Nov 2007 23:13:46 CET', $date->format3(DATE_RFC1123), 'DATE_RFC1123 [' . DATE_RFC1123 . '] (format3)');
+compare('Thu, 29 Nov 07 23:13:46 +0100', $date->format3(DATE_RFC1036), 'DATE_RFC1036 [' . DATE_RFC1036 . '] (format3)');
+compare('Thu, 29 Nov 2007 23:13:46 +0100', $date->format3(DATE_RFC1123), 'DATE_RFC1123 [' . DATE_RFC1123 . '] (format3)');
 compare('Thu, 29 Nov 2007 23:13:46 +0100', $date->format3(DATE_RFC2822), 'DATE_RFC2822 [' . DATE_RFC2822 . '] (format3)');
 compare('2007-11-29T23:13:46+01:00', $date->format3(DATE_RFC3339), 'DATE_RFC3339 [' . DATE_RFC3339 . '] (format3)');
-compare('Thu, 29 Nov 2007 23:13:46 CET', $date->format3(DATE_RSS), 'DATE_RSS [' . DATE_RSS . '] (format3)');
+compare('Thu, 29 Nov 2007 23:13:46 +0100', $date->format3(DATE_RSS), 'DATE_RSS [' . DATE_RSS . '] (format3)');
 compare('2007-11-29T23:13:46+01:00', $date->format3(DATE_W3C), 'DATE_W3C [' . DATE_W3C . '] (format3)');
 
 ?>

@@ -124,7 +124,9 @@ class Date_Test extends PHPUnit_TestCase {
 
     function testDateUnixtime()
     {
-        $temp = new Date(strtotime("2003-10-04 14:03:24"));
+        $temp = new Date();
+        $temp->setTZbyID("UTC");
+        $temp->setDate(strtotime("2003-10-04 14:03:24Z"));
         $this->assertEquals(
             '2003-10-04 14:03:24',
             sprintf('%04d-%02d-%02d %02d:%02d:%02d',
@@ -136,10 +138,9 @@ class Date_Test extends PHPUnit_TestCase {
     function testDateUnixtime2()
     {
         $temp = new Date();
-        $hs_oldtz = $temp->getTZID();
         $temp->setTZbyID("UTC-05:30");
-        $temp->setDate(strtotime("2003-10-04 14:03:24"));
-        $temp->convertTZbyID($hs_oldtz);
+        $temp->setDate(strtotime("2003-10-04 14:03:24Z"));
+        $temp->convertTZbyID("UTC");
         $this->assertEquals(
             '2003-10-04 14:03:24',
             sprintf('%04d-%02d-%02d %02d:%02d:%02d',
@@ -151,12 +152,25 @@ class Date_Test extends PHPUnit_TestCase {
     function testDateUnixtime3()
     {
         $temp = new Date();
-        $hs_oldtz = $temp->getTZID();
         $temp->setTZbyID("America/Chicago");
-        $temp->setDate(strtotime("2003-10-04 14:03:24"));
-        $temp->convertTZbyID($hs_oldtz);
+        $temp->setDate(strtotime("2003-10-04 14:03:24Z"));
+        $temp->convertTZbyID("UTC");
         $this->assertEquals(
             '2003-10-04 14:03:24',
+            sprintf('%04d-%02d-%02d %02d:%02d:%02d',
+                $temp->year, $temp->month, $temp->day,
+                $temp->hour, $temp->minute, $temp->second)
+        );
+    }
+
+    function testDateUnixtime4()
+    {
+        $temp = new Date();
+        $temp->setTZbyID("Europe/London");
+        $temp->setDate(strtotime("2003-10-04 14:03:24Z")); // Summer time in London
+        $temp->setTZbyID("UTC");
+        $this->assertEquals(
+            '2003-10-04 15:03:24', // Preserves London local time (15.03)
             sprintf('%04d-%02d-%02d %02d:%02d:%02d',
                 $temp->year, $temp->month, $temp->day,
                 $temp->hour, $temp->minute, $temp->second)
