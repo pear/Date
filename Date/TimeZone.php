@@ -151,7 +151,7 @@ class Date_TimeZone
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_summertimeoffset;
 
@@ -160,7 +160,7 @@ class Date_TimeZone
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_summertimestartmonth;
 
@@ -177,7 +177,7 @@ class Date_TimeZone
      *
      * @var      string
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $os_summertimestartday;
 
@@ -187,7 +187,7 @@ class Date_TimeZone
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_summertimestarttime;
 
@@ -196,7 +196,7 @@ class Date_TimeZone
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_summertimeendmonth;
 
@@ -206,7 +206,7 @@ class Date_TimeZone
      * @var      string
      * @access   private
      * @see      Date_TimeZone::$os_summertimestartday
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $os_summertimeendday;
 
@@ -216,7 +216,7 @@ class Date_TimeZone
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_summertimeendtime;
 
@@ -626,7 +626,7 @@ class Date_TimeZone
      *
      * @return   int
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeLimitDay($ps_summertimelimitcode, $pn_month, $pn_year)
     {
@@ -843,7 +843,7 @@ class Date_TimeZone
      * @return   bool       true if this date is in Summer time for this time
      *                       zone
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function inDaylightTimeStandard($pm_date)
     {
@@ -1163,7 +1163,7 @@ class Date_TimeZone
      *
      * @return   int        integer representing the month (1 to 12)
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeStartMonth()
     {
@@ -1187,7 +1187,7 @@ class Date_TimeZone
      *
      * @return   string
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeStartDay()
     {
@@ -1211,7 +1211,7 @@ class Date_TimeZone
      *
      * @return   int        integer representing the month (1 to 12)
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeStartTime()
     {
@@ -1228,7 +1228,7 @@ class Date_TimeZone
      * @return   int        integer representing the month (1 to 12)
      * @access   public
      * @see      Date_TimeZone::getSummerTimeStartMonth()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeEndMonth()
     {
@@ -1245,7 +1245,7 @@ class Date_TimeZone
      * @return   string
      * @access   public
      * @see      Date_TimeZone::getSummerTimeStartDay()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeEndDay()
     {
@@ -1262,7 +1262,7 @@ class Date_TimeZone
      * @return   int        integer representing the month (1 to 12)
      * @access   public
      * @see      Date_TimeZone::getSummerTimeStartTime()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSummerTimeEndTime()
     {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.5.0a1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+<package packagerversion="1.7.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
     http://pear.php.net/dtd/tasks-1.0.xsd
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
@@ -8,12 +8,12 @@
  <summary>Generic date/time handling class for PEAR</summary>
  <description>Generic classes for representation and manipulation of
 dates, times and time zones without the need of timestamps,
-which is a huge limitation for php programs.  Includes time zone data,
+which is a huge limitation for PHP programs.  Includes time zone data,
 time zone conversions and many date/time conversions.
 It does not rely on 32-bit system date stamps, so
 you can display calendars and compare dates that date
-pre 1970 and post 2038. This package also provides a class
-to convert date strings between Gregorian and Human calendar formats.</description>
+pre 1970 and post 2038.
+ </description>
  <lead>
   <name>Baba Buehler</name>
   <user>baba</user>
@@ -38,6 +38,12 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
   <email>firman@php.net</email>
   <active>yes</active>
  </lead>
+ <lead>
+  <name>C.A. Woodcock</name>
+  <user>c01234</user>
+  <email>c01234@netcomuk.co.uk</email>
+  <active>yes</active>
+ </lead>
  <developer>
   <name>Alan Knowles</name>
   <user>alan_k</user>
@@ -50,23 +56,37 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
   <email>scar@php.net</email>
   <active>yes</active>
  </helper>
- <date>2006-11-22</date>
- <time>08:39:01</time>
+ <date>2008-03-23</date>
+ <time>09:24:08</time>
  <version>
-  <release>1.4.7</release>
-  <api>1.4</api>
+  <release>1.5.0a1</release>
+  <api>1.5.0</api>
  </version>
  <stability>
-  <release>stable</release>
-  <api>stable</api>
+  <release>alpha</release>
+  <api>alpha</api>
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
- <notes>* Fix bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
-* Fix bug #9409: Date_Calc, fatal error using a non-array variable as an array
-* Fix bug #9414: Date::addSeconds() fails to work properly with negative numbers
-* Many cosmetics update
-* Moved bug test files to tests/bugs/
-* Removed unused files</notes>
+ <notes>* Fixed bug #2378: getDate(DATE_FORMAT_UNIXTIME) doesn&apos;t convert to GMT
+* Fixed bug #7439: US/Indiana Daylight Savings Change
+* Implemented request #9700: Incorrect timestamps allowd
+* Fixed bug #10349: Wrong offset in timezones
+* Fixed bug #10591: inDaylightTime fails
+* Implemented request #11090: microtime is not set by default constructor
+* Fixed bug #11313: DST time change not handled correctly
+* Fixed bug #11475: Date::copy don&apos;t copy milisecond part
+* Fixed bug #11682: Australia/Perth has DST
+* Fixed bug #11708: getWeekdayAbbrname returns wrong lenght if string is unicode
+* Fixed bug #12019: Date-&gt;after(...) changes the date
+* Fixed bug #12420: Date constructor handles iso 8601 timezone offests of zero incorrectly
+* Fixed bug #12529: setTZ globally sets your TZ instead of only within date object
+* Fixed bug #13376: setFromDateDiff change source dates
+
+* Improved time-zone functionality so that it is entirely handled by the class and not reliant on native functions
+* Added leap-second functionality
+* Added functions &apos;Date::round()&apos; and &apos;Date::trunc()&apos;
+* Added formatting function &apos;Date::format2()&apos; that uses a &apos;YYYY-MM-DD&apos;-style formatting code
+* Added formatting function &apos;Date::format3()&apos; to allow date-formatting using the formatting code of &apos;date()&apos;</notes>
  <contents>
   <dir baseinstalldir="/" name="/">
    <dir name="Date">
@@ -84,6 +104,11 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
     </file>
    </dir> <!-- /Date -->
    <dir name="docs">
+    <dir name="examples">
+     <file name="example.php" role="doc">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+    </dir> <!-- /docs/examples -->
     <file name="LICENSE" role="doc">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
@@ -93,6 +118,9 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
    </dir> <!-- /docs -->
    <dir name="tests">
     <dir name="bugs">
+     <file name="bug-445.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
      <file name="bug-674.phpt" role="test">
       <tasks:replace from="@package_version@" to="version" type="package-info" />
      </file>
@@ -111,6 +139,15 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
      <file name="bug-967.phpt" role="test">
       <tasks:replace from="@package_version@" to="version" type="package-info" />
      </file>
+     <file name="bug-2378.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-6246.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-8518.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
      <file name="bug-8912.phpt" role="test">
       <tasks:replace from="@package_version@" to="version" type="package-info" />
      </file>
@@ -118,6 +155,15 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
       <tasks:replace from="@package_version@" to="version" type="package-info" />
      </file>
      <file name="bug-9414.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-9568.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-9801.phpt" role="test">
+      <tasks:replace from="@package_version@" to="version" type="package-info" />
+     </file>
+     <file name="bug-13376.phpt" role="test">
       <tasks:replace from="@package_version@" to="version" type="package-info" />
      </file>
     </dir> <!-- /tests/bugs -->
@@ -133,10 +179,52 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
     <file name="testunit_date_span.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
+    <file name="test_addseconds.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_addseconds_Calcutta.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_addseconds_Paris.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
     <file name="test_calc.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
     <file name="test_date_methods_span.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_format.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_julianday.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_round_trunc.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_0.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_1.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_2.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_3.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_4.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_5.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_6.php" role="test">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+    <file name="test_weeknumbers_ISO.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
    </dir> <!-- /tests -->
@@ -157,172 +245,6 @@ to convert date strings between Gregorian and Human calendar formats.</descripti
  </dependencies>
  <phprelease />
  <changelog>
-
-  <!-- 1.4.7 -->
-  <release>
-   <version>
-    <release>1.4.7</release>
-    <api>1.4</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2006-11-22</date>
-   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
-   <notes>* Fix bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
-* Fix bug #9409: Date_Calc, fatal error using a non-array variable as an array
-* Fix bug #9414: Date::addSeconds() fails to work properly with negative numbers
-* Many cosmetics update
-* Moved bug test files to tests/bugs/
-* Removed unused files</notes>
-  </release>
-
-  <!-- 1.4.6 -->
-  <release>
-   <date>2005-11-15</date>
-   <version>
-    <release>1.4.6</release>
-    <api>1.4.6</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <notes>- Change license from PHP License to new BSD License
-- Bug #5715 fypo, missing s in $GLOBALS
-   </notes>
-  </release>
-
-  <!-- 1.4.5 -->
-  <release>
-   <version>
-    <release>1.4.5</release>
-    <api>1.4.5</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2005-10-12</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>Same code base as 1.4.4-beta
-See 1.4.4 changelog for details
-   </notes>
-  </release>
-
-  <!-- 1.4.4 -->
-  <release>
-   <version>
-    <release>1.4.4</release>
-    <api>1.4.4</api>
-   </version>
-   <stability>
-    <release>beta</release>
-    <api>stable</api>
-   </stability>
-   <date>2004-05-16</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Establish the DATE_CALC_FORMAT constant
-  and use it as the default value for each
-  of the Date_Calc class' method's $format
-  parameter.
-- Add beginOfMonthBySpan() and
-  endOfMonthBySpan() methods to Date_Calc.
-- Use integers for the parameters in
-  Date_Calc instead of strings.
-- Tweak Date_Calc::NWeekdayOfMonth() so it
-  can calculate the 'last' given weekday of
-  a month.
-- Fix Bug 1640. Make sure all longname's are also
-  keys in $GLOBALS['_DATE_TIMEZONE_DATA'].  Makes
-  Date_TimeZone work under more operating systems.
-- #5420, missing CEST
-- #3846, getYear, getMonth returns integer
-- #2652, add %h and %i support (rob at wildlime dot com
-- #5494, force dot as decimal separator
-- #3022, allow to specify the weekday abbrevation length used in ::format()
-- #4878, %s padding fix when &lt; 10 ( aashley at optimiser dot com)
-- #3059, use GLOBALS in date_span
-   </notes>
-  </release>
-
-  <!-- 1.4.3 -->
-  <release>
-   <version>
-    <release>1.4.3</release>
-    <api>1.4.3</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2004-05-16</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #1250, wrong name for Bangladesh TZ
-- Fix #1390, add XML Schema datetime support
-  (aashley at optimiser dot com)
-  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-   </notes>
-  </release>
-
-  <!-- 1.4.3 -->
-  <release>
-   <version>
-    <release>1.4.3</release>
-    <api>1.4.3</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2004-05-16</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #1250, wrong name for Bangladesh TZ
-- Fix #1390, add XML Schema datetime support
-  (aashley at optimiser dot com)
-  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime
-   </notes>
-  </release>
-
-  <!-- 1.4.2 -->
-  <release>
-   <version>
-    <release>1.4.2</release>
-    <api>1.4.2</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2004-03-14</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #976 TimeZone default bad global usage
-  only _DATE_TIMEZONE_DEFAULT is used now
-- Fix #683, add optional length argumet to getDayName()
-- Fix PHP5 problems with get_class functions
-   </notes>
-  </release>
-
-  <!-- 1.4.1 -->
-  <release>
-   <version>
-    <release>1.4.1</release>
-    <api>1.4.1</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2005-10-02</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #674 endOfWeek() beginOfWeek()
-- Fix #727, weeksInMonth (wrong result with some dates)
-- Fix #674 (and old system #22549), check arguments in Date_Span
-   </notes>
-  </release>
-
-  <!-- 1.4 -->
   <release>
    <version>
     <release>1.4</release>
@@ -350,9 +272,164 @@ See 1.4.4 changelog for details
 - bugfix for bug 271: Date_Calc weeksInMonth() returns wrong number
 - fix abstraction bug, Date constructor accepts now object that extends Date
 - add tests to release package
-- Fix notices and mins calc in to toUTCbyOffset()
-   </notes>
+- Fix notices and mins calc in to toUTCbyOffset()</notes>
   </release>
+  <release>
+   <version>
+    <release>1.4.2</release>
+    <api>1.4.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-03-14</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #976 TimeZone default bad global usage
+  only _DATE_TIMEZONE_DEFAULT is used now
+- Fix #683, add optional length argumet to getDayName()
+- Fix PHP5 problems with get_class functions</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.3</release>
+    <api>1.4.3</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-16</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #1250, wrong name for Bangladesh TZ
+- Fix #1390, add XML Schema datetime support
+  (aashley at optimiser dot com)
+  See http://www.w3.org/TR/2004/PER-xmlschema-2-20040318/#dateTime</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.4</release>
+    <api>1.4.4</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-05-16</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Establish the DATE_CALC_FORMAT constant
+  and use it as the default value for each
+  of the Date_Calc class&apos; method&apos;s $format
+  parameter.
+- Add beginOfMonthBySpan() and
+  endOfMonthBySpan() methods to Date_Calc.
+- Use integers for the parameters in
+  Date_Calc instead of strings.
+- Tweak Date_Calc::NWeekdayOfMonth() so it
+  can calculate the &apos;last&apos; given weekday of
+  a month.
+- Fix Bug 1640. Make sure all longname&apos;s are also
+  keys in $GLOBALS[&apos;_DATE_TIMEZONE_DATA&apos;].  Makes
+  Date_TimeZone work under more operating systems.
+- #5420, missing CEST
+- #3846, getYear, getMonth returns integer
+- #2652, add %h and %i support (rob at wildlime dot com
+- #5494, force dot as decimal separator
+- #3022, allow to specify the weekday abbrevation length used in ::format()
+- #4878, %s padding fix when &lt; 10 ( aashley at optimiser dot com)
+- #3059, use GLOBALS in date_span</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.1</release>
+    <api>1.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-10-02</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #674 endOfWeek() beginOfWeek()
+- Fix #727, weeksInMonth (wrong result with some dates)
+- Fix #674 (and old system #22549), check arguments in Date_Span</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.5</release>
+    <api>1.4.5</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2005-10-12</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>Same code base as 1.4.4-beta
+See 1.4.4 changelog for details</notes>
+  </release>
+  <release>
+   <date>2005-11-15</date>
+   <version>
+    <release>1.4.6</release>
+    <api>1.4.6</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <notes>- Change license from PHP License to new BSD License
+- Bug #5715 fypo, missing s in $GLOBALS</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.7</release>
+    <api>1.4</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2006-11-22</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>* Fix bug #8912: putenv() causes crashes in DateTimeZone::inDaylightTime() under windows
+* Fix bug #9409: Date_Calc, fatal error using a non-array variable as an array
+* Fix bug #9414: Date::addSeconds() fails to work properly with negative numbers
+* Many cosmetics update
+* Moved bug test files to tests/bugs/
+* Removed unused files</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.5.0a1</release>
+    <api>1.5.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2008-03-23</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>* Fixed bug #2378: getDate(DATE_FORMAT_UNIXTIME) doesn&apos;t convert to GMT
+* Fixed bug #7439: US/Indiana Daylight Savings Change
+* Implemented request #9700: Incorrect timestamps allowd
+* Fixed bug #10349: Wrong offset in timezones
+* Fixed bug #10591: inDaylightTime fails
+* Implemented request #11090: microtime is not set by default constructor
+* Fixed bug #11313: DST time change not handled correctly
+* Fixed bug #11475: Date::copy don&apos;t copy milisecond part
+* Fixed bug #11682: Australia/Perth has DST
+* Fixed bug #11708: getWeekdayAbbrname returns wrong lenght if string is unicode
+* Fixed bug #12019: Date-&gt;after(...) changes the date
+* Fixed bug #12420: Date constructor handles iso 8601 timezone offests of zero incorrectly
+* Fixed bug #12529: setTZ globally sets your TZ instead of only within date object
+* Fixed bug #13376: setFromDateDiff change source dates
 
+* Improved time-zone functionality so that it is entirely handled by the class and not reliant on native functions
+* Added leap-second functionality
+* Added functions &apos;Date::round()&apos; and &apos;Date::trunc()&apos;
+* Added formatting function &apos;Date::format2()&apos; that uses a &apos;YYYY-MM-DD&apos;-style formatting code
+* Added formatting function &apos;Date::format3()&apos; to allow date-formatting using the formatting code of &apos;date()&apos;</notes>
+  </release>
  </changelog>
 </package>

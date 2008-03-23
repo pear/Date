@@ -87,7 +87,7 @@ require_once 'Date/Span.php';
  * in calls to 'Date::setNow()'.  Note that this makes a call to
  * 'gettimeofday()', which may not work on all systems.
  *
- * @since    Constant available since Release [next version]
+ * @since    Constant available since Release 1.5.0
  */
 define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
 
@@ -140,7 +140,7 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  *       the time to something invalid
  *  (c) the user sets DATE_CORRECTINVALIDTIME_DEFAULT to true
  *
- * @since    Constant available since Release [next version]
+ * @since    Constant available since Release 1.5.0
  */
 define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
 
@@ -164,7 +164,7 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
  * allow an invalid date/time to be set regardless of the value of this
  * constant.
  *
- * @since    Constant available since Release [next version]
+ * @since    Constant available since Release 1.5.0
  */
 define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
 
@@ -185,7 +185,7 @@ define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
  * Note that this constant does not affect Date::addSpan() and
  * Date::subtractSpan() which will not count leap seconds in any case.
  *
- * @since    Constant available since Release [next version]
+ * @since    Constant available since Release 1.5.0
  */
 define('DATE_COUNT_LEAP_SECONDS', false);
 
@@ -324,7 +324,7 @@ class Date
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardyear;
 
@@ -333,7 +333,7 @@ class Date
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardmonth;
 
@@ -342,7 +342,7 @@ class Date
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardday;
 
@@ -351,7 +351,7 @@ class Date
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardhour;
 
@@ -360,7 +360,7 @@ class Date
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardminute;
 
@@ -369,7 +369,7 @@ class Date
      *
      * @var      int
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardsecond;
 
@@ -378,7 +378,7 @@ class Date
      *
      * @var      float
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $on_standardpartsecond;
 
@@ -387,7 +387,7 @@ class Date
      *
      * @var      bool
      * @access   private
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $ob_countleapseconds;
 
@@ -399,7 +399,7 @@ class Date
      * @var      bool
      * @access   private
      * @see      Date::isTimeValid()
-     * @since    Property available since Release [next version]
+     * @since    Property available since Release 1.5.0
      */
     var $ob_invalidtime = null;
 
@@ -658,7 +658,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setNow($pb_setmicrotime = DATE_CAPTURE_MICROTIME_BY_DEFAULT)
     {
@@ -723,7 +723,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function round($pn_precision = DATE_PRECISION_DAY,
                    $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
@@ -870,7 +870,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function roundSeconds($pn_precision = 0,
                           $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
@@ -930,7 +930,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function trunc($pn_precision = DATE_PRECISION_DAY,
                    $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
@@ -1049,7 +1049,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function truncSeconds($pn_precision = 0,
                           $pb_correctinvalidtime = DATE_CORRECTINVALIDTIME_DEFAULT)
@@ -1461,7 +1461,7 @@ class Date
      *
      * @return   string
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _getOrdinalSuffix($pn_num, $pb_uppercase = true)
     {
@@ -1515,7 +1515,7 @@ class Date
      *
      * @return   string
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _spellNumber($pn_num,
                           $pb_ordinal = false,
@@ -1638,7 +1638,7 @@ class Date
      *
      * @return   string
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _formatNumber($pn_num,
                            &$ps_format,
@@ -1948,7 +1948,7 @@ class Date
      *
      * @return   string     date/time in given format
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function format2($ps_format, $ps_locale = "en_GB")
     {
@@ -3072,7 +3072,7 @@ class Date
      *
      * @return   string     date/time in given format
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function format3($ps_format)
     {
@@ -3237,7 +3237,7 @@ class Date
      *
      * @return   string     the time zone ID
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getTZID()
     {
@@ -3263,7 +3263,7 @@ class Date
      *
      * @return   void
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _setTZToDefault()
     {
@@ -3414,7 +3414,7 @@ class Date
      *
      * @return   string     the long name of the time zone
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getTZLongName()
     {
@@ -3440,7 +3440,7 @@ class Date
      *
      * @return   string     the short name of the time zone
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getTZShortName()
     {
@@ -3474,7 +3474,7 @@ class Date
      *
      * @return   int        the corrected offset to UTC in milliseconds
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getTZOffset()
     {
@@ -3680,7 +3680,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addYears($pn_years)
     {
@@ -3713,7 +3713,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addMonths($pn_months)
     {
@@ -3745,7 +3745,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addDays($pn_days)
     {
@@ -3777,7 +3777,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addHours($pn_hours)
     {
@@ -3816,7 +3816,7 @@ class Date
      *
      * @return   void
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addMinutes($pn_minutes)
     {
@@ -4184,7 +4184,7 @@ class Date
      *
      * @return   mixed      days between two dates as int or float
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function dateDiff($po_date, $pb_ignoretime = false)
     {
@@ -4251,7 +4251,7 @@ class Date
      * @return   bool       true if the time zones are equivalent
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function inEquivalentTimeZones($po_date1, $po_date2)
     {
@@ -4472,7 +4472,7 @@ class Date
      * @return     int        the Julian date
      * @access     public
      * @see        Date::getDayOfYear()
-     * @deprecated Method deprecated in Release [next version]
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function getJulianDate()
     {
@@ -4488,7 +4488,7 @@ class Date
      *
      * @return   int        an integer between 1 and 366
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getDayOfYear()
     {
@@ -4758,7 +4758,7 @@ class Date
      *
      * @return   object
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _getErrorInvalidTime()
     {
@@ -4787,7 +4787,7 @@ class Date
      *
      * @return   bool
      * @access   private
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _secondsInDayIsValid()
     {
@@ -4848,7 +4848,7 @@ class Date
      *
      * @return   bool
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function isTimeValid()
     {
@@ -4918,7 +4918,7 @@ class Date
      *
      * @return   float      float which is at least 0 and less than 86400
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSecondsPastMidnight()
     {
@@ -4940,7 +4940,7 @@ class Date
      *
      * @return   float      the part-second
      * @access   protected
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getPartSecond()
     {
@@ -4959,7 +4959,7 @@ class Date
      *
      * @return   int        the year
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardYear()
     {
@@ -4978,7 +4978,7 @@ class Date
      *
      * @return   int        the minute
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardMonth()
     {
@@ -4997,7 +4997,7 @@ class Date
      *
      * @return   int        the day
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardDay()
     {
@@ -5016,7 +5016,7 @@ class Date
      *
      * @return   int        the hour
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardHour()
     {
@@ -5035,7 +5035,7 @@ class Date
      *
      * @return   int        the minute
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardMinute()
     {
@@ -5054,7 +5054,7 @@ class Date
      *
      * @return   int        the second
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardSecond()
     {
@@ -5074,7 +5074,7 @@ class Date
      *
      * @return   float      float which is at least 0 and less than 86400
      * @access   public
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardSecondsPastMidnight()
     {
@@ -5096,7 +5096,7 @@ class Date
      *
      * @return   float      the part-second
      * @access   protected
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getStandardPartSecond()
     {
@@ -5126,7 +5126,7 @@ class Date
      *                       and part-second
      * @access   private
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function _addOffset($pn_offset,
                         $pn_day,
@@ -5239,7 +5239,7 @@ class Date
      * @return   void
      * @access   protected
      * @see      Date::setStandardTime()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setLocalTime($pn_day,
                           $pn_month,
@@ -5379,7 +5379,7 @@ class Date
      * @return   void
      * @access   protected
      * @see      Date::setLocalTime()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setStandardTime($pn_day,
                              $pn_month,
@@ -5577,7 +5577,7 @@ class Date
      * @return   void
      * @access   public
      * @see      Date::setDateTime()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setDayMonthYear($d, $m, $y)
     {
@@ -5715,7 +5715,7 @@ class Date
      * @return   void
      * @access   protected
      * @see      Date::setHourMinuteSecond(), Date::setDateTime()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setPartSecond($pn_ps, $pb_repeatedhourdefault = false)
     {
@@ -5752,7 +5752,7 @@ class Date
      * @return   void
      * @access   public
      * @see      Date::setDateTime()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setHourMinuteSecond($h, $m, $s, $pb_repeatedhourdefault = false)
     {
@@ -5805,7 +5805,7 @@ class Date
      * @return   void
      * @access   public
      * @see      Date::setDayMonthYear(), Date::setHourMinuteSecond()
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function setDateTime($pn_day,
                          $pn_month,

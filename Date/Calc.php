@@ -358,7 +358,7 @@ class Date_Calc
      * @return   int
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSecondsInYear($pn_year)
     {
@@ -414,7 +414,7 @@ class Date_Calc
      * @return   int
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSecondsInMonth($pn_month, $pn_year)
     {
@@ -473,7 +473,7 @@ class Date_Calc
      * @return   int
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSecondsInDay($pn_day, $pn_month, $pn_year)
     {
@@ -577,7 +577,7 @@ class Date_Calc
      * @return   int
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getSecondsInMinute($pn_day,
                                 $pn_month,
@@ -606,7 +606,7 @@ class Date_Calc
      * @return   mixed      integer or float from 0-86399
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function secondsPastMidnight($pn_hour, $pn_minute, $pn_second)
     {
@@ -626,7 +626,7 @@ class Date_Calc
      *                       integer or float, depending on parameter)
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function secondsPastMidnightToTime($pn_seconds)
     {
@@ -656,7 +656,7 @@ class Date_Calc
      * @return   mixed      integer or float from 0-3599
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function secondsPastTheHour($pn_minute, $pn_second)
     {
@@ -681,7 +681,7 @@ class Date_Calc
      * @return   array      array of year, month, day, hour
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addHours($pn_hours, $pn_day, $pn_month, $pn_year, $pn_hour)
     {
@@ -738,7 +738,7 @@ class Date_Calc
      * @return   array      array of year, month, day, hour, minute
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addMinutes($pn_minutes,
                         $pn_day,
@@ -809,7 +809,7 @@ class Date_Calc
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addSeconds($pn_seconds,
                         $pn_day,
@@ -1197,7 +1197,7 @@ class Date_Calc
      * @return   array      array of integer month numbers, in order
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getMonths($pn_year)
     {
@@ -1250,7 +1250,7 @@ class Date_Calc
      * @return   array      array of year, month as integers
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function prevMonth($pn_month, $pn_year)
     {
@@ -1277,7 +1277,7 @@ class Date_Calc
      * @return   array      array of year, month as integers
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function nextMonth($pn_month, $pn_year)
     {
@@ -1310,7 +1310,7 @@ class Date_Calc
      *                       4713 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addMonthsToDays($pn_months, $pn_days)
     {
@@ -1371,7 +1371,7 @@ class Date_Calc
      * @return   string     the date in the desired format
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addMonths($pn_months,
                        $pn_day,
@@ -1420,7 +1420,7 @@ class Date_Calc
      *                       4713 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addYearsToDays($pn_years, $pn_days)
     {
@@ -1490,7 +1490,7 @@ class Date_Calc
      * @return   string     the date in the desired format
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addYears($pn_years,
                       $pn_day,
@@ -1540,7 +1540,7 @@ class Date_Calc
      * @return   string     the date in the desired format
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function addDays($pn_days,
                      $pn_day,
@@ -1584,7 +1584,7 @@ class Date_Calc
      * @return   int        number of first day of month
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getFirstDayOfMonth($pn_month, $pn_year)
     {
@@ -1604,7 +1604,7 @@ class Date_Calc
      * @return   int        number of last day of month
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getLastDayOfMonth($pn_month, $pn_year)
     {
@@ -1625,7 +1625,7 @@ class Date_Calc
      * @return   integer    the number of days since 24th November, 4714 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function firstDayOfMonth($pn_month, $pn_year)
     {
@@ -1649,7 +1649,7 @@ class Date_Calc
      * @return   integer    the number of days since 24th November, 4714 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function lastDayOfMonth($pn_month, $pn_year)
     {
@@ -1670,7 +1670,7 @@ class Date_Calc
      * @return   int        number of first month of year
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function getFirstMonthOfYear($pn_year)
     {
@@ -1691,7 +1691,7 @@ class Date_Calc
      * @return   integer    the number of days since 24th November, 4714 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function firstDayOfYear($pn_year)
     {
@@ -1712,7 +1712,7 @@ class Date_Calc
      * @return   integer    the number of days since 24th November, 4714 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function lastDayOfYear($pn_year)
     {
@@ -1746,7 +1746,7 @@ class Date_Calc
      * @return   int        the number of days since 1st January, 4713 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function dateToDaysJulian($day, $month, $year)
     {
@@ -1795,7 +1795,7 @@ class Date_Calc
      * @return   string     the date in the desired format
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function daysToDateJulian($days, $format = DATE_CALC_FORMAT)
     {
@@ -1845,7 +1845,7 @@ class Date_Calc
      *                       integers
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function isoWeekDate($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
@@ -1980,7 +1980,7 @@ class Date_Calc
      * @return   array      array of year, week no as integers
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function weekOfYear4th($pn_day = 0,
                            $pn_month = 0,
@@ -2054,7 +2054,7 @@ class Date_Calc
      * @return   array      array of year, week no as integers
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function weekOfYear7th($pn_day = 0,
                            $pn_month = 0,
@@ -2162,7 +2162,7 @@ class Date_Calc
      * @return   int
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function dayOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
@@ -2196,7 +2196,7 @@ class Date_Calc
      * @return     int
      * @access     public
      * @static
-     * @deprecated Method deprecated in Release [next version]
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function julianDate($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
@@ -2397,7 +2397,7 @@ class Date_Calc
      * @return   int        integer from 0 to 7 where 0 represents Sunday
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function daysToDayOfWeek($pn_days)
     {
@@ -2477,7 +2477,7 @@ class Date_Calc
      * @return   int        integer from 1 to 53
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function weekOfYearAbsolute($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
@@ -2530,7 +2530,7 @@ class Date_Calc
      * @return   int        integer from 1 to 54
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function weekOfYear1st($pn_day = 0,
                            $pn_month = 0,
@@ -2574,7 +2574,7 @@ class Date_Calc
      * @access     public
      * @static
      * @see        Date_Calc::weekOfYear7th
-     * @deprecated Method deprecated in Release [next version]
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function weekOfYear($pn_day = 0, $pn_month = 0, $pn_year = null)
     {
@@ -2599,7 +2599,7 @@ class Date_Calc
      * @return   int        integer from 1 to 5
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function weekOfMonthAbsolute($pn_day = 0)
     {
@@ -2621,7 +2621,7 @@ class Date_Calc
      * @return   int        integer from 1 to 5
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function weekOfMonth($pn_day = 0)
     {
@@ -3048,7 +3048,7 @@ class Date_Calc
      *                       4713 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function daysToPrevDayOfWeek($dow, $days, $onorbefore = false)
     {
@@ -3126,7 +3126,7 @@ class Date_Calc
      *                       4713 B.C.
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function daysToNextDayOfWeek($dow, $days, $onorafter = false)
     {
@@ -3470,8 +3470,8 @@ class Date_Calc
      * @access     public
      * @static
      * @see        Date_Calc::beginOfMonthBySpan()
-     * @since      Method available since Release [next version]
-     * @deprecated Method deprecated in Release [next version]
+     * @since      Method available since Release 1.5.0
+     * @deprecated Method deprecated in Release 1.5.0
      */
     function endOfMonth($month = 0, $year = null, $format = DATE_CALC_FORMAT)
     {
@@ -3845,7 +3845,7 @@ class Date_Calc
      * @return   bool
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function isLeapYearGregorian($year = null)
     {
@@ -3874,7 +3874,7 @@ class Date_Calc
      * @return   boolean
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function isLeapYearJulian($year = null)
     {
@@ -4100,7 +4100,7 @@ class Date_Calc
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function round($pn_precision,
                    $pn_day,
@@ -4324,7 +4324,7 @@ class Date_Calc
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public
      * @static
-     * @since    Method available since Release [next version]
+     * @since    Method available since Release 1.5.0
      */
     function roundSeconds($pn_precision,
                           $pn_day,
