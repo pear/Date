@@ -328,7 +328,7 @@ class Date_TimeZone
             $this->shortname    = $_DATE_TIMEZONE_DATA[$ps_id]['shortname'];
             $this->longname     = $_DATE_TIMEZONE_DATA[$ps_id]['longname'];
             $this->offset       = $_DATE_TIMEZONE_DATA[$ps_id]['offset'];
-            $this->dstshortname = 
+            $this->dstshortname =
                 array_key_exists("dstshortname",
                                  $_DATE_TIMEZONE_DATA[$ps_id]) ?
                 $_DATE_TIMEZONE_DATA[$ps_id]['dstshortname'] :
@@ -654,7 +654,7 @@ class Date_TimeZone
                     explode(" ",
                             Date_Calc::prevDayOfWeek($ha_daysofweek[$ha_matches[1]],
                                                      $hn_nmday,
-                                                     $hn_nextmonth, 
+                                                     $hn_nextmonth,
                                                      $hn_nmyear,
                                                      "%Y %m %d",
                                                      false)); // not including
@@ -829,7 +829,7 @@ class Date_TimeZone
      *
      * For example, if the clocks go forward at 1.00 standard time,
      * then if the specified date/time is at 1.00, the function will
-     * return true, although the correct local time will actually 
+     * return true, although the correct local time will actually
      * be 2.00.
      *
      * This function is reliable for all dates and times, unlike the
@@ -2910,6 +2910,8 @@ $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
         'offset' => -18000000,
         'shortname' => 'EST',
         'dstshortname' => 'EDT',
+        'longname' => 'Eastern Standard Time',
+        'dstlongname' => 'Eastern Daylight Time',
         'summertimeoffset' => 3600000,
         'summertimestartmonth' => 3,
         'summertimestartday' => 'Sun>=8',
