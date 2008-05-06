@@ -109,7 +109,7 @@ $GLOBALS['_DATE_SPAN_INPUT_FORMAT'] = DATE_SPAN_INPUT_FORMAT_NNSV;
  * @copyright 1997-2006 Leandro Lucarella, Pierre-Alain Joye
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
- * @version   Release: @package_version@
+ * @version   Release: 1.5.0a1
  * @link      http://pear.php.net/package/Date
  * @since     Class available since Release 1.4
  */
@@ -205,6 +205,9 @@ class Date_Span
         } elseif (is_string($time)) {
             return $this->setFromString($time, $format);
         } elseif (is_int($time)) {
+            if (is_string($format)) {
+                return $this->setFromString((string) $time, $format);
+            }
             return $this->setFromSeconds($time);
         } else {
             return $this->setFromSeconds(0);
