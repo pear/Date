@@ -49,6 +49,12 @@
 
 
 // }}}
+
+/**
+ * PEAR
+ */
+require_once 'PEAR.php';
+
 // {{{ General constants:
 
 if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
@@ -103,7 +109,7 @@ define('DATE_PRECISION_SECOND', 5);
  * @copyright 1999-2007 Monte Ohrt, Pierre-Alain Joye, Daniel Convissor, C.A. Woodcock
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
- * @version   Release: @package_version@
+ * @version   Release: 1.5.0a1
  * @link      http://pear.php.net/package/Date
  * @since     Class available since Release 1.2
  */
@@ -333,7 +339,7 @@ class Date_Calc
         $hn_century = intval(($hn_currentyear = date("Y")) / 100);
         $hn_currentyear = $hn_currentyear % 100;
 
-        if ($year < 0 || $year >= 100) 
+        if ($year < 0 || $year >= 100)
             $year = $year % 100;
 
         if ($year - $hn_currentyear < -50)
@@ -487,7 +493,7 @@ class Date_Calc
         // even though practically they only occur in June or December).
         //
         // Do not define a leap second on a day of the month other than
-        // the last day without altering the implementation of the 
+        // the last day without altering the implementation of the
         // functions that depend on this one.
         //
         // It is possible, though, to define an un-leap second (i.e. a skipped
@@ -2384,7 +2390,7 @@ class Date_Calc
 
     /**
      * Returns day of week for specified 'Julian Day'
-     * 
+     *
      * The algorithm is valid for all years (positive and negative), and
      * also for years preceding 4714 B.C. (i.e. for negative 'Julian Days'),
      * and so the only limitation is platform-dependent (for 32-bit systems
@@ -2701,7 +2707,7 @@ class Date_Calc
             $year = Date_Calc::dateNow('%Y');
         }
 
-        return Date_Calc::firstDayOfYear($year + 1) - 
+        return Date_Calc::firstDayOfYear($year + 1) -
                Date_Calc::firstDayOfYear($year);
     }
 
@@ -3671,7 +3677,7 @@ class Date_Calc
             $month = Date_Calc::dateNow('%m');
         }
 
-        return Date_Calc::addMonths($months, 
+        return Date_Calc::addMonths($months,
                                     Date_Calc::getFirstDayOfMonth($month, $year),
                                     $month,
                                     $year,
@@ -3753,7 +3759,7 @@ class Date_Calc
      * such as the second Saturday of January 2000
      *
      * @param int    $week   the number of the week to get
-     *                        (1 = first, etc.  Also can be 'last'.)
+     *                       (1 to 5.  Also can be 'last'.)
      * @param int    $dow    the day of the week (0 = Sunday)
      * @param int    $month  the month
      * @param int    $year   the year.  Use the complete year instead of the
@@ -3767,10 +3773,30 @@ class Date_Calc
     function nWeekdayOfMonth($week, $dow, $month, $year,
                              $format = DATE_CALC_FORMAT)
     {
+        if ($week < 1 || $week > 5) {
+            return PEAR::raiseError('Invalid $week value, only 1-5 accepted');
+        }
+
+        if ($dow < 0 || $dow > 6) {
+            return PEAR::raiseError('Invalid $dow value, only 0-6 accepted');
+        }
+
+        if ($month < 1 || $month > 12) {
+            return PEAR::raiseError('Invalid $month value');
+        }
+
         if (is_numeric($week)) {
-            $DOW1day = ($week - 1) * 7 + 1;
-            $DOW1    = Date_Calc::dayOfWeek($DOW1day, $month, $year);
-            $wdate   = ($week - 1) * 7 + 1 + (7 + $dow - $DOW1) % 7;
+            // the weekday of first day of month "1"
+            $DOW1 = Date_Calc::dayOfWeek(1, $month, $year);
+
+            // finds the sunday
+            $sunday =  ($week - 1) * 7 + 1;
+            if ($DOW1 > 0) {
+                $sunday += (7 - $DOW1);
+            }
+
+            // adjust the sunday with dow addition
+            $wdate   = $sunday + $dow;
             if ($wdate > Date_Calc::daysInMonth($month, $year)) {
                 return -1;
             } else {
@@ -3959,7 +3985,7 @@ class Date_Calc
      * @param int $month the month
      * @param int $year  the year.  Use the complete year instead of the
      *                    abbreviated version.  E.g. use 2005, not 05.
-     *            
+     *
      * @return   boolean
      * @access   public
      * @static
@@ -3999,7 +4025,7 @@ class Date_Calc
      * @param int $month2 the month
      * @param int $year2  the year.  Use the complete year instead of the
      *                     abbreviated version.  E.g. use 2005, not 05.
-     *            
+     *
      * @return   int        the absolute number of days between the two dates.
      *                       If an error occurs, -1 is returned.
      * @access   public
@@ -4032,7 +4058,7 @@ class Date_Calc
      * @param int $month2 the month
      * @param int $year2  the year.  Use the complete year instead of the
      *                     abbreviated version.  E.g. use 2005, not 05.
-     *            
+     *
      * @return   int        0 if the dates are equal. 1 if date 1 is later, -1
      *                       if date 1 is earlier.
      * @access   public
@@ -4346,11 +4372,9 @@ class Date_Calc
 
 
     // }}}
-
 }
 
 // }}}
-
 
 /*
  * Local variables:
