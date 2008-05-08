@@ -57,7 +57,7 @@ pre 1970 and post 2038.
   <active>yes</active>
  </helper>
  <date>2008-03-23</date>
- <time>09:24:08</time>
+ <time>21:43:01</time>
  <version>
   <release>1.5.0a1</release>
   <api>1.5.0</api>
@@ -242,6 +242,13 @@ pre 1970 and post 2038.
     <min>1.4.0</min>
    </pearinstaller>
   </required>
+  <optional>
+   <package>
+    <name>Numbers_Words</name>
+    <channel>pear.php.net</channel>
+    <min>0.15.0</min>
+   </package>
+  </optional>
  </dependencies>
  <phprelease />
  <changelog>
@@ -273,6 +280,21 @@ pre 1970 and post 2038.
 - fix abstraction bug, Date constructor accepts now object that extends Date
 - add tests to release package
 - Fix notices and mins calc in to toUTCbyOffset()</notes>
+  </release>
+  <release>
+   <version>
+    <release>1.4.1</release>
+    <api>1.4.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2004-02-24</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>- Fix #674 endOfWeek() beginOfWeek()
+- Fix #727, weeksInMonth (wrong result with some dates)
+- Fix #674 (and old system #22549), check arguments in Date_Span</notes>
   </release>
   <release>
    <version>
@@ -338,21 +360,6 @@ pre 1970 and post 2038.
 - #3022, allow to specify the weekday abbrevation length used in ::format()
 - #4878, %s padding fix when &lt; 10 ( aashley at optimiser dot com)
 - #3059, use GLOBALS in date_span</notes>
-  </release>
-  <release>
-   <version>
-    <release>1.4.1</release>
-    <api>1.4.1</api>
-   </version>
-   <stability>
-    <release>stable</release>
-    <api>stable</api>
-   </stability>
-   <date>2005-10-02</date>
-   <license uri="http://www.php.net/license">PHP License</license>
-   <notes>- Fix #674 endOfWeek() beginOfWeek()
-- Fix #727, weeksInMonth (wrong result with some dates)
-- Fix #674 (and old system #22549), check arguments in Date_Span</notes>
   </release>
   <release>
    <version>

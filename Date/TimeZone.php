@@ -58,7 +58,7 @@
  *
  * If no valid timezone id is found, the default timezone is set to 'UTC'.
  * You may also manually set the default timezone by passing a valid id to
- * Date_TimeZone::setDefault().
+ * {@link Date_TimeZone::setDefault()}.
  *
  * This class includes time zone data (from zoneinfo) in the form of a
  * global array, $_DATE_TIMEZONE_DATA.
@@ -70,7 +70,7 @@
  * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, C.A. Woodcock
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
- * @version   Release: @package_version@
+ * @version   Release: 1.5.0a1
  * @link      http://pear.php.net/package/Date
  */
 class Date_TimeZone
@@ -227,13 +227,10 @@ class Date_TimeZone
     /**
      * Constructor
      *
-     * Creates a new Date::TimeZone object, representing the time zone
-     * specified in $id.
-     *
      * If the supplied ID is invalid, the created time zone is "UTC".
      *
      * A note about time zones of the form 'Etc/*' (quoted from the public
-     * domain 'tz' data-base (see ftp://elsie.nci.nih.gov/pub/tzdata2007i.tar.gz
+     * domain 'tz' data-base (see {@link ftp://elsie.nci.nih.gov/pub/}
      * [file 'etcetera']):
      *
      *  These entries are mostly present for historical reasons, so that
@@ -243,23 +240,23 @@ class Date_TimeZone
      *  need now for the entries that are not on UTC are for ships at sea
      *  that cannot use POSIX TZ settings.
      *
-     *   Etc/GMT  (GMT)
-     *   Etc/UTC  (UTC)
-     *   Etc/UCT  (UCT)
+     *  - <b>Etc/GMT</b>  (GMT)
+     *  - <b>Etc/UTC</b>  (UTC)
+     *  - <b>Etc/UCT</b>  (UCT)
      *
      *  The following link uses older naming conventions, but it belongs here.
      *  We want this to work even on installations that omit the other older
      *  names.
      *
-     *   Etc/GMT  (equivalent to GMT)
+     *  - <b>Etc/GMT</b>  (equivalent to GMT)
      *
-     *   Etc/UTC  (equivalent to Etc/Universal)
-     *   Etc/UTC  (equivalent to Etc/Zulu)
+     *  - <b>Etc/UTC</b>  (equivalent to Etc/Universal)
+     *  - <b>Etc/UTC</b>  (equivalent to Etc/Zulu)
      *
-     *   Etc/GMT  (equivalent to Etc/Greenwich)
-     *   Etc/GMT  (equivalent to Etc/GMT-0)
-     *   Etc/GMT  (equivalent to Etc/GMT+0)
-     *   Etc/GMT  (equivalent to Etc/GMT0)
+     *  - <b>Etc/GMT</b>  (equivalent to Etc/Greenwich)
+     *  - <b>Etc/GMT</b>  (equivalent to Etc/GMT-0)
+     *  - <b>Etc/GMT</b>  (equivalent to Etc/GMT+0)
+     *  - <b>Etc/GMT</b>  (equivalent to Etc/GMT0)
      *
      *  We use POSIX-style signs in the Zone names and the output abbreviations,
      *  even though this is the opposite of what many people expect.
@@ -285,38 +282,38 @@ class Date_TimeZone
      *  old way uses the codes from previous versions so we moved the names
      *  into the Etc subdirectory.
      *
-     *   Etc/GMT-14  (14 hours ahead of Greenwich)
-     *   Etc/GMT-13  (13)
-     *   Etc/GMT-12  (12)
-     *   Etc/GMT-11  (11)
-     *   Etc/GMT-10  (10)
-     *   Etc/GMT-9   (9)
-     *   Etc/GMT-8   (8)
-     *   Etc/GMT-7   (7)
-     *   Etc/GMT-6   (6)
-     *   Etc/GMT-5   (5)
-     *   Etc/GMT-4   (4)
-     *   Etc/GMT-3   (3)
-     *   Etc/GMT-2   (2)
-     *   Etc/GMT-1   (1)
-     *   Etc/GMT+1   (1 hour behind Greenwich)
-     *   Etc/GMT+2   (2)
-     *   Etc/GMT+3   (3)
-     *   Etc/GMT+4   (4)
-     *   Etc/GMT+5   (5)
-     *   Etc/GMT+6   (6)
-     *   Etc/GMT+7   (7)
-     *   Etc/GMT+8   (8)
-     *   Etc/GMT+9   (9)
-     *   Etc/GMT+10  (10)
-     *   Etc/GMT+11  (11)
-     *   Etc/GMT+12  (12)
+     *  - <b>Etc/GMT-14</b>  (14 hours ahead of Greenwich)
+     *  - <b>Etc/GMT-13</b>  (13)
+     *  - <b>Etc/GMT-12</b>  (12)
+     *  - <b>Etc/GMT-11</b>  (11)
+     *  - <b>Etc/GMT-10</b>  (10)
+     *  - <b>Etc/GMT-9</b>   (9)
+     *  - <b>Etc/GMT-8</b>   (8)
+     *  - <b>Etc/GMT-7</b>   (7)
+     *  - <b>Etc/GMT-6</b>   (6)
+     *  - <b>Etc/GMT-5</b>   (5)
+     *  - <b>Etc/GMT-4</b>   (4)
+     *  - <b>Etc/GMT-3</b>   (3)
+     *  - <b>Etc/GMT-2</b>   (2)
+     *  - <b>Etc/GMT-1</b>   (1)
+     *  - <b>Etc/GMT+1</b>   (1 hour behind Greenwich)
+     *  - <b>Etc/GMT+2</b>   (2)
+     *  - <b>Etc/GMT+3</b>   (3)
+     *  - <b>Etc/GMT+4</b>   (4)
+     *  - <b>Etc/GMT+5</b>   (5)
+     *  - <b>Etc/GMT+6</b>   (6)
+     *  - <b>Etc/GMT+7</b>   (7)
+     *  - <b>Etc/GMT+8</b>   (8)
+     *  - <b>Etc/GMT+9</b>   (9)
+     *  - <b>Etc/GMT+10</b>  (10)
+     *  - <b>Etc/GMT+11</b>  (11)
+     *  - <b>Etc/GMT+12</b>  (12)
      *
      * @param string $ps_id the time zone ID
      *
      * @return   void
      * @access   public
-     * @see      Date::setTZByID(), Date_TimeZone::isValidID()
+     * @see      Date::setTZ(), Date::setTZByID(), Date_TimeZone::isValidID()
      */
     function Date_TimeZone($ps_id)
     {
@@ -454,36 +451,38 @@ class Date_TimeZone
      * time zone data, or is a UTC offset in one of the following forms,
      * i.e. an offset with no geographical or political base:
      *
-     *  UTC[+/-][hh]:[mm] - e.g. UTC+03:00
-     *  UTC[+/-][hh][mm]  - e.g. UTC-0530
-     *  UTC[+/-][hh]      - e.g. UTC+03
-     *  UTC[+/-][h]       - e.g. UTC-1     (the last is not ISO 8601
-     *                                     standard but is the preferred
-     *                                     form)
+     *  - <b>UTC[+/-][hh]:[mm]</b> - e.g. UTC+03:00
+     *  - <b>UTC[+/-][hh][mm]</b>  - e.g. UTC-0530
+     *  - <b>UTC[+/-][hh]</b>      - e.g. UTC+03
+     *  - <b>UTC[+/-][h]</b>       - e.g. UTC-1
+     *
+     * (the last is not an ISO 8601 standard but is the preferred form)
      *
      * N.B. these are not sanctioned by any ISO standard, but the form of
      * the offset itself, i.e. the part after the characters 'UTC', is the
      * ISO 8601 standard form for representing this part.
      *
-     * The form '[+/-][h]' is not ISO conformant, but ISO 8601 only
+     * The form '<b>[+/-][h]</b>' is not ISO conformant, but ISO 8601 only
      * defines the form of the time zone offset of a particular time, that
-     * is, it actually defines the form '<time>UTC[+/-][hh]', and its
-     * purview does not apparently cover the name of the time zone itself.
-     * For this there is no official international standard (or even a non-
-     * international standard).  The closest thing to a sanctioning body
-     * is the 'tz' database (http://www.twinsun.com/tz/tz-link.htm) which
-     * is run by volunteers but which is heavily relied upon by various
-     * programming languages and the internet community.  However they
-     * mainly define geographical/political time zone names of the
+     * is, it actually defines the form '<b><time>UTC[+/-][hh]</b>', and
+     * its purview does not apparently cover the name of the time zone
+     * itself. For this there is no official international standard (or
+     * even a non- international standard).  The closest thing to a
+     * sanctioning body is the 'tz' database
+     * ({@link http://www.twinsun.com/tz/tz-link.htm})
+     * which is run by volunteers but which is heavily relied upon by
+     * various programming languages and the internet community.  However
+     * they mainly define geographical/political time zone names of the
      * form 'London/Europe' because their main aim is to collate the time
      * zone definitions which are set by individual countries/states, not
      * to prescribe any standard.
      *
      * However it seems that the de facto standard to describe time zones
      * as non-geographically/politically-based areas where the local time
-     * on all clocks reads the same seems to be the form 'UTC[+/-][h]'
-     * for integral numbers of hours, and 'UTC[+/-][hh]:[mm]' otherwise.
-     * (See http://en.wikipedia.org/wiki/List_of_time_zones)
+     * on all clocks reads the same seems to be the form '<b>UTC[+/-][h]</b>'
+     * for integral numbers of hours, and '<b>UTC[+/-][hh]:[mm]</b>'
+     * otherwise.
+     * (See {@link http://en.wikipedia.org/wiki/List_of_time_zones})
      *
      * N.B. 'GMT' is also commonly used instead of 'UTC', but 'UTC' seems
      * to be technically preferred.  GMT-based IDs still exist in the 'tz
@@ -523,6 +522,7 @@ class Date_TimeZone
      * @return   bool       true if this time zone is equal to the supplied
      *                       time zone
      * @access   public
+     * @see      Date_TimeZone::isEquivalent()
      */
     function isEqual($tz)
     {
@@ -543,11 +543,11 @@ class Date_TimeZone
      * Tests to see if this time zone is equivalent to a given time zone object.
      * Equivalence in this context consists in the two time zones having:
      *
-     *  an equal offset from UTC in both standard and Summer time (if
-     *   the time zones observe Summer time)
-     *  the same Summer time start and end rules, that is, the two time zones
-     *   must switch from standard time to Summer time, and vice versa, on the
-     *   same day and at the same time
+     *  - an equal offset from UTC in both standard and Summer time (if
+     *              the time zones observe Summer time)
+     *  - the same Summer time start and end rules, that is, the two time
+     *              zones must switch from standard time to Summer time,
+     *              and vice versa, on the same day and at the same time
      *
      * @param object $pm_tz the Date_TimeZone object to test, or a valid time
      *                       zone ID
@@ -555,6 +555,7 @@ class Date_TimeZone
      * @return   bool       true if this time zone is equivalent to the supplied
      *                       time zone
      * @access   public
+     * @see      Date_TimeZone::isEqual(), Date::inEquivalentTimeZones()
      */
     function isEquivalent($pm_tz)
     {
@@ -612,11 +613,12 @@ class Date_TimeZone
      * Returns day on which Summer time starts or ends for given year
      *
      * The limit (start or end) code can take the following forms:
-     *  5                 the fifth of the month
-     *  lastSun           the last Sunday in the month
-     *  lastMon           the last Monday in the month
-     *  Sun>=8            first Sunday on or after the 8th
-     *  Sun<=25           last Sunday on or before the 25th
+     *
+     *  - <b>5</b>       -       the fifth of the month
+     *  - <b>lastSun</b> -       the last Sunday in the month
+     *  - <b>lastMon</b> -       the last Monday in the month
+     *  - <b>Sun>=8</b>  -       first Sunday on or after the 8th
+     *  - <b>Sun<=25</b> -       last Sunday on or before the 25th
      *
      * @param string $ps_summertimelimitcode code which specifies Summer time
      *                                        limit day
@@ -626,6 +628,7 @@ class Date_TimeZone
      *
      * @return   int
      * @access   private
+     * @see      Date_TimeZone::getSummerTimeStartDay()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeLimitDay($ps_summertimelimitcode, $pn_month, $pn_year)
@@ -709,7 +712,7 @@ class Date_TimeZone
     // {{{ inDaylightTime()
 
     /**
-     * Is the given date/time in DST for this time zone
+     * Returns whether the given date/time is in DST for this time zone
      *
      * Works for all years, positive and negative.  Possible problems
      * are that when the clocks go forward, there is an invalid hour
@@ -735,6 +738,7 @@ class Date_TimeZone
      * @return   bool       true if this date is in Summer time for this time
      *                       zone
      * @access   public
+     * @see      Date_TimeZone::inDaylightTimeStandard()
      */
     function inDaylightTime($pm_date, $pb_repeatedhourdefault = false)
     {
@@ -833,7 +837,8 @@ class Date_TimeZone
      * be 2.00.
      *
      * This function is reliable for all dates and times, unlike the
-     * related function 'inDaylightTime()', which will fail if passed
+     * related function '{@link Date_TimeZone::inDaylightTime()}',
+     * which will fail if passed
      * an invalid time (the skipped hour) and will be wrong half the
      * time if passed an ambiguous time (the repeated hour).
      *
@@ -843,6 +848,7 @@ class Date_TimeZone
      * @return   bool       true if this date is in Summer time for this time
      *                       zone
      * @access   public
+     * @see      Date_TimeZone::inDaylightTime()
      * @since    Method available since Release 1.5.0
      */
     function inDaylightTimeStandard($pm_date)
@@ -919,8 +925,8 @@ class Date_TimeZone
      * Get the DST offset for this time zone
      *
      * Returns the DST offset of this time zone, in milliseconds,
-     * if the zone observes DST, zero otherwise.  Currently the
-     * DST offset is hard-coded to one hour.
+     * if the zone observes DST, zero otherwise.  If the offset is not
+     * known, the function returns one hour.
      *
      * @return   int        the DST offset, in milliseconds or nought if the
      *                       zone does not observe DST
@@ -958,6 +964,7 @@ class Date_TimeZone
      *
      * @return   int        the offset, in milliseconds
      * @access   public
+     * @see      Date_TimeZone::getOffset()
      */
     function getRawOffset()
     {
@@ -992,6 +999,7 @@ class Date_TimeZone
      *
      * @return   int        the corrected offset to UTC in milliseconds
      * @access   public
+     * @see      Date_TimeZone::getRawOffset(), Date::getTZOffset()
      */
     function getOffset($pm_insummertime)
     {
@@ -1032,7 +1040,7 @@ class Date_TimeZone
     // {{{ getID()
 
     /**
-     * Returns the time zone id for this time zone, i.e. "America/Chicago"
+     * Returns the time zone id for this time zone, e.g. "America/Chicago"
      *
      * @return   string     the time zone ID
      * @access   public
@@ -1052,7 +1060,8 @@ class Date_TimeZone
      * Long form of time zone name, e.g. 'Greenwich Mean Time'. Additionally
      * a Date object can be passed in which case the Summer time name will
      * be returned instead if the date falls in Summer time, e.g. 'British
-     * Summer Time'.
+     * Summer Time', or a Boolean can be passed which explicitly specifies
+     * whether the date is in Summer time.
      *
      * N.B. this is not a unique identifier - for this purpose use the
      * time zone ID.
@@ -1063,6 +1072,8 @@ class Date_TimeZone
      *
      * @return   string     the long name
      * @access   public
+     * @see      Date_TimeZone::getShortName(), Date_TimeZone::getDSTLongName(),
+     *            Date::getTZLongName()
      */
     function getLongName($pm_insummertime = false)
     {
@@ -1103,6 +1114,8 @@ class Date_TimeZone
      *
      * @return   string     the short name
      * @access   public
+     * @see      Date_TimeZone::getLongName(), Date_TimeZone::getDSTShortName(),
+     *            Date::getTZShortName()
      */
     function getShortName($pm_insummertime = false)
     {
@@ -1133,6 +1146,7 @@ class Date_TimeZone
      *
      * @return   string     the daylight savings time long name
      * @access   public
+     * @see      Date_TimeZone::getDSTShortName(), Date_TimeZone::getLongName()
      */
     function getDSTLongName()
     {
@@ -1148,6 +1162,7 @@ class Date_TimeZone
      *
      * @return   string     the daylight savings time short name
      * @access   public
+     * @see      Date_TimeZone::getDSTLongName(), Date_TimeZone::getShortName()
      */
     function getDSTShortName()
     {
@@ -1163,6 +1178,9 @@ class Date_TimeZone
      *
      * @return   int        integer representing the month (1 to 12)
      * @access   public
+     * @see      Date_TimeZone::getSummerTimeEndMonth(),
+     *            Date_TimeZone::getSummerTimeStartTime(),
+     *            Date_TimeZone::getSummerTimeStartDay()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeStartMonth()
@@ -1175,18 +1193,22 @@ class Date_TimeZone
     // {{{ getSummerTimeStartDay()
 
     /**
-     * Returns the a code representing the day on which Summer time starts
+     * Returns a code representing the day on which Summer time starts
      *
      * Returns a string in one of the following forms:
      *
-     *  5        the fifth of the month
-     *  lastSun  the last Sunday in the month
-     *  lastMon  the last Monday in the month
-     *  Sun>=8   first Sunday on or after the 8th
-     *  Sun<=25  last Sunday on or before the 25th
+     *  - <b>5</b>       - the fifth of the month
+     *  - <b>lastSun</b> - the last Sunday in the month
+     *  - <b>lastMon</b> - the last Monday in the month
+     *  - <b>Sun>=8</b>  - first Sunday on or after the 8th
+     *  - <b>Sun<=25</b> - last Sunday on or before the 25th
      *
      * @return   string
      * @access   public
+     * @see      Date_TimeZone::getSummerTimeEndDay(),
+     *            Date_TimeZone::getSummerTimeStartTime(),
+     *            Date_TimeZone::getSummerTimeStartMonth(),
+     *            Date_TimeZone::getSummerTimeLimitDay()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeStartDay()
@@ -1211,6 +1233,9 @@ class Date_TimeZone
      *
      * @return   int        integer representing the month (1 to 12)
      * @access   public
+     * @see      Date_TimeZone::getSummerTimeEndTime(),
+     *            Date_TimeZone::getSummerTimeStartDay(),
+     *            Date_TimeZone::getSummerTimeStartMonth()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeStartTime()
@@ -1227,7 +1252,9 @@ class Date_TimeZone
      *
      * @return   int        integer representing the month (1 to 12)
      * @access   public
-     * @see      Date_TimeZone::getSummerTimeStartMonth()
+     * @see      Date_TimeZone::getSummerTimeStartMonth(),
+     *            Date_TimeZone::getSummerTimeEndTime(),
+     *            Date_TimeZone::getSummerTimeEndDay()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeEndMonth()
@@ -1240,11 +1267,22 @@ class Date_TimeZone
     // {{{ getSummerTimeEndDay()
 
     /**
-     * Returns the a code representing the day on which Summer time ends
+     * Returns a code representing the day on which Summer time ends
+     *
+     * Returns a string in one of the following forms:
+     *
+     *  - <b>5</b>       - the fifth of the month
+     *  - <b>lastSun</b> - the last Sunday in the month
+     *  - <b>lastMon</b> - the last Monday in the month
+     *  - <b>Sun>=8</b>  - first Sunday on or after the 8th
+     *  - <b>Sun<=25</b> - last Sunday on or before the 25th
      *
      * @return   string
      * @access   public
-     * @see      Date_TimeZone::getSummerTimeStartDay()
+     * @see      Date_TimeZone::getSummerTimeStartDay(),
+     *            Date_TimeZone::getSummerTimeEndTime(),
+     *            Date_TimeZone::getSummerTimeEndMonth(),
+     *            Date_TimeZone::getSummerTimeLimitDay()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeEndDay()
@@ -1261,7 +1299,9 @@ class Date_TimeZone
      *
      * @return   int        integer representing the month (1 to 12)
      * @access   public
-     * @see      Date_TimeZone::getSummerTimeStartTime()
+     * @see      Date_TimeZone::getSummerTimeStartTime(),
+     *            Date_TimeZone::getSummerTimeEndDay(),
+     *            Date_TimeZone::getSummerTimeEndMonth()
      * @since    Method available since Release 1.5.0
      */
     function getSummerTimeEndTime()
@@ -1277,14 +1317,13 @@ class Date_TimeZone
 // }}}
 
 /**
- * Time Zone Data offset is in miliseconds
+ * Time Zone Data (correct as of 15.iii.2007)
+ *
+ * N.B. offsets are in milliseconds
  *
  * @global array $GLOBALS['_DATE_TIMEZONE_DATA']
  */
 $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
-    //
-    // Time zone data is correct as of 15.iii.2007
-    //
     'Africa/Abidjan' => array(
         'offset' => 0,
         'shortname' => 'GMT',

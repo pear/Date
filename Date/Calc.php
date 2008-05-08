@@ -55,6 +55,7 @@
  */
 require_once 'PEAR.php';
 
+
 // {{{ General constants:
 
 if (!defined('DATE_CALC_BEGIN_WEEKDAY')) {
@@ -119,34 +120,34 @@ class Date_Calc
     // {{{ dateFormat()
 
     /**
-     * Formats the date in the given format, much like strfmt()
+     * Formats the date in the given format, much like
+     * {@link http://www.php.net/strftime strftime()}
      *
      * This function is used to alleviate the problem with 32-bit numbers for
-     * dates pre 1970 or post 2038, as strfmt() has on most systems.
+     * dates pre 1970 or post 2038, as strftime() has on most systems.
      * Most of the formatting options are compatible.
      *
      * Formatting options:
-     * <pre>
-     * %a   abbreviated weekday name (Sun, Mon, Tue)
-     * %A   full weekday name (Sunday, Monday, Tuesday)
-     * %b   abbreviated month name (Jan, Feb, Mar)
-     * %B   full month name (January, February, March)
-     * %d   day of month (range 00 to 31)
-     * %e   day of month, single digit (range 0 to 31)
-     * %E   number of days since unspecified epoch (integer)
-     *        (%E is useful for passing a date in a URL as
-     *        an integer value. Then simply use
-     *        daysToDate() to convert back to a date.)
-     * %j   day of year (range 001 to 366)
-     * %m   month as decimal number (range 1 to 12)
-     * %n   newline character (\n)
-     * %t   tab character (\t)
-     * %w   weekday as decimal (0 = Sunday)
-     * %U   week number of current year, first sunday as first week
-     * %y   year as decimal (range 00 to 99)
-     * %Y   year as decimal including century (range 0000 to 9999)
-     * %%   literal '%'
-     * </pre>
+     *
+     *  - <b>%a</b> - abbreviated weekday name (Sun, Mon, Tue)
+     *  - <b>%A</b> - full weekday name (Sunday, Monday, Tuesday)
+     *  - <b>%b</b> - abbreviated month name (Jan, Feb, Mar)
+     *  - <b>%B</b> - full month name (January, February, March)
+     *  - <b>%d</b> - day of month (range 00 to 31)
+     *  - <b>%e</b> - day of month, single digit (range 0 to 31)
+     *  - <b>%E</b> - number of days since unspecified epoch (integer).
+     *                ('<b>%E</b>' is useful for passing a date in a URL as an
+     *                integer value.  Then simply use {@link Date_Calc::daysToDate()}
+     *                to convert back to a date.)
+     *  - <b>%j</b> - day of year (range 001 to 366)
+     *  - <b>%m</b> - month as decimal number (range 1 to 12)
+     *  - <b>%n</b> - newline character (\n)
+     *  - <b>%t</b> - tab character (\t)
+     *  - <b>%w</b> - weekday as decimal (0 = Sunday)
+     *  - <b>%U</b> - week number of current year, first sunday as first week
+     *  - <b>%y</b> - year as decimal (range 00 to 99)
+     *  - <b>%Y</b> - year as decimal including century (range 0000 to 9999)
+     *  - <b>%%</b> - literal '%'
      *
      * @param int    $day    the day of the month
      * @param int    $month  the month
@@ -245,8 +246,9 @@ class Date_Calc
     /**
      * Returns the current local date
      *
-     * NOTE: This function retrieves the local date using strftime(),
-     * which may or may not be 32-bit safe on your system.
+     * NOTE: This function retrieves the local date using
+     * {@link http://www.php.net/strftime strftime()}, which may or may
+     * not be 32-bit safe on your system.
      *
      * @param string $format the string indicating how to format the output
      *
@@ -321,12 +323,12 @@ class Date_Calc
      * and 50 years in the future), then the past year is chosen.
      *
      * For example, if the current year is 2007:
-     *  03 - returns 2003
-     *  09 - returns 2009
-     *  56 - returns 2056 (closer to 2007 than 1956)
-     *  57 - returns 1957 (1957 and 2007 are equidistant, so previous century
-     *        chosen)
-     *  58 - returns 1958
+     *  - <b>"03"</b> - returns 2003
+     *  - <b>"09"</b> - returns 2009
+     *  - <b>"56"</b> - returns 2056 (closer to 2007 than 1956)
+     *  - <b>"57"</b> - returns 1957 (1957 and 2007 are equidistant,
+     *                   so previous century chosen)
+     *  - <b>"58"</b> - returns 1958
      *
      * @param int $year the 2 digit year
      *
@@ -1966,8 +1968,8 @@ class Date_Calc
      * falls on 31st December.
      *
      * Also note that this is very similar to the ISO week returned by
-     * 'isoWeekDate()', the difference being that the ISO week always has
-     * 7 days, and if the 4th of January is a Friday, for example,
+     * {@link Date::isoWeekDate()}, the difference being that the ISO week
+     * always has 7 days, and if the 4th of January is a Friday, for example,
      * ISO week 1 would start on Monday, 31st December in the previous year,
      * whereas the week defined by this function would start on 1st January,
      * but would be only 6 days long.  Of course you can also set the day
@@ -2099,8 +2101,6 @@ class Date_Calc
 
     /**
      * Determines julian date of the given season
-     *
-     * Adapted from previous work in Java by James Mark Hamilton.
      *
      * @param string $season the season to get the date for: VERNALEQUINOX,
      *                        SUMMERSOLSTICE, AUTUMNALEQUINOX,
@@ -2567,7 +2567,7 @@ class Date_Calc
      *
      * N.B. this function is equivalent to calling:
      *
-     *  <code>Date_Calc::weekOfYear7th($day, $month, $year, 0)</code>
+     *  <code>Date_Calc::weekOfYear7th($day, $month, $year, 0);</code>
      *
      * Returned week is an integer from 1 to 53.
      *
@@ -3265,7 +3265,7 @@ class Date_Calc
 
     /**
      * Find the month day of the beginning of week for given date,
-     * using DATE_CALC_BEGIN_WEEKDAY
+     * using {@link DATE_CALC_BEGIN_WEEKDAY}
      *
      * Can return weekday of prev month.
      *
@@ -3304,7 +3304,7 @@ class Date_Calc
 
     /**
      * Find the month day of the end of week for given date,
-     * using DATE_CALC_BEGIN_WEEKDAY
+     * using {@link DATE_CALC_BEGIN_WEEKDAY}
      *
      * Can return weekday of following month.
      *
@@ -3343,7 +3343,7 @@ class Date_Calc
 
     /**
      * Find the month day of the beginning of week before given date,
-     * using DATE_CALC_BEGIN_WEEKDAY
+     * using {@link DATE_CALC_BEGIN_WEEKDAY}
      *
      * Can return weekday of prev month.
      *
@@ -3387,7 +3387,7 @@ class Date_Calc
 
     /**
      * Find the month day of the beginning of week after given date,
-     * using DATE_CALC_BEGIN_WEEKDAY
+     * using {@link DATE_CALC_BEGIN_WEEKDAY}
      *
      * Can return weekday of prev month.
      *
@@ -3654,7 +3654,7 @@ class Date_Calc
      * @param int    $months the number of months from the date provided.
      *                        Positive numbers go into the future.
      *                        Negative numbers go into the past.
-     *                        0 is the month presented in $month.
+     *                        Nought is the month presented in $month.
      * @param string $month  the month, default is current local month
      * @param string $year   the year in four digit format, default is the
      *                        current local year
@@ -3695,7 +3695,7 @@ class Date_Calc
      * @param int    $months the number of months from the date provided.
      *                        Positive numbers go into the future.
      *                        Negative numbers go into the past.
-     *                        0 is the month presented in $month.
+     *                        Nought is the month presented in $month.
      * @param string $month  the month, default is current local month
      * @param string $year   the year in four digit format, default is the
      *                        current local year
@@ -4083,37 +4083,38 @@ class Date_Calc
      *
      * The precision parameter must be one of the following constants:
      *
-     *  <code>DATE_PRECISION_YEAR</code>
-     *  <code>DATE_PRECISION_MONTH</code>
-     *  <code>DATE_PRECISION_DAY</code>
-     *  <code>DATE_PRECISION_HOUR</code>
-     *  <code>DATE_PRECISION_10MINUTES</code>
-     *  <code>DATE_PRECISION_MINUTE</code>
-     *  <code>DATE_PRECISION_10SECONDS</code>
-     *  <code>DATE_PRECISION_SECOND</code>
+     *   - {@link DATE_PRECISION_YEAR}
+     *   - {@link DATE_PRECISION_MONTH}
+     *   - {@link DATE_PRECISION_DAY}
+     *   - {@link DATE_PRECISION_HOUR}
+     *   - {@link DATE_PRECISION_10MINUTES}
+     *   - {@link DATE_PRECISION_MINUTE}
+     *   - {@link DATE_PRECISION_10SECONDS}
+     *   - {@link DATE_PRECISION_SECOND}
      *
      * The precision can also be specified as an integral offset from
      * one of these constants, where the offset reflects a precision
      * of 10 to the power of the offset greater than the constant.
      * For example:
      *
-     *  <code>DATE_PRECISION_YEAR - 1</code> rounds the date to the nearest 10
+     *   - <b>(DATE_PRECISION_YEAR - 1)</b> rounds the date to the nearest 10
      *                                      years
-     *  <code>DATE_PRECISION_YEAR - 3</code> rounds the date to the nearest 1000
+     *   - <b>(DATE_PRECISION_YEAR - 3)</b> rounds the date to the nearest 1000
      *                                      years
-     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to 1 decimal
+     *   - <b>(DATE_PRECISION_SECOND + 1)</b> rounds the date to 1 decimal
      *                                        point of a second
-     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to 3 decimal
+     *   - <b>(DATE_PRECISION_SECOND + 1)</b> rounds the date to 3 decimal
      *                                        points of a second
-     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to the nearest 10
+     *   - <b>(DATE_PRECISION_SECOND + 1)</b> rounds the date to the nearest 10
      *                                        seconds (thus it is equivalent to
-     *                                        DATE_PRECISION_10SECONDS)
+     *                                        <b>DATE_PRECISION_10SECONDS</b>)
      *
      * N.B. This function requires a time in UTC if both the precision is at
      * least DATE_PRECISION_SECOND and leap seconds are being counted, otherwise
      * any local time is acceptable.
      *
-     * @param int   $pn_precision a 'DATE_PRECISION_*' constant
+     * @param int   $pn_precision a 'DATE_PRECISION_*' constant (defaults to
+     *                             {@link DATE_PRECISION_DAY})
      * @param int   $pn_day       the day of the month
      * @param int   $pn_month     the month
      * @param int   $pn_year      the year
@@ -4121,7 +4122,7 @@ class Date_Calc
      * @param int   $pn_minute    the minute
      * @param mixed $pn_second    the second as integer or float
      * @param bool  $pb_countleap whether to count leap seconds (defaults to
-     *                             DATE_COUNT_LEAP_SECONDS)
+     *                             {@link DATE_COUNT_LEAP_SECONDS})
      *
      * @return   array      array of year, month, day, hour, minute, second
      * @access   public

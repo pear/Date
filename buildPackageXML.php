@@ -10,6 +10,7 @@ $pkg = new PEAR_PackageFileManager2;
 $options = array(
     'simpleoutput'      => true,
     'baseinstalldir'    => '/',
+    'packagefile'       => 'package.xml',
     'packagedirectory'  => dirname(__FILE__),
     'filelistgenerator' => 'Cvs',
     'dir_roles'         => array(
@@ -92,6 +93,9 @@ $pkg->addMaintainer('helper', 'scar', 'Leonardo Dutra', 'scar@php.net');
 $pkg->setPhpDep('4.3');
 $pkg->setPearinstallerDep('1.4.0');
 
+//$pkg->addDependency("Numbers_Words", "0.15.0", "eq", "pkg", true);
+//$pkg->detectDependencies();
+
 // Add some replacements.
 $pkg->addGlobalReplacement('package-info', '@package_version@', 'version');
 
@@ -99,13 +103,19 @@ $pkg->addGlobalReplacement('package-info', '@package_version@', 'version');
 $pkg->generateContents();
 
 // Writes a package.xml.
-$e = $pkg->writePackageFile();
+if (isset($_GET['make']) || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')) {
+    $e = $pkg->writePackageFile();
 
-// Some errors occurs.
-if (PEAR::isError($e)) {
-    throw new Exception('Unable to write package file. Got message: ' .
-                        $e->getMessage());
+    // Some errors occurs.
+    if (PEAR::isError($e)) {
+        throw new Exception('Unable to write package file. Got message: ' .
+                            $e->getMessage());
+    }
+} else {
+    $pkg->debugPackageFile();
 }
+
+
 
 /*
  * Local variables:

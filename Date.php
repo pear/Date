@@ -7,8 +7,8 @@
  * Generic date handling class for PEAR
  *
  * Handles time zones and changes from local standard to local Summer
- * time (daylight-saving time) through the Date_TimeZone class.
- * Supports several operations from Date_Calc on Date objects.
+ * time (daylight-saving time) through the {@link Date_TimeZone} class.
+ * Supports several operations from {@link Date_Calc} on Date objects.
  *
  * PHP versions 4 and 5
  *
@@ -84,8 +84,9 @@ require_once 'Date/Span.php';
 
 /**
  * Whether to capture the micro-time (in microseconds) by default
- * in calls to 'Date::setNow()'.  Note that this makes a call to
- * 'gettimeofday()', which may not work on all systems.
+ * in calls to {@link Date::setNow()}.  Note that this makes a call to
+ * {@link http://www.php.net/gettimeofday gettimeofday()}, which may
+ * not work on all systems.
  *
  * @since    Constant available since Release 1.5.0
  */
@@ -103,13 +104,16 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  * a function, directly or indirectly, that accesses the time
  * part of the object.  So, for example, if the user calls:
  *
- *  <code>$date_object->format2('HH.MI.SS')</code> or:
- *  <code>$date->object->addSeconds(30)</code>,
+ * <code>$date_object->formatLikeSQL('HH.MI.SS');</code>
+ *
+ * or:
+ *
+ * <code>$date->object->addSeconds(30);</code>
  *
  * an error will be returned if the time is invalid.  However,
  * if the user calls:
  *
- *  <code>$date->object->addDays(1)</code>,
+ * <code>$date->object->addDays(1);</code>
  *
  * for example, such that the time is no longer invalid, then the
  * object will no longer be in this invalid state.  This behaviour
@@ -132,13 +136,16 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  * Backwards compatibility here means that the behaviour is the same as it
  * used to be, less the bug.
  *
- * Note that this problem is not an issue for the user if:
+ * Note that this problem is not an issue for the user if any of these
+ * conditions are satisfied:
  *
- *  (a) the user uses a time zone that does not observe Summer time, e.g. UTC
- *  (b) the user never accesses the time, that is, he never makes a call to
- *       Date::getHour() or Date::format("%H"), for example, even if he sets
- *       the time to something invalid
- *  (c) the user sets DATE_CORRECTINVALIDTIME_DEFAULT to true
+ * <ol>
+ *  <li>the user uses a time zone that does not observe Summer time, e.g. UTC</li>
+ *  <li>the user never accesses the time, that is, he never makes a call to
+ *       {@link Date::getHour()} or {@link Date::formatLikeStrftime("%H")}, for
+ *       example, even if he sets the time to something invalid</li>
+ *  <li>the user sets DATE_CORRECTINVALIDTIME_DEFAULT to true</li>
+ * </ol>
  *
  * @since    Constant available since Release 1.5.0
  */
@@ -149,9 +156,9 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
  * disallowing invalid dates (e.g. 31st February) being set by the following
  * functions:
  *
- *  Date::setYear()
- *  Date::setMonth()
- *  Date::setDay()
+ *  - {@link Date::setYear()}
+ *  - {@link Date::setMonth()}
+ *  - {@link Date::setDay()}
  *
  * If the constant is set to 'true', then the date will be checked (by
  * default), and if invalid, an error will be returned with the Date object
@@ -160,7 +167,8 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
  * This constant is set to 'false' by default for backwards-compatibility
  * reasons, however, you are recommended to set it to 'true'.
  *
- * Note that setHour(), setMinute(), setSecond() and setPartSecond()
+ * Note that {@link Date::setHour()}, {@link Date::setMinute()},
+ * {@link Date::setSecond()} and {@link Date::setPartSecond()}
  * allow an invalid date/time to be set regardless of the value of this
  * constant.
  *
@@ -173,25 +181,32 @@ define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
  * when setting the date/time, and whether to count leap seconds in the
  * following functions:
  *
- *  Date::addSeconds()
- *  Date::subtractSeconds()
- *  Date_Calc::addSeconds()
- *  Date::round()
- *  Date::roundSeconds()
+ *  - {@link Date::addSeconds()}
+ *  - {@link Date::subtractSeconds()}
+ *  - {@link Date_Calc::addSeconds()}
+ *  - {@link Date::round()}
+ *  - {@link Date::roundSeconds()}
  *
  * This constant is set to 'false' by default for backwards-compatibility
  * reasons, however, you are recommended to set it to 'true'.
  *
- * Note that this constant does not affect Date::addSpan() and
- * Date::subtractSpan() which will not count leap seconds in any case.
+ * Note that this constant does not affect {@link Date::addSpan()} and
+ * {@link Date::subtractSpan()} which will not count leap seconds in any case.
  *
  * @since    Constant available since Release 1.5.0
  */
 define('DATE_COUNT_LEAP_SECONDS', false);
 
+/**
+ * Method to call when user invokes {@link Date::format()}
+ *
+ * @since    Constant available since Release 1.5.1
+ */
+define('DATE_FORMAT_METHOD', 'formatLikeStrftime');
+
 
 // }}}
-// {{{ Output format constants (used in 'Date::getDate()')
+// {{{ Output format constants (used in {@link Date::getDate()})
 
 /**
  * "YYYY-MM-DD HH:MM:SS"
@@ -248,7 +263,7 @@ define('DATE_FORMAT_UNIXTIME', 5);
  * @copyright 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman Wandayandi, C.A. Woodcock
  * @license   http://www.opensource.org/licenses/bsd-license.php
  *            BSD License
- * @version   Release: @package_version@
+ * @version   Release: 1.5.0a1
  * @link      http://pear.php.net/package/Date
  */
 class Date
@@ -415,7 +430,7 @@ class Date
     /**
      * Defines the default weekday abbreviation length
      *
-     * Formerly used by Date::format(), but now redundant - the abbreviation
+     * Formerly used by {@link Date::formatLikeStrftime()}, but now redundant - the abbreviation
      * for the current locale of the machine is used.
      *
      * @var      int
@@ -437,16 +452,16 @@ class Date
      * or another Date object.  If no date is passed, the current date/time
      * is used.
      *
-     * If a date is passed and an exception is returned by 'setDate()'
+     * If a date is passed and an exception is returned by {@link Date::setDate()}
      * there is nothing that this function can do, so for this reason, it
      * is advisable to pass no parameter and to make a separate call to
-     * 'setDate()'.  A date/time should only be passed if known to be a
+     * Date::setDate().  A date/time should only be passed if known to be a
      * valid ISO 8601 string or a valid Unix timestamp.
      *
      * @param mixed $date                optional ISO 8601 date/time to initialize;
      *                                    or, a Unix time stamp
      * @param bool  $pb_countleapseconds whether to count leap seconds
-     *                                    (defaults to DATE_COUNT_LEAP_SECONDS)
+     *                                    (defaults to {@link DATE_COUNT_LEAP_SECONDS})
      *
      * @return   void
      * @access   public
@@ -479,7 +494,7 @@ class Date
      * Copy values from another Date object
      *
      * Makes this Date a copy of another Date object.  This is a
-     * PHP4-compatible implementation of '__clone()' in PHP5.
+     * PHP4-compatible implementation of {@link Date::__clone()} in PHP5.
      *
      * @param object $date Date object to copy
      *
@@ -545,28 +560,25 @@ class Date
      *
      * Format parameter should be one of the specified DATE_FORMAT_* constants:
      *
-     *  <code>DATE_FORMAT_ISO</code>
-     *                              - 'YYYY-MM-DD HH:MI:SS'
-     *  <code>DATE_FORMAT_ISO_BASIC</code>
-     *                              - 'YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?'
-     *  <code>DATE_FORMAT_ISO_EXTENDED</code>
-     *                              - 'YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?'
-     *  <code>DATE_FORMAT_ISO_EXTENDED_MICROTIME</code>
-     *                              - 'YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
-     *  <code>DATE_FORMAT_TIMESTAMP</code>
-     *                              - 'YYYYMMDDHHMMSS'
-     *  <code>DATE_FORMAT_UNIXTIME'</code>
-     *                              - long integer of the no of seconds since
-     *                                 the Unix Epoch
-     *                                 (1st January 1970 00.00.00 GMT)
+     *   - <b>{@link DATE_FORMAT_ISO}</b> - 'YYYY-MM-DD HH:MI:SS'
+     *   - <b>{@link DATE_FORMAT_ISO_BASIC}</b> - 'YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?'
+     *   - <b>{@link DATE_FORMAT_ISO_EXTENDED}</b> - 'YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?'
+     *   - <b>{@link DATE_FORMAT_ISO_EXTENDED_MICROTIME}</b> - 'YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
+     *   - <b>{@link DATE_FORMAT_TIMESTAMP}</b> - 'YYYYMMDDHHMMSS'
+     *   - <b>{@link DATE_FORMAT_UNIXTIME}</b> - long integer of the no of seconds since
+     *                              the Unix Epoch
+     *                              (1st January 1970 00.00.00 GMT)
      *
      * @param string $date                   input date
      * @param int    $format                 optional format constant
      *                                        (DATE_FORMAT_*) of the input date.
      *                                        This parameter is not needed,
      *                                        except to force the setting of the
-     *                                        date from a Unix time-stamp
-     *                                        (DATE_FORMAT_UNIXTIME).
+     *                                        date from a Unix time-stamp (for
+     *                                        which use
+     *                                        {@link DATE_FORMAT_UNIXTIME}).
+     *                                        (Defaults to
+     *                                        {@link DATE_FORMAT_ISO}.)
      * @param bool   $pb_repeatedhourdefault value to return if repeated
      *                                        hour is specified (defaults
      *                                        to false)
@@ -654,7 +666,7 @@ class Date
      *
      * @param bool $pb_setmicrotime whether to set micro-time (defaults to the
      *                               value of the constant
-     *                               DATE_CAPTURE_MICROTIME_BY_DEFAULT)
+     *                               {@link DATE_CAPTURE_MICROTIME_BY_DEFAULT})
      *
      * @return   void
      * @access   public
@@ -686,40 +698,37 @@ class Date
      *
      * The precision parameter must be one of the following constants:
      *
-     *  <code>DATE_PRECISION_YEAR</code>
-     *  <code>DATE_PRECISION_MONTH</code>
-     *  <code>DATE_PRECISION_DAY</code>
-     *  <code>DATE_PRECISION_HOUR</code>
-     *  <code>DATE_PRECISION_10MINUTES</code>
-     *  <code>DATE_PRECISION_MINUTE</code>
-     *  <code>DATE_PRECISION_10SECONDS</code>
-     *  <code>DATE_PRECISION_SECOND</code>
-     *
-     * N.B. the default is DATE_PRECISION_DAY
+     *   - <b>{@link DATE_PRECISION_YEAR}</b>
+     *   - <b>{@link DATE_PRECISION_MONTH}</b>
+     *   - <b>{@link DATE_PRECISION_DAY}</b> (default)
+     *   - <b>{@link DATE_PRECISION_HOUR}</b>
+     *   - <b>{@link DATE_PRECISION_10MINUTES}</b>
+     *   - <b>{@link DATE_PRECISION_MINUTE}</b>
+     *   - <b>{@link DATE_PRECISION_10SECONDS}</b>
+     *   - <b>{@link DATE_PRECISION_SECOND}</b>
      *
      * The precision can also be specified as an integral offset from
      * one of these constants, where the offset reflects a precision
      * of 10 to the power of the offset greater than the constant.
      * For example:
      *
-     *  <code>DATE_PRECISION_YEAR - 1</code> rounds the date to the nearest 10
-     *                                      years
-     *  <code>DATE_PRECISION_YEAR - 3</code> rounds the date to the nearest 1000
-     *                                      years
-     *  <code>DATE_PRECISION_SECOND + 1</code> rounds the date to 1 decimal
-     *                                        point of a second
-     *  <code>DATE_PRECISION_SECOND + 3</code> rounds the date to 3 decimal
-     *                                        points of a second
-     *  <code>DATE_PRECISION_SECOND - 1</code> rounds the date to the nearest 10
-     *                                        seconds (thus it is equivalent to
-     *                                        DATE_PRECISION_10SECONDS)
+     *   - <b>(DATE_PRECISION_YEAR - 1)</b> - rounds the date to the nearest 10 years
+     *   - <b>(DATE_PRECISION_YEAR - 3)</b> - rounds the date to the nearest 1000 years
+     *   - <b>(DATE_PRECISION_SECOND + 1)</b> - rounds the date to 1 decimal
+     *                                    point of a second
+     *   - <b>(DATE_PRECISION_SECOND + 3)</b> - rounds the date to 3 decimal
+     *                                    points of a second
+     *   - <b>(DATE_PRECISION_SECOND - 1)</b> - rounds the date to the nearest 10
+     *                                    seconds (thus it is equivalent to
+     *                                    <b>DATE_PRECISION_10SECONDS</b>)
      *
-     * @param int  $pn_precision          a 'DATE_PRECISION_*' constant
+     * @param int  $pn_precision          a 'DATE_PRECISION_*' constant (defaults to
+     *                                     {@link DATE_PRECISION_DAY})
      * @param bool $pb_correctinvalidtime whether to correct, by adding the
      *                                     local Summer time offset, the rounded
      *                                     time if it falls in the skipped hour
      *                                     (defaults to
-     *                                     DATE_CORRECTINVALIDTIME_DEFAULT)
+     *                                     {@link DATE_CORRECTINVALIDTIME_DEFAULT})
      *
      * @return   void
      * @access   public
@@ -859,14 +868,15 @@ class Date
      * Rounds seconds up or down to the nearest specified unit
      *
      * N.B. this function is equivalent to calling:
-     *  <code>'round(DATE_PRECISION_SECOND + $pn_precision)'</code>
+     *
+     * <code>$date_object->round(DATE_PRECISION_SECOND + $pn_precision);</code>
      *
      * @param int  $pn_precision          number of digits after the decimal point
      * @param bool $pb_correctinvalidtime whether to correct, by adding the
      *                                     local Summer time offset, the rounded
      *                                     time if it falls in the skipped hour
      *                                     (defaults to
-     *                                     DATE_CORRECTINVALIDTIME_DEFAULT)
+     *                                     {@link DATE_CORRECTINVALIDTIME_DEFAULT})
      *
      * @return   void
      * @access   public
@@ -889,44 +899,43 @@ class Date
      *
      * The precision parameter must be one of the following constants:
      *
-     *  <code>DATE_PRECISION_YEAR</code>
-     *  <code>DATE_PRECISION_MONTH</code>
-     *  <code>DATE_PRECISION_DAY</code>
-     *  <code>DATE_PRECISION_HOUR</code>
-     *  <code>DATE_PRECISION_10MINUTES</code>
-     *  <code>DATE_PRECISION_MINUTE</code>
-     *  <code>DATE_PRECISION_10SECONDS</code>
-     *  <code>DATE_PRECISION_SECOND</code>
-     *
-     * N.B. the default is DATE_PRECISION_DAY
+     *   - {@link DATE_PRECISION_YEAR}
+     *   - {@link DATE_PRECISION_MONTH}
+     *   - {@link DATE_PRECISION_DAY} (default)
+     *   - {@link DATE_PRECISION_HOUR}
+     *   - {@link DATE_PRECISION_10MINUTES}
+     *   - {@link DATE_PRECISION_MINUTE}
+     *   - {@link DATE_PRECISION_10SECONDS}
+     *   - {@link DATE_PRECISION_SECOND}
      *
      * The precision can also be specified as an integral offset from
      * one of these constants, where the offset reflects a precision
      * of 10 to the power of the offset greater than the constant.
      * For example:
      *
-     *  <code>DATE_PRECISION_YEAR</code> truncates the month, day and time
-     *                                  part of the year
-     *  <code>DATE_PRECISION_YEAR - 1</code> truncates the unit part of the
-     *                                      year, e.g. 1987 becomes 1980
-     *  <code>DATE_PRECISION_YEAR - 3</code> truncates the hundreds part of the
-     *                                      year, e.g. 1987 becomes 1000
-     *  <code>DATE_PRECISION_SECOND + 1</code> truncates the part of the second
-     *                                        less than 0.1 of a second, e.g.
-     *                                        3.26301 becomes 3.2 seconds
-     *  <code>DATE_PRECISION_SECOND + 3</code> truncates the part of the second
-     *                                        less than 0.001 of a second, e.g.
-     *                                        3.26301 becomes 3.263 seconds
-     *  <code>DATE_PRECISION_SECOND - 1</code> truncates the unit part of the
-     *                                        seconds (thus it is equivalent to
-     *                                        DATE_PRECISION_10SECONDS)
+     *   - <b>DATE_PRECISION_YEAR</b> - truncates the month, day and time
+     *                            part of the year
+     *   - <b>(DATE_PRECISION_YEAR - 1)</b> - truncates the unit part of the
+     *                                  year, e.g. 1987 becomes 1980
+     *   - <b>(DATE_PRECISION_YEAR - 3)</b> - truncates the hundreds part of the
+     *                                  year, e.g. 1987 becomes 1000
+     *   - <b>(DATE_PRECISION_SECOND + 1)</b> - truncates the part of the second
+     *                                    less than 0.1 of a second, e.g.
+     *                                    3.26301 becomes 3.2 seconds
+     *   - <b>(DATE_PRECISION_SECOND + 3)</b> - truncates the part of the second
+     *                                    less than 0.001 of a second, e.g.
+     *                                    3.26301 becomes 3.263 seconds
+     *   - <b>(DATE_PRECISION_SECOND - 1)</b> - truncates the unit part of the
+     *                                    seconds (thus it is equivalent to
+     *                                    <b>DATE_PRECISION_10SECONDS</b>)
      *
-     * @param int  $pn_precision          a 'DATE_PRECISION_*' constant
+     * @param int  $pn_precision          a 'DATE_PRECISION_*' constant (defaults
+     *                                     to {@link DATE_PRECISION_DAY})
      * @param bool $pb_correctinvalidtime whether to correct, by adding the
      *                                     local Summer time offset, the
      *                                     truncated time if it falls in the
      *                                     skipped hour (defaults to
-     *                                     DATE_CORRECTINVALIDTIME_DEFAULT)
+     *                                     {@link DATE_CORRECTINVALIDTIME_DEFAULT})
      *
      * @return   void
      * @access   public
@@ -1038,14 +1047,17 @@ class Date
      * Truncates seconds according to the specified precision
      *
      * N.B. this function is equivalent to calling:
-     *  <code>'Date::trunc(DATE_PRECISION_SECOND + $pn_precision)'</code>
+     *
+     * <code>
+     *   $date_object->trunc(DATE_PRECISION_SECOND + $pn_precision);
+     * </code>
      *
      * @param int  $pn_precision          number of digits after the decimal point
      * @param bool $pb_correctinvalidtime whether to correct, by adding the
      *                                     local Summer time offset, the
      *                                     truncated time if it falls in the
      *                                     skipped hour (defaults to
-     *                                     DATE_CORRECTINVALIDTIME_DEFAULT)
+     *                                     {@link DATE_CORRECTINVALIDTIME_DEFAULT})
      *
      * @return   void
      * @access   public
@@ -1065,62 +1077,63 @@ class Date
     /**
      * Gets a string (or other) representation of this date
      *
-     * Returns a date in the format specified by the DATE_FORMAT_* constants.
+     * Returns a date in the format specified by the DATE_FORMAT_* constants,
+     * which should be one of the following:
+     *
+     *   - {@link DATE_FORMAT_ISO} (default)
+     *   - {@link DATE_FORMAT_ISO_BASIC}
+     *   - {@link DATE_FORMAT_ISO_EXTENDED}
+     *   - {@link DATE_FORMAT_ISO_EXTENDED_MICROTIME}
+     *   - {@link DATE_FORMAT_TIMESTAMP}
+     *   - {@link DATE_FORMAT_UNIXTIME}
      *
      * @param int $format format constant (DATE_FORMAT_*) of the output date
      *
-     * @return   string     the date in the requested format
+     * @return   string     the date in the requested format (defaults to
+     *                       {@link DATE_FORMAT_ISO})
      * @access   public
      */
     function getDate($format = DATE_FORMAT_ISO)
     {
+        $ret;
         switch ($format) {
         case DATE_FORMAT_ISO:
-            return $this->format("%Y-%m-%d %T");
+            $ret = $this->formatLikeStrftime("%Y-%m-%d %T");
             break;
         case DATE_FORMAT_ISO_BASIC:
             $format = "%Y%m%dT%H%M%S";
             if ($this->getTZID() == 'UTC') {
                 $format .= "Z";
             }
-            return $this->format($format);
+            $ret = $this->formatLikeStrftime($format);
             break;
         case DATE_FORMAT_ISO_EXTENDED:
             $format = "%Y-%m-%dT%H:%M:%S";
             if ($this->getTZID() == 'UTC') {
                 $format .= "Z";
             }
-            return $this->format($format);
+            $ret = $this->formatLikeStrftime($format);
             break;
         case DATE_FORMAT_ISO_EXTENDED_MICROTIME:
             $format = "%Y-%m-%dT%H:%M:%s";
             if ($this->getTZID() == 'UTC') {
                 $format .= "Z";
             }
-            return $this->format($format);
+            $ret = $this->formatLikeStrftime($format);
             break;
         case DATE_FORMAT_TIMESTAMP:
-            return $this->format("%Y%m%d%H%M%S");
+            $ret = $this->formatLikeStrftime("%Y%m%d%H%M%S");
             break;
         case DATE_FORMAT_UNIXTIME:
-            // Enter a time in UTC, so use 'gmmktime()' (the alternative
-            // is to offset additionally by the local time, but the object
-            // is not necessarily using local time):
-            //
-            if ($this->ob_invalidtime)
-                return $this->_getErrorInvalidTime();
-
-            return gmmktime($this->on_standardhour,
-                            $this->on_standardminute,
-                            $this->on_standardsecond,
-                            $this->on_standardmonth,
-                            $this->on_standardday,
-                            $this->on_standardyear) -
-                   $this->tz->getRawOffset() / 1000; // N.B. Unix-time excludes
-                                                     // leap seconds by
-                                                     // definition
+            if ($this->ob_invalidtime) {
+                $ret = $this->_getErrorInvalidTime();
+            } else {
+                $ret = (string) $this->getTime();
+            }
             break;
         }
+
+        return $ret;
     }
 
 
@@ -1128,96 +1141,128 @@ class Date
     // {{{ format()
 
     /**
-     *  Date pretty printing, similar to strftime()
+     * Formats the date according to the specified formatting code string
      *
-     *  Formats the date in the given format, much like
-     *  strftime().  Most strftime() options are supported.<br><br>
+     * This function is an alias for the method specified by the constant
+     * {@link DATE_FORMAT_METHOD} (which defaults to 'formatLikeStrftime'
+     * for backwards-compatibility).
      *
-     *  Formatting options:<br><br>
+     * @return   string     date/time in given format
+     * @access   public
+     * @see      Date::formatLikeStrftime(), Date::formatLikeDate(),
+     *            Date::formatLikeSQL()
+     */
+    function format()
+    {
+        return call_user_func_array(array(&$this, DATE_FORMAT_METHOD),
+                                    func_get_args());
+    }
+
+
+    // }}}
+    // {{{ formatLikeStrftime()
+
+    /**
+     * Formats the date according to the specified formatting code string,
+     * based on {@link http://www.php.net/strftime strftime()}
      *
-     *  <code>%a  </code>  abbreviated weekday name (Sun, Mon, Tue) <br>
-     *  <code>%A  </code>  full weekday name (Sunday, Monday, Tuesday) <br>
-     *  <code>%b  </code>  abbreviated month name (Jan, Feb, Mar) <br>
-     *  <code>%B  </code>  full month name (January, February, March) <br>
-     *  <code>%C  </code>  century number (the year divided by 100 and truncated
-     *                     to an integer, range 00 to 99) <br>
-     *  <code>%d  </code>  day of month (range 00 to 31) <br>
-     *  <code>%D  </code>  equivalent to "%m/%d/%y" <br>
-     *  <code>%e  </code>  day of month without leading noughts (range 0 to 31) <br>
-     *  <code>%E  </code>  Julian day - no of days since Monday, 24th November,
-     *                     4714 B.C. (in the proleptic Gregorian calendar) <br>
-     *  <code>%g  </code>  like %G, but without the century <br>
-     *  <code>%G  </code>  the 4-digit year corresponding to the ISO week
-     *                     number (see %V). This has the same format and value
-     *                     as %Y, except that if the ISO week number belongs
-     *                     to the previous or next year, that year is used
-     *                     instead. <br>
-     *  <code>%h  </code>  hour as decimal number without leading noughts (0
-     *                     to 23) <br>
-     *  <code>%H  </code>  hour as decimal number (00 to 23) <br>
-     *  <code>%i  </code>  hour as decimal number on 12-hour clock without
-     *                     leading noughts (1 to 12) <br>
-     *  <code>%I  </code>  hour as decimal number on 12-hour clock (01 to 12) <br>
-     *  <code>%j  </code>  day of year (range 001 to 366) <br>
-     *  <code>%m  </code>  month as decimal number (range 01 to 12) <br>
-     *  <code>%M  </code>  minute as a decimal number (00 to 59) <br>
-     *  <code>%n  </code>  newline character ("\n") <br>
-     *  <code>%o  </code>  raw timezone offset expressed as '+/-HH:MM' <br>
-     *  <code>%O  </code>  dst-corrected timezone offset expressed as '+/-HH:MM' <br>
-     *  <code>%p  </code>  either 'am' or 'pm' depending on the time <br>
-     *  <code>%P  </code>  either 'AM' or 'PM' depending on the time <br>
-     *  <code>%r  </code>  time in am/pm notation; equivalent to "%I:%M:%S %p" <br>
-     *  <code>%R  </code>  time in 24-hour notation; equivalent to "%H:%M" <br>
-     *  <code>%s  </code>  seconds including the micro-time (the decimal
-     *                     representation less than one second to six decimal
-     *                     places<br>
-     *  <code>%S  </code>  seconds as a decimal number (00 to 59) <br>
-     *  <code>%t  </code>  tab character ("\t") <br>
-     *  <code>%T  </code>  current time; equivalent to "%H:%M:%S" <br>
-     *  <code>%u  </code>  day of week as decimal (1 to 7; where 1 = Monday) <br>
-     *  <code>%U  </code>  week number of the current year as a decimal
+     * Formats the date in the given format, much like
+     * strftime().  Most strftime() options are supported.
+     *
+     *
+     * Formatting options:
+     *
+     *   - <b>%a</b> - abbreviated weekday name (Sun, Mon, Tue)
+     *   - <b>%A</b> - full weekday name (Sunday, Monday, Tuesday)
+     *   - <b>%b</b> - abbreviated month name (Jan, Feb, Mar)
+     *   - <b>%B</b> - full month name (January, February, March)
+     *   - <b>%C</b> - century number (the year divided by 100 and truncated
+     *                     to an integer, range 00 to 99)
+     *   - <b>%d</b> - day of month (range 00 to 31)
+     *   - <b>%D</b> - equivalent to '<b>%m/%d/%y</b>'
+     *   - <b>%e</b> - day of month without leading noughts (range 0 to 31)
+     *   - <b>%E</b> - {@link http://en.wikipedia.org/wiki/Julian_day Julian day} -
+     *                 no of days since Monday, 24th November, 4714 B.C. (in
+     *                 the proleptic Gregorian calendar)
+     *   - <b>%g</b> - like '<b>%G</b>', but without the century
+     *   - <b>%G</b> - the 4-digit year corresponding to the ISO week
+     *                     number (see '<b>%V</b>'). This has the same
+     *                     format and value as '<b>%Y</b>', except that if
+     *                     the ISO week number belongs to the previous or
+     *                     next year, that year is used instead.
+     *   - <b>%h</b> - hour as decimal number without leading noughts (0
+     *                     to 23)
+     *   - <b>%H</b> - hour as decimal number (00 to 23)
+     *   - <b>%i</b> - hour as decimal number on 12-hour clock without
+     *                     leading noughts (1 to 12)
+     *   - <b>%I</b> - hour as decimal number on 12-hour clock (01 to 12)
+     *   - <b>%j</b> - day of year (range 001 to 366)
+     *   - <b>%m</b> - month as decimal number (range 01 to 12)
+     *   - <b>%M</b> - minute as a decimal number (00 to 59)
+     *   - <b>%n</b> - newline character ("\n")
+     *   - <b>%o</b> - raw timezone offset expressed as '+/-HH:MM'
+     *   - <b>%O</b> - dst-corrected timezone offset expressed as '+/-HH:MM'
+     *   - <b>%p</b> - either 'am' or 'pm' depending on the time
+     *   - <b>%P</b> - either 'AM' or 'PM' depending on the time
+     *   - <b>%r</b> - time in am/pm notation; equivalent to
+     *                  '<b>%I:%M:%S %p</b>'
+     *   - <b>%R</b> - time in 24-hour notation; equivalent to
+     *                  '<b>%H:%M</b>'
+     *   - <b>%s</b> - seconds including the micro-time (the decimal
+     *                     representation less than one second to six
+     *                     decimal places
+     *   - <b>%S</b> - seconds as a decimal number (00 to 59)
+     *   - <b>%t</b> - tab character ("\t")
+     *   - <b>%T</b> - current time; equivalent to '<b>%H:%M:%S</b>'
+     *   - <b>%u</b> - day of week as decimal (1 to 7; where 1 = Monday)
+     *   - <b>%U</b> - week number of the current year as a decimal
      *                     number, starting with the first Sunday as the first
      *                     day of the first week (i.e. the first full week of
      *                     the year, and the week that contains 7th January)
-     *                     (00 to 53) <br>
-     *  <code>%V  </code>  the ISO 8601:1988 week number of the current year
-     *                     as a decimal number, range 01 to 53, where week 1
-     *                     is the first week that has at least 4 days in the
-     *                     current year, and with Monday as the first day of
-     *                     the week.  (Use %G or %g for the year component
-     *                     that corresponds to the week number for the
-     *                     specified timestamp.)
-     *  <code>%w  </code>  day of week as decimal (0 to 6; where 0 = Sunday) <br>
-     *  <code>%W  </code>  week number of the current year as a decimal
+     *                     (00 to 53)
+     *   - <b>%V</b> - the {@link http://en.wikipedia.org/wiki/ISO_week_date ISO 8601:1988}
+     *                 week number of the current year
+     *                 as a decimal number, range 01 to 53, where week 1
+     *                 is the first week that has at least 4 days in the
+     *                 current year, and with Monday as the first day of
+     *                 the week.  (Use '<b>%G</b>' or '<b>%g</b>' for the
+     *                 year component that corresponds to the week number
+     *                 for the specified timestamp.)
+     *   - <b>%w</b> - day of week as decimal (0 to 6; where 0 = Sunday)
+     *   - <b>%W</b> - week number of the current year as a decimal
      *                     number, starting with the first Monday as the first
      *                     day of the first week (i.e. the first full week of
      *                     the year, and the week that contains 7th January)
-     *                     (00 to 53) <br>
-     *  <code>%y  </code>  year as decimal (range 00 to 99) <br>
-     *  <code>%Y  </code>  year as decimal including century (range 0000 to
-     *                     9999) <br>
-     *  <code>%Z  </code>  Abbreviated form of time zone name, e.g. 'GMT', or
+     *                     (00 to 53)
+     *   - <b>%y</b> - year as decimal (range 00 to 99)
+     *   - <b>%Y</b> - year as decimal including century (range 0000 to
+     *                     9999)
+     *   - <b>%Z</b> - Abbreviated form of time zone name, e.g. 'GMT', or
      *                     the abbreviation for Summer time if the date falls
-     *                     in Summer time, e.g. 'BST'. <br>
-     *  <code>%%  </code>  literal '%' <br>
-     * <br>
+     *                     in Summer time, e.g. 'BST'.
+     *   - <b>%%</b> - literal '%'
      *
-     * The following codes render a different output to that of 'strftime()':
      *
-     *  <code>%e</code> in 'strftime()' a single digit is preceded by a space
-     *  <code>%h</code> in 'strftime()' is equivalent to '%b'
-     *  <code>%U</code> '%U' and '%W' are different in 'strftime()' in that
-     *                  if week 1 does not start on 1st January, '00' is
-     *                  returned, whereas this function returns '53', that is,
-     *                  the week is counted as the last of the previous year.
-     *  <code>%W</code>
+     * The following codes render a different output to that of
+     *  {@link http://www.php.net/strftime strftime()}:
+     *
+     *   - <b>%e</b> - in 'strftime()' a single digit is preceded by a space
+     *   - <b>%h</b> - in 'strftime()' is equivalent to '<b>%b</b>'
+     *   - <b>%U</b> - '<b>%U</b>' and '<b>%W</b>' are different in
+     *                  'strftime()' in that if week 1 does not start on 1st
+     *                  January, '00' is returned, whereas this function
+     *                  returns '53', that is, the week is counted as the
+     *                  last of the previous year.
+     *   - <b>%W</b>
      *
      * @param string $format the format string for returned date/time
      *
      * @return   string     date/time in given format
      * @access   public
+     * @see      Date::format(), Date::formatLikeDate(), Date::formatLikeSQL()
+     * @since    Method available since Release 1.5.1
      */
-    function format($format)
+    function formatLikeStrftime($format)
     {
         $output = "";
 
@@ -1497,13 +1542,14 @@ class Date
     /**
      * Converts a number to its word representation
      *
-     * Private helper function, particularly for 'format2()'.  N.B. The
-     * second argument is the 'SP' code which can be specified in the
-     * format string for 'format2()' and is interpreted as follows:
-     *  'SP' - returns upper-case spelling, e.g. 'FOUR HUNDRED'
-     *  'Sp' - returns spelling with first character of each word
+     * Private helper function, particularly for {@link Date::formatLikeSQL()}.
+     * N.B. The second argument is the 'SP' code which can be specified in the
+     * format string for 'formatLikeSQL()' and is interpreted as follows:
+     *
+     *  - <b>SP</b> - returns upper-case spelling, e.g. 'FOUR HUNDRED'
+     *  - <b>Sp</b> - returns spelling with first character of each word
      *         capitalized, e.g. 'Four Hundred'
-     *  'sp' - returns lower-case spelling, e.g. 'four hundred'
+     *  - <b>sp</b> - returns lower-case spelling, e.g. 'four hundred'
      *
      * @param int    $pn_num            number to be converted to words
      * @param bool   $pb_ordinal        boolean specifying if the number should
@@ -1588,34 +1634,37 @@ class Date
     /**
      * Formats a number according to the specified format string
      *
-     * Private helper function, for 'format2()', which interprets the
-     * codes 'SP' and 'TH' and the combination of the two as follows:
+     * Private helper function, for {@link Date::formatLikeSQL()}, which
+     * interprets the codes '<b>SP</b>' and '<b>TH</b>' and the combination
+     * of the two as follows:
      *
-     *  <code>TH</code> Ordinal number
-     *  <code>SP</code> Spelled cardinal number
-     *  <code>SPTH</code> Spelled ordinal number (combination of 'SP' and 'TH'
-     *                   in any order)
-     *  <code>THSP</code> 
+     *   - <b>TH</b> - Ordinal number
+     *   - <b>SP</b> - Spelled cardinal number
+     *   - <b>SPTH</b> - Spelled ordinal number (combination of '<b>SP</b>'
+     *                   and '<b>TH</b>' in any order)
+     *   - <b>THSP</b>
      *
-     * Code 'SP' can have the following three variations (which can also be used
-     * in combination with 'TH'):
+     * Code '<b>SP</b>' can have the following three variations (which
+     * can also be used in combination with '<b>TH</b>'):
      *
-     *  <code>SP</code> returns upper-case spelling, e.g. 'FOUR HUNDRED'
-     *  <code>Sp</code> returns spelling with first character of each word
+     *   - <b>SP</b> - returns upper-case spelling, e.g. 'FOUR HUNDRED'
+     *   - <b>Sp</b> - returns spelling with first character of each word
      *                 capitalized, e.g. 'Four Hundred'
-     *  <code>sp</code> returns lower-case spelling, e.g. 'four hundred'
+     *   - <b>sp</b> - returns lower-case spelling, e.g. 'four hundred'
      *
-     * Code 'TH' can have the following two variations (although in combination
-     * with code 'SP', the case specification of 'SP' takes precedence):
+     * Code '<b>TH</b>' can have the following two variations (although in
+     * combination with code '<b>SP</b>', the case specification of
+     * '<b>SP</b>' takes precedence):
      *
-     *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH
-     *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th
+     *   - <b>TH</b> - returns upper-case ordinal suffix, e.g. 400TH
+     *   - <b>th</b> - returns lower-case ordinal suffix, e.g. 400th
      *
      * N.B. The format string is passed by reference, in order to pass back
-     * the part of the format string that matches the valid codes 'SP' and
-     * 'TH'.  If none of these are found, then it is set to an empty string;
-     * If both codes are found then a string is returned with code 'SP'
-     * preceding code 'TH' (i.e. 'SPTH', 'Spth' or 'spth').
+     * the part of the format string that matches the valid codes '<b>SP</b>'
+     * and '<b>TH</b>'.  If none of these are found, then it is set to an
+     * empty string;  If both codes are found then a string is returned with
+     * code '<b>SP</b>' preceding code '<b>TH</b>' (i.e. '<b>SPTH</b>',
+     * '<b>Spth</b>' or '<b>spth</b>').
      *
      * @param int    $pn_num         integer to be converted to words
      * @param string &$ps_format     string of formatting codes (max. length 4)
@@ -1719,228 +1768,235 @@ class Date
 
 
     // }}}
-    // {{{ format2()
+    // {{{ formatLikeSQL()
 
     /**
-     * Extended version of 'format()' with variable-length formatting codes
+     * Formats the date according to the specified formatting code string,
+     * based on SQL date-formatting codes
      *
-     * Most codes reproduce the no of digits equal to the length of the code,
-     * for example, 'YYY' will return the last 3 digits of the year, and so
-     * the year 2007 will produce '007', and the year 89 will produce '089',
-     * unless the no-padding code is used as in 'NPYYY', which will return
-     * '89'.
+     * Most codes reproduce the no of digits equal to the length of the
+     * code, for example, '<b>YYY</b>' will return the last 3 digits of
+     * the year, and so the year 2007 will produce '007', and the year 89
+     * will produce '089', unless the no-padding code is used as in
+     * '<b>NPYYY</b>', which will return '89'.
      *
-     * For negative values, the sign will be discarded, unless the 'S' code
-     * is used in combination, but note that for positive values the value
-     * will be padded with a leading space unless it is suppressed with
-     * the no-padding modifier, for example for 2007:
+     * For negative values, the sign will be discarded, unless the
+     * '<b>S</b>' code is used in combination, but note that for positive
+     * values the value will be padded with a leading space unless it
+     * is suppressed with the no-padding modifier, for example for 2007:
      *
-     *  <code>YYYY</code> returns '2007'
-     *  <code>SYYYY</code> returns ' 2007'
-     *  <code>NPSYYYY</code> returns '2007'
+     *   - <b>YYYY</b> - returns '2007'
+     *   - <b>SYYYY</b> - returns ' 2007'
+     *   - <b>NPSYYYY</b> - returns '2007'
      *
-     * The no-padding modifier 'NP' can be used with numeric codes to
-     * suppress leading (or trailing in the case of code 'F') noughts, and
-     * with character-returning codes such as 'DAY' to suppress trailing
-     * spaces, which will otherwise be padded to the maximum possible length
-     * of the return-value of the code; for example, for Monday:
+     * The no-padding modifier '<b>NP</b>' can be used with numeric codes
+     * to suppress leading (or trailing in the case of code '<b>F</b>')
+     * noughts, and with character-returning codes such as '<b>DAY</b>'
+     * to suppress trailing spaces, which will otherwise be padded to the
+     * maximum possible length of the return-value of the code; for
+     * example, for Monday:
      *
-     *  <code>Day</code> returns 'Monday   ' because the maximum length of
+     *   - <b>Day</b> - returns 'Monday   ' because the maximum length of
      *                  this code is 'Wednesday';
-     *  <code>NPDay</code> returns 'Monday'
+     *   - <b>NPDay</b> - returns 'Monday'
      *
      * N.B. this code affects the code immediately following only, and
      * without this code the default is always to apply padding.
      *
-     * Most character-returning codes, such as 'MONTH', will
+     * Most character-returning codes, such as '<b>MONTH</b>', will
      * set the capitalization according to the code, so for example:
      *
-     *  <code>MONTH</code> returns upper-case spelling, e.g. 'JANUARY'
-     *  <code>Month</code> returns spelling with first character of each word
+     *   - <b>MONTH</b> - returns upper-case spelling, e.g. 'JANUARY'
+     *   - <b>Month</b> - returns spelling with first character of each word
      *                    capitalized, e.g. 'January'
-     *  <code>month</code> returns lower-case spelling, e.g. 'january'
+     *   - <b>month</b> - returns lower-case spelling, e.g. 'january'
      *
      * Where it makes sense, numeric codes can be combined with a following
-     * 'SP' code which spells out the number, or with a 'TH' code, which
-     * renders the code as an ordinal ('TH' only works in English), for
-     * example, for 31st December:
+     * '<b>SP</b>' code which spells out the number, or with a '<b>TH</b>'
+     * code, which renders the code as an ordinal ('<b>TH</b>' only works
+     * in English), for example, for 31st December:
      *
-     *  <code>DD</code> returns '31'
-     *  <code>DDTH</code> returns '31ST'
-     *  <code>DDth</code> returns '31st'
-     *  <code>DDSP</code> returns 'THIRTY-ONE'
-     *  <code>DDSp</code> returns 'Thirty-one'
-     *  <code>DDsp</code> returns 'thirty-one'
-     *  <code>DDSPTH</code> returns 'THIRTY-FIRST'
-     *  <code>DDSpth</code> returns 'Thirty-first'
-     *  <code>DDspth</code> returns 'thirty-first'
+     *   - <b>DD</b> - returns '31'
+     *   - <b>DDTH</b> - returns '31ST'
+     *   - <b>DDth</b> - returns '31st'
+     *   - <b>DDSP</b> - returns 'THIRTY-ONE'
+     *   - <b>DDSp</b> - returns 'Thirty-one'
+     *   - <b>DDsp</b> - returns 'thirty-one'
+     *   - <b>DDSPTH</b> - returns 'THIRTY-FIRST'
+     *   - <b>DDSpth</b> - returns 'Thirty-first'
+     *   - <b>DDspth</b> - returns 'thirty-first'
      *
      *
      * All formatting options:
      *
-     *  <code>-</code> All punctuation and white-space is reproduced unchanged
-     *  <code>/</code>
-     *  <code>,</code>
-     *  <code>.</code>
-     *  <code>;</code>
-     *  <code>:</code>
-     *  <code> </code>
-     *  <code>"text"</code> Quoted text is reproduced unchanged (escape using
+     *   - <b>-</b> (All punctuation and white-space is reproduced unchanged)
+     *   - <b>/</b>
+     *   - <b>,</b>
+     *   - <b>.</b>
+     *   - <b>;</b>
+     *   - <b>:</b>
+     *   - <b>"text"</b> - Quoted text is reproduced unchanged (escape using
      *                     '\')
-     *  <code>AD</code> AD indicator with or without full stops; N.B. if you
-     *                 are using 'Astronomical' year numbering then 'A.D./B.C.'
-     *                 indicators will be out for negative years
-     *  <code>A.D.</code> 
-     *  <code>AM</code> Meridian indicator with or without full stops
-     *  <code>A.M.</code> 
-     *  <code>BC</code> BC indicator with or without full stops
-     *  <code>B.C.</code> 
-     *  <code>BCE</code> BCE indicator with or without full stops
-     *  <code>B.C.E.</code> 
-     *  <code>CC</code> Century, i.e. the year divided by 100, discarding the
-     *                 remainder; 'S' prefixes negative years with a minus sign
-     *  <code>SCC</code> 
-     *  <code>CE</code> CE indicator with or without full stops
-     *  <code>C.E.</code> 
-     *  <code>D</code> Day of week (0-6), where 0 represents Sunday
-     *  <code>DAY</code> Name of day, padded with blanks to display width of the
+     *   - <b>AD</b> - AD indicator with or without full stops
+     *   - <b>A.D.</b>
+     *   - <b>AM</b> - Meridian indicator with or without full stops
+     *   - <b>A.M.</b>
+     *   - <b>BC</b> - BC indicator with or without full stops
+     *   - <b>B.C.</b>
+     *   - <b>BCE</b> - BCE indicator with or without full stops
+     *   - <b>B.C.E.</b>
+     *   - <b>CC</b> - Century, i.e. the year divided by 100, discarding the
+     *                 remainder; '<b>S</b>' prefixes negative years with a
+     *                 minus sign
+     *   - <b>SCC</b>
+     *   - <b>CE</b> - CE indicator with or without full stops
+     *   - <b>C.E.</b>
+     *   - <b>D</b> - Day of week (0-6), where 0 represents Sunday
+     *   - <b>DAY</b> - Name of day, padded with blanks to display width of the
      *                  widest name of day in the locale of the machine
-     *  <code>DD</code> Day of month (1-31)
-     *  <code>DDD</code> Day of year (1-366)
-     *  <code>DY</code> Abbreviated name of day
-     *  <code>FFF</code> Fractional seconds; no radix character is printed.  The
-     *                  no of 'F's determines the no of digits of the
+     *   - <b>DD</b> - Day of month (1-31)
+     *   - <b>DDD</b> - Day of year (1-366)
+     *   - <b>DY</b> - Abbreviated name of day
+     *   - <b>FFF</b> - Fractional seconds; no radix character is printed.  The
+     *                  no of '<b>F</b>'s determines the no of digits of the
      *                  part-second to return; e.g. 'HH:MI:SS.FF'
-     *  <code>F[integer]</code> The integer after 'F' specifies the number of
-     *                         digits of the part-second to return.  This is an
-     *                         alternative to using F[integer], and 'F3' is thus
-     *                         equivalent to using 'FFF'.
-     *  <code>HH</code> Hour of day (0-23)
-     *  <code>HH12</code> Hour of day (1-12)
-     *  <code>HH24</code> Hour of day (0-23)
-     *  <code>ID</code> Day of week (1-7) based on the ISO standard
-     *  <code>IW</code> Week of year (1-52 or 1-53) based on the ISO standard
-     *  <code>IYYY</code> 4-digit year based on the ISO 8601 standard; 'S'
-     *                   prefixes negative years with a minus sign
-     *  <code>SIYYY</code> 
-     *  <code>IYY</code> Last 3, 2, or 1 digit(s) of ISO year
-     *  <code>IY</code> 
-     *  <code>I</code> 
-     *  <code>J</code> Julian day - the number of days since Monday, 24th
-     *                November, 4714 B.C. (proleptic Gregorian calendar)
-     *  <code>MI</code> Minute (0-59)
-     *  <code>MM</code> Month (01-12; January = 01)
-     *  <code>MON</code> Abbreviated name of month
-     *  <code>MONTH</code> Name of month, padded with blanks to display width of
+     *   - <b>F[integer]</b> - The integer after '<b>F</b>' specifies the
+     *                         number of digits of the part-second to return.
+     *                         This is an alternative to using several
+     *                         '<b>F</b>'s in sequence, and '<b>F3</b>' is thus
+     *                         equivalent to using '<b>FFF</b>'.
+     *   - <b>HH</b> - Hour of day (0-23)
+     *   - <b>HH12</b> - Hour of day (1-12)
+     *   - <b>HH24</b> - Hour of day (0-23)
+     *   - <b>ID</b> - Day of week (1-7) based on the ISO 8601 standard (see
+     *                 '<b>IW</b>')
+     *   - <b>IW</b> - Week of year (1-52 or 1-53) based on the
+     *                 {@link http://en.wikipedia.org/wiki/ISO_week_date ISO 8601 standard}
+     *   - <b>IYYY</b> - 4-digit year based on the ISO 8601 standard (see
+     *                 '<b>IW</b>'); '<b>S</b>' prefixes negative years with a
+     *                 minus sign
+     *   - <b>SIYYY</b>
+     *   - <b>IYY</b> - Last 3, 2, or 1 digit(s) of ISO year
+     *   - <b>IY</b>
+     *   - <b>I</b>
+     *   - <b>J</b> - {@link http://en.wikipedia.org/wiki/Julian_day Julian day} -
+     *                the number of days since Monday, 24th November, 4714 B.C.
+     *                (proleptic Gregorian calendar)
+     *   - <b>MI</b> - Minute (0-59)
+     *   - <b>MM</b> - Month (01-12; January = 01)
+     *   - <b>MON</b> - Abbreviated name of month
+     *   - <b>MONTH</b> - Name of month, padded with blanks to display width of
      *                    the widest name of month in the date language used for
-     *  <code>PM</code> Meridian indicator with or without full stops
-     *  <code>P.M.</code> 
-     *  <code>Q</code> Quarter of year (1, 2, 3, 4; January - March = 1)
-     *  <code>RM</code> Roman numeral month (I-XII; January = I); N.B. padded
+     *   - <b>PM</b> - Meridian indicator with or without full stops
+     *   - <b>P.M.</b>
+     *   - <b>Q</b> - Quarter of year (1, 2, 3, 4; January - March = 1)
+     *   - <b>RM</b> - Roman numeral month (I-XII; January = I); N.B. padded
      *                 with leading spaces.
-     *  <code>SS</code> Second (0-59)
-     *  <code>SSSSS</code> Seconds past midnight (0-86399)
-     *  <code>TZC</code> Abbreviated form of time zone name, e.g. 'GMT', or the
+     *   - <b>SS</b> - Second (0-59)
+     *   - <b>SSSSS</b> - Seconds past midnight (0-86399)
+     *   - <b>TZC</b> - Abbreviated form of time zone name, e.g. 'GMT', or the
      *                  abbreviation for Summer time if the date falls in Summer
      *                  time, e.g. 'BST'.
      *                  N.B. this is not a unique identifier - for this purpose
-     *                  use the time zone region (code 'TZR').
-     *  <code>TZH</code> Time zone hour; 'S' prefixes the hour with the correct
-     *                  sign, (+/-), which otherwise is not displayed.  Note
-     *                  that the leading nought can be suppressed with the
-     *                  no-padding code 'NP').  Also note that if you combine
-     *                  with the 'SP' code, the sign will not be spelled out.
-     *                  (I.e. 'STZHSp' will produce '+One', for example, and
-     *                  not 'Plus One'.
-     *                  'TZH:TZM' will produce, for example, '+05:30'.  (Also
-     *                  see 'TZM' format code)
-     *  <code>STZH</code> 
-     *  <code>TZI</code> Whether or not the date is in Summer time (daylight
+     *                  use the time zone region (code '<b>TZR</b>').
+     *   - <b>TZH</b> - Time zone hour; '<b>S</b>' prefixes the hour with the
+     *                  correct sign, (+/-), which otherwise is not displayed.
+     *                  Note that the leading nought can be suppressed with the
+     *                  no-padding code '<b>NP</b>').  Also note that if you
+     *                  combine with the '<b>SP</b>' code, the sign will not be
+     *                  spelled out. (I.e. '<b>STZHSp</b>' will produce '+One',
+     *                  for example, and not 'Plus One'.
+     *                  '<b>TZH:TZM</b>' will produce, for example, '+05:30'.
+     *                  (Also see '<b>TZM</b>' format code)
+     *   - <b>STZH</b>
+     *   - <b>TZI</b> - Whether or not the date is in Summer time (daylight
      *                  saving time).  Returns '1' if Summer time, else '0'.
-     *  <code>TZM</code> Time zone minute, without any +/- sign.  (Also see
-     *                  'TZH' format element)
-     *  <code>TZN</code> Long form of time zone name, e.g.
+     *   - <b>TZM</b> - Time zone minute, without any +/- sign.  (Also see
+     *                  '<b>TZH</b>' format element)
+     *   - <b>TZN</b> - Long form of time zone name, e.g.
      *                  'Greenwich Mean Time', or the name of the Summer time if
      *                  the date falls in Summer time, e.g.
      *                  'British Summer Time'.  N.B. this is not a unique
      *                  identifier - for this purpose use the time zone region
-     *                  (code 'TZR').
-     *  <code>TZO</code> Time zone offset in ISO 8601 form - that is, 'Z' if
+     *                  (code '<b>TZR</b>').
+     *   - <b>TZO</b> - Time zone offset in ISO 8601 form - that is, 'Z' if
      *                  UTC, else [+/-][hh]:[mm] (which would be equivalent
-     *                  to 'STZH:TZM').  Note that this result is right padded
+     *                  to '<b>STZH:TZM</b>').  Note that this result is right
+     *                  padded.
      *                  with spaces by default, (i.e. if 'Z').
-     *  <code>TZS</code> Time zone offset in seconds; 'S' prefixes negative
-     *                  sign with minus sign '-' if negative, and no sign if
-     *                  positive (i.e. -43200 to 50400).
-     *  <code>STZS</code>
-     *  <code>TZR</code> Time zone region, that is, the name or ID of the time
+     *   - <b>TZS</b> - Time zone offset in seconds; '<b>S</b>' prefixes
+     *                  negative sign with minus sign '-' if negative, and no
+     *                  sign if positive (i.e. -43200 to 50400).
+     *   - <b>STZS</b>
+     *   - <b>TZR</b> - Time zone region, that is, the name or ID of the time
      *                  zone e.g. 'Europe/London'.  This value is unique for
      *                  each time zone.
-     *  <code>U</code> Seconds since the Unix Epoch -
+     *   - <b>U</b> - Seconds since the Unix Epoch -
      *                January 1 1970 00:00:00 GMT
-     *  <code>W</code> 'Absolute' week of month (1-5), counting week 1 as
+     *   - <b>W</b> - 'Absolute' week of month (1-5), counting week 1 as
      *                1st-7th of the year, regardless of the day
-     *  <code>W1</code> Week of year (1-54), counting week 1 as the week that
+     *   - <b>W1</b> - Week of year (1-54), counting week 1 as the week that
      *                 contains 1st January
-     *  <code>W4</code> Week of year (1-53), counting week 1 as the week that
+     *   - <b>W4</b> - Week of year (1-53), counting week 1 as the week that
      *                 contains 4th January (i.e. first week with at least 4
      *                 days)
-     *  <code>W7</code> Week of year (1-53), counting week 1 as the week that
+     *   - <b>W7</b> - Week of year (1-53), counting week 1 as the week that
      *                 contains 7th January (i.e. first full week)
-     *  <code>WW</code> 'Absolute' week of year (1-53), counting week 1 as
+     *   - <b>WW</b> - 'Absolute' week of year (1-53), counting week 1 as
      *                 1st-7th of the year, regardless of the day
-     *  <code>YEAR</code> Year, spelled out; 'S' prefixes negative years with
-     *                  'MINUS'; N.B. 'YEAR' differs from 'YYYYSP' in that the
-     *                   first will render 1923, for example, as 'NINETEEN
-     *                   TWENTY-THREE, and the second as 'ONE THOUSAND NINE
-     *                   HUNDRED TWENTY-THREE'
-     *  <code>SYEAR</code> 
-     *  <code>YYYY</code> 4-digit year; 'S' prefixes negative years with a minus
-     *                   sign
-     *  <code>SYYYY</code> 
-     *  <code>YYY</code> Last 3, 2, or 1 digit(s) of year
-     *  <code>YY</code> 
-     *  <code>Y</code> 
-     *  <code>Y,YYY</code> Year with thousands-separator in this position; five
+     *   - <b>YEAR</b> - Year, spelled out; '<b>S</b>' prefixes negative
+     *                   years with 'MINUS'; N.B. '<b>YEAR</b>' differs from
+     *                   '<b>YYYYSP</b>' in that the first will render 1923,
+     *                   for example, as 'NINETEEN TWENTY-THREE, and the
+     *                   second as 'ONE THOUSAND NINE HUNDRED TWENTY-THREE'
+     *   - <b>SYEAR</b>
+     *   - <b>YYYY</b> - 4-digit year; '<b>S</b>' prefixes negative years
+     *                   with a minus sign
+     *   - <b>SYYYY</b>
+     *   - <b>YYY</b> - Last 3, 2, or 1 digit(s) of year
+     *   - <b>YY</b>
+     *   - <b>Y</b>
+     *   - <b>Y,YYY</b> - Year with thousands-separator in this position; five
      *                    possible separators
-     *  <code>Y.YYY</code> 
-     *  <code>Y·YYY</code> N.B. space-dot (mid-dot, interpunct) is valid only in
+     *   - <b>Y.YYY</b>
+     *   - <b>Y·YYY</b> - N.B. space-dot (mid-dot, interpunct) is valid only in
      *                    ISO 8859-1 (so take care when using UTF-8 in
      *                    particular)
-     *  <code>Y'YYY</code> 
-     *  <code>Y YYY</code> 
+     *   - <b>Y'YYY</b>
+     *   - <b>Y YYY</b>
      *
      * In addition the following codes can be used in combination with other
      * codes;
      *  Codes that modify the next code in the format string:
      *
-     *  <code>NP</code> 'No Padding' - Returns a value with no trailing blanks
+     *   - <b>NP</b> - 'No Padding' - Returns a value with no trailing blanks
      *                 and no leading or trailing noughts; N.B. that the
      *                 default is to include this padding in the return string.
      *                 N.B. affects the code immediately following only.
      *
      *  Codes that modify the previous code in the format string (can only
-     *  be used with integral codes such as 'MM'):
+     *  be used with integral codes such as '<b>MM</b>'):
      *
-     *  <code>TH</code> Ordinal number
-     *  <code>SP</code> Spelled cardinal number
-     *  <code>SPTH</code> Spelled ordinal number (combination of 'SP' and 'TH'
-     *                   in any order)
-     *  <code>THSP</code> 
+     *   - <b>TH</b> - Ordinal number
+     *   - <b>SP</b> - Spelled cardinal number
+     *   - <b>SPTH</b> - Spelled ordinal number (combination of '<b>SP</b>'
+     *                   and '<b>TH</b>' in any order)
+     *   - <b>THSP</b>
      *
-     * Code 'SP' can have the following three variations (which can also be used
-     * in combination with 'TH'):
+     * Code '<b>SP</b>' can have the following three variations (which can
+     * also be used in combination with '<b>TH</b>'):
      *
-     *  <code>SP</code> returns upper-case spelling, e.g. 'FOUR HUNDRED'
-     *  <code>Sp</code> returns spelling with first character of each word
+     *   - <b>SP</b> - returns upper-case spelling, e.g. 'FOUR HUNDRED'
+     *   - <b>Sp</b> - returns spelling with first character of each word
      *                 capitalized, e.g. 'Four Hundred'
-     *  <code>sp</code> returns lower-case spelling, e.g. 'four hundred'
+     *   - <b>sp</b> - returns lower-case spelling, e.g. 'four hundred'
      *
-     * Code 'TH' can have the following two variations (although in combination
-     * with code 'SP', the case specification of 'SP' takes precedence):
+     * Code '<b>TH</b>' can have the following two variations (although in
+     * combination with code '<b>SP</b>', the case specification of
+     * '<b>SP</b>' takes precedence):
      *
-     *  <code>TH</code> returns upper-case ordinal suffix, e.g. 400TH
-     *  <code>th</code> returns lower-case ordinal suffix, e.g. 400th
+     *   - <b>TH</b> - returns upper-case ordinal suffix, e.g. 400TH
+     *   - <b>th</b> - returns lower-case ordinal suffix, e.g. 400th
      *
      * @param string $ps_format format string for returned date/time
      * @param string $ps_locale language name abbreviation used for formatting
@@ -1948,9 +2004,10 @@ class Date
      *
      * @return   string     date/time in given format
      * @access   public
+     * @see      Date::format(), Date::formatLikeStrftime(), Date::formatLikeDate()
      * @since    Method available since Release 1.5.0
      */
-    function format2($ps_format, $ps_locale = "en_GB")
+    function formatLikeSQL($ps_format, $ps_locale = "en_GB")
     {
         if (!preg_match('/^("([^"\\\\]|\\\\\\\\|\\\\")*"|(D{1,3}|S?C+|' .
                         'HH(12|24)?|I[DW]|S?IY*|J|M[IM]|Q|SS(SSS)?|S?TZ[HS]|' .
@@ -2974,233 +3031,237 @@ class Date
 
 
     // }}}
-    // {{{ format3()
+    // {{{ formatLikeDate()
 
     /**
-     * Formats the date in the same way as 'format()', but using the
-     * formatting codes used by the PHP function 'date()'
      *
-     * All 'date()' formatting options are supported except 'B'.  This
+     *
+     * Formats the date according to the specified formatting code string,
+     * based on {@link http://www.php.net/date date()}
+     *
+     * All date() formatting options are supported except '<b>B</b>'.  This
      * function also responds to the DATE_* constants, such as DATE_COOKIE,
      * which are specified at:
      *
-     *  http://www.php.net/manual/en/ref.datetime.php#datetime.constants
+     *  {@link http://www.php.net/manual/en/datetime.constants.php}
      *
      *
      * Formatting options:
      *
      * (Day)
      *
-     *  <code>d</code> Day of the month, 2 digits with leading zeros (01 to 31)
-     *  <code>D</code> A textual representation of a day, three letters ('Mon'
+     *   - <b>d</b> - Day of the month, 2 digits with leading zeros (01 to 31)
+     *   - <b>D</b> - A textual representation of a day, three letters ('Mon'
      *                to 'Sun')
-     *  <code>j</code> Day of the month without leading zeros (1 to 31)
-     *  <code>l</code> [lowercase 'L'] A full textual representation of the day
+     *   - <b>j</b> - Day of the month without leading zeros (1 to 31)
+     *   - <b>l</b> - [lowercase 'L'] A full textual representation of the day
      *                of the week ('Sunday' to 'Saturday')
-     *  <code>N</code> ISO-8601 numeric representation of the day of the week
-     *                (1 (for Monday) to 7 (for Sunday))
-     *  <code>S</code> English ordinal suffix for the day of the month, 2
+     *   - <b>N</b> - ISO-8601 numeric representation of the day of the week
+     *                (1 (for Monday) to 7 (for Sunday)) (see '<b>W</b>')
+     *   - <b>S</b> - English ordinal suffix for the day of the month, 2
      *                characters ('st', 'nd', 'rd' or 'th')
-     *  <code>w</code> Numeric representation of the day of the week (0 (for
+     *   - <b>w</b> - Numeric representation of the day of the week (0 (for
      *                Sunday) to 6 (for Saturday))
-     *  <code>z</code> The day of the year, starting from 0 (0 to 365)
+     *   - <b>z</b> - The day of the year, starting from 0 (0 to 365)
      *
      * (Week)
      *
-     *  <code>W</code> ISO-8601 week number of year, weeks starting on Monday
-     *                (00 to 53)
+     *   - <b>W</b> - {@link http://en.wikipedia.org/wiki/ISO_week_date ISO-8601}
+     *                week number of year, weeks starting on Monday (00 to 53)
      *
      * (Month)
      *
-     *  <code>F</code> A full textual representation of a month ('January' to
+     *   - <b>F</b> - A full textual representation of a month ('January' to
      *                'December')
-     *  <code>m</code> Numeric representation of a month, with leading zeros
+     *   - <b>m</b> - Numeric representation of a month, with leading zeros
      *                (01 to 12)
-     *  <code>M</code> A short textual representation of a month, three letters
+     *   - <b>M</b> - A short textual representation of a month, three letters
      *                ('Jan' to 'Dec')
-     *  <code>n</code> Numeric representation of a month, without leading zeros
+     *   - <b>n</b> - Numeric representation of a month, without leading zeros
      *                (1 to 12)
-     *  <code>t</code> Number of days in the given month (28 to 31)
+     *   - <b>t</b> - Number of days in the given month (28 to 31)
      *
      * (Year)
      *
-     *  <code>L</code> Whether it is a leap year (1 if it is a leap year, 0
+     *   - <b>L</b> - Whether it is a leap year (1 if it is a leap year, 0
      *                otherwise)
-     *  <code>o</code> ISO-8601 year number. This has the same value as Y,
-     *                except that if the ISO week number (W) belongs to the
-     *                previous or next year, that year is used instead.
-     *  <code>Y</code> A full numeric representation of a year, 4 digits (0000
+     *   - <b>o</b> - ISO-8601 year number (see '<b>W</b>'). This has the same
+     *                value as '<b>Y</b>', except that if the ISO week number
+     *                ('<b>W</b>') belongs to the previous or next year, that
+     *                year is used instead.
+     *   - <b>Y</b> - A full numeric representation of a year, 4 digits (0000
      *                to 9999)
-     *  <code>y</code> A two digit representation of a year (00 to 99)
+     *   - <b>y</b> - A two digit representation of a year (00 to 99)
      *
      * (Time)
      *
-     *  <code>a</code> Lowercase Ante meridiem and Post meridiem ('am' or
+     *   - <b>a</b> - Lowercase Ante meridiem and Post meridiem ('am' or
      *                'pm')
-     *  <code>A</code> Uppercase Ante meridiem and Post meridiem ('AM' or
+     *   - <b>A</b> - Uppercase Ante meridiem and Post meridiem ('AM' or
      *                'PM')
-     *  <code>g</code> 12-hour format of an hour without leading zeros (1 to 12)
-     *  <code>G</code> 24-hour format of an hour without leading zeros (0 to 23)
-     *  <code>h</code> 12-hour format of an hour with leading zeros (01 to 12)
-     *  <code>H</code> 24-hour format of an hour with leading zeros (00 to 23)
-     *  <code>i</code> Minutes with leading zeros (00 to 59)
-     *  <code>s</code> Seconds, with leading zeros (00 to 59)
-     *  <code>u</code> Milliseconds, e.g. '54321'
+     *   - <b>g</b> - 12-hour format of an hour without leading zeros (1 to 12)
+     *   - <b>G</b> - 24-hour format of an hour without leading zeros (0 to 23)
+     *   - <b>h</b> - 12-hour format of an hour with leading zeros (01 to 12)
+     *   - <b>H</b> - 24-hour format of an hour with leading zeros (00 to 23)
+     *   - <b>i</b> - Minutes with leading zeros (00 to 59)
+     *   - <b>s</b> - Seconds, with leading zeros (00 to 59)
+     *   - <b>u</b> - Milliseconds, e.g. '54321'
      *
      * (Time Zone)
      *
-     *  <code>e</code> Timezone identifier, e.g. Europe/London
-     *  <code>I</code> Whether or not the date is in Summer time (1 if Summer
+     *   - <b>e</b> - Timezone identifier, e.g. Europe/London
+     *   - <b>I</b> - Whether or not the date is in Summer time (1 if Summer
      *                time, 0 otherwise)
-     *  <code>O</code> Difference to Greenwich time (GMT) in hours, e.g. '+0200'
-     *  <code>P</code> Difference to Greenwich time (GMT) with colon between
+     *   - <b>O</b> - Difference to Greenwich time (GMT) in hours, e.g. '+0200'
+     *   - <b>P</b> - Difference to Greenwich time (GMT) with colon between
      *                hours and minutes, e.g. '+02:00'
-     *  <code>T</code> Timezone abbreviation, e.g. 'GMT', 'EST'
-     *  <code>Z</code> Timezone offset in seconds. The offset for timezones west
+     *   - <b>T</b> - Timezone abbreviation, e.g. 'GMT', 'EST'
+     *   - <b>Z</b> - Timezone offset in seconds. The offset for timezones west
      *                of UTC is always negative, and for those east of UTC is
      *                always positive. (-43200 to 50400)
      *
      * (Full Date/Time)
      *
-     *  <code>c</code> ISO 8601 date, e.g. '2004-02-12T15:19:21+00:00'
-     *  <code>r</code> RFC 2822 formatted date, e.g.
+     *   - <b>c</b> - ISO 8601 date, e.g. '2004-02-12T15:19:21+00:00'
+     *   - <b>r</b> - RFC 2822 formatted date, e.g.
      *                'Thu, 21 Dec 2000 16:01:07 +0200'
-     *  <code>U</code> Seconds since the Unix Epoch
+     *   - <b>U</b> - Seconds since the Unix Epoch
      *                (January 1 1970 00:00:00 GMT)
      *
      * @param string $ps_format the format string for returned date/time
      *
      * @return   string     date/time in given format
      * @access   public
+     * @see      Date::format(), Date::formatLikeStrftime(), Date::formatLikeSQL()
      * @since    Method available since Release 1.5.0
      */
-    function format3($ps_format)
+    function formatLikeDate($ps_format)
     {
-        $hs_format2str = "";
+        $hs_formatLikeSQLstr = "";
 
         for ($i = 0; $i < strlen($ps_format); ++$i) {
             switch ($hs_char = substr($ps_format, $i, 1)) {
             case 'd':
-                $hs_format2str .= 'DD';
+                $hs_formatLikeSQLstr .= 'DD';
                 break;
             case 'D':
-                $hs_format2str .= 'NPDy';
+                $hs_formatLikeSQLstr .= 'NPDy';
                 break;
             case 'j':
-                $hs_format2str .= 'NPDD';
+                $hs_formatLikeSQLstr .= 'NPDD';
                 break;
             case 'l':
-                $hs_format2str .= 'NPDay';
+                $hs_formatLikeSQLstr .= 'NPDay';
                 break;
             case 'N':
-                $hs_format2str .= 'ID';
+                $hs_formatLikeSQLstr .= 'ID';
                 break;
             case 'S':
-                $hs_format2str .= 'th';
+                $hs_formatLikeSQLstr .= 'th';
                 break;
             case 'w':
-                $hs_format2str .= 'D';
+                $hs_formatLikeSQLstr .= 'D';
                 break;
             case 'z':
-                $hs_format2str .= '"' . ($this->getDayOfYear() - 1) . '"';
+                $hs_formatLikeSQLstr .= '"' . ($this->getDayOfYear() - 1) . '"';
                 break;
             case 'W':
-                $hs_format2str .= 'IW';
+                $hs_formatLikeSQLstr .= 'IW';
                 break;
             case 'F':
-                $hs_format2str .= 'NPMonth';
+                $hs_formatLikeSQLstr .= 'NPMonth';
                 break;
             case 'm':
-                $hs_format2str .= 'MM';
+                $hs_formatLikeSQLstr .= 'MM';
                 break;
             case 'M':
-                $hs_format2str .= 'NPMon';
+                $hs_formatLikeSQLstr .= 'NPMon';
                 break;
             case 'n':
-                $hs_format2str .= 'NPMM';
+                $hs_formatLikeSQLstr .= 'NPMM';
                 break;
             case 't':
-                $hs_format2str .= '"' . $this->getDaysInMonth() . '"';
+                $hs_formatLikeSQLstr .= '"' . $this->getDaysInMonth() . '"';
                 break;
             case 'L':
-                $hs_format2str .= '"' . ($this->isLeapYear() ? 1 : 0) . '"';
+                $hs_formatLikeSQLstr .= '"' . ($this->isLeapYear() ? 1 : 0) . '"';
                 break;
             case 'o':
-                $hs_format2str .= 'IYYY';
+                $hs_formatLikeSQLstr .= 'IYYY';
                 break;
             case 'Y':
-                $hs_format2str .= 'YYYY';
+                $hs_formatLikeSQLstr .= 'YYYY';
                 break;
             case 'y':
-                $hs_format2str .= 'YY';
+                $hs_formatLikeSQLstr .= 'YY';
                 break;
             case 'a':
-                $hs_format2str .= 'am';
+                $hs_formatLikeSQLstr .= 'am';
                 break;
             case 'A':
-                $hs_format2str .= 'AM';
+                $hs_formatLikeSQLstr .= 'AM';
                 break;
             case 'g':
-                $hs_format2str .= 'NPHH12';
+                $hs_formatLikeSQLstr .= 'NPHH12';
                 break;
             case 'G':
-                $hs_format2str .= 'NPHH24';
+                $hs_formatLikeSQLstr .= 'NPHH24';
                 break;
             case 'h':
-                $hs_format2str .= 'HH12';
+                $hs_formatLikeSQLstr .= 'HH12';
                 break;
             case 'H':
-                $hs_format2str .= 'HH24';
+                $hs_formatLikeSQLstr .= 'HH24';
                 break;
             case 'i':
-                $hs_format2str .= 'MI';
+                $hs_formatLikeSQLstr .= 'MI';
                 break;
             case 's':
-                $hs_format2str .= 'SS';
+                $hs_formatLikeSQLstr .= 'SS';
                 break;
             case 'u':
-                $hs_format2str .= 'SSFFF';
+                $hs_formatLikeSQLstr .= 'SSFFF';
                 break;
             case 'e':
-                $hs_format2str .= 'TZR';
+                $hs_formatLikeSQLstr .= 'TZR';
                 break;
             case 'I':
-                $hs_format2str .= 'TZI';
+                $hs_formatLikeSQLstr .= 'TZI';
                 break;
             case 'O':
-                $hs_format2str .= 'STZHTZM';
+                $hs_formatLikeSQLstr .= 'STZHTZM';
                 break;
             case 'P':
-                $hs_format2str .= 'STZH:TZM';
+                $hs_formatLikeSQLstr .= 'STZH:TZM';
                 break;
             case 'T':
-                $hs_format2str .= 'TZC';
+                $hs_formatLikeSQLstr .= 'TZC';
                 break;
             case 'Z':
-                $hs_format2str .= 'TZS';
+                $hs_formatLikeSQLstr .= 'TZS';
                 break;
             case 'c':
-                $hs_format2str .= 'YYYY-MM-DD"T"HH24:MI:SSSTZH:TZM';
+                $hs_formatLikeSQLstr .= 'YYYY-MM-DD"T"HH24:MI:SSSTZH:TZM';
                 break;
             case 'r':
-                $hs_format2str .= 'Dy, DD Mon YYYY HH24:MI:SS STZHTZM';
+                $hs_formatLikeSQLstr .= 'Dy, DD Mon YYYY HH24:MI:SS STZHTZM';
                 break;
             case 'U':
-                $hs_format2str .= 'U';
+                $hs_formatLikeSQLstr .= 'U';
                 break;
             case '\\':
                 $hs_char = substr($ps_format, ++$i, 1);
-                $hs_format2str .= '"' . ($hs_char == '\\' ? '\\\\' : $hs_char) . '"';
+                $hs_formatLikeSQLstr .= '"' . ($hs_char == '\\' ? '\\\\' : $hs_char) . '"';
                 break;
             case '"':
-                $hs_format2str .= '"\\""';
+                $hs_formatLikeSQLstr .= '"\\""';
                 break;
             default:
-                $hs_format2str .= '"' . $hs_char . '"';
+                $hs_formatLikeSQLstr .= '"' . $hs_char . '"';
             }
         }
 
-        $ret = $this->format2($hs_format2str);
+        $ret = $this->formatLikeSQL($hs_formatLikeSQLstr);
         if (PEAR::isError($ret) &&
             $ret->getCode() == DATE_ERROR_INVALIDFORMATSTRING) {
             return PEAR::raiseError("Invalid date format '$ps_format'",
@@ -3215,17 +3276,31 @@ class Date
     // {{{ getTime()
 
     /**
-     * Returns the date/time in Unix time() format
+     * Returns the date/time in Unix-Time format (as returned for example by
+     * {@link http://www.php.net/time time()}
      *
-     * Returns a representation of this date in Unix time() format.  This may
-     * only be valid for dates from 1970 to ~2038.
+     * This may only be valid for dates from 1970 to ~2038.  N.B. this
+     * function makes a call to {@link http://www.php.net/gmmktime gmmktime()}
      *
-     * @return   int        number of seconds since the unix epoch
+     * @return   int        number of seconds since the Unix epoch
      * @access   public
      */
     function getTime()
     {
-        return $this->getDate(DATE_FORMAT_UNIXTIME);
+        // Enter a time in UTC, so use 'gmmktime()' (the alternative
+        // is to offset additionally by the local time, but the object
+        // is not necessarily using local time):
+        //
+        return gmmktime($this->on_standardhour,
+                        $this->on_standardminute,
+                        $this->on_standardsecond,
+                        $this->on_standardmonth,
+                        $this->on_standardday,
+                        $this->on_standardyear) -
+               $this->tz->getRawOffset() / 1000; // N.B. Unix-time excludes
+                                                 // leap seconds by
+                                                 // definition
+
     }
 
 
@@ -3237,6 +3312,8 @@ class Date
      *
      * @return   string     the time zone ID
      * @access   public
+     * @see      Date::setTZByID(), Date::getTZLongName(),
+     *            Date::getTZShortName(), Date_TimeZone
      * @since    Method available since Release 1.5.0
      */
     function getTZID()
@@ -3297,7 +3374,8 @@ class Date
      *
      * @return   void
      * @access   public
-     * @see      Date::setTZByID()
+     * @see      Date::setTZByID(), Date::convertTZ(),
+     *            Date_TimeZone::Date_TimeZone(), Date_TimeZone
      */
     function setTZ($tz)
     {
@@ -3323,8 +3401,8 @@ class Date
      * the tz data-base is not intended to be a regulating body
      * anyway.)  Lists of valid IDs are maintained at:
      *
-     *  http://en.wikipedia.org/wiki/List_of_zoneinfo_timezones
-     *  http://www.php.net/manual/en/timezones.php
+     *  - {@link http://en.wikipedia.org/wiki/List_of_zoneinfo_timezones}
+     *  - {@link http://www.php.net/manual/en/timezones.php}
      *
      * If no time-zone is specified and PHP version >= 5.1.0, the time
      * zone is set automatically to the php.ini configuration directive
@@ -3344,10 +3422,10 @@ class Date
      * The ID can also be specified as a UTC offset in one of the following
      * forms, i.e. an offset with no geographical or political base:
      *
-     *  UTC[+/-][h]       - e.g. UTC-1     (the preferred form)
-     *  UTC[+/-][hh]      - e.g. UTC+03
-     *  UTC[+/-][hh][mm]  - e.g. UTC-0530
-     *  UTC[+/-][hh]:[mm] - e.g. UTC+03:00
+     *  - <b>UTC[+/-][h]</b>       - e.g. UTC-1     (the preferred form)
+     *  - <b>UTC[+/-][hh]</b>      - e.g. UTC+03
+     *  - <b>UTC[+/-][hh][mm]</b>  - e.g. UTC-0530
+     *  - <b>UTC[+/-][hh]:[mm]</b> - e.g. UTC+03:00
      *
      * N.B. 'UTC' seems to be technically preferred over 'GMT'.  GMT-based
      * IDs still exist in the tz data-base, but beware of POSIX-style
@@ -3358,8 +3436,9 @@ class Date
      *
      * @return   void
      * @access   public
-     * @see      Date::convertTZByID(), Date_TimeZone::isValidID(),
-     *            Date_TimeZone::Date_TimeZone()
+     * @see      Date::getTZID(), Date::setTZ(), Date::convertTZByID(),
+     *            Date_TimeZone::isValidID(), Date_TimeZone::Date_TimeZone(),
+     *            Date_TimeZone
      */
     function setTZByID($ps_id = null)
     {
@@ -3414,6 +3493,8 @@ class Date
      *
      * @return   string     the long name of the time zone
      * @access   public
+     * @see      Date::getTZID(), Date::getTZShortName(),
+     *            Date_TimeZone::getLongName()
      * @since    Method available since Release 1.5.0
      */
     function getTZLongName()
@@ -3440,6 +3521,8 @@ class Date
      *
      * @return   string     the short name of the time zone
      * @access   public
+     * @see      Date::getTZID(), Date::getTZLongName(),
+     *            Date_TimeZone::getShortName()
      * @since    Method available since Release 1.5.0
      */
     function getTZShortName()
@@ -3474,6 +3557,7 @@ class Date
      *
      * @return   int        the corrected offset to UTC in milliseconds
      * @access   public
+     * @see      Date_TimeZone::getOffset()
      * @since    Method available since Release 1.5.0
      */
     function getTZOffset()
@@ -3499,6 +3583,7 @@ class Date
      *
      * @return   boolean    true if DST is in effect for this date
      * @access   public
+     * @see      Date_TimeZone::hasDaylightTime(), Date_TimeZone::inDaylightTime()
      */
     function inDaylightTime($pb_repeatedhourdefault = false)
     {
@@ -3529,14 +3614,16 @@ class Date
      * Converts this date to a new time zone
      *
      * Previously this might not have worked correctly if your system did
-     * not allow putenv() or if localtime() did not work in your
-     * environment, but this implementation is no longer used.
+     * not allow {@link http://www.php.net/putenv putenv()} or if
+     * {@link http://www.php.net/localtime localtime()} did not work in
+     * your environment, but this implementation is no longer used.
      *
      * @param object $tz Date_TimeZone object to convert to
      *
      * @return   void
      * @access   public
-     * @see      Date::convertTZByID()
+     * @see      Date::convertTZByID(), Date::toUTC(),
+     *            Date_TimeZone::Date_TimeZone(), Date_TimeZone
      */
     function convertTZ($tz)
     {
@@ -3582,6 +3669,7 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::convertTZ(), Date::convertTZByID(), Date::toUTCbyOffset()
      */
     function toUTC()
     {
@@ -3610,8 +3698,9 @@ class Date
      *
      * @return   void
      * @access   public
-     * @see      Date::setTZByID(), Date_TimeZone::isValidID(),
-     *            Date_TimeZone::Date_TimeZone()
+     * @see      Date::convertTZ(), Date::toUTC(), Date::setTZByID(),
+     *            Date_TimeZone::isValidID(), Date_TimeZone::Date_TimeZone(),
+     *            Date_TimeZone
      */
     function convertTZByID($ps_id)
     {
@@ -3638,11 +3727,12 @@ class Date
      * (e.g. UTC+1), i.e. not a geographical time zone.  However
      * it is retained for backwards compaibility.
      *
-     * @param string $ps_offset offset of the form '[+/-][hh]:[mm]',
-     *                           '[+/-][hh][mm]', or 'Z'
+     * @param string $ps_offset offset of the form '<b>[+/-][hh]:[mm]</b>',
+     *                           '<b>[+/-][hh][mm]</b>', or '<b>Z</b>'
      *
      * @return   bool
      * @access   private
+     * @see      Date::toUTC(), Date::convertTZ(), Date::convertTZByID()
      */
     function toUTCbyOffset($ps_offset)
     {
@@ -4009,9 +4099,9 @@ class Date
      *   For example, if a leap second occurred at 23.59.60, the
      *   following calculations:
      *
-     *    23.59.59 + one second
-     *    23.59.00 + one minute
-     *    23.00.00 + one hour
+     *    - 23.59.59 + one second
+     *    - 23.59.00 + one minute
+     *    - 23.00.00 + one hour
      *
      *   would all produce 00.00.00 the next day.
      *
@@ -4037,17 +4127,18 @@ class Date
      * If you want alternative functionality, you must use a mixture of
      * the following functions instead:
      *
-     *  addYears()
-     *  addMonths()
-     *  addDays()
-     *  addHours()
-     *  addMinutes()
-     *  addSeconds()
+     *  - {@link Date::addYears()}
+     *  - {@link Date::addMonths()}
+     *  - {@link Date::addDays()}
+     *  - {@link Date::addHours()}
+     *  - {@link Date::addMinutes()}
+     *  - {@link Date::addSeconds()}
      *
      * @param object $span the time span to add
      *
      * @return   void
      * @access   public
+     * @see      Date_Span
      */
     function addSpan($span)
     {
@@ -4105,12 +4196,13 @@ class Date
      * because the result would be dependent on which order the consituent
      * parts of the span are subtracted from the date.  Therefore, leap
      * seconds are ignored by this function.  If you want to count leap
-     * seconds, use 'subtractSeconds()'.
+     * seconds, use {@link Date::subtractSeconds()}.
      *
      * @param object $span the time span to subtract
      *
      * @return   void
      * @access   public
+     * @see      Date_Span
      */
     function subtractSpan($span)
     {
@@ -4172,7 +4264,9 @@ class Date
      * a float, with each hour being treated as 1/24th of a day and so on.
      *
      * For example,
-     *  21/11/2007 13.00 minus 21/11/2007 01.00
+     *
+     *  - 21/11/2007 13.00 minus 21/11/2007 01.00
+     *
      * returns 0.5
      *
      * Note that if the passed date is in the past, a positive value will be
@@ -4235,11 +4329,11 @@ class Date
      * Equivalence in this context consists in the time zones of the two dates
      * having:
      *
-     *  an equal offset from UTC in both standard and Summer time (if
-     *   the time zones observe Summer time)
-     *  the same Summer time start and end rules, that is, the two time zones
-     *   must switch from standard time to Summer time, and vice versa, on the
-     *   same day and at the same time
+     *  - an equal offset from UTC in both standard and Summer time (if
+     *               the time zones observe Summer time)
+     *  - the same Summer time start and end rules, that is, the two time zones
+     *               must switch from standard time to Summer time, and
+     *               vice versa, on the same day and at the same time
      *
      * An example of two equivalent time zones is 'Europe/London' and
      * 'Europe/Lisbon', which in London is known as GMT/BST, and in Lisbon as
@@ -4251,6 +4345,7 @@ class Date
      * @return   bool       true if the time zones are equivalent
      * @access   public
      * @static
+     * @see      Date_TimeZone::isEquivalent()
      * @since    Method available since Release 1.5.0
      */
     function inEquivalentTimeZones($po_date1, $po_date2)
@@ -4265,7 +4360,7 @@ class Date
     /**
      * Compares two dates
      *
-     * Suitable for use in sorting functions.
+     * Suitable for use in sorting functions
      *
      * @param object $od1 the first Date object to compare
      * @param object $od2 the second Date object to compare
@@ -4458,13 +4553,13 @@ class Date
      * N.B. this function does not return (and never has returned) the 'Julian
      * Date', as described, for example, at:
      *
-     *  http://en.wikipedia.org/wiki/Julian_day
+     *  - {@link http://en.wikipedia.org/wiki/Julian_day}
      *
-     * If you want the day of the year (0-366), use 'getDayOfYear()' instead.
-     * If you want the true Julian Day, call one of the following:
+     * If you want the day of the year (0-366), use {@link Date::getDayOfYear()}
+     * instead.  If you want the true Julian Day, call one of the following:
      *
-     *  <code>format("%E")</code>
-     *  <code>format2("J")</code>
+     *   - {@link Date::formatLikeStrftime()} using code '<b>%E</b>'
+     *   - {@link Date::formatLikeSQL()} using code '<b>J</b>'
      *
      * There currently is no function that calls the Julian Date (as opposed
      * to the 'Julian Day'), although the Julian Day is an approximation.
@@ -5234,7 +5329,7 @@ class Date
      *                                       local Summer time offset, the
      *                                       specified time if it falls in the
      *                                       skipped hour (defaults to
-     *                                       DATE_CORRECTINVALIDTIME_DEFAULT)
+     *                                       {@link DATE_CORRECTINVALIDTIME_DEFAULT})
      *
      * @return   void
      * @access   protected
@@ -5454,6 +5549,8 @@ class Date
      *
      * @param int  $y           the year
      * @param bool $pb_validate whether to check that the new date is valid
+     *                           (defaults to {@link DATE_VALIDATE_DATE_BY_DEFAULT})
+     *                           
      *
      * @return   void
      * @access   public
@@ -5493,6 +5590,7 @@ class Date
      *
      * @param int  $m           the month
      * @param bool $pb_validate whether to check that the new date is valid
+     *                           (defaults to {@link DATE_VALIDATE_DATE_BY_DEFAULT})
      *
      * @return   void
      * @access   public
@@ -5532,6 +5630,7 @@ class Date
      *
      * @param int  $d           the day
      * @param bool $pb_validate whether to check that the new date is valid
+     *                           (defaults to {@link DATE_VALIDATE_DATE_BY_DEFAULT})
      *
      * @return   void
      * @access   public
