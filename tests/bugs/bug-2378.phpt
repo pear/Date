@@ -30,19 +30,19 @@ foreach ($dates as $hs_date) {
 
     if (PEAR::isError($res = $date->convertTZbyID('UTC'))) { print_r($res); exit(); }
     $ts = $date->getTime();
-    echo 'Greenwich       = ' . str_pad($ts, 10) . ' - ' . $date->format2('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
+    echo 'Greenwich       = ' . str_pad($ts, 10) . ' - ' . $date->formatLikeSQL('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
 
     if (PEAR::isError($res = $date->convertTZbyID('Europe/London'))) { print_r($res); exit(); }
     $ts = $date->getTime();
-    echo 'London  ' . $date->format2('("UTC"NPSTZH)') . " = " . str_pad($ts, 10) . ' - ' . $date->format2('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
+    echo 'London  ' . $date->formatLikeSQL('("UTC"NPSTZH)') . " = " . str_pad($ts, 10) . ' - ' . $date->formatLikeSQL('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
 
     if (PEAR::isError($res = $date->convertTZbyID('Europe/Paris'))) { print_r($res); exit(); }
     $ts = $date->getTime();
-    echo 'Paris   ' . $date->format2('("UTC"NPSTZH)') . " = " . str_pad($ts, 10) . ' - ' . $date->format2('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
+    echo 'Paris   ' . $date->formatLikeSQL('("UTC"NPSTZH)') . " = " . str_pad($ts, 10) . ' - ' . $date->formatLikeSQL('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
 
     if (PEAR::isError($res = $date->convertTZbyID('Asia/Jakarta'))) { print_r($res); exit(); }
     $ts = $date->getTime();
-    echo 'Jakarta ' . $date->format2('("UTC"NPSTZH)') . " = " . str_pad($ts, 10) . ' - ' . $date->format2('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
+    echo 'Jakarta ' . $date->formatLikeSQL('("UTC"NPSTZH)') . " = " . str_pad($ts, 10) . ' - ' . $date->formatLikeSQL('YYYY-MM-DD HH:MI:SSSTZH:TZM') . "\n";
 }
 ?>
 --EXPECT--
