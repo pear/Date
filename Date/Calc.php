@@ -3770,19 +3770,21 @@ class Date_Calc
      * @access   public
      * @static
      */
-    function nWeekdayOfMonth($week, $dow, $month, $year,
+    function nWeekDayOfMonth($week, $dow, $month, $year,
                              $format = DATE_CALC_FORMAT)
     {
-        if ($week < 1 || $week > 5) {
-            return PEAR::raiseError('Invalid $week value, only 1-5 accepted');
+        if ((is_numeric($week) && ($week < 1 || $week > 5)) ||
+            (!is_numeric($week) && $week != "last")
+            ) {
+            return PEAR::raiseError("Invalid week value '$week', only 1-5 or 'last' accepted");
         }
 
         if ($dow < 0 || $dow > 6) {
-            return PEAR::raiseError('Invalid $dow value, only 0-6 accepted');
+            return PEAR::raiseError("Invalid dow value '$dow', only 0-6 accepted");
         }
 
         if ($month < 1 || $month > 12) {
-            return PEAR::raiseError('Invalid $month value');
+            return PEAR::raiseError("Invalid month value '$month'");
         }
 
         if (is_numeric($week)) {
@@ -3790,7 +3792,7 @@ class Date_Calc
             $DOW1 = Date_Calc::dayOfWeek(1, $month, $year);
 
             // finds the sunday
-            $sunday =  ($week - 1) * 7 + 1;
+            $sunday = ($week - 1) * 7 + 1;
             if ($DOW1 > 0) {
                 $sunday += (7 - $DOW1);
             }

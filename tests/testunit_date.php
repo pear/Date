@@ -308,7 +308,7 @@ class Date_Test extends PHPUnit_TestCase {
         $this->time->convertTZbyID($hs_oldtz);
     }
 
-    function testFormat()
+    function testFormatLikeStrftime()
     {
         $codes = array(
             'a' => 'Sat',
@@ -343,7 +343,7 @@ class Date_Test extends PHPUnit_TestCase {
 
         foreach ($codes as $code => $expected) {
             $this->assertEquals(
-                "$code: $expected", $this->time->format("$code: %$code")
+                "$code: $expected", $this->time->formatLikeStrftime("$code: %$code")
             );
         }
     }
