@@ -1154,8 +1154,9 @@ class Date
      */
     function format()
     {
+        $ha_args = func_get_args();
         return call_user_func_array(array(&$this, DATE_FORMAT_METHOD),
-                                    func_get_args());
+                                    $ha_args);
     }
 
 
@@ -3137,131 +3138,131 @@ class Date
      */
     function formatLikeDate($ps_format)
     {
-        $hs_formatLikeSQLstr = "";
+        $hs_formatlikesqlstr = "";
 
         for ($i = 0; $i < strlen($ps_format); ++$i) {
             switch ($hs_char = substr($ps_format, $i, 1)) {
             case 'd':
-                $hs_formatLikeSQLstr .= 'DD';
+                $hs_formatlikesqlstr .= 'DD';
                 break;
             case 'D':
-                $hs_formatLikeSQLstr .= 'NPDy';
+                $hs_formatlikesqlstr .= 'NPDy';
                 break;
             case 'j':
-                $hs_formatLikeSQLstr .= 'NPDD';
+                $hs_formatlikesqlstr .= 'NPDD';
                 break;
             case 'l':
-                $hs_formatLikeSQLstr .= 'NPDay';
+                $hs_formatlikesqlstr .= 'NPDay';
                 break;
             case 'N':
-                $hs_formatLikeSQLstr .= 'ID';
+                $hs_formatlikesqlstr .= 'ID';
                 break;
             case 'S':
-                $hs_formatLikeSQLstr .= 'th';
+                $hs_formatlikesqlstr .= 'th';
                 break;
             case 'w':
-                $hs_formatLikeSQLstr .= 'D';
+                $hs_formatlikesqlstr .= 'D';
                 break;
             case 'z':
-                $hs_formatLikeSQLstr .= '"' . ($this->getDayOfYear() - 1) . '"';
+                $hs_formatlikesqlstr .= '"' . ($this->getDayOfYear() - 1) . '"';
                 break;
             case 'W':
-                $hs_formatLikeSQLstr .= 'IW';
+                $hs_formatlikesqlstr .= 'IW';
                 break;
             case 'F':
-                $hs_formatLikeSQLstr .= 'NPMonth';
+                $hs_formatlikesqlstr .= 'NPMonth';
                 break;
             case 'm':
-                $hs_formatLikeSQLstr .= 'MM';
+                $hs_formatlikesqlstr .= 'MM';
                 break;
             case 'M':
-                $hs_formatLikeSQLstr .= 'NPMon';
+                $hs_formatlikesqlstr .= 'NPMon';
                 break;
             case 'n':
-                $hs_formatLikeSQLstr .= 'NPMM';
+                $hs_formatlikesqlstr .= 'NPMM';
                 break;
             case 't':
-                $hs_formatLikeSQLstr .= '"' . $this->getDaysInMonth() . '"';
+                $hs_formatlikesqlstr .= '"' . $this->getDaysInMonth() . '"';
                 break;
             case 'L':
-                $hs_formatLikeSQLstr .= '"' . ($this->isLeapYear() ? 1 : 0) . '"';
+                $hs_formatlikesqlstr .= '"' . ($this->isLeapYear() ? 1 : 0) . '"';
                 break;
             case 'o':
-                $hs_formatLikeSQLstr .= 'IYYY';
+                $hs_formatlikesqlstr .= 'IYYY';
                 break;
             case 'Y':
-                $hs_formatLikeSQLstr .= 'YYYY';
+                $hs_formatlikesqlstr .= 'YYYY';
                 break;
             case 'y':
-                $hs_formatLikeSQLstr .= 'YY';
+                $hs_formatlikesqlstr .= 'YY';
                 break;
             case 'a':
-                $hs_formatLikeSQLstr .= 'am';
+                $hs_formatlikesqlstr .= 'am';
                 break;
             case 'A':
-                $hs_formatLikeSQLstr .= 'AM';
+                $hs_formatlikesqlstr .= 'AM';
                 break;
             case 'g':
-                $hs_formatLikeSQLstr .= 'NPHH12';
+                $hs_formatlikesqlstr .= 'NPHH12';
                 break;
             case 'G':
-                $hs_formatLikeSQLstr .= 'NPHH24';
+                $hs_formatlikesqlstr .= 'NPHH24';
                 break;
             case 'h':
-                $hs_formatLikeSQLstr .= 'HH12';
+                $hs_formatlikesqlstr .= 'HH12';
                 break;
             case 'H':
-                $hs_formatLikeSQLstr .= 'HH24';
+                $hs_formatlikesqlstr .= 'HH24';
                 break;
             case 'i':
-                $hs_formatLikeSQLstr .= 'MI';
+                $hs_formatlikesqlstr .= 'MI';
                 break;
             case 's':
-                $hs_formatLikeSQLstr .= 'SS';
+                $hs_formatlikesqlstr .= 'SS';
                 break;
             case 'u':
-                $hs_formatLikeSQLstr .= 'SSFFF';
+                $hs_formatlikesqlstr .= 'SSFFF';
                 break;
             case 'e':
-                $hs_formatLikeSQLstr .= 'TZR';
+                $hs_formatlikesqlstr .= 'TZR';
                 break;
             case 'I':
-                $hs_formatLikeSQLstr .= 'TZI';
+                $hs_formatlikesqlstr .= 'TZI';
                 break;
             case 'O':
-                $hs_formatLikeSQLstr .= 'STZHTZM';
+                $hs_formatlikesqlstr .= 'STZHTZM';
                 break;
             case 'P':
-                $hs_formatLikeSQLstr .= 'STZH:TZM';
+                $hs_formatlikesqlstr .= 'STZH:TZM';
                 break;
             case 'T':
-                $hs_formatLikeSQLstr .= 'TZC';
+                $hs_formatlikesqlstr .= 'TZC';
                 break;
             case 'Z':
-                $hs_formatLikeSQLstr .= 'TZS';
+                $hs_formatlikesqlstr .= 'TZS';
                 break;
             case 'c':
-                $hs_formatLikeSQLstr .= 'YYYY-MM-DD"T"HH24:MI:SSSTZH:TZM';
+                $hs_formatlikesqlstr .= 'YYYY-MM-DD"T"HH24:MI:SSSTZH:TZM';
                 break;
             case 'r':
-                $hs_formatLikeSQLstr .= 'Dy, DD Mon YYYY HH24:MI:SS STZHTZM';
+                $hs_formatlikesqlstr .= 'Dy, DD Mon YYYY HH24:MI:SS STZHTZM';
                 break;
             case 'U':
-                $hs_formatLikeSQLstr .= 'U';
+                $hs_formatlikesqlstr .= 'U';
                 break;
             case '\\':
                 $hs_char = substr($ps_format, ++$i, 1);
-                $hs_formatLikeSQLstr .= '"' . ($hs_char == '\\' ? '\\\\' : $hs_char) . '"';
+                $hs_formatlikesqlstr .= '"' . ($hs_char == '\\' ? '\\\\' : $hs_char) . '"';
                 break;
             case '"':
-                $hs_formatLikeSQLstr .= '"\\""';
+                $hs_formatlikesqlstr .= '"\\""';
                 break;
             default:
-                $hs_formatLikeSQLstr .= '"' . $hs_char . '"';
+                $hs_formatlikesqlstr .= '"' . $hs_char . '"';
             }
         }
 
-        $ret = $this->formatLikeSQL($hs_formatLikeSQLstr);
+        $ret = $this->formatLikeSQL($hs_formatlikesqlstr);
         if (PEAR::isError($ret) &&
             $ret->getCode() == DATE_ERROR_INVALIDFORMATSTRING) {
             return PEAR::raiseError("Invalid date format '$ps_format'",
