@@ -598,26 +598,37 @@ class Date_Span
         if (!is_a($date1, 'date') or !is_a($date2, 'date')) {
             return false;
         }
-        $date1->toUTC();
-        $date2->toUTC();
-        if ($date1->after($date2)) {
-            list($date1, $date2) = array($date2, $date1);
+
+        // create a local copy of instance, in order avoid changes the object
+        // reference when its object has converted to UTC due PHP5 is always
+        // passed the object by reference.
+        $tdate1 = new Date($date1);
+        $tdate2 = new Date($date2);
+
+        // convert to UTC
+        $tdate1->toUTC();
+        $tdate2->toUTC();
+
+        if ($tdate1->after($tdate2)) {
+            list($tdate1, $tdate2) = array($tdate2, $tdate1);
         }
-        $days  = Date_Calc::dateDiff($date1->getDay(),
-                                     $date1->getMonth(),
-                                     $date1->getYear(),
-                                     $date2->getDay(),
-                                     $date2->getMonth(),
-                                     $date2->getYear());
-        $hours = $date2->getHour() - $date1->getHour();
-        $mins  = $date2->getMinute() - $date1->getMinute();
-        $secs  = $date2->getSecond() - $date1->getSecond();
+
+        $days  = Date_Calc::dateDiff($tdate1->getDay(),
+                                     $tdate1->getMonth(),
+                                     $tdate1->getYear(),
+                                     $tdate2->getDay(),
+                                     $tdate2->getMonth(),
+                                     $tdate2->getYear());
+
+        $hours = $tdate2->getHour() - $tdate1->getHour();
+        $mins  = $tdate2->getMinute() - $tdate1->getMinute();
+        $secs  = $tdate2->getSecond() - $tdate1->getSecond();
+
         $this->setFromSeconds($days * 86400 +
                               $hours * 3600 +
                               $mins * 60 + $secs);
         return true;
     }
-
 
     // }}}
     // {{{ copy()
@@ -650,11 +661,11 @@ class Date_Span
     /**
      * Formats time span according to specified code (similar to
      * {@link Date::formatLikeStrftime()})
-     * 
+     *
      * Uses a code based on {@link http://www.php.net/strftime strftime()}.
-     * 
+     *
      * Formatting options:
-     * 
+     *
      *  - <b>%C</b> - Days with time, equivalent to '<b>%D, %H:%M:%S</b>'
      *  - <b>%d</b> - Total days as a float number
      *                  (2 days, 12 hours = 2.5 days)
