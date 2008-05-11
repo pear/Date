@@ -1189,10 +1189,9 @@ class Date
             $ret = $this->formatLikeStrftime("%Y%m%d%H%M%S");
             break;
         case DATE_FORMAT_UNIXTIME:
-            if ($this->ob_invalidtime) {
-                $ret = $this->_getErrorInvalidTime();
-            } else {
-                $ret = (string) $this->getTime();
+            $ret = $this->getTime();
+            if (!PEAR::isError($ret)) {
+                $ret = (string) $ret;
             }
             break;
         }
@@ -3352,19 +3351,21 @@ class Date
      */
     function getTime()
     {
-        // Enter a time in UTC, so use 'gmmktime()' (the alternative
-        // is to offset additionally by the local time, but the object
-        // is not necessarily using local time):
-        //
-        return gmmktime($this->on_standardhour,
-                        $this->on_standardminute,
-                        $this->on_standardsecond,
-                        $this->on_standardmonth,
-                        $this->on_standardday,
-                        $this->on_standardyear) -
-               $this->tz->getRawOffset() / 1000; // N.B. Unix-time excludes
-                                                 // leap seconds by
-                                                 // definition
+        if ($this->ob_invalidtime) {
+            $ret = $this->_getErrorInvalidTime();
+        } else {
+            // Use 'gmmktime()' and offset result (to get UTC):
+            //
+            return gmmktime($this->on_standardhour,
+                            $this->on_standardminute,
+                            $this->on_standardsecond,
+                            $this->on_standardmonth,
+                            $this->on_standardday,
+                            $this->on_standardyear) -
+                   $this->tz->getRawOffset() / 1000; // N.B. Unix-time excludes
+                                                     // leap seconds by
+                                                     // definition
+        }
 
     }
 
