@@ -149,11 +149,12 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  * </ol>
  *
  * @since    Constant available since Release 1.5.0
+ * @see      Date::isValidTime(), DATE_VALIDATE_DATE_BY_DEFAULT
  */
 define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
 
 /**
- * Whether to validate dates (i.e. day-month-year, ignoring the time) by
+ * Whether to validate dates (i.e. day/month/year, ignoring the time) by
  * disallowing invalid dates (e.g. 31st February) being set by the following
  * functions:
  *
@@ -173,7 +174,8 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
  * allow an invalid date/time to be set regardless of the value of this
  * constant.
  *
- * @see      Date::isValidDate(), Date::isValidTime(), Date::isNull()
+ * @see      Date::isValidDate(), Date::isValidTime(), Date::isNull(),
+ *            DATE_CORRECTINVALIDTIME_DEFAULT
  * @since    Constant available since Release 1.5.0
  */
 define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
@@ -562,9 +564,9 @@ class Date
      *
      * If the object is set to an invalid date, then this function will
      * still return 'false'.  To check whether the date is valid use
-     * either {@link Date::isValidDate()} (to check the day-month-year
+     * either {@link Date::isValidDate()} (to check the day/month/year
      * part of the object only) or {@link Date::isValidTime()} (to check
-     * the time, in addition to the day-month-year part).
+     * the time, in addition to the day/month/year part).
      *
      * @return   bool
      * @access   public
@@ -581,7 +583,7 @@ class Date
     // {{{ isValidDate()
 
     /**
-     * Returns whether the date (i.e. day-month-year) is valid
+     * Returns whether the date (i.e. day/month/year) is valid
      *
      * It is not possible to set the object to an invalid date using
      * {@link Date::setDate()}, but it is possible to do so using the
@@ -594,17 +596,16 @@ class Date
      * However you can prevent this possibility (by default) by setting
      * {@link DATE_VALIDATE_DATE_BY_DEFAULT} to 'true', in which case
      * these three functions will return an error if they specify an
-     * invalid date.
+     * invalid date, and the object will be unmodified.
      *
-     * Note that this function only checks the day-month-year part of
+     * Note that this function only checks the day/month/year part of
      * the object.  Even if this is valid, it is still possible for the
      * time to be invalid (see {@link DATE_CORRECTINVALIDTIME_DEFAULT}).
      * To check the time as well, use {@link Date::isValidTime()}.
      *
      * @return   bool
      * @access   public
-     * @see      Date::setDate(), Date::isNull(), Date::isValidTime(),
-     *            DATE_CORRECTINVALIDTIME_DEFAULT
+     * @see      Date::setDate(), Date::isNull(), Date::isValidTime()
      * @since    Method available since Release 1.5.0
      */
     function isValidDate()
@@ -4322,7 +4323,7 @@ class Date
      *
      * If the second parameter '$pb_ignoretime' is specified as false, the time
      * parts of the two dates will be ignored, and the integral no of days
-     * between the day-month-year parts of the two dates will be returned.  If
+     * between the day/month/year parts of the two dates will be returned.  If
      * either of the two dates have an invalid time, the integral no of days
      * will also be returned, else the returned value will be the no of days as
      * a float, with each hour being treated as 1/24th of a day and so on.
@@ -4983,11 +4984,18 @@ class Date
     // {{{ isValidTime()
 
     /**
-     * Whether the stored time is valid as a local time
+     * Returns whether the stored date/time is valid, i.e as a local time
+     * for the current time-zone.
      *
      * An invalid time is one that lies in the 'skipped hour' at the point
-     * that the clocks go forward.  Note that the stored date (i.e.
-     * the day/month/year, is always valid).
+     * that the clocks go forward (if the time-zone uses Summer time).
+     *
+     * Note that the stored date (i.e. the day/month/year), is set more
+     * strictly:  it is not possible to set an invalid day/month/year
+     * using {@link Date::setDate()} and it is only possible to do so with
+     * {@link setYear()} etc. for backwards-compatibility (and anyway, this
+     * can be switched off by default by setting
+     * {@link DATE_VALIDATE_DATE_BY_DEFAULT} to 'true').
      *
      * The object is able to store an invalid time because a user might
      * unwittingly and correctly store a valid time, and then add one day so
@@ -5007,7 +5015,8 @@ class Date
      *
      * @return   bool
      * @access   public
-     * @see      Date::isValidDate, Date::isNull()
+     * @see      Date::isValidDate(), Date::isNull(),
+     *            DATE_VALIDATE_DATE_BY_DEFAULT, DATE_CORRECTINVALIDTIME_DEFAULT
      * @since    Method available since Release 1.5.0
      */
     function isValidTime()
