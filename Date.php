@@ -142,8 +142,9 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  * <ol>
  *  <li>the user uses a time zone that does not observe Summer time, e.g. UTC</li>
  *  <li>the user never accesses the time, that is, he never makes a call to
- *       {@link Date::getHour()} or {@link Date::formatLikeStrftime("%H")}, for
- *       example, even if he sets the time to something invalid</li>
+ *       {@link Date::getHour()} or {@link Date::formatLikeStrftime()} using
+ *       format code '<b>%H</b>', for example, even if he sets the time to
+ *       something invalid</li>
  *  <li>the user sets DATE_CORRECTINVALIDTIME_DEFAULT to true</li>
  * </ol>
  *
@@ -172,6 +173,7 @@ define('DATE_CORRECTINVALIDTIME_DEFAULT', true);
  * allow an invalid date/time to be set regardless of the value of this
  * constant.
  *
+ * @see      Date::isValidDate(), Date::isValidTime(), Date::isNull()
  * @since    Constant available since Release 1.5.0
  */
 define('DATE_VALIDATE_DATE_BY_DEFAULT', false);
@@ -413,7 +415,7 @@ class Date
      *
      * @var      bool
      * @access   private
-     * @see      Date::isTimeValid()
+     * @see      Date::isValidTime()
      * @since    Property available since Release 1.5.0
      */
     var $ob_invalidtime = null;
@@ -553,6 +555,67 @@ class Date
 
 
     // }}}
+    // {{{ isNull()
+
+    /**
+     * Returns whether the object is null (i.e. no date has been set)
+     *
+     * If the object is set to an invalid date, then this function will
+     * still return 'false'.  To check whether the date is valid use
+     * either {@link Date::isValidDate()} (to check the day-month-year
+     * part of the object only) or {@link Date::isValidTime()} (to check
+     * the time, in addition to the day-month-year part).
+     *
+     * @return   bool
+     * @access   public
+     * @see      Date::setDate(), Date::isValidDate(), Date::isValidTime()
+     * @since    Method available since Release 1.5.0
+     */
+    function isNull()
+    {
+        return is_null($this->year);
+    }
+
+
+    // }}}
+    // {{{ isValidDate()
+
+    /**
+     * Returns whether the date (i.e. day-month-year) is valid
+     *
+     * It is not possible to set the object to an invalid date using
+     * {@link Date::setDate()}, but it is possible to do so using the
+     * following functions:
+     *
+     *  - {@link Date::setYear()}
+     *  - {@link Date::setMonth()}
+     *  - {@link Date::setDay()}
+     *
+     * However you can prevent this possibility (by default) by setting
+     * {@link DATE_VALIDATE_DATE_BY_DEFAULT} to 'true', in which case
+     * these three functions will return an error if they specify an
+     * invalid date.
+     *
+     * Note that this function only checks the day-month-year part of
+     * the object.  Even if this is valid, it is still possible for the
+     * time to be invalid (see {@link DATE_CORRECTINVALIDTIME_DEFAULT}).
+     * To check the time as well, use {@link Date::isValidTime()}.
+     *
+     * @return   bool
+     * @access   public
+     * @see      Date::setDate(), Date::isNull(), Date::isValidTime(),
+     *            DATE_CORRECTINVALIDTIME_DEFAULT
+     * @since    Method available since Release 1.5.0
+     */
+    function isValidDate()
+    {
+        return
+            !Date::isNull() &&
+            Date_Calc::isValidDate($this->year, $this->month, $this->day);
+    }
+
+
+    // }}}
     // {{{ setDate()
 
     /**
@@ -585,12 +648,12 @@ class Date
      *
      * @return   void
      * @access   public
+     * @see      Date::isNull(), Date::isValidDate(), Date::isValidTime()
      */
     function setDate($date,
                      $format = DATE_FORMAT_ISO,
                      $pb_repeatedhourdefault = false)
     {
-
         if (preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])' .
                          '([T\s]?([01][0-9]|2[0-3]):?' .             // [hh]
                          '([0-5][0-9]):?([0-5][0-9]|60)(\.\d+)?' .   // [mi]:[ss]
@@ -598,6 +661,7 @@ class Date
                          $date, $regs) &&
             $format != DATE_FORMAT_UNIXTIME
             ) {
+
             // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
             // These formats are extremely close to each other.  This regex
             // is very loose and accepts almost any butchered format you could
@@ -631,7 +695,6 @@ class Date
                                 isset($regs[7]) ? $regs[7] : 0,
                                 isset($regs[8]) ? $regs[8] : 0.0,
                                 $pb_repeatedhourdefault);
-
         } else if (is_numeric($date)) {
             // Unix Time; N.B. Unix Time is defined relative to GMT,
             // so it needs to be adjusted for the current time zone;
@@ -652,7 +715,7 @@ class Date
             //
             $this->convertTZByID($hs_id);
         } else {
-            return PEAR::raiseError("Date not in ISO 8601 format",
+            return PEAR::raiseError("Date '$date' not in ISO 8601 format",
                                     DATE_ERROR_INVALIDDATEFORMAT);
         }
     }
@@ -4381,9 +4444,9 @@ class Date
         if (!Date::inEquivalentTimeZones($d1, $d2)) {
             // Only a time zone with a valid time can be converted:
             //
-            if ($d2->isTimeValid()) {
+            if ($d2->isValidTime()) {
                 $d2->convertTZByID($d1->getTZID());
-            } else if ($d1->isTimeValid()) {
+            } else if ($d1->isValidTime()) {
                 $d1->convertTZByID($d2->getTZID());
             } else {
                 // No comparison can be made without guessing the time:
@@ -4917,7 +4980,7 @@ class Date
 
 
     // }}}
-    // {{{ isTimeValid()
+    // {{{ isValidTime()
 
     /**
      * Whether the stored time is valid as a local time
@@ -4944,9 +5007,10 @@ class Date
      *
      * @return   bool
      * @access   public
+     * @see      Date::isValidDate, Date::isNull()
      * @since    Method available since Release 1.5.0
      */
-    function isTimeValid()
+    function isValidTime()
     {
         return !$this->ob_invalidtime;
     }

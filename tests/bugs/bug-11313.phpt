@@ -43,9 +43,8 @@ $tmp->format($PRINT_FORMAT));
 ?>
 --EXPECT--
                                        Actual date: 2007-03-25 03:00:04 MSD+04:00
-                             Subtracting 5 seconds: 2007-03-25 01:59:59 MSD+03:00
-                            Subtracting 20 minutes: 2007-03-25 01:40:04 MSD+03:00
+                             Subtracting 5 seconds: 2007-03-25 01:59:59 MSK+03:00
+                            Subtracting 20 minutes: 2007-03-25 01:40:04 MSK+03:00
                     Subtracting 2 hours 30 minutes: 2007-03-24 23:30:04 MSK+03:00
                               Subtracting 10 hours: 2007-03-24 16:00:04 MSK+03:00
                                 Subtracting 3 days: 2007-03-22 02:00:04 MSK+03:00
-
