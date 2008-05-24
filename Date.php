@@ -108,12 +108,12 @@ define('DATE_CAPTURE_MICROTIME_BY_DEFAULT', false);
  *
  * or:
  *
- * <code>$date->object->addSeconds(30);</code>
+ * <code>$date_object->addSeconds(30);</code>
  *
  * an error will be returned if the time is invalid.  However,
  * if the user calls:
  *
- * <code>$date->object->addDays(1);</code>
+ * <code>$date_object->addDays(1);</code>
  *
  * for example, such that the time is no longer invalid, then the
  * object will no longer be in this invalid state.  This behaviour
@@ -3341,7 +3341,7 @@ class Date
 
     /**
      * Returns the date/time in Unix-Time format (as returned for example by
-     * {@link http://www.php.net/time time()}
+     * {@link http://www.php.net/time time()})
      *
      * This may only be valid for dates from 1970 to ~2038.  N.B. this
      * function makes a call to {@link http://www.php.net/gmmktime gmmktime()}
@@ -3396,13 +3396,14 @@ class Date
      *
      * If PHP version >= 5.1.0, uses the php.ini configuration directive
      * 'date.timezone' if set and valid, else the value returned by
-     * 'date("e")' if valid, else the default specified if the global
+     * '{@link http://www.php.net/date date("e")}'
+     * if valid, else the default specified if the global
      * constant '$GLOBALS["_DATE_TIMEZONE_DEFAULT"]', which if itself
      * left unset, defaults to "UTC".
      *
      * N.B. this is a private method; to set the time zone to the
-     * default publicly you should call 'setTZByID()', that is, with no
-     * parameter (or a parameter of null).
+     * default publicly you should call '{@link Date::setTZByID()}',
+     * that is, with no parameter (or a parameter of null).
      *
      * @return   void
      * @access   private
@@ -3432,7 +3433,7 @@ class Date
      * Sets the time zone of this date with the given
      * Date_TimeZone object.  Does not alter the date/time,
      * only assigns a new time zone.  For conversion, use
-     * convertTZ().
+     * {@link Date::convertTZ()}.
      *
      * @param object $tz the Date_TimeZone object to use.  If called with a
      *                    parameter that is not a Date_TimeZone object, will
@@ -3462,7 +3463,7 @@ class Date
      * Sets the time zone of this date with the given time zone ID
      *
      * The time zone IDs are drawn from the 'tz data-base' (see 
-     * http://en.wikipedia.org/wiki/Zoneinfo), which is the de facto
+     * {@link http://en.wikipedia.org/wiki/Zoneinfo}), which is the de facto
      * internet and IT standard.  (There is no official standard, and
      * the tz data-base is not intended to be a regulating body
      * anyway.)  Lists of valid IDs are maintained at:
@@ -3473,7 +3474,8 @@ class Date
      * If no time-zone is specified and PHP version >= 5.1.0, the time
      * zone is set automatically to the php.ini configuration directive
      * 'date.timezone' if set and valid, else the value returned by
-     * 'date("e")' if valid, else the default specified if the global
+     * '{@link http://www.php.net/date date("e")}'
+     * if valid, else the default specified if the global
      * constant '$GLOBALS["_DATE_TIMEZONE_DEFAULT"]', which if itself
      * left unset, defaults to "UTC".
      *
@@ -3483,7 +3485,8 @@ class Date
      * set to another time zone, using this function, in which the date
      * falls in standard time, then the time will remain set to 11.00 UTC,
      * and not 10.00.  You can convert a date to another time zone by
-     * calling 'convertTZ()'.
+     * calling '{@link Date::convertTZ()}', which preserves the actual
+     * time as measured against UTC.
      *
      * The ID can also be specified as a UTC offset in one of the following
      * forms, i.e. an offset with no geographical or political base:
@@ -3757,8 +3760,9 @@ class Date
      * Converts this date to a new time zone, given a valid time zone ID
      *
      * Previously this might not have worked correctly if your system did
-     * not allow putenv() or if localtime() does not work in your
-     * environment, but this implementation is no longer used.
+     * not allow {@link http://www.php.net/putenv putenv()} or if
+     * {@link http://www.php.net/localtime localtime()} did not work
+     * in your environment, but this implementation is no longer used.
      *
      * @param string $ps_id a valid time zone id, e.g. 'Europe/London'
      *
