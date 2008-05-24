@@ -22,7 +22,7 @@ $states = array(
 
 $originalTimezone = new Date_TimeZone('Australia/Adelaide');
 
-$d = new Date("2007-08-31 11.59.59Z");
+$d = new Date("2007-08-31 11:59:59Z");
 $hn_time = $d->getTime();
 foreach ($states as $state) {
     $new_date = new Date($hn_time);
@@ -36,34 +36,34 @@ foreach ($states as $state) {
 }
 ?>
 --EXPECT--
-Original Time (Australia/Adelaide): 943920000
-Australia/Adelaide: 943920000
+Original Time (Australia/Adelaide): 1188561599
+Australia/Adelaide: 1188561599
 Difference: 0
 
-Original Time (Australia/Adelaide): 943920000
+Original Time (Australia/Adelaide): 1188561599
 Australia/Canberra: 943921800
 Difference: 1800
 
-Original Time (Australia/Adelaide): 943920000
-Australia/Darwin: 943920000
+Original Time (Australia/Adelaide): 1188561599
+Australia/Darwin: 1188561599
 Difference: 0
 
-Original Time (Australia/Adelaide): 943920000
+Original Time (Australia/Adelaide): 1188561599
 Australia/Brisbane: 943921800
 Difference: 1800
 
-Original Time (Australia/Adelaide): 943920000
+Original Time (Australia/Adelaide): 1188561599
 Australia/Hobart: 943921800
 Difference: 1800
 
-Original Time (Australia/Adelaide): 943920000
+Original Time (Australia/Adelaide): 1188561599
 Australia/Melbourne: 943921800
 Difference: 1800
 
-Original Time (Australia/Adelaide): 943920000
+Original Time (Australia/Adelaide): 1188561599
 Australia/Perth: 943914600
 Difference: -5400
 
-Original Time (Australia/Adelaide): 943920000
+Original Time (Australia/Adelaide): 1188561599
 Australia/Sydney: 943921800
 Difference: 1800
