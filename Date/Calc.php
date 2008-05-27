@@ -4375,6 +4375,52 @@ class Date_Calc
 
 
     // }}}
+    // {{{ isoWeekToDate()
+
+    /**
+     * Convert the Week number and Day-of-Week to Date.
+     *
+     * Calculation algorithm taken from http://www.merlyn.demon.co.uk/weekcalc.htm.
+     *
+     * @param int    $year   four digits of year
+     * @param int    $week   a number of week from 1 to 53
+     * @param int    $dow    day of week between 1 (Monday) to 7 (Sunday)
+     * @param string $format the output format
+     *
+     * @return  string formatted date.
+     * @access  public
+     * @static
+     * @since   Method available since Release 1.5.0a2
+     */
+    function isoWeekToDate($year, $week, $dow, $format = DATE_CALC_FORMAT)
+    {
+        // validates the week number
+        list(, $nweeks) = Date_Calc::isoWeekDate(28, 12, $year);
+        if ($week > $nweeks) {
+            return PEAR::raiseError('Week number cannot be greater than ' . $nweeks);
+        }
+
+        // validates the day of week
+        if ($dow < 1 || $dow > 7) {
+            return PEAR::raiseError('Day of week cannot be less than 1 and greater than 7');
+        }
+
+        // finds the day of week of January 4th.
+        $jan4th = Date_Calc::dayOfWeek(4, 1, $year);
+        if ($jan4th == 0) {
+            $jan4th = 7;
+        }
+
+        // offset to the monday of that week
+        $offset = - ($jan4th - 1);
+
+        // increment the days starting from january 4th.
+        $days = Date_Calc::dateToDays(1, 1, $year) + $offset + 7 * ($week - 1) + ($dow - 1) + 3;
+
+        return Date_Calc::daysToDate($days, $format);
+    }
+
+    // }}}
 }
 
 // }}}
