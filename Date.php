@@ -434,8 +434,9 @@ class Date
     /**
      * Defines the default weekday abbreviation length
      *
-     * Formerly used by {@link Date::formatLikeStrftime()}, but now redundant - the abbreviation
-     * for the current locale of the machine is used.
+     * Formerly used by {@link Date::formatLikeStrftime()}, but now
+     * redundant - the abbreviation for the current locale of the machine
+     * is used.
      *
      * @var      int
      * @access   private
@@ -465,7 +466,8 @@ class Date
      * @param mixed $date                optional ISO 8601 date/time to initialize;
      *                                    or, a Unix time stamp
      * @param bool  $pb_countleapseconds whether to count leap seconds
-     *                                    (defaults to {@link DATE_COUNT_LEAP_SECONDS})
+     *                                    (defaults to
+     *                                    {@link DATE_COUNT_LEAP_SECONDS})
      *
      * @return   void
      * @access   public
@@ -655,7 +657,10 @@ class Date
                      $format = DATE_FORMAT_ISO,
                      $pb_repeatedhourdefault = false)
     {
-        if (preg_match('/^([0-9]{4,4})-?(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])' .
+        if (preg_match('/^([0-9]{4,4})-?(' .
+                         '(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])|' . // [mm]-[dd]
+                         'W(0[1-9]|[1-4][0-9]|5[1-3])-?([1-7])' .       // ISO week date
+                         ')' .
                          '([T\s]?([01][0-9]|2[0-3]):?' .             // [hh]
                          '([0-5][0-9]):?([0-5][0-9]|60)(\.\d+)?' .   // [mi]:[ss]
                          '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', // offset
@@ -663,39 +668,61 @@ class Date
             $format != DATE_FORMAT_UNIXTIME
             ) {
 
-            // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
-            // These formats are extremely close to each other.  This regex
-            // is very loose and accepts almost any butchered format you could
-            // throw at it.  e.g. 2003-10-07 19:45:15 and 2003-10071945:15
-            // are the same thing in the eyes of this regex, even though the
-            // latter is not a valid ISO 8601 date.
+            if (substr($regs[2], 0, 1) == "W") {
+                // ISO week date
+                //
 
-            if (!Date_Calc::isValidDate($regs[3], $regs[2], $regs[1])) {
-                return PEAR::raiseError("'" .
-                                        Date_Calc::dateFormat($regs[1],
-                                                              $regs[2],
-                                                              $regs[3],
-                                                              "%Y-%m-%d") .
-                                        "' is invalid calendar date",
-                                        DATE_ERROR_INVALIDDATE);
-            }
+                $hs_date = Date_Calc::isoWeekToDate($regs[6],
+                                                    $regs[5],
+                                                    $regs[1],
+                                                    "%Y %m %d");
+                if (PEAR::isError($hs_date)) {
+                    return $hs_date;
+                }
 
-            if (isset($regs[9])) {
-                if ($regs[9] == "Z") {
-                    $this->tz = new Date_TimeZone("UTC");
-                } else {
-                    $this->tz = new Date_TimeZone("UTC" . $regs[9]);
+                list($hs_year, $hs_month, $hs_day) = explode(" ", $hs_date);
+
+            } else {
+                // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
+                // These formats are extremely close to each other.  This regex
+                // is very loose and accepts almost any butchered format you could
+                // throw at it.  e.g. 2003-10-07 19:45:15 and 2003-10071945:15
+                // are the same thing in the eyes of this regex, even though the
+                // latter is not a valid ISO 8601 date.
+                //
+
+                $hs_year  = $regs[1];
+                $hs_month = $regs[3];
+                $hs_day   = $regs[4];
+
+                if (!Date_Calc::isValidDate($hs_day, $hs_month, $hs_year)) {
+                    return PEAR::raiseError("'" .
+                                            Date_Calc::dateFormat($hs_year,
+                                                                  $hs_month,
+                                                                  $hs_day,
+                                                                  "%Y-%m-%d") .
+                                            "' is invalid calendar date",
+                                            DATE_ERROR_INVALIDDATE);
                 }
             }
 
-            $this->setLocalTime($regs[3],
-                                $regs[2],
-                                $regs[1],
-                                isset($regs[5]) ? $regs[5] : 0,
-                                isset($regs[6]) ? $regs[6] : 0,
-                                isset($regs[7]) ? $regs[7] : 0,
-                                isset($regs[8]) ? $regs[8] : 0.0,
+            if (isset($regs[12])) {
+                if ($regs[12] == "Z") {
+                    $this->tz = new Date_TimeZone("UTC");
+                } else {
+                    $this->tz = new Date_TimeZone("UTC" . $regs[12]);
+                }
+            }
+
+            $this->setLocalTime($hs_day,
+                                $hs_month,
+                                $hs_year,
+                                isset($regs[8]) ? $regs[8] : 0,
+                                isset($regs[9]) ? $regs[9] : 0,
+                                isset($regs[10]) ? $regs[10] : 0,
+                                isset($regs[11]) ? $regs[11] : 0.0,
                                 $pb_repeatedhourdefault);
+
         } else if (is_numeric($date)) {
             // Unix Time; N.B. Unix Time is defined relative to GMT,
             // so it needs to be adjusted for the current time zone;
@@ -777,7 +804,8 @@ class Date
      * For example:
      *
      *   - <b>(DATE_PRECISION_YEAR - 1)</b> - rounds the date to the nearest 10 years
-     *   - <b>(DATE_PRECISION_YEAR - 3)</b> - rounds the date to the nearest 1000 years
+     *   - <b>(DATE_PRECISION_YEAR - 3)</b> - rounds the date to the nearest 1000
+     *                                         years
      *   - <b>(DATE_PRECISION_SECOND + 1)</b> - rounds the date to 1 decimal
      *                                    point of a second
      *   - <b>(DATE_PRECISION_SECOND + 3)</b> - rounds the date to 3 decimal
@@ -3003,7 +3031,7 @@ class Date
                         // Year is spelled 'Nineteen Twelve' rather than
                         // 'One thousand Nine Hundred Twelve':
                         //
-                        $hn_century = intval($this->year / 100);
+                        $hn_century      = intval($this->year / 100);
                         $hs_numberformat = $hs_spformat;
 
                         // Allow all digits (specify nought); padding irrelevant:
@@ -3098,8 +3126,6 @@ class Date
     // {{{ formatLikeDate()
 
     /**
-     *
-     *
      * Formats the date according to the specified formatting code string,
      * based on {@link http://www.php.net/date date()}
      *
@@ -3315,7 +3341,9 @@ class Date
                 break;
             case '\\':
                 $hs_char = substr($ps_format, ++$i, 1);
-                $hs_formatlikesqlstr .= '"' . ($hs_char == '\\' ? '\\\\' : $hs_char) . '"';
+                $hs_formatlikesqlstr .= '"' .
+                                        ($hs_char == '\\' ? '\\\\' : $hs_char) .
+                                        '"';
                 break;
             case '"':
                 $hs_formatlikesqlstr .= '"\\""';
@@ -5629,7 +5657,6 @@ class Date
      * @param int  $y           the year
      * @param bool $pb_validate whether to check that the new date is valid
      *                           (defaults to {@link DATE_VALIDATE_DATE_BY_DEFAULT})
-     *                           
      *
      * @return   void
      * @access   public

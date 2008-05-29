@@ -613,12 +613,12 @@ class Date_Span
             list($tdate1, $tdate2) = array($tdate2, $tdate1);
         }
 
-        $days  = Date_Calc::dateDiff($tdate1->getDay(),
-                                     $tdate1->getMonth(),
-                                     $tdate1->getYear(),
-                                     $tdate2->getDay(),
-                                     $tdate2->getMonth(),
-                                     $tdate2->getYear());
+        $days = Date_Calc::dateDiff($tdate1->getDay(),
+                                    $tdate1->getMonth(),
+                                    $tdate1->getYear(),
+                                    $tdate2->getDay(),
+                                    $tdate2->getMonth(),
+                                    $tdate2->getYear());
 
         $hours = $tdate2->getHour() - $tdate1->getHour();
         $mins  = $tdate2->getMinute() - $tdate1->getMinute();

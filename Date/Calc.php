@@ -3798,7 +3798,7 @@ class Date_Calc
             }
 
             // adjust the sunday with dow addition
-            $wdate   = $sunday + $dow;
+            $wdate = $sunday + $dow;
             if ($wdate > Date_Calc::daysInMonth($month, $year)) {
                 return -1;
             } else {
@@ -4378,31 +4378,34 @@ class Date_Calc
     // {{{ isoWeekToDate()
 
     /**
-     * Convert the Week number and Day-of-Week to Date.
+     * Converts the Week number and Day-of-Week to Date
      *
-     * Calculation algorithm taken from http://www.merlyn.demon.co.uk/weekcalc.htm.
+     * Calculation algorithm taken from
+     * {@link http://www.merlyn.demon.co.uk/weekcalc.htm}.
      *
+     * @param int    $dow    day of week from 1 (Monday) to 7 (Sunday)
+     * @param int    $week   number of week from 1 to 53
      * @param int    $year   four digits of year
-     * @param int    $week   a number of week from 1 to 53
-     * @param int    $dow    day of week between 1 (Monday) to 7 (Sunday)
      * @param string $format the output format
      *
-     * @return  string formatted date.
+     * @return  string formatted date
      * @access  public
      * @static
      * @since   Method available since Release 1.5.0a2
      */
-    function isoWeekToDate($year, $week, $dow, $format = DATE_CALC_FORMAT)
+    function isoWeekToDate($dow, $week, $year, $format = DATE_CALC_FORMAT)
     {
         // validates the week number
         list(, $nweeks) = Date_Calc::isoWeekDate(28, 12, $year);
         if ($week > $nweeks) {
-            return PEAR::raiseError('Week number cannot be greater than ' . $nweeks);
+            return PEAR::raiseError("ISO week number for $year cannot be greater than $nweeks",
+                                    DATE_ERROR_INVALIDDATE);
         }
 
         // validates the day of week
         if ($dow < 1 || $dow > 7) {
-            return PEAR::raiseError('Day of week cannot be less than 1 and greater than 7');
+            return PEAR::raiseError("ISO day of week must be between 1 and 7",
+                                    DATE_ERROR_INVALIDDATE);
         }
 
         // finds the day of week of January 4th.
