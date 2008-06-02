@@ -14,7 +14,7 @@
  *
  * LICENSE:
  *
- * Copyright (c) 1997-2007 Baba Buehler, Pierre-Alain Joye, Firman
+ * Copyright (c) 1997-2008 Baba Buehler, Pierre-Alain Joye, Firman
  * Wandayandi, C.A. Woodcock
  * All rights reserved.
  *
@@ -218,17 +218,17 @@ define('DATE_FORMAT_METHOD', 'formatLikeStrftime');
 define('DATE_FORMAT_ISO', 1);
 
 /**
- * "YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?"
+ * "YYYYMMDDTHHMMSS(Z|(+/-)HHMM)?"
  */
 define('DATE_FORMAT_ISO_BASIC', 2);
 
 /**
- * "YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?"
+ * "YYYY-MM-DDTHH:MM:SS(Z|(+/-)HH:MM)?"
  */
 define('DATE_FORMAT_ISO_EXTENDED', 3);
 
 /**
- * "YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?"
+ * "YYYY-MM-DDTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?"
  */
 define('DATE_FORMAT_ISO_EXTENDED_MICROTIME', 6);
 
@@ -622,14 +622,73 @@ class Date
     // {{{ setDate()
 
     /**
-     * Sets the fields of a Date object based on the input date and format
+     * Sets the date/time of the object based on the input date and format
+     *
+     * Accepts a string in three possible formats, and in this order of
+     * precedence:
+     *
+     *   - ISO 8601 date (see {@link http://en.wikipedia.org/wiki/ISO_8601})
+     *   - Time-Stamp (i.e. 'YYYYMMDDHHMMSS')
+     *   - Unix time-stamp (see {@link http://en.wikipedia.org/wiki/Unix_time})
+     *
+     * Note that if you want to pass a Unix time-stamp then you need to set
+     * the $format parameter to {@link DATE_FORMAT_UNIXTIME}, or else use the
+     * method {@link Date::setFromTime()}.
+     *
+     * The input string should be a date/time representation in one of the
+     * following general formats:
+     *
+     *   - <b><date>T<time><time-zone></b>
+     *   - <b><date> <time><time-zone></b> (non-ISO-standard)
+     *   - <b><date><time><time-zone></b> (non-ISO-standard)
+     *   - <b><date>T<time></b> i.e. without optional <time-zone> representation
+     *   - <b><date> <time></b>
+     *   - <b><date><time></b>
+     *   - <b><date></b> i.e. without optional <time> representation
+     *
+     * that is, the representation must be comprised of a <b><date></b> part,
+     * with an optional <b><time></b> part, which itself may include an optional
+     * <time-zone> part, each of which may consist of any one of the permitted
+     * formats detailed below.  The <b><date></b> and <b><time</b> representations
+     * should be divided with the time designator <b>T</b> according to the ISO 8601
+     * standard, although this method also permits representations divided by a
+     * space, or by no delimiter at all.
+     *
+     * The <b><date></b> representation should be in one of the following formats:
+     *
+     *   - <b>Calendar date</b>: <b>YYYY-MM-DD</b> (extended format) or
+     *                           <b>YYYYMMDD</b> (basic format), where [YYYY]
+     *                           indicates the four-digit year (0000-9999), [MM]
+     *                           indicates the month (01-12) and [DD] indicates the
+     *                           day of the month [01-31]
+     *   - <b>ISO week date</b>: <b>YYYY-Www-D</b> (extended format) or
+     *                           <b>YYYYWwwD</b> (basic format), where [YYYY]
+     *                           indicates the ISO year (slightly different from the
+     *                           calendar year (see below)), [Www] indicates the ISO
+     *                           week no prefixed by the letter 'W' (W01-W53) and
+     *                           [D] indicates the ISO week-day (1-7), beginning on
+     *                           Monday and ending on Sunday.  (Also see
+     *                           {@link http://en.wikipedia.org/wiki/ISO_week_date}.)
+     *   - <b>Ordinal date</b>: <b>YYYY-DDD</b> (extended format) or
+     *                          <b>YYYYDDD</b> (basic format), where [YYYY]
+     *                          indicates the four-digit year (0000-9999) and [DDD]
+     *                          indicates the day of the year (001-366)
+     *
+     * The <b><time></b> representation should be in one of the following formats:
+     *
+     *   - <b>hh:mm:ss</b> (extended format) or <b>hhmmss</b> (basic format)
+     *   - <b>hh:mm</b> (extended format) or <b>hhmm</b> (basic format)
+     *   - <b>hh</b> (extended format) or <b>hh</b> (basic format)
+     *
+     * where [hh] represents the hour (00-24), [mm] represents the minute (00-59)
+     * and [ss] represents the second (00-60)
      *
      * Format parameter should be one of the specified DATE_FORMAT_* constants:
      *
      *   - <b>{@link DATE_FORMAT_ISO}</b> - 'YYYY-MM-DD HH:MI:SS'
-     *   - <b>{@link DATE_FORMAT_ISO_BASIC}</b> - 'YYYYMMSSTHHMMSS(Z|(+/-)HHMM)?'
-     *   - <b>{@link DATE_FORMAT_ISO_EXTENDED}</b> - 'YYYY-MM-SSTHH:MM:SS(Z|(+/-)HH:MM)?'
-     *   - <b>{@link DATE_FORMAT_ISO_EXTENDED_MICROTIME}</b> - 'YYYY-MM-SSTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
+     *   - <b>{@link DATE_FORMAT_ISO_BASIC}</b> - 'YYYYMMDDTHHMMSS(Z|(+/-)HHMM)?'
+     *   - <b>{@link DATE_FORMAT_ISO_EXTENDED}</b> - 'YYYY-MM-DDTHH:MM:SS(Z|(+/-)HH:MM)?'
+     *   - <b>{@link DATE_FORMAT_ISO_EXTENDED_MICROTIME}</b> - 'YYYY-MM-DDTHH:MM:SS(.S*)?(Z|(+/-)HH:MM)?'
      *   - <b>{@link DATE_FORMAT_TIMESTAMP}</b> - 'YYYYMMDDHHMMSS'
      *   - <b>{@link DATE_FORMAT_UNIXTIME}</b> - long integer of the no of seconds since
      *                              the Unix Epoch
@@ -651,25 +710,35 @@ class Date
      *
      * @return   void
      * @access   public
-     * @see      Date::isNull(), Date::isValidDate(), Date::isValidTime()
+     * @see      Date::isNull(), Date::isValidDate(), Date::isValidTime(),
+     *            Date::setFromTime()
      */
     function setDate($date,
                      $format = DATE_FORMAT_ISO,
                      $pb_repeatedhourdefault = false)
     {
-        if (preg_match('/^([0-9]{4,4})-?(' .
+        if ($format == DATE_FORMAT_UNIXTIME) {
+            if (is_numeric($date)) {
+                // Assume Unix time-stamp:
+                //
+                $this->setFromTime((int) $date);
+            } else {
+                return PEAR::raiseError("'$date' not valid Unix time-stamp");
+            }
+        } else if (preg_match('/^([0-9]{4,4})-?(' .
                          '(0[1-9]|1[0-2])-?(0[1-9]|[12][0-9]|3[01])|' . // [mm]-[dd]
-                         'W(0[1-9]|[1-4][0-9]|5[1-3])-?([1-7])' .       // ISO week date
-                         ')' .
-                         '([T\s]?([01][0-9]|2[0-3]):?' .             // [hh]
-                         '([0-5][0-9]):?([0-5][0-9]|60)(\.\d+)?' .   // [mi]:[ss]
-                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i', // offset
-                         $date, $regs) &&
-            $format != DATE_FORMAT_UNIXTIME
+                         'W(0[1-9]|[1-4][0-9]|5[1-3])-?([1-7])|' .       // ISO week date
+                         '(0(0[1-9]|[1-9][0-9])|[12][0-9]{2,2}|3([0-5][0-9]|6[1-6]))' . // [ddd]
+                         ')([T\s]?' .
+                         '([01][0-9]|2[0-3])(:?' .            // [hh]
+                         '([0-5][0-9])(:?' .                  // [mm]
+                         '([0-5][0-9]|60)([,.][0-9]+)?)?)?' . // [ss]
+                         '(Z|[+\-][0-9]{2,2}(:?[0-5][0-9])?)?)?$/i',    // offset
+                         $date, $regs)
             ) {
 
             if (substr($regs[2], 0, 1) == "W") {
-                // ISO week date
+                // ISO week date (YYYY-Www-D)
                 //
 
                 $hs_date = Date_Calc::isoWeekToDate($regs[6],
@@ -682,7 +751,17 @@ class Date
 
                 list($hs_year, $hs_month, $hs_day) = explode(" ", $hs_date);
 
+            } else if (strlen($regs[2]) == 3) {
+                // ISO ordinal date (YYYY-DDD)
+                //
+
+                $hn_jd = Date_Calc::firstDayOfYear($regs[1]) + $regs[2] - 1;
+                list($hs_year, $hs_month, $hs_day) =
+                    explode(" ", Date_Calc::daysToDate($hn_jd, "%Y %m %d"));
+
             } else {
+                // ISO calendar date (YYYY-MM-DD)
+                //
                 // DATE_FORMAT_ISO, ISO_BASIC, ISO_EXTENDED, and TIMESTAMP
                 // These formats are extremely close to each other.  This regex
                 // is very loose and accepts almost any butchered format you could
@@ -706,42 +785,27 @@ class Date
                 }
             }
 
-            if (isset($regs[12])) {
-                if ($regs[12] == "Z") {
+            if (isset($regs[17])) {
+                if ($regs[17] == "Z") {
                     $this->tz = new Date_TimeZone("UTC");
                 } else {
-                    $this->tz = new Date_TimeZone("UTC" . $regs[12]);
+                    $this->tz = new Date_TimeZone("UTC" . $regs[17]);
                 }
             }
 
             $this->setLocalTime($hs_day,
                                 $hs_month,
                                 $hs_year,
-                                isset($regs[8]) ? $regs[8] : 0,
-                                isset($regs[9]) ? $regs[9] : 0,
-                                isset($regs[10]) ? $regs[10] : 0,
-                                isset($regs[11]) ? $regs[11] : 0.0,
+                                isset($regs[11]) && $regs[11] != "" ?
+                                    $regs[11] : 0,
+                                isset($regs[13]) && $regs[13] != "" ?
+                                    $regs[13] : 0,
+                                isset($regs[15]) && $regs[15] != "" ?
+                                    $regs[15] : 0,
+                                isset($regs[16]) && $regs[16] != "" ?
+                                    $regs[16] : 0.0,
                                 $pb_repeatedhourdefault);
 
-        } else if (is_numeric($date)) {
-            // Unix Time; N.B. Unix Time is defined relative to GMT,
-            // so it needs to be adjusted for the current time zone;
-            // however we do not know if it is in Summer time until
-            // we have converted it from Unix time:
-            //
-
-            // Get current time zone details:
-            //
-            $hs_id = $this->getTZID();
-
-            // Input Unix time as UTC:
-            //
-            $this->tz = new Date_TimeZone("UTC");
-            $this->setDate(gmdate("Y-m-d H:i:s", $date));
-
-            // Convert back to correct time zone:
-            //
-            $this->convertTZByID($hs_id);
         } else {
             return PEAR::raiseError("Date '$date' not in ISO 8601 format",
                                     DATE_ERROR_INVALIDDATEFORMAT);
@@ -3365,10 +3429,48 @@ class Date
 
 
     // }}}
+    // {{{ setFromTime()
+
+    /**
+     * Sets the date/time using a Unix time-stamp
+     *
+     * This may only be valid for dates from 1970 to ~2038.  N.B. this
+     * function makes a call to {@link http://www.php.net/gmdate gmdate()}
+     *
+     * @param int $pn_timestamp Unix time-stamp
+     *
+     * @return   void
+     * @access   public
+     * @see      Date::getTime(), Date::setDate()
+     */
+    function setFromTime($pn_timestamp)
+    {
+        // Unix Time; N.B. Unix Time is defined relative to GMT,
+        // so it needs to be adjusted for the current time zone;
+        // however we do not know if it is in Summer time until
+        // we have converted it from Unix time:
+        //
+
+        // Get current time zone details:
+        //
+        $hs_id = $this->getTZID();
+
+        // Input Unix time as UTC:
+        //
+        $this->tz = new Date_TimeZone("UTC");
+        $this->setDate(gmdate("Y-m-d H:i:s", $pn_timestamp));
+
+        // Convert back to correct time zone:
+        //
+        $this->convertTZByID($hs_id);
+    }
+
+
+    // }}}
     // {{{ getTime()
 
     /**
-     * Returns the date/time in Unix-Time format (as returned for example by
+     * Returns the date/time as Unix time-stamp (as returned for example by
      * {@link http://www.php.net/time time()})
      *
      * This may only be valid for dates from 1970 to ~2038.  N.B. this
