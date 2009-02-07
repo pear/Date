@@ -2561,6 +2561,8 @@ $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
         'offset' => -14400000,
         'shortname' => 'AST',
         'dstshortname' => 'ADT',
+        'longname' => 'Atlantic Standard Time',
+        'dstlongname' => 'Atlantic Daylight Time',
         'summertimeoffset' => 3600000,
         'summertimestartmonth' => 3,
         'summertimestartday' => 'Sun>=8',
