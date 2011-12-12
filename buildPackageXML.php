@@ -3,7 +3,7 @@
 // $Id$
 
 require_once 'PEAR/PackageFileManager2.php';
-require_once 'PEAR/PackageFileManager/Cvs.php';
+require_once 'PEAR/PackageFileManager/Git.php';
 
 $pkg = new PEAR_PackageFileManager2;
 
@@ -12,7 +12,7 @@ $options = array(
     'baseinstalldir'    => '/',
     'packagefile'       => 'package.xml',
     'packagedirectory'  => dirname(__FILE__),
-    'filelistgenerator' => 'Cvs',
+    'filelistgenerator' => 'Git',
     'dir_roles'         => array(
         'tests'         => 'test',
         'docs'          => 'doc',
@@ -40,26 +40,17 @@ pre 1970 and post 2038.
 EOT;
 
 $notes = <<<EOT
-* Fixed bug #2378: getDate(DATE_FORMAT_UNIXTIME) doesn't convert to GMT
-* Fixed bug #7439: US/Indiana Daylight Savings Change
-* Implemented request #9700: Incorrect timestamps allowd
-* Fixed bug #10349: Wrong offset in timezones
-* Fixed bug #10591: inDaylightTime fails
-* Implemented request #11090: microtime is not set by default constructor
-* Fixed bug #11313: DST time change not handled correctly
-* Fixed bug #11475: Date::copy don't copy milisecond part
-* Fixed bug #11682: Australia/Perth has DST
-* Fixed bug #11708: getWeekdayAbbrname returns wrong lenght if string is unicode
-* Fixed bug #12019: Date->after(...) changes the date
-* Fixed bug #12420: Date constructor handles iso 8601 timezone offests of zero incorrectly
-* Fixed bug #12529: setTZ globally sets your TZ instead of only within date object
-* Fixed bug #13376: setFromDateDiff change source dates
+QA release.
+Users are strongly encouraged to adopt to inbuilt DateTime functionality.
 
-* Improved time-zone functionality so that it is entirely handled by the class and not reliant on native functions
-* Added leap-second functionality
-* Added functions 'Date::round()' and 'Date::trunc()'
-* Added formatting function 'Date::format2()' that uses a 'YYYY-MM-DD'-style formatting code
-* Added formatting function 'Date::format3()' to allow date-formatting using the formatting code of 'date()'
+Bug #17730 Patch: Avoid ereg, using preg_match
+Doc Bug #15029 large Date_Span's cannot be created
+Bug #14929 Timezone summertime
+Bug #14856 America/Moncton longname and dstlongname missing
+Bug #14084 TZ variable being set wrecks global config
+Bug #13615 America/Toronto time-zone is missing longname and dstlongname
+Bug #13545 Date_Span::set() doesn't work when passed an int and format
+Req #13488 Please rename Methods format2 and format3
 EOT;
 
 $summary = <<<EOT
@@ -72,7 +63,7 @@ $pkg->setSummary($summary);
 $pkg->setDescription($desc);
 $pkg->setChannel('pear.php.net');
 $pkg->setAPIVersion('1.5.0');
-$pkg->setReleaseVersion('1.5.0a1');
+$pkg->setReleaseVersion('1.5.0a2');
 $pkg->setReleaseStability('alpha');
 $pkg->setAPIStability('alpha');
 $pkg->setNotes($notes);
