@@ -7264,7 +7264,7 @@ if (isset($GLOBALS['_DATE_TIMEZONE_DEFAULT'])
     Date_TimeZone::setDefault($GLOBALS['_DATE_TIMEZONE_DEFAULT']);
 } else if (function_exists('version_compare') &&
            version_compare(phpversion(), "5.1.0", ">=") &&
-           (Date_TimeZone::isValidID($ps_id = ini_get("date.timezone")) ||
+           (Date_TimeZone::isValidID($ps_id = date_default_timezone_get()) ||
             Date_TimeZone::isValidID($ps_id = date("e"))
             )
            ) {
