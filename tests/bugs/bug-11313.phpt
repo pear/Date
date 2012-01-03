@@ -3,7 +3,7 @@ Bug #11313 DST time change not handled correctly
 --FILE--
 <?php
 
-putenv('TZ=Europe/Moscow');
+date_default_timezone_set('Europe/Moscow');
 //include_once('debug.php');
 require_once 'Date.php';
 
