@@ -21,7 +21,7 @@
 
 require_once 'Date.php';
 require_once 'Date/Span.php';
-require_once 'PHPUnit.php';
+require_once 'PHPUnit/Autoload.php';
 
 /**
  * Test case for Date_Span
@@ -29,13 +29,9 @@ require_once 'PHPUnit.php';
  * @package Date
  * @author Leandro Lucarella <llucax@php.net>
  */
-class Date_SpanTest extends PHPUnit_TestCase {
+class Date_SpanTest extends PHPUnit_Framework_TestCase {
 
     var $time;
-
-    function Date_SpanTest($name) {
-        $this->PHPUnit_TestCase($name);
-    }
 
     function setUp() {
         $this->time = new Date_Span(97531);
@@ -169,11 +165,3 @@ class Date_SpanTest extends PHPUnit_TestCase {
     }
 
 }
-
-// runs the tests
-$suite = new PHPUnit_TestSuite("Date_SpanTest");
-$result = PHPUnit::run($suite);
-// prints the tests
-echo $result->toString();
-
-?>

@@ -20,7 +20,7 @@
 //
 
 require_once 'Date.php';
-require_once 'PHPUnit.php';
+require_once 'PHPUnit/Autoload.php';
 
 class myDate extends Date {
     function myDate($date)
@@ -35,14 +35,9 @@ class myDate extends Date {
  * @package Date
  * @author Marshall Roch <mroch@php.net>
  */
-class Date_Test extends PHPUnit_TestCase {
+class Date_Test extends PHPUnit_Framework_TestCase {
 
     var $time;
-
-    function Date_Test($name)
-    {
-        $this->PHPUnit_TestCase($name);
-    }
 
     function setUp()
     {
@@ -359,11 +354,3 @@ class Date_Test extends PHPUnit_TestCase {
     }
 
 }
-
-// runs the tests
-$suite = new PHPUnit_TestSuite("Date_Test");
-$result = PHPUnit::run($suite);
-// prints the tests
-echo $result->toString();
-
-?>
