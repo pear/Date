@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-    http://pear.php.net/dtd/tasks-1.0.xsd
-    http://pear.php.net/dtd/package-2.0
-    http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.0     http://pear.php.net/dtd/package-2.0.xsd">
  <name>Date</name>
  <channel>pear.php.net</channel>
  <summary>Generic date/time handling class for PEAR</summary>
@@ -12,8 +9,7 @@ which is a huge limitation for PHP programs.  Includes time zone data,
 time zone conversions and many date/time conversions.
 It does not rely on 32-bit system date stamps, so
 you can display calendars and compare dates that date
-pre 1970 and post 2038.
- </description>
+pre 1970 and post 2038.</description>
  <lead>
   <name>Baba Buehler</name>
   <user>baba</user>
@@ -56,10 +52,10 @@ pre 1970 and post 2038.
   <email>scar@php.net</email>
   <active>yes</active>
  </helper>
- <date>2011-12-13</date>
- <time>00:42:51</time>
+ <date>2012-10-23</date>
+ <time>11:40:53</time>
  <version>
-  <release>1.5.0a2</release>
+  <release>1.5.0a3</release>
   <api>1.5.0</api>
  </version>
  <stability>
@@ -68,175 +64,153 @@ pre 1970 and post 2038.
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
  <notes>
-QA release.
-Users are strongly encouraged to adopt to inbuilt DateTime functionality.
-
-Bug #17730 Patch: Avoid ereg, using preg_match
-Doc Bug #15029 large Date_Span&apos;s cannot be created
-Bug #14929 Timezone summertime
-Bug #14856 America/Moncton longname and dstlongname missing
-Bug #14084 TZ variable being set wrecks global config
-Bug #13615 America/Toronto time-zone is missing longname and dstlongname
-Bug #13545 Date_Span::set() doesn&apos;t work when passed an int and format
-Req #13488 Please rename Methods format2 and format3
+QA release
+Request #17626 Patch to add missing longname and dstlongname info
+Bug #19184 use date_default_timezone_get() instead of ini_get(date.timezone)
+Bug #19568 setDate() handles ISO week dates incorrectly
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <dir name="Date">
-    <file name="Calc.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="Human.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="Span.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="TimeZone.php" role="php">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-   </dir> <!-- /Date -->
-   <dir name="docs">
-    <dir name="examples">
-     <file name="example.php" role="doc">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-    </dir> <!-- /docs/examples -->
-    <file name="LICENSE" role="doc">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="TODO" role="doc">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-   </dir> <!-- /docs -->
-   <dir name="tests">
-    <dir name="bugs">
-     <file name="bug-445.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-674.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-727-1.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-727-2.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-727-3.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-727-4.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-967.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-2378-1.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-2378.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-6246.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-8518.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-8912.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-9213.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-9414.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-9568.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-9801.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-11313.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-13376.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-     <file name="bug-13545.phpt" role="test">
-      <tasks:replace from="@package_version@" to="version" type="package-info" />
-     </file>
-    </dir> <!-- /tests/bugs -->
-    <file name="calc.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="testunit.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="testunit_date.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="testunit_date_span.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_addseconds.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_addseconds_Calcutta.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_addseconds_Paris.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_calc.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_date_methods_span.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_format.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_julianday.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_round_trunc.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_0.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_1.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_2.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_3.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_4.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_5.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_6.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="test_weeknumbers_ISO.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-   </dir> <!-- /tests -->
-   <file name="Date.php" role="php">
+   <file baseinstalldir="/" md5sum="16c72a89611c2e6b5e45efa5503b015c" name="Date/Calc.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file name="README" role="data">
+   <file baseinstalldir="/" md5sum="9f3b65e24da70f3706d45438e6148fb3" name="Date/Human.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-  </dir> <!-- / -->
+   <file baseinstalldir="/" md5sum="483831ea37ae708d9a220372e9d5b572" name="Date/Span.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="dc6794ab6bcf28d90b2154ede81ab80d" name="Date/TimeZone.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="792b333b7e7b6a591da410c2f7ca4897" name="docs/LICENSE" role="doc">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="2d70b58b19e2fca19e2f2e9fcd8af3e4" name="docs/TODO" role="doc">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="d8015e45b93064e90f15bdca2731db55" name="docs/examples/example.php" role="doc">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="ae6e6d864b574cebe038d6430ac36c52" name="tests/calc.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="434171b5b0829cb889a9de97ce197a64" name="tests/DateSpanTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="45443ed0976a576bc7ad422e38025c19" name="tests/DateTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="c355edaa61d14c4ad831f8894f83219d" name="tests/test_addseconds.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="4bda6b2b1392ca0a8993d2a947e71736" name="tests/test_addseconds_Calcutta.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="3a8a3429f409900e13b8f7f639ac8196" name="tests/test_addseconds_Paris.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="8b7243ba335fc9cf2b35712aa7481716" name="tests/test_calc.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="d2e6e5273f6e6eabecb529acb41e9aed" name="tests/test_date_methods_span.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="359ebed16223da91cc94b3dcf1fffe3a" name="tests/test_format.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="2d7feef39f58ee97ff354ff869b3fc99" name="tests/test_julianday.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="0888b37265f5079e32a4de490ada4eaf" name="tests/test_round_trunc.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="13ffbb67ca3828297cfdc54ee7408dfb" name="tests/test_weeknumbers_0.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="e51f49fc3bce3d94237f89276dee54fb" name="tests/test_weeknumbers_1.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="b2fcdc95b3de2767331b1b248feaa818" name="tests/test_weeknumbers_2.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="8ef8d3110adafab5779c555010bde302" name="tests/test_weeknumbers_3.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="9dacc87289c853cbe07f69e1a55ffd23" name="tests/test_weeknumbers_4.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="7e0c6bbb61b0b7acba409914858c5998" name="tests/test_weeknumbers_5.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="3bf028663c0d44068e405af2a9e9cbab" name="tests/test_weeknumbers_6.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="718791b73052d28a89de911ca460056c" name="tests/test_weeknumbers_ISO.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="ebbadc4b070ec6cbf26aea9f8ebe6eb3" name="tests/bugs/bug-445.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="94b6b7b84bda5f8020281dd3f60fae83" name="tests/bugs/bug-674.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="9ab0e02d17982db82508d38412470ff0" name="tests/bugs/bug-727-1.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="7dba774309148c07d6d720f5de20c765" name="tests/bugs/bug-727-2.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="02d3335d31fd4b0d2f40581085843f32" name="tests/bugs/bug-727-3.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="a5d7386395ce944b00aa446d7fac8c97" name="tests/bugs/bug-727-4.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="72961606c266d201f3052b2f10b3ae0c" name="tests/bugs/bug-967.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="3b42cc3008e576aca2660d8d8e7c145d" name="tests/bugs/bug-2378-1.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="d3b317576da5c76b9daafc90da730364" name="tests/bugs/bug-2378.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="9853b8fdd91863448c23fb11bd462c17" name="tests/bugs/bug-6246.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="e67501d25664e18515667ad61750bb68" name="tests/bugs/bug-8518.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="f70ba8d75110b1af52c685500f4e704b" name="tests/bugs/bug-8912.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="28d08bc629929e0955541968aabb7455" name="tests/bugs/bug-9213.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="f94605749fc02880f5787954ffe4a8d1" name="tests/bugs/bug-9414.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="39254e372b4785f7c79b584918607fd8" name="tests/bugs/bug-9568.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="931d05cef03138351b0d7e079054908e" name="tests/bugs/bug-9801.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="abfa20deaa1aeb8cd8ed99c44ba93639" name="tests/bugs/bug-11313.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="11949c886f8e48c3fa5ee4adc76b8ca3" name="tests/bugs/bug-13376.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="1c42e57e2b748dcef2cbd6cab72551d3" name="tests/bugs/bug-13545.phpt" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="0e6df25af581dfcd814040ea983e0fb9" name="tests/bugs/bug-19568.phpt" role="test" />
+   <file baseinstalldir="/" md5sum="59d925897e995c75872dc7b411f0b2d9" name="buildPackageXML.php" role="php" />
+   <file baseinstalldir="/" md5sum="bbaf37a53bb31267612d2ead9b45fcbe" name="Date.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="49ca131c2ce58f5283006861554ac561" name="README" role="data">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+  </dir>
  </contents>
  <dependencies>
   <required>
@@ -477,6 +451,24 @@ Bug #14084 TZ variable being set wrecks global config
 Bug #13615 America/Toronto time-zone is missing longname and dstlongname
 Bug #13545 Date_Span::set() doesn&apos;t work when passed an int and format
 Req #13488 Please rename Methods format2 and format3
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.5.0a3</release>
+    <api>1.5.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2012-10-23</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>
+QA release
+Request #17626 Patch to add missing longname and dstlongname info
+Bug #19184 use date_default_timezone_get() instead of ini_get(date.timezone)
+Bug #19568 setDate() handles ISO week dates incorrectly
    </notes>
   </release>
  </changelog>
