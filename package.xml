@@ -52,10 +52,10 @@ pre 1970 and post 2038.</description>
   <email>scar@php.net</email>
   <active>yes</active>
  </helper>
- <date>2012-10-23</date>
- <time>11:40:53</time>
+ <date>2013-10-08</date>
+ <time>05:58:53</time>
  <version>
-  <release>1.5.0a3</release>
+  <release>1.5.0a4</release>
   <api>1.5.0</api>
  </version>
  <stability>
@@ -64,10 +64,7 @@ pre 1970 and post 2038.</description>
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
  <notes>
-QA release
-Request #17626 Patch to add missing longname and dstlongname info
-Bug #19184 use date_default_timezone_get() instead of ini_get(date.timezone)
-Bug #19568 setDate() handles ISO week dates incorrectly
+Fix broken tgz package file
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -469,6 +466,22 @@ QA release
 Request #17626 Patch to add missing longname and dstlongname info
 Bug #19184 use date_default_timezone_get() instead of ini_get(date.timezone)
 Bug #19568 setDate() handles ISO week dates incorrectly
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.5.0a4</release>
+    <api>1.5.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2013-10-08</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>
+Fix broken tgz package file
    </notes>
   </release>
  </changelog>
