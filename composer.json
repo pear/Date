@@ -1,0 +1,61 @@
+{
+    "authors": [
+        {
+            "email": "baba@babaz.com",
+            "name": "Baba Buehler",
+            "role": "Lead"
+        },
+        {
+            "email": "pajoye@php.net",
+            "name": "Pierre-Alain Joye",
+            "role": "Lead"
+        },
+        {
+            "email": "mohrt@php.net",
+            "name": "Monte Ohrt",
+            "role": "Lead"
+        },
+        {
+            "email": "firman@php.net",
+            "name": "Firman Wandayandi",
+            "role": "Lead"
+        },
+        {
+            "email": "c01234@netcomuk.co.uk",
+            "name": "C.A. Woodcock",
+            "role": "Lead"
+        },
+        {
+            "email": "alan@akbkhome.com",
+            "name": "Alan Knowles",
+            "role": "Developer"
+        },
+        {
+            "email": "scar@php.net",
+            "name": "Leonardo Dutra",
+            "role": "Helper"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Date": "./"
+        }
+    },
+    "description": "More info available on: http://pear.php.net/package/Date",
+    "include-path": [
+        "./"
+    ],
+    "license": "BSD License",
+    "name": "pear/date",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Date",
+        "source": "https://github.com/pear/Date"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
