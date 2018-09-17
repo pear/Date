@@ -465,18 +465,41 @@ class Date
      *
      * @param mixed $date                optional ISO 8601 date/time to initialize;
      *                                    or, a Unix time stamp
-     * @param bool  $pb_countleapseconds whether to count leap seconds
+     * @param mixed $options             optional with backwards compatibility;
+     *                                    accept bool whether to count leap seconds
      *                                    (defaults to
-     *                                    {@link DATE_COUNT_LEAP_SECONDS})
+     *                                    {@link DATE_COUNT_LEAP_SECONDS});
+     *                                    accept array options with default options:
+     *                                    'pb_countleapseconds' to count leap seconds
+     *                                    (defaults to
+     *                                    {@link DATE_COUNT_LEAP_SECONDS});
+     *                                    'format' (DATE_FORMAT_*) of the input date.
+     *                                    This option is not needed, except to force
+     *                                    the setting of the date from a Unix
+     *                                    time-stamp (for which use
+     *                                    {@link DATE_FORMAT_UNIXTIME}).
+     *                                    (Defaults to
+     *                                    {@link DATE_FORMAT_ISO}.)
      *
      * @return   void
      * @access   public
      * @see      Date::setDate()
      */
-    function Date($date = null,
-                  $pb_countleapseconds = DATE_COUNT_LEAP_SECONDS)
+    function Date($date = null, $options = null)
     {
-        $this->ob_countleapseconds = $pb_countleapseconds;
+		$default = array(
+		    "pb_countleapseconds" => DATE_COUNT_LEAP_SECONDS,
+		    "format" => DATE_FORMAT_ISO
+		);
+		if (is_null($options)) {
+			$options = array();
+	    }
+		if (is_bool($options)) {
+			$options["pb_countleapseconds"] = $options;
+	    }
+	    $args = array_merge($default, $options);
+
+        $this->ob_countleapseconds = $args["pb_countleapseconds"];
 
         if (is_a($date, 'Date')) {
             $this->copy($date);
@@ -485,7 +508,7 @@ class Date
                 // 'setDate()' expects a time zone to be already set:
                 //
                 $this->_setTZToDefault();
-                $this->setDate($date);
+                $this->setDate($date, $args["format"]);
             } else {
                 $this->setNow();
             }
