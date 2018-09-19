@@ -425,7 +425,7 @@ class Date
     /**
      * Date_TimeZone object for this date
      *
-     * @var      object     Date_TimeZone object
+     * @var      Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
@@ -481,11 +481,10 @@ class Date
      *                                    (Defaults to
      *                                    {@link DATE_FORMAT_ISO}.)
      *
-     * @return   void
      * @access   public
      * @see      Date::setDate()
      */
-    function Date($date = null, $options = null)
+    function __construct($date = null, $options = null)
     {
 		$default = array(
 		    "pb_countleapseconds" => DATE_COUNT_LEAP_SECONDS,
@@ -1274,7 +1273,6 @@ class Date
      */
     function getDate($format = DATE_FORMAT_ISO)
     {
-        $ret;
         switch ($format) {
         case DATE_FORMAT_ISO:
             $ret = $this->formatLikeStrftime("%Y-%m-%d %T");
@@ -4371,10 +4369,10 @@ class Date
             return $this->_getErrorInvalidTime();
         }
 
-        $hn_days           = $span->day;
-        $hn_standardhour   = $this->on_standardhour + $span->hour;
-        $hn_standardminute = $this->on_standardminute + $span->minute;
-        $hn_standardsecond = $this->on_standardsecond + $span->second;
+        $hn_days           = $span->format('%D');
+        $hn_standardhour   = $this->on_standardhour + $span->format('%h');
+        $hn_standardminute = $this->on_standardminute + $span->format('%m');
+        $hn_standardsecond = $this->on_standardsecond + $span->format('%s');
 
         if ($hn_standardsecond >= 60) {
             ++$hn_standardminute;
@@ -4435,10 +4433,10 @@ class Date
             return $this->_getErrorInvalidTime();
         }
 
-        $hn_days           = -$span->day;
-        $hn_standardhour   = $this->on_standardhour - $span->hour;
-        $hn_standardminute = $this->on_standardminute - $span->minute;
-        $hn_standardsecond = $this->on_standardsecond - $span->second;
+        $hn_days           = -$span->format('%D');
+        $hn_standardhour   = $this->on_standardhour - $span->format('%h');
+        $hn_standardminute = $this->on_standardminute - $span->format('%m');
+        $hn_standardsecond = $this->on_standardsecond - $span->format('%s');
 
         if ($hn_standardsecond < 0) {
             --$hn_standardminute;
@@ -4571,7 +4569,7 @@ class Date
      * @see      Date_TimeZone::isEquivalent()
      * @since    Method available since Release 1.5.0
      */
-    function inEquivalentTimeZones($po_date1, $po_date2)
+    static function inEquivalentTimeZones($po_date1, $po_date2)
     {
         return $po_date1->tz->isEquivalent($po_date2->getTZID());
     }
@@ -4593,7 +4591,7 @@ class Date
      * @access   public
      * @static
      */
-    function compare($od1, $od2)
+    static function compare($od1, $od2)
     {
         $d1 = new Date($od1);
         $d2 = new Date($od2);
@@ -5455,7 +5453,7 @@ class Date
      * @static
      * @since    Method available since Release 1.5.0
      */
-    function _addOffset($pn_offset,
+    static function _addOffset($pn_offset,
                         $pn_day,
                         $pn_month,
                         $pn_year,

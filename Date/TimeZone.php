@@ -311,11 +311,10 @@ class Date_TimeZone
      *
      * @param string $ps_id the time zone ID
      *
-     * @return   void
      * @access   public
      * @see      Date::setTZ(), Date::setTZByID(), Date_TimeZone::isValidID()
      */
-    function Date_TimeZone($ps_id)
+    function __construct($ps_id)
     {
         $_DATE_TIMEZONE_DATA =& $GLOBALS['_DATE_TIMEZONE_DATA'];
 
@@ -414,7 +413,7 @@ class Date_TimeZone
      * @return   object     Date_TimeZone object of the default time zone
      * @access   public
      */
-    function getDefault()
+    static function getDefault()
     {
         return new Date_TimeZone($GLOBALS['_DATE_TIMEZONE_DEFAULT']);
     }
@@ -431,7 +430,7 @@ class Date_TimeZone
      * @return   void
      * @access   public
      */
-    function setDefault($id)
+    static function setDefault($id)
     {
         if (Date_TimeZone::isValidID($id)) {
             $GLOBALS['_DATE_TIMEZONE_DEFAULT'] = $id;
@@ -495,7 +494,7 @@ class Date_TimeZone
      * @access   public
      * @see      Date::setTZByID(), Date_TimeZone::Date_TimeZone()
      */
-    function isValidID($ps_id)
+    static function isValidID($ps_id)
     {
         if (isset($GLOBALS['_DATE_TIMEZONE_DATA'][$ps_id])) {
             return true;
@@ -5291,7 +5290,7 @@ $GLOBALS['_DATE_TIMEZONE_DATA'] = array(
         'shortname' => 'VOLT',
         'dstshortname' => 'VOLST',
         'longname' => 'Volograd Time',
-        'longname' => 'Volograd Summer Time',
+        'dstlongname' => 'Volograd Summer Time',
         'summertimeoffset' => 3600000,
         'summertimestartmonth' => 3,
         'summertimestartday' => 'lastSun',

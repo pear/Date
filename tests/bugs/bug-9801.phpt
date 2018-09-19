@@ -16,11 +16,11 @@ $d2 = new Date();
 $d1->setTZbyID('Canada/Eastern');
 $d2->setTZbyID('Canada/Eastern');
 
-echo 'Timezone (before): ' . $d1->tz->getId() . "\n";
+echo 'Timezone (before): ' . $d1->getTZID() . "\n";
 
 Date::compare($d1, $d2);
 
-echo 'Timezone (after): ' . $d1->tz->getId() . "\n";
+echo 'Timezone (after): ' . $d1->getTZID() . "\n";
 ?>
 --EXPECT--
 Timezone (before): Canada/Eastern

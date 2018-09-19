@@ -484,5 +484,22 @@ Bug #19568 setDate() handles ISO week dates incorrectly
 Fix broken tgz package file
    </notes>
   </release>
+
+  <release>
+   <version>
+    <release>1.5.0a5</release>
+    <api>1.5.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2018-20-09</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+   <notes>
+Bug fix 14413 (unit-test failures for 8912, 2378-1)
+Fix 'Non-static method should not be called statically' warnings
+   </notes>
+  </release>
  </changelog>
 </package>

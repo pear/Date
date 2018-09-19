@@ -103,7 +103,7 @@ class Date_Human
      * @access   public
      * @static
      */
-    function gregorianToHuman($day = 0, $month = 0, $year = 0)
+    static function gregorianToHuman($day = 0, $month = 0, $year = 0)
     {
         /*
          * Check to see if any of the arguments are empty
@@ -197,7 +197,7 @@ class Date_Human
      * @access   public
      * @static
      */
-    function humanToGregorian($day, $month, $year = 0)
+    static function humanToGregorian($day, $month, $year = 0)
     {
         /*
          * Check to see if the year has been passed through.
