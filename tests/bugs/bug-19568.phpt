@@ -5,14 +5,14 @@ Bug #19568 setDate() handles ISO week dates incorrectly
 require_once 'Date.php';
 
 $x = new Date('2012-W49-1');
-print $x->year . "\n";
-print $x->month . "\n";
-print $x->day . "\n";
+print $x->getYear() . "\n";
+print $x->getMonth() . "\n";
+print $x->getDay() . "\n";
 
 $y = new Date('2012-W50-1');
-print $y->year . "\n";
-print $y->month . "\n";
-print $y->day . "\n";
+print $y->getYear() . "\n";
+print $y->getMonth() . "\n";
+print $y->getDay() . "\n";
 --EXPECT--
 2012
 12

@@ -56,6 +56,6 @@
         "pear/pear_exception": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "^3.7"
     }
 }

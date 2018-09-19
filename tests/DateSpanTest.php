@@ -29,8 +29,11 @@ require_once 'PHPUnit/Autoload.php';
  * @package Date
  * @author Leandro Lucarella <llucax@php.net>
  */
-class Date_SpanTest extends PHPUnit_Framework_TestCase {
-
+class Date_SpanTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * @var Date_Span
+     */
     var $time;
 
     function setUp() {
@@ -45,8 +48,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $this->time->setFromArray(array(5, 48.5, 28.5, 31));
         $this->assertEquals(
             '7:0:59:1',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -54,8 +57,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $this->time->setFromString('5:00:59:31');
         $this->assertEquals(
             '5:0:59:31',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -63,8 +66,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $this->time->setFromSeconds(434344);
         $this->assertEquals(
             '5:0:39:4',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -72,8 +75,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $this->time->setFromMinutes(7860.0166666666);
         $this->assertEquals(
             '5:11:0:1',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -81,8 +84,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $this->time->setFromHours(50.12345);
         $this->assertEquals(
             '2:2:7:24',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -90,8 +93,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $this->time->setFromDays(pi());
         $this->assertEquals(
             '3:3:23:54',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -102,8 +105,8 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         );
         $this->assertEquals(
             '366:1:5:9',
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s'))
         );
     }
 
@@ -111,10 +114,10 @@ class Date_SpanTest extends PHPUnit_Framework_TestCase {
         $time = new Date_Span();
         $time->copy($this->time);
         $this->assertEquals(
-            sprintf('%d:%d:%d:%d', $this->time->day, $this->time->hour,
-                $this->time->minute, $this->time->second),
-            sprintf('%d:%d:%d:%d', $time->day, $time->hour,
-                $time->minute, $time->second)
+            sprintf('%d:%d:%d:%d', $this->time->format('%D'), $this->time->format('%h'),
+                $this->time->format('%m'), $this->time->format('%s')),
+            sprintf('%d:%d:%d:%d', $time->format('%D'), $time->format('%h'),
+                $time->format('%m'), $time->format('%s'))
         );
     }
 

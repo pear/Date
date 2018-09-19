@@ -12,13 +12,13 @@ require_once 'Date/TimeZone.php';
 // Sets default timezone via a global variable.
 $_DATE_TIMEZONE_DEFAULT = 'Pacific/Chatham';
 $tz = Date_TimeZone::getDefault();
-echo 'Date_TimeZone::$id = ' . $tz->id . "\n";
+echo 'Date_TimeZone::$id = ' . $tz->getId() . "\n";
 
 // Sets default timezone via Date_TimeZone::setDefault().
 Date_TimeZone::setDefault('CST');
 $default = 'EST';
 $tz = Date_TimeZone::getDefault();
-echo 'Date_TimeZone::$id = ' . $tz->id . "\n";
+echo 'Date_TimeZone::$id = ' . $tz->getId() . "\n";
 echo '$GLOBALS[\'_DATE_TIMEZONE_DEFAULT\'] = ' . $_DATE_TIMEZONE_DEFAULT . "\n";
 ?>
 --EXPECT--
